@@ -4,11 +4,10 @@ import { CaseStudiesCarousel } from "@/components/shared/CaseStudiesCarousel";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { TrustLogosSection } from "@/components/shared/TrustLogosSection";
-import { FAQSection } from "@/components/shared/FAQSection";
 import { HeroMotion } from "@/components/shared/HeroMotion";
 import { HeroStatsGrid } from "@/components/shared/HeroStatsGrid";
 import { MessagingFramework } from "@/components/shared/MessagingFramework";
-import { brand, insights, home, homeFaqs, capabilities } from "@/lib/content";
+import { brand, insights, home, capabilities } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
 
 export default function HomePage() {
@@ -23,11 +22,11 @@ export default function HomePage() {
               {brand.heroEyebrow}
             </p>
             <h1
-              className={`${ttForsDisplay.className} brand-phrase mt-3 text-[1.75rem] leading-[1.08] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
+              className={`${ttForsDisplay.className} brand-phrase mt-3 text-[2rem] leading-[1.08] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
             >
               {brand.claim}
             </h1>
-            <p className="mt-3 max-w-lg text-[0.875rem] leading-relaxed text-white/72 sm:mt-5 sm:text-base lg:text-lg">
+            <p className="mt-3 max-w-lg text-base leading-relaxed text-white/72 sm:mt-5 sm:text-base lg:text-lg">
               {brand.promise}
             </p>
           </div>
@@ -201,12 +200,6 @@ export default function HomePage() {
           </div>
         </Container>
       </section>
-
-      <FAQSection
-        items={homeFaqs}
-        title="Preguntas frecuentes"
-        subtitle="Lo esencial, en pocas líneas."
-      />
 
       {/* CTA */}
       {/* CTA — sin animación en móvil (HeroMotion ya lo maneja) */}
