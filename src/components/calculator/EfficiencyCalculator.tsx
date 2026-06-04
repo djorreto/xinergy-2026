@@ -69,7 +69,7 @@ export function EfficiencyCalculator() {
   return (
     <div className="overflow-hidden border border-xinergy-charcoal/10 bg-white shadow-[0_32px_64px_-24px_rgba(63,55,75,0.18)]">
       {/* Progress */}
-      <div className="border-b border-xinergy-charcoal/8 bg-xinergy-cream/60 px-6 py-5 lg:px-10">
+      <div className="border-b border-xinergy-charcoal/8 bg-xinergy-cream/60 px-4 py-4 sm:px-6 sm:py-5 lg:px-10">
         <div className="flex items-center justify-between gap-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-xinergy-slate">
             Diagnóstico de oportunidad
@@ -100,7 +100,7 @@ export function EfficiencyCalculator() {
 
       <div className="grid lg:grid-cols-5">
         {/* Form */}
-        <div className="lg:col-span-3 p-6 lg:p-10">
+        <div className="lg:col-span-3 p-4 sm:p-6 lg:p-10">
           {step === 0 && (
             <div className="space-y-8 animate-in">
               <fieldset>
@@ -239,7 +239,7 @@ export function EfficiencyCalculator() {
             <div className="space-y-8">
               <div>
                 <p className="label-editorial">Oportunidad estimada (año 1)</p>
-                <p className="mt-4 font-display text-4xl font-semibold tracking-tight text-xinergy-charcoal lg:text-5xl">
+                <p className="mt-3 font-display text-3xl font-semibold tracking-tight text-xinergy-charcoal sm:mt-4 sm:text-4xl lg:text-5xl">
                   {formatUsd(result.savingsExpected)}
                 </p>
                 <p className="mt-2 text-sm text-xinergy-slate">
@@ -283,7 +283,7 @@ export function EfficiencyCalculator() {
             </div>
           )}
 
-          <div className="mt-10 flex flex-wrap gap-3 border-t border-xinergy-charcoal/8 pt-8">
+          <div className="mobile-actions mt-8 border-t border-xinergy-charcoal/8 pt-6 sm:mt-10 sm:flex-wrap sm:pt-8">
             {step > 0 && !(step === 2 && resultsUnlocked) && (
               <button
                 type="button"
@@ -294,19 +294,19 @@ export function EfficiencyCalculator() {
                   }
                   setStep(step - 1);
                 }}
-                className="btn-secondary"
+                className="btn-secondary w-full sm:w-auto"
                 disabled={submitting}
               >
                 Atrás
               </button>
             )}
             {step < 1 && (
-              <button type="button" onClick={() => setStep(step + 1)} className="btn-primary">
+              <button type="button" onClick={() => setStep(step + 1)} className="btn-primary w-full sm:w-auto">
                 Continuar
               </button>
             )}
             {step === 1 && (
-              <button type="button" onClick={() => setStep(2)} className="btn-primary">
+              <button type="button" onClick={() => setStep(2)} className="btn-primary w-full sm:w-auto">
                 Ver mi oportunidad
               </button>
             )}
@@ -315,13 +315,13 @@ export function EfficiencyCalculator() {
                 type="button"
                 onClick={handleUnlockResults}
                 disabled={submitting}
-                className="btn-primary disabled:opacity-60"
+                className="btn-primary w-full disabled:opacity-60 sm:w-auto"
               >
                 {submitting ? "Un momento…" : "Ver mi oportunidad"}
               </button>
             )}
             {step === 2 && resultsUnlocked && (
-              <Link href={contactHref("diagnostico")} className="btn-primary">
+              <Link href={contactHref("diagnostico")} className="btn-primary w-full text-center sm:w-auto">
                 Agendar diagnóstico sin costo
               </Link>
             )}
@@ -329,7 +329,7 @@ export function EfficiencyCalculator() {
         </div>
 
         {/* Sidebar */}
-        <aside className="border-t border-xinergy-charcoal/8 bg-xinergy-charcoal p-6 text-white lg:col-span-2 lg:border-t-0 lg:border-l">
+        <aside className="border-t border-xinergy-charcoal/8 bg-xinergy-charcoal p-4 text-white sm:p-6 lg:col-span-2 lg:border-t-0 lg:border-l">
           {step < 2 || !resultsUnlocked ? (
             <>
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-xinergy-orange">

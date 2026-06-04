@@ -1,6 +1,39 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const ANIMATION_MIN_WIDTH = 1024;
+
+function useHeroAnimationEnabled() {
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const motionMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const widthMq = window.matchMedia(`(min-width: ${ANIMATION_MIN_WIDTH}px)`);
+
+    const update = () => {
+      setEnabled(widthMq.matches && !motionMq.matches);
+    };
+
+    update();
+    widthMq.addEventListener("change", update);
+    motionMq.addEventListener("change", update);
+    return () => {
+      widthMq.removeEventListener("change", update);
+      motionMq.removeEventListener("change", update);
+    };
+  }, []);
+
+  return enabled;
+}
+
+function HeroMotionStatic() {
+  return (
+    <div className="hero-motion hero-motion--static" aria-hidden>
+      <div className="hero-motion__grain" />
+    </div>
+  );
+}
 
 type Blob = {
   x: number;
@@ -733,7 +766,7 @@ function drawSpendStory(
   ctx.restore();
 }
 
-export function HeroMotion() {
+function HeroMotionCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const blobsRef = useRef(BLOBS.map((b) => ({ ...b })));
   const rafRef = useRef<number>(0);
@@ -840,4 +873,9 @@ export function HeroMotion() {
       <div className="hero-motion__grain" />
     </div>
   );
+}
+
+export function HeroMotion() {
+  const animationEnabled = useHeroAnimationEnabled();
+  return animationEnabled ? <HeroMotionCanvas /> : <HeroMotionStatic />;
 }

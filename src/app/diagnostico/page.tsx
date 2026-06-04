@@ -16,22 +16,22 @@ export const metadata: Metadata = {
 export default function DiagnosticoPage() {
   return (
     <>
-      <section className="gradient-hero relative -mt-[4.25rem] min-h-[22rem] overflow-hidden pt-[4.25rem] text-white">
+      <section className="gradient-hero hero-offset relative overflow-hidden text-white">
         <HeroMotion />
-        <Container className="relative z-10 py-20 lg:py-28">
+        <Container className="relative z-10 py-12 sm:py-20 lg:py-28">
           <p className="label-editorial-light">Diagnóstico gratuito</p>
-          <p className={`${ttForsDisplay.className} mt-4 text-lg text-xinergy-orange`}>
+          <p className={`${ttForsDisplay.className} mt-3 text-base text-xinergy-orange sm:mt-4 sm:text-lg`}>
             {brand.claim}
           </p>
           <h1
-            className={`${ttForsDisplay.className} mt-4 max-w-3xl text-4xl leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.25rem]`}
+            className={`${ttForsDisplay.className} mt-3 max-w-3xl text-[1.75rem] leading-[1.12] tracking-tight sm:mt-4 sm:text-4xl sm:leading-[1.1] lg:text-[3.25rem]`}
           >
             ¿Cuánta eficiencia puede liberar su empresa?
           </h1>
-          <p className={`${ttForsDisplay.className} mt-3 text-lg text-white/80`}>
+          <p className={`${ttForsDisplay.className} mt-2 text-base text-white/80 sm:mt-3 sm:text-lg`}>
             {brand.tagline}
           </p>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-white/65 lg:text-lg">
+          <p className="mt-4 max-w-xl text-[0.9375rem] leading-relaxed text-white/65 sm:mt-6 sm:text-base lg:text-lg">
             Estimación en 2 minutos según industria, gasto con proveedores y madurez del
             área. Sin compromiso.
           </p>

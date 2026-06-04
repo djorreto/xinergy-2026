@@ -102,6 +102,9 @@ const serviceMap: Record<string, string[]> = {
   savings: ["Abastecimiento estratégico", "Procurement Transformation"],
 };
 
+/** Piso de tasa de ahorro sobre gasto addressable (rango prudente). */
+const MIN_SAVINGS_RATE = 0.119;
+
 function getMaturityLevel(score: number): CalculatorResult["maturityLevel"] {
   if (score <= 6) return "Inicial";
   if (score <= 10) return "En desarrollo";
@@ -146,10 +149,11 @@ export function calculateOpportunity(input: CalculatorInput): CalculatorResult {
   const maturityGap = 1 - maturityPct;
   const countryFactor = 1 + Math.min(input.countries - 1, 5) * 0.025;
 
-  const expectedRate =
+  const expectedRateRaw =
     industry.baseRate * (1 + maturityGap * 0.55) * countryFactor;
-  const rateConservative = expectedRate * 0.65;
-  const rateAggressive = expectedRate * 1.35;
+  const expectedRate = Math.max(expectedRateRaw, MIN_SAVINGS_RATE);
+  const rateConservative = Math.max(expectedRate * 0.65, MIN_SAVINGS_RATE);
+  const rateAggressive = Math.max(expectedRate * 1.35, rateConservative * 1.1);
 
   const savingsExpected = Math.round(addressableSpendUsd * expectedRate);
   const savingsConservative = Math.round(addressableSpendUsd * rateConservative);

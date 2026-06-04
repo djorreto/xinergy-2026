@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -27,6 +27,13 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#3f374b",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,7 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${ttForsDisplay.variable} ${univers.variable} h-full`}>
-      <body className={`${univers.className} flex min-h-full flex-col antialiased`}>
+      <body className={`${univers.className} flex min-h-dvh flex-col antialiased overflow-x-clip pb-[env(safe-area-inset-bottom)]`}>
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />

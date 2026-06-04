@@ -32,13 +32,14 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+      className={`site-header fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         useSolidHeader
           ? "border-b border-xinergy-charcoal/8 bg-white/95 shadow-sm backdrop-blur-md"
           : "border-b border-white/10 bg-xinergy-charcoal/40 backdrop-blur-sm"
       }`}
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
-      <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between px-6 lg:px-10">
+      <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-10">
         <XinergyLogo
           variant={useSolidHeader ? "color" : "white"}
           className="relative z-10"

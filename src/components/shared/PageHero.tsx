@@ -20,17 +20,17 @@ export function PageHero({
     <section
       className={
         dark
-          ? "gradient-hero relative -mt-[4.25rem] min-h-[18rem] overflow-hidden pt-[4.25rem] text-white lg:min-h-[22rem]"
-          : "border-b border-xinergy-charcoal/8 bg-xinergy-cream pt-[4.25rem]"
+          ? "gradient-hero hero-offset relative min-h-[18rem] overflow-hidden text-white lg:min-h-[22rem]"
+          : "page-offset border-b border-xinergy-charcoal/8 bg-xinergy-cream"
       }
     >
       {dark && <HeroMotion />}
-      <Container className="relative z-10 py-16 lg:py-24">
+      <Container className="relative z-10 py-12 sm:py-16 lg:py-24">
         {eyebrow && (
           <p className={dark ? "label-editorial-light" : "label-editorial"}>{eyebrow}</p>
         )}
         <h1
-          className={`${brandTitle ? ttForsDisplay.className : "font-display"} mt-4 max-w-3xl text-3xl leading-tight tracking-tight lg:text-5xl ${dark ? "text-white" : "text-xinergy-charcoal"}`}
+          className={`${brandTitle ? ttForsDisplay.className : "font-display"} mt-3 max-w-3xl text-[1.75rem] leading-[1.12] tracking-tight sm:mt-4 sm:text-3xl lg:text-5xl ${dark ? "text-white" : "text-xinergy-charcoal"}`}
         >
           {title}
         </h1>

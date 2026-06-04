@@ -25,16 +25,16 @@ export default async function ContactoPage({ searchParams }: Props) {
         title={context.title}
         description={context.description}
       />
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
-          <div className="grid gap-16 lg:grid-cols-2">
+          <div className="grid gap-10 sm:gap-16 lg:grid-cols-2">
             <div className="overflow-hidden rounded-2xl border border-xinergy-charcoal/10 bg-white shadow-lg shadow-xinergy-charcoal/10">
               <iframe
                 src={brand.mondayFormUrl}
                 title="Formulario de contacto Xinergy"
                 width="650"
                 height="500"
-                className="h-[32rem] w-full max-w-full border-0 sm:h-[500px]"
+                className="h-[28rem] w-full max-w-full border-0 sm:h-[32rem] lg:h-[500px]"
                 loading="lazy"
               />
             </div>
