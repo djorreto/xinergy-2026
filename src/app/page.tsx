@@ -17,25 +17,23 @@ export default function HomePage() {
       {/* Hero */}
       <section className="gradient-hero hero-offset relative overflow-hidden text-white lg:min-h-[36rem]">
         <HeroMotion />
-        <Container className="relative z-10 pb-0 pt-3 sm:pb-16 sm:pt-12 lg:py-32">
+        <Container className="relative z-10 pb-4 pt-0 sm:pb-16 sm:pt-12 lg:py-32">
           <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl">
-            <p className="label-editorial-light max-sm:text-[0.625rem] max-sm:leading-relaxed max-sm:tracking-[0.12em]">
+            <p className="label-editorial-light max-lg:text-[0.625rem] max-lg:leading-relaxed max-lg:tracking-[0.12em]">
               {brand.heroEyebrow}
             </p>
             <h1
-              className={`${ttForsDisplay.className} brand-phrase mt-4 text-[1.875rem] leading-[1.08] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
+              className={`${ttForsDisplay.className} brand-phrase mt-3 text-[1.75rem] leading-[1.08] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
             >
               {brand.claim}
             </h1>
-            <p className="mt-3.5 max-w-lg text-[0.9375rem] leading-relaxed text-white/72 sm:mt-5 sm:text-base lg:text-lg">
+            <p className="mt-3 max-w-lg text-[0.875rem] leading-relaxed text-white/72 sm:mt-5 sm:text-base lg:text-lg">
               {brand.promise}
             </p>
           </div>
           <div className="mobile-actions mt-5 sm:mt-10">
-            <Button href="/contacto" className="max-sm:!min-h-[2rem] max-sm:!px-3 max-sm:!py-2 max-sm:!text-[0.5625rem]">
-              {brand.cta}
-            </Button>
-            <Button href="/diagnostico" variant="light" className="max-sm:!min-h-[2rem] max-sm:!px-3 max-sm:!py-2 max-sm:!text-[0.5625rem]">
+            <Button href="/contacto">{brand.cta}</Button>
+            <Button href="/diagnostico" variant="light">
               Calcular oportunidad
             </Button>
           </div>
