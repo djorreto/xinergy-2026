@@ -1,26 +1,345 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --xinergy-orange: #fca100;
+  --xinergy-orange-dark: #d88900;
+  --xinergy-slate: #54526d;
+  --xinergy-charcoal: #3f374b;
+  --xinergy-beige: #a28f6d;
+  --xinergy-cream: #f4f1ec;
+  --xinergy-ivory: #faf9f7;
+  --xinergy-white: #ffffff;
+  --background: var(--xinergy-ivory);
+  --foreground: var(--xinergy-charcoal);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-xinergy-orange: var(--xinergy-orange);
+  --color-xinergy-orange-dark: var(--xinergy-orange-dark);
+  --color-xinergy-slate: var(--xinergy-slate);
+  --color-xinergy-charcoal: var(--xinergy-charcoal);
+  --color-xinergy-beige: var(--xinergy-beige);
+  --color-xinergy-cream: var(--xinergy-cream);
+  --color-xinergy-ivory: var(--xinergy-ivory);
+  --font-sans: var(--font-univers), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: var(--font-tt-fors-display), "Helvetica Neue", Arial, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--xinergy-orange) 40%, white);
+  color: var(--xinergy-charcoal);
+}
+
+.font-display,
+.type-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* Frases de marca: siempre TT Fors Display */
+.brand-phrase {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* —— Editorial labels (Proxima / Inverto style) —— */
+.label-editorial {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--xinergy-slate);
+}
+
+.label-editorial::before {
+  content: "";
+  display: inline-block;
+  width: 1.5rem;
+  height: 1px;
+  background: var(--xinergy-orange);
+  margin-right: 0.75rem;
+  vertical-align: middle;
+}
+
+.label-editorial-light {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, white 55%, transparent);
+}
+
+/* —— Hero —— */
+.gradient-hero {
+  position: relative;
+  background-color: var(--xinergy-charcoal);
+}
+
+/* Fondo animado (canvas) detrás del contenido */
+.hero-motion {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-motion__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-motion__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.text-gradient {
+  background: linear-gradient(120deg, #ffd080 0%, var(--xinergy-orange) 50%, #ffb84d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* —— Buttons —— */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 1.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--xinergy-charcoal);
+  background: var(--xinergy-orange);
+  border: 1px solid transparent;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--xinergy-orange-dark);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 1.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--xinergy-charcoal);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--xinergy-charcoal) 20%, transparent);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--xinergy-charcoal);
+  background: white;
+}
+
+.btn-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 1.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: white;
+  border: 1px solid color-mix(in srgb, white 35%, transparent);
+  transition: background 0.2s;
+}
+
+.btn-light:hover {
+  background: color-mix(in srgb, white 8%, transparent);
+}
+
+/* —— Calculator tiles —— */
+.option-tile {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  text-align: left;
+  color: var(--xinergy-slate);
+  border: 1px solid color-mix(in srgb, var(--xinergy-charcoal) 12%, transparent);
+  background: var(--xinergy-ivory);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.option-tile:hover {
+  border-color: color-mix(in srgb, var(--xinergy-charcoal) 25%, transparent);
+}
+
+.option-tile-active {
+  border-color: var(--xinergy-orange);
+  background: color-mix(in srgb, var(--xinergy-orange) 8%, white);
+  color: var(--xinergy-charcoal);
+  font-weight: 500;
+}
+
+.metric-cell {
+  padding: 1rem 1.25rem;
+  border-left: 2px solid var(--xinergy-orange);
+  background: var(--xinergy-cream);
+}
+
+.metric-cell dt {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--xinergy-slate);
+}
+
+.metric-cell dd {
+  margin-top: 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--xinergy-charcoal);
+}
+
+/* —— Cards —— */
+.card-premium {
+  background: white;
+  border: 1px solid color-mix(in srgb, var(--xinergy-charcoal) 8%, transparent);
+  transition: box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.card-premium:hover {
+  border-color: color-mix(in srgb, var(--xinergy-orange) 35%, transparent);
+  box-shadow: 0 24px 48px -20px color-mix(in srgb, var(--xinergy-charcoal) 18%, transparent);
+}
+
+.card-hover {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-3px);
+}
+
+/* —— Section rhythm —— */
+.section-pad {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.section-pad-lg {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+@media (min-width: 1024px) {
+  .section-pad {
+    padding-top: 5.5rem;
+    padding-bottom: 5.5rem;
+  }
+
+  .section-pad-lg {
+    padding-top: 6.5rem;
+    padding-bottom: 6.5rem;
+  }
+}
+
+.marquee-track {
+  animation: marquee 50s linear infinite;
+}
+
+.logo-marquee::before,
+.logo-marquee::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6rem;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.logo-marquee::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--logo-fade, white) 0%, transparent 100%);
+}
+
+.logo-marquee::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--logo-fade, white) 0%, transparent 100%);
+}
+
+/* Carrusel sin hueco: dos grupos iguales, desplazamiento exacto -50% */
+.logo-marquee-runner {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: logo-marquee-scroll var(--marquee-duration, 45s) linear infinite;
+}
+
+.logo-marquee-reverse {
+  animation-direction: reverse;
+}
+
+@keyframes logo-marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Logo wall: color suave sobre fondo claro (sin brightness= bloques grises) */
+.logo-client-tile {
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+.logo-marquee-group:hover .logo-client-tile {
+  opacity: 0.88;
+}
+
+.logo-client-tile:hover {
+  opacity: 1;
+  transform: scale(1.03);
+}
+
+/* Números de proceso (estilo Reverse) */
+.step-number {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 500;
+  line-height: 1;
+  color: color-mix(in srgb, var(--xinergy-orange) 35%, transparent);
+}
+
+/* —— Divider line —— */
+.rule-accent {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--xinergy-orange) 0%,
+    color-mix(in srgb, var(--xinergy-orange) 0%, transparent) 100%
+  );
 }

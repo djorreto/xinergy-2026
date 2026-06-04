@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Xinergy 2026 — Sitio web
 
-## Getting Started
+Sitio corporativo de Xinergy — consultoría en **eficiencias para el negocio** (consultoría, procurement, digital, managed services). Identidad de marca oficial.
 
-First, run the development server:
+## Paleta de marca
+
+| Color | Hex | Uso |
+|-------|-----|-----|
+| Naranjo (principal) | `#FCA100` | CTAs, acentos, highlights |
+| Morado pizarra | `#54526D` | Texto secundario, UI |
+| Morado carbón | `#3F374B` | Fondos oscuros, headings |
+| Beige | `#A28F6D` | Acentos suaves, tags |
+
+## Tipografías
+
+- **TT Fors Display** — titulares (`font-display`)
+- **Univers** — cuerpo y UI
+
+Coloque los `.woff2` licenciados en `public/fonts/` (ver `public/fonts/README.md`). Sin archivos, el sitio usa Helvetica/Arial como respaldo.
+
+## Logos
+
+- Marca: `public/brand/` — PNG **RGBA** generados desde los oficiales (`logo-white`, `logo-color`, etc.)
+- Si actualizas los assets originales: `pip3 install pillow && python3 scripts/process-brand-logos.py`
+- Clientes: `public/clients/` + listado en `src/lib/clients.ts`
+
+## Desarrollo
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Estructura
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/` — Home (estructura tipo Reverse: problema → valor → servicios → proceso → diagnóstico → casos → clientes → FAQ → CTA)
+- `/nosotros` — About + ESG + stats
+- `/servicios` + `/servicios/[slug]` — 7 líneas de servicio
+- `/industrias` + `/industrias/[slug]` — 4 verticales
+- `/casos` + `/casos/[slug]` — Challenge / Approach / Results
+- `/insights` + `/insights/[slug]` — Thought leadership
+- `/diagnostico` — **Calculadora de eficiencia** (industria, gasto, madurez, cash neutral)
+- `/contacto` — Formulario + modelo comercial
 
-## Learn More
+Contenido editable en `src/lib/content.ts`.
 
-To learn more about Next.js, take a look at the following resources:
+## Build
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+npm start
+```
