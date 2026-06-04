@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { nav, brand } from "@/lib/content";
+import { nav } from "@/lib/content";
 import { Button } from "@/components/ui/Button";
 import { XinergyLogo } from "@/components/shared/XinergyLogo";
 import { ExpertiseNavMenu } from "@/components/layout/ExpertiseNavMenu";
@@ -116,9 +116,11 @@ export function SiteHeader() {
             </Link>
           ))}
           <div className="mt-4 flex flex-col gap-3">
-            <Button href="/diagnostico">Calcular ahorro</Button>
-            <Button href="/contacto" variant="secondary">
-              {brand.cta}
+            <Button href="/contacto" variant="primary">
+              Contacto
+            </Button>
+            <Button href="/diagnostico" variant="secondary">
+              Calcular ahorro
             </Button>
           </div>
         </div>
