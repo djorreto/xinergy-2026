@@ -7,7 +7,6 @@ import { TrustLogosSection } from "@/components/shared/TrustLogosSection";
 import { FAQSection } from "@/components/shared/FAQSection";
 import { HeroMotion } from "@/components/shared/HeroMotion";
 import { HeroStatsGrid } from "@/components/shared/HeroStatsGrid";
-import { HeroFitnessMini } from "@/components/shared/HeroFitnessMini";
 import { MessagingFramework } from "@/components/shared/MessagingFramework";
 import { brand, insights, home, homeFaqs, capabilities } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
@@ -18,9 +17,11 @@ export default function HomePage() {
       {/* Hero */}
       <section className="gradient-hero hero-offset relative overflow-hidden text-white lg:min-h-[36rem]">
         <HeroMotion />
-        <Container className="relative z-10 pb-0 pt-12 sm:pb-16 sm:pt-12 lg:py-32">
+        <Container className="relative z-10 pb-0 pt-3 sm:pb-16 sm:pt-12 lg:py-32">
           <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl">
-            <p className="label-editorial-light">{brand.heroEyebrow}</p>
+            <p className="label-editorial-light max-sm:text-[0.625rem] max-sm:leading-relaxed max-sm:tracking-[0.12em]">
+              {brand.heroEyebrow}
+            </p>
             <h1
               className={`${ttForsDisplay.className} brand-phrase mt-4 text-[1.875rem] leading-[1.08] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
             >
@@ -30,13 +31,14 @@ export default function HomePage() {
               {brand.promise}
             </p>
           </div>
-          <div className="mobile-actions mt-6 sm:mt-10">
-            <Button href="/contacto">{brand.cta}</Button>
-            <Button href="/diagnostico" variant="light">
+          <div className="mobile-actions mt-5 sm:mt-10">
+            <Button href="/contacto" className="max-sm:!min-h-[2rem] max-sm:!px-3 max-sm:!py-2 max-sm:!text-[0.5625rem]">
+              {brand.cta}
+            </Button>
+            <Button href="/diagnostico" variant="light" className="max-sm:!min-h-[2rem] max-sm:!px-3 max-sm:!py-2 max-sm:!text-[0.5625rem]">
               Calcular oportunidad
             </Button>
           </div>
-          <HeroFitnessMini />
           <HeroStatsGrid variant="hero" />
         </Container>
       </section>
