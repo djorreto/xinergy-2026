@@ -7,6 +7,7 @@ import { TrustLogosSection } from "@/components/shared/TrustLogosSection";
 import { FAQSection } from "@/components/shared/FAQSection";
 import { HeroMotion } from "@/components/shared/HeroMotion";
 import { HeroStatsGrid } from "@/components/shared/HeroStatsGrid";
+import { HeroFitnessMini } from "@/components/shared/HeroFitnessMini";
 import { MessagingFramework } from "@/components/shared/MessagingFramework";
 import { brand, insights, home, homeFaqs, capabilities } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
@@ -17,15 +18,15 @@ export default function HomePage() {
       {/* Hero */}
       <section className="gradient-hero hero-offset relative overflow-hidden text-white lg:min-h-[36rem]">
         <HeroMotion />
-        <Container className="relative z-10 pb-0 pt-5 sm:pb-16 sm:pt-12 lg:py-32">
+        <Container className="relative z-10 pb-0 pt-12 sm:pb-16 sm:pt-12 lg:py-32">
           <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl">
             <p className="label-editorial-light">{brand.heroEyebrow}</p>
             <h1
-              className={`${ttForsDisplay.className} brand-phrase mt-3 text-[1.625rem] leading-[1.1] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
+              className={`${ttForsDisplay.className} brand-phrase mt-4 text-[1.875rem] leading-[1.08] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
             >
               {brand.claim}
             </h1>
-            <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/70 sm:mt-5 sm:text-base lg:text-lg">
+            <p className="mt-3.5 max-w-lg text-[0.9375rem] leading-relaxed text-white/72 sm:mt-5 sm:text-base lg:text-lg">
               {brand.promise}
             </p>
           </div>
@@ -35,13 +36,17 @@ export default function HomePage() {
               Calcular oportunidad
             </Button>
           </div>
+          <HeroFitnessMini />
           <HeroStatsGrid variant="hero" />
         </Container>
       </section>
 
       {/* Stats en banda sólida — móvil (sin gráfico detrás) */}
-      <section className="border-t border-white/8 bg-[#2a2433] py-5 lg:hidden">
+      <section className="border-t border-white/8 bg-[#2a2433] py-6 lg:hidden">
         <Container>
+          <p className="label-editorial-light mb-4 !text-[0.625rem] !tracking-[0.18em]">
+            Impacto medible
+          </p>
           <HeroStatsGrid variant="band" />
         </Container>
       </section>
@@ -51,7 +56,7 @@ export default function HomePage() {
         <Container>
           <blockquote className="max-w-3xl border-l-2 border-dotted border-xinergy-orange pl-4 sm:pl-8">
             <p
-              className={`${ttForsDisplay.className} brand-phrase text-xl leading-snug sm:text-3xl lg:text-[2.125rem] lg:leading-snug`}
+              className={`${ttForsDisplay.className} brand-phrase text-lg leading-snug break-words sm:text-3xl lg:text-[2.125rem] lg:leading-snug`}
             >
               <span className="font-bold">{brand.strongPhrase.lead}</span>
               <br />
