@@ -4,9 +4,19 @@ import { brand, nav, presenceLabel, officesLabel } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
 
 export function SiteFooter() {
+  const year = new Date().getFullYear();
+
   return (
     <footer className="border-t border-xinergy-charcoal/10 bg-xinergy-charcoal text-white">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-10">
+      {/* Móvil: solo copyright — nav y contacto están en el menú */}
+      <div className="px-5 py-6 lg:hidden">
+        <p className="text-center text-[11px] text-white/35">
+          © {year} {brand.name}
+        </p>
+      </div>
+
+      {/* Desktop */}
+      <div className="mx-auto hidden max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:block lg:px-10">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Image
@@ -78,7 +88,7 @@ export function SiteFooter() {
             Oficinas en {officesLabel}
           </p>
           <p className="mt-6 text-[11px] text-white/30">
-            © {new Date().getFullYear()} {brand.name}.
+            © {year} {brand.name}.
           </p>
         </div>
       </div>
