@@ -6,8 +6,9 @@ import { Container } from "@/components/ui/Container";
 import { TrustLogosSection } from "@/components/shared/TrustLogosSection";
 import { FAQSection } from "@/components/shared/FAQSection";
 import { HeroMotion } from "@/components/shared/HeroMotion";
+import { HeroStatsGrid } from "@/components/shared/HeroStatsGrid";
 import { MessagingFramework } from "@/components/shared/MessagingFramework";
-import { brand, heroStats, insights, home, homeFaqs, capabilities } from "@/lib/content";
+import { brand, insights, home, homeFaqs, capabilities } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
 
 export default function HomePage() {
@@ -16,36 +17,32 @@ export default function HomePage() {
       {/* Hero */}
       <section className="gradient-hero hero-offset relative overflow-hidden text-white lg:min-h-[36rem]">
         <HeroMotion />
-        <Container className="relative z-10 pb-12 pt-10 sm:pb-20 sm:pt-14 lg:py-32">
+        <Container className="relative z-10 pb-0 pt-5 sm:pb-16 sm:pt-12 lg:py-32">
           <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl">
             <p className="label-editorial-light">{brand.heroEyebrow}</p>
             <h1
-              className={`${ttForsDisplay.className} brand-phrase mt-5 text-[2rem] leading-[1.08] sm:mt-6 sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
+              className={`${ttForsDisplay.className} brand-phrase mt-3 text-[1.625rem] leading-[1.1] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
             >
               {brand.claim}
             </h1>
-            <p className="mt-5 max-w-lg text-[0.9375rem] leading-relaxed text-white/70 sm:mt-6 sm:text-base lg:text-lg">
+            <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/70 sm:mt-5 sm:text-base lg:text-lg">
               {brand.promise}
             </p>
           </div>
-          <div className="mobile-actions mt-8 sm:mt-10">
+          <div className="mobile-actions mt-6 sm:mt-10">
             <Button href="/contacto">{brand.cta}</Button>
             <Button href="/diagnostico" variant="light">
               Calcular oportunidad
             </Button>
           </div>
-          <dl className="mt-10 grid grid-cols-2 gap-x-4 gap-y-6 border-t border-white/10 pt-6 sm:mt-16 sm:gap-x-14 sm:gap-y-6 sm:pt-10 lg:flex lg:flex-wrap">
-            {heroStats.map((s) => (
-              <div key={s.label} className="min-w-0 sm:max-w-none">
-                <dt className={`${ttForsDisplay.className} brand-phrase text-xl text-xinergy-orange sm:text-3xl lg:text-4xl`}>
-                  {s.value}
-                </dt>
-                <dd className="mt-2 max-w-[10rem] text-xs leading-snug text-white/50 sm:max-w-[12rem] lg:max-w-[13rem]">
-                  {s.label}
-                </dd>
-              </div>
-            ))}
-          </dl>
+          <HeroStatsGrid variant="hero" />
+        </Container>
+      </section>
+
+      {/* Stats en banda sólida — móvil (sin gráfico detrás) */}
+      <section className="border-t border-white/8 bg-[#2a2433] py-5 lg:hidden">
+        <Container>
+          <HeroStatsGrid variant="band" />
         </Container>
       </section>
 
@@ -207,6 +204,7 @@ export default function HomePage() {
       />
 
       {/* CTA */}
+      {/* CTA — sin animación en móvil (HeroMotion ya lo maneja) */}
       <section className="gradient-hero relative min-h-0 overflow-hidden section-pad-lg text-white">
         <HeroMotion />
         <Container className="relative z-10 text-center">

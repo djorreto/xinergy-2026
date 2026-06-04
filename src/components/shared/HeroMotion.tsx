@@ -876,6 +876,18 @@ function HeroMotionCanvas() {
 }
 
 export function HeroMotion() {
+  return (
+    <>
+      <div className="hero-motion hero-motion--static lg:hidden" aria-hidden />
+      <div className="hidden lg:contents">
+        <HeroMotionDesktop />
+      </div>
+    </>
+  );
+}
+
+function HeroMotionDesktop() {
   const animationEnabled = useHeroAnimationEnabled();
-  return animationEnabled ? <HeroMotionCanvas /> : <HeroMotionStatic />;
+  if (!animationEnabled) return <HeroMotionStatic />;
+  return <HeroMotionCanvas />;
 }

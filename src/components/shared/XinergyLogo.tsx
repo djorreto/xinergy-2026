@@ -28,7 +28,7 @@ export function XinergyLogo({
         width={200}
         height={24}
         priority={priority}
-        className="h-5 w-auto object-contain object-left sm:h-6 lg:h-8"
+        className="h-[1.125rem] max-w-[5.75rem] w-auto object-contain object-left sm:h-6 sm:max-w-none lg:h-8"
       />
     </Link>
   );

@@ -39,7 +39,7 @@ export function SiteHeader() {
       }`}
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
-      <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-10">
+      <div className="mx-auto flex h-[var(--site-header-height,3.25rem)] max-w-7xl items-center justify-between px-4 sm:h-[4.25rem] sm:px-6 lg:px-10">
         <XinergyLogo
           variant={useSolidHeader ? "color" : "white"}
           className="relative z-10"
@@ -88,7 +88,7 @@ export function SiteHeader() {
           onClick={() => setOpen(!open)}
           aria-label="Menú"
         >
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             {open ? (
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
             ) : (

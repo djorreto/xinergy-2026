@@ -18,13 +18,13 @@ export default function DiagnosticoPage() {
     <>
       <section className="gradient-hero hero-offset relative overflow-hidden text-white">
         <HeroMotion />
-        <Container className="relative z-10 py-12 sm:py-20 lg:py-28">
+        <Container className="relative z-10 py-8 sm:py-16 lg:py-24">
           <p className="label-editorial-light">Diagnóstico gratuito</p>
-          <p className={`${ttForsDisplay.className} mt-3 text-base text-xinergy-orange sm:mt-4 sm:text-lg`}>
+          <p className={`${ttForsDisplay.className} mt-2 text-sm text-xinergy-orange sm:mt-4 sm:text-lg`}>
             {brand.claim}
           </p>
           <h1
-            className={`${ttForsDisplay.className} mt-3 max-w-3xl text-[1.75rem] leading-[1.12] tracking-tight sm:mt-4 sm:text-4xl sm:leading-[1.1] lg:text-[3.25rem]`}
+            className={`${ttForsDisplay.className} mt-2 max-w-3xl text-[1.5rem] leading-[1.12] tracking-tight sm:mt-4 sm:text-4xl sm:leading-[1.1] lg:text-[3.25rem]`}
           >
             ¿Cuánta eficiencia puede liberar su empresa?
           </h1>
