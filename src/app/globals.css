@@ -489,3 +489,20 @@ body {
     color-mix(in srgb, var(--xinergy-orange) 0%, transparent) 100%
   );
 }
+
+/* Móvil/tablet: hero empieza claramente bajo el header fijo */
+@media (max-width: 1023px) {
+  .hero-below-header {
+    margin-top: 0;
+    padding-top: calc(
+      var(--site-header-height, 3.5rem) + env(safe-area-inset-top, 0px) + 3.5rem
+    );
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-below-header {
+    margin-top: 0;
+    padding-top: 0;
+  }
+}

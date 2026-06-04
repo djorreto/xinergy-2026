@@ -15,11 +15,11 @@ export default function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="gradient-hero hero-offset relative overflow-hidden text-white lg:min-h-[36rem]">
+      <section className="gradient-hero hero-below-header relative overflow-hidden text-white lg:hero-offset lg:min-h-[36rem]">
         <HeroMotion />
-        <Container className="relative z-10 pb-4 pt-0 sm:pb-16 sm:pt-12 lg:py-32">
+        <Container className="relative z-10 pb-12 pt-0 sm:pb-16 sm:pt-12 lg:py-32">
           <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl">
-            <p className="label-editorial-light max-lg:text-[0.625rem] max-lg:leading-relaxed max-lg:tracking-[0.12em]">
+            <p className="label-editorial-light max-lg:text-[0.6875rem] max-lg:leading-relaxed max-lg:tracking-[0.1em] max-lg:text-white/75">
               {brand.heroEyebrow}
             </p>
             <h1
@@ -42,7 +42,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats en banda sólida — móvil (sin gráfico detrás) */}
-      <section className="border-t border-white/8 bg-[#2a2433] py-6 lg:hidden">
+      <section className="border-t border-white/8 bg-[#2a2433] py-8 lg:hidden">
         <Container>
           <p className="label-editorial-light mb-4 !text-[0.625rem] !tracking-[0.18em]">
             Impacto medible

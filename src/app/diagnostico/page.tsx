@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function DiagnosticoPage() {
   return (
     <>
-      <section className="gradient-hero hero-offset relative overflow-hidden text-white">
+      <section className="gradient-hero hero-below-header relative overflow-hidden text-white lg:hero-offset">
         <HeroMotion />
         <Container className="relative z-10 py-8 sm:py-16 lg:py-24">
           <p className="label-editorial-light">Diagnóstico gratuito</p>
