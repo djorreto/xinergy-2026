@@ -1,3 +1,5 @@
+import { brand } from "@/lib/content";
+
 /** Leyenda del gráfico narrativo — solo banda CTA en home */
 export function HeroChartCaption() {
   return (
@@ -10,7 +12,7 @@ export function HeroChartCaption() {
         <span className="font-medium text-[#f09080]">presión de mercado</span> o{" "}
         <span className="font-medium text-[#f09080]">choques globales</span>,{" "}
         <span className="font-semibold text-xinergy-orange">Xinergy</span> lleva{" "}
-        <span className="font-medium text-[#8de0b0]">fitness for business</span> a
+        <span className="font-medium text-[#8de0b0]">{brand.claim}</span> a
         sus clientes: el{" "}
         <span className="font-medium text-[#aad4ff]">SLA</span> y los resultados se
         sostienen — o mejoran — mientras el gasto se optimiza.

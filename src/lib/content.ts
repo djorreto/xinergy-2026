@@ -2,7 +2,7 @@ export const brand = {
   name: "Xinergy",
   tagline: "Ejecutamos eficiencias con impacto real",
   heroEyebrow: "Eficiencia en operación y abastecimiento",
-  claim: "Fitness for business",
+  claim: "#Fitness for business",
   strongPhrase: {
     lead: "Expertos en generación de eficiencias",
     highlight: "con impacto real,",

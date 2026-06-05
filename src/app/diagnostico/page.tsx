@@ -9,7 +9,7 @@ import { ttForsDisplay } from "@/lib/fonts";
 export const metadata: Metadata = {
   title: "Diagnóstico de eficiencia",
   description:
-    "Fitness for business — calcula cuántas eficiencias puedes conseguir. Sin costo. Modelo cash neutral.",
+    "#Fitness for business — calcula cuántas eficiencias puedes conseguir. Sin costo. Modelo cash neutral.",
 };
 
 export default function DiagnosticoPage() {
