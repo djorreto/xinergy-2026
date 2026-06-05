@@ -144,7 +144,7 @@ export default function HomePage() {
         </div>
         <div className="bg-xinergy-cream section-pad-lg text-xinergy-charcoal">
           <Container>
-            <div className="mx-auto max-w-xl">
+            <div className="max-w-xl">
               <HeroChartCaption className="mb-10 sm:mb-12" />
               <SectionHeader
                 eyebrow={home.cta.eyebrow}
