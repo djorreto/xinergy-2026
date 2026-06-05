@@ -7,7 +7,7 @@ import {
   type CalculatorInput,
 } from "@/lib/calculator";
 
-export const CALCULATOR_LEAD_SOURCE = "calculo ahorro pagina web";
+export const CALCULATOR_LEAD_SOURCE = "calculo eficiencias pagina web";
 
 function industryLabel(id: CalculatorInput["industry"]): string {
   return industries.find((i) => i.id === id)?.label ?? id;
@@ -41,7 +41,7 @@ export function buildCalculatorLeadSummary(
     "═══ PASO 3 · RESULTADO ═══",
     `Correo: ${email}`,
     "",
-    "Oportunidad estimada (año 1):",
+    "Eficiencias estimadas (año 1):",
     `  · Esperada: ${formatUsd(result.savingsExpected)}`,
     `  · Rango prudente: ${formatUsd(result.savingsConservative)} – ${formatUsd(result.savingsAggressive)}`,
     `  · Gasto addressable: ${formatUsd(result.addressableSpendUsd)} (~${result.addressablePct}% del total)`,

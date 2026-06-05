@@ -72,7 +72,7 @@ export function EfficiencyCalculator() {
       <div className="border-b border-xinergy-charcoal/8 bg-xinergy-cream/60 px-4 py-4 sm:px-6 sm:py-5 lg:px-10">
         <div className="flex items-center justify-between gap-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-xinergy-slate">
-            Diagnóstico de oportunidad
+            Diagnóstico de eficiencias
           </p>
           <p className="text-xs text-xinergy-slate/70">
             Paso {step + 1} de {STEPS.length}
@@ -202,7 +202,7 @@ export function EfficiencyCalculator() {
                   Ingresa tu correo para verlo
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-xinergy-slate">
-                  Te mostramos la oportunidad estimada al instante. Solo usamos tu email para
+                  Te mostramos cuántas eficiencias puedes conseguir al instante. Solo usamos tu email para
                   dar seguimiento si quieres profundizar.
                 </p>
               </div>
@@ -238,7 +238,7 @@ export function EfficiencyCalculator() {
           {step === 2 && resultsUnlocked && result && (
             <div className="space-y-8">
               <div>
-                <p className="label-editorial">Oportunidad estimada (año 1)</p>
+                <p className="label-editorial">Eficiencias estimadas (año 1)</p>
                 <p className="mt-3 font-display text-3xl font-semibold tracking-tight text-xinergy-charcoal sm:mt-4 sm:text-4xl lg:text-5xl">
                   {formatUsd(result.savingsExpected)}
                 </p>
@@ -307,7 +307,7 @@ export function EfficiencyCalculator() {
             )}
             {step === 1 && (
               <button type="button" onClick={() => setStep(2)} className="btn-primary w-full sm:w-auto">
-                Ver mi oportunidad
+                Ver mis eficiencias
               </button>
             )}
             {step === 2 && !resultsUnlocked && (
@@ -317,7 +317,7 @@ export function EfficiencyCalculator() {
                 disabled={submitting}
                 className="btn-primary w-full disabled:opacity-60 sm:w-auto"
               >
-                {submitting ? "Un momento…" : "Ver mi oportunidad"}
+                {submitting ? "Un momento…" : "Ver mis eficiencias"}
               </button>
             )}
             {step === 2 && resultsUnlocked && (
@@ -348,12 +348,12 @@ export function EfficiencyCalculator() {
                   {
                     n: "02",
                     t: "Opportunity assessment",
-                    d: "Cuantificamos ahorros por categoría con metodología audit-able.",
+                    d: "Cuantificamos eficiencias por categoría con metodología audit-able.",
                   },
                   {
                     n: "03",
                     t: "Propuesta cash neutral",
-                    d: "Honorarios ligados al ahorro verificado en P&L.",
+                    d: "Honorarios ligados a eficiencias verificadas en P&L.",
                   },
                 ].map((item) => (
                   <li key={item.n} className="flex gap-4">
@@ -376,7 +376,7 @@ export function EfficiencyCalculator() {
               </h3>
               <p className="mt-4 text-sm leading-relaxed text-white/65">
                 No cobramos por horas. Nuestros honorarios se vinculan a{" "}
-                <strong className="text-white">ahorros reales</strong> que su equipo de finanzas
+                <strong className="text-white">eficiencias reales</strong> que su equipo de finanzas
                 puede verificar en el P&L.
               </p>
               <div className="mt-8 rounded-sm border border-white/10 bg-white/5 p-5">
@@ -384,14 +384,14 @@ export function EfficiencyCalculator() {
                   ~{result?.monthsToNeutral ?? 4} meses
                 </p>
                 <p className="mt-2 text-xs text-white/55">
-                  Ventana típica para que el flujo de ahorros cubra el fee del programa — sin
+                  Ventana típica para que el flujo de eficiencias cubra el fee del programa — sin
                   desembolso neto adicional.
                 </p>
               </div>
               <ul className="mt-8 space-y-3 text-xs text-white/55">
                 <li>· Ustedes no financian el programa por adelantado</li>
                 <li>· El riesgo de delivery lo asumimos con ustedes</li>
-                <li>· Alineación total: ganamos cuando ustedes ahorran</li>
+                <li>· Alineación total: ganamos cuando ustedes capturan eficiencias</li>
               </ul>
               <p className="mt-8 text-[11px] italic text-white/40">
                 *Estimación ilustrativa. La propuesta formal se define tras el diagnóstico sin

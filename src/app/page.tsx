@@ -33,7 +33,7 @@ export default function HomePage() {
           <div className="mobile-actions mt-5 sm:mt-10">
             <Button href="/contacto">{brand.cta}</Button>
             <Button href="/diagnostico" variant="light">
-              Calcular oportunidad
+              Calcular eficiencias
             </Button>
           </div>
           <HeroStatsGrid variant="hero" />
@@ -145,7 +145,7 @@ export default function HomePage() {
             En unos minutos, con datos básicos de su gasto y operación.
           </p>
           <div className="mt-8">
-            <Button href="/diagnostico">Iniciar diagnóstico</Button>
+            <Button href="/diagnostico">Calcular eficiencias</Button>
           </div>
         </Container>
       </section>
@@ -171,7 +171,7 @@ export default function HomePage() {
             <div className="mobile-actions mt-8 justify-center sm:mt-10">
               <Button href="/contacto">{brand.cta}</Button>
               <Button href="/diagnostico" variant="light">
-                Calcular mi oportunidad
+                Calcular eficiencias
               </Button>
             </div>
           </Container>

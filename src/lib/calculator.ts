@@ -88,7 +88,7 @@ export const maturityQuestions = [
   },
   {
     id: "savings",
-    question: "¿Hacen tracking formal de ahorros contra el P&L?",
+    question: "¿Hacen tracking formal de eficiencias contra el P&L?",
     lowLabel: "No",
     highLabel: "Sí, auditado",
   },

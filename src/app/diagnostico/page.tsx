@@ -10,7 +10,7 @@ import { ttForsDisplay } from "@/lib/fonts";
 export const metadata: Metadata = {
   title: "Diagnóstico de eficiencia",
   description:
-    "Fitness for business — calcula tu oportunidad de eficiencia. Sin costo. Modelo cash neutral.",
+    "Fitness for business — calcula cuántas eficiencias puedes conseguir. Sin costo. Modelo cash neutral.",
 };
 
 export default function DiagnosticoPage() {
@@ -53,8 +53,8 @@ export default function DiagnosticoPage() {
                 Cómo funciona en la práctica
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-xinergy-slate">
-                Xinergy no factura por horas. El fee se vincula a ahorros que finanzas
-                valida en el P&L. El flujo de savings del programa cubre el costo del
+                Xinergy no factura por horas. El fee se vincula a eficiencias que finanzas
+                valida en el P&L. El flujo de valor del programa cubre el costo del
                 servicio — típicamente en pocos meses.
               </p>
             </article>
@@ -66,15 +66,15 @@ export default function DiagnosticoPage() {
                 },
                 {
                   title: "Mes 1–3 — Quick wins",
-                  body: "Primeras negociaciones y categorías de impacto. Los ahorros empiezan a materializarse.",
+                  body: "Primeras negociaciones y categorías de impacto. Las eficiencias empiezan a materializarse.",
                 },
                 {
                   title: "Mes 3+ — Cash neutral",
-                  body: "El acumulado de savings supera el fee variable. Desde ahí, el programa se autofinancia.",
+                  body: "El acumulado de eficiencias supera el fee variable. Desde ahí, el programa se autofinancia.",
                 },
                 {
                   title: "Después — Valor neto",
-                  body: "Savings recurrentes en contratos y procesos. Su área queda más madura y digitalizada.",
+                  body: "Eficiencias recurrentes en contratos y procesos. Su área queda más madura y digitalizada.",
                 },
               ].map((item) => (
                 <div

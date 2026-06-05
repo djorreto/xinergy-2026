@@ -17,7 +17,7 @@ export function CTABand() {
             {brand.cta}
           </Button>
           <Button href="/diagnostico" variant="light">
-            Calcular oportunidad
+            Calcular eficiencias
           </Button>
         </div>
       </Container>

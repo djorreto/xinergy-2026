@@ -75,7 +75,7 @@ export function SiteHeader() {
             variant={useSolidHeader ? "secondary" : "light"}
             className="!px-4 !py-2.5 !text-[11px]"
           >
-            Calcular ahorro
+            Calcular eficiencias
           </Button>
           <Button href="/contacto" variant="primary" className="!px-5 !py-2.5 !text-[11px]">
             Contacto
@@ -120,7 +120,7 @@ export function SiteHeader() {
               Contacto
             </Button>
             <Button href="/diagnostico" variant="secondary">
-              Calcular ahorro
+              Calcular eficiencias
             </Button>
           </div>
         </div>
