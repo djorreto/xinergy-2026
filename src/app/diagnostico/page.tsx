@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { EfficiencyCalculator } from "@/components/calculator/EfficiencyCalculator";
-import { HeroMotion } from "@/components/shared/HeroMotion";
 import { Container } from "@/components/ui/Container";
 import { brand } from "@/lib/content";
 import { contactHref } from "@/lib/contact-context";
@@ -17,7 +16,7 @@ export default function DiagnosticoPage() {
   return (
     <>
       <section className="gradient-hero hero-below-header relative overflow-hidden text-white lg:hero-offset">
-        <HeroMotion />
+        <div className="hero-motion hero-motion--static" aria-hidden />
         <Container className="relative z-10 py-8 sm:py-16 lg:py-24">
           <p className="label-editorial-light">Diagnóstico gratuito</p>
           <p className={`${ttForsDisplay.className} mt-2 text-sm text-xinergy-orange sm:mt-4 sm:text-lg`}>

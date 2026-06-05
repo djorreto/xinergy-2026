@@ -1,5 +1,4 @@
 import { Container } from "@/components/ui/Container";
-import { HeroMotion } from "@/components/shared/HeroMotion";
 import { ttForsDisplay } from "@/lib/fonts";
 
 export function PageHero({
@@ -24,7 +23,7 @@ export function PageHero({
           : "page-offset border-b border-xinergy-charcoal/8 bg-xinergy-cream"
       }
     >
-      {dark && <HeroMotion />}
+      {dark && <div className="hero-motion hero-motion--static" aria-hidden />}
       <Container className="relative z-10 py-12 sm:py-16 lg:py-24">
         {eyebrow && (
           <p className={dark ? "label-editorial-light" : "label-editorial"}>{eyebrow}</p>
