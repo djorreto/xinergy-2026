@@ -526,6 +526,24 @@ body {
   }
 }
 
+@media (min-width: 1024px) {
+  .hero-mobile-actions {
+    flex-flow: row wrap;
+    align-items: center;
+    width: auto;
+    max-width: none;
+    gap: 1rem;
+  }
+
+  .hero-mobile-actions .btn-primary,
+  .hero-mobile-actions .btn-light {
+    width: auto;
+    min-height: 2.75rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
 @media (max-width: 639px) {
   .mobile-actions:not(.hero-mobile-actions):not(.cta-band-actions):not(.calculator-actions) {
     flex-flow: row wrap;
