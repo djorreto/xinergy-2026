@@ -57,8 +57,7 @@ export const messaging = {
   },
   how: {
     title: "Cómo lo hacemos",
-    intro:
-      "Compartimos riesgos, medimos y somos tus socios en la implementación y ejecución.",
+    intro: "De la planificación a la ejecución con impacto real.",
     points: [
       "VRO para seguimiento de implementación y captura de valor.",
       "Change management y gestión del cambio.",
