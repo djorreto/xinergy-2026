@@ -20,7 +20,7 @@ export function ExpertiseNavMenu({
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || variant === "mobile") return;
     const onPointerDown = (e: MouseEvent) => {
       if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
         setOpen(false);
@@ -35,7 +35,7 @@ export function ExpertiseNavMenu({
       document.removeEventListener("mousedown", onPointerDown);
       document.removeEventListener("keydown", onEscape);
     };
-  }, [open]);
+  }, [open, variant]);
 
   const close = () => {
     setOpen(false);
@@ -49,11 +49,11 @@ export function ExpertiseNavMenu({
             ? "text-xinergy-slate hover:text-xinergy-charcoal"
             : "text-white/80 hover:text-white"
         } ${open ? (useSolidHeader ? "!text-xinergy-charcoal" : "!text-white") : ""}`
-      : "flex w-full items-center justify-between py-2.5 text-sm font-medium text-xinergy-charcoal";
+      : "flex w-full min-h-11 items-center justify-between py-3 text-sm font-semibold text-xinergy-charcoal";
 
   if (variant === "mobile") {
     return (
-      <div ref={rootRef} className="border-b border-xinergy-charcoal/8 pb-2">
+      <div ref={rootRef} className="mb-2 border-b border-xinergy-charcoal/8 pb-3">
         <button
           type="button"
           className={triggerClass}
@@ -62,7 +62,7 @@ export function ExpertiseNavMenu({
         >
           Expertise
           <svg
-            className={`h-4 w-4 transition ${open ? "rotate-180" : ""}`}
+            className={`h-4 w-4 shrink-0 transition ${open ? "rotate-180" : ""}`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -71,37 +71,45 @@ export function ExpertiseNavMenu({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
-        {open && (
-          <div className="mt-1 space-y-1 pb-2 pl-2">
-            {capabilities.map((cap, i) => (
+        <div
+          className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+            open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className="mt-2 space-y-1 rounded-xl bg-xinergy-cream px-2 py-3">
+              {capabilities.map((cap, i) => (
+                <Link
+                  key={cap.title}
+                  href={cap.href}
+                  className="flex gap-3 rounded-lg px-3 py-3 active:bg-white"
+                  onClick={close}
+                >
+                  <span
+                    className={`${ttForsDisplay.className} brand-phrase w-7 shrink-0 text-lg text-xinergy-orange`}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="text-sm font-medium leading-snug text-xinergy-charcoal">
+                      {cap.title}
+                    </span>
+                    <span className="mt-0.5 block text-xs leading-snug text-xinergy-slate">
+                      {cap.description}
+                    </span>
+                  </span>
+                </Link>
+              ))}
               <Link
-                key={cap.title}
-                href={cap.href}
-                className="flex gap-3 rounded-lg px-3 py-2.5 hover:bg-xinergy-cream"
+                href="/servicios"
+                className="mt-1 block rounded-lg px-3 py-3 text-xs font-semibold uppercase tracking-wider text-xinergy-orange active:bg-white"
                 onClick={close}
               >
-                <span
-                  className={`${ttForsDisplay.className} brand-phrase w-7 flex-shrink-0 text-lg text-xinergy-orange`}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="min-w-0">
-                  <span className="text-sm font-medium text-xinergy-charcoal">{cap.title}</span>
-                  <span className="mt-0.5 block text-xs leading-snug text-xinergy-slate">
-                    {cap.description}
-                  </span>
-                </span>
+                Ver todas las líneas →
               </Link>
-            ))}
-            <Link
-              href="/servicios"
-              className="mt-2 block px-3 py-2 text-xs font-semibold uppercase tracking-wider text-xinergy-orange"
-              onClick={close}
-            >
-              Ver todas las líneas →
-            </Link>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     );
   }

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { nav } from "@/lib/content";
 import { Button } from "@/components/ui/Button";
 import { XinergyLogo } from "@/components/shared/XinergyLogo";
@@ -12,9 +13,14 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const isOverlayHero =
     pathname === "/" || pathname === "/diagnostico";
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setOpen(false);
@@ -39,9 +45,62 @@ export function SiteHeader() {
   // En home/diagnóstico: header oscuro transparente hasta hacer scroll
   const useSolidHeader = scrolled || !isOverlayHero;
 
+  const mobileMenu =
+    open && mounted
+      ? createPortal(
+          <div className="fixed inset-0 z-[200] lg:hidden">
+            <button
+              type="button"
+              className="absolute inset-x-0 bottom-0 top-[calc(var(--site-header-height,3.5rem)+env(safe-area-inset-top,0px))] bg-xinergy-charcoal/60"
+              aria-label="Cerrar menú"
+              onClick={() => setOpen(false)}
+            />
+            <nav
+              className="absolute inset-x-0 bottom-0 top-[calc(var(--site-header-height,3.5rem)+env(safe-area-inset-top,0px))] flex max-h-[calc(100dvh-var(--site-header-height,3.5rem)-env(safe-area-inset-top,0px))] flex-col overflow-y-auto overscroll-contain border-t border-xinergy-charcoal/10 bg-white px-6 py-5 shadow-2xl"
+              aria-label="Navegación móvil"
+            >
+              <ExpertiseNavMenu
+                useSolidHeader
+                variant="mobile"
+                onNavigate={() => setOpen(false)}
+              />
+              {nav.map((item) => {
+                const isActive =
+                  pathname === item.href || pathname.startsWith(item.href + "/");
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`block rounded py-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-xinergy-orange ${
+                      isActive
+                        ? "text-xinergy-charcoal ring-1 ring-xinergy-orange"
+                        : "text-xinergy-charcoal"
+                    }`}
+                    onClick={() => setOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+              <div className="mt-auto flex flex-col gap-3 border-t border-xinergy-charcoal/8 pt-6 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+                <Button href="/contacto" variant="primary" className="w-full justify-center">
+                  Contacto
+                </Button>
+                <Button href="/diagnostico" variant="secondary" className="w-full justify-center">
+                  Calcular eficiencias
+                </Button>
+              </div>
+            </nav>
+          </div>,
+          document.body,
+        )
+      : null;
+
   return (
     <header
-      className={`site-header fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+      className={`site-header fixed inset-x-0 top-0 transition-all duration-300 ${
+        open ? "z-[210]" : "z-50"
+      } ${
         useSolidHeader
           ? "border-b border-xinergy-charcoal/8 bg-white/95 shadow-sm backdrop-blur-md"
           : "border-b border-white/10 bg-xinergy-charcoal/95 backdrop-blur-md max-lg:shadow-sm lg:bg-xinergy-charcoal/40"
@@ -114,52 +173,7 @@ export function SiteHeader() {
         </button>
       </div>
 
-      {open && (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <button
-            type="button"
-            className="absolute inset-0 bg-xinergy-charcoal/55"
-            aria-label="Cerrar menú"
-            onClick={() => setOpen(false)}
-          />
-          <nav
-            className="absolute inset-x-0 bottom-0 top-[calc(var(--site-header-height,3.5rem)+env(safe-area-inset-top,0px))] overflow-y-auto overscroll-contain border-t border-xinergy-charcoal/10 bg-white px-6 py-6 shadow-xl"
-            aria-label="Navegación móvil"
-          >
-          <ExpertiseNavMenu
-            useSolidHeader
-            variant="mobile"
-            onNavigate={() => setOpen(false)}
-          />
-          {nav.map((item) => {
-            const isActive =
-              pathname === item.href || pathname.startsWith(item.href + "/");
-            return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`block rounded py-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-xinergy-orange ${
-                isActive
-                  ? "text-xinergy-charcoal ring-1 ring-xinergy-orange"
-                  : "text-xinergy-charcoal"
-              }`}
-              onClick={() => setOpen(false)}
-            >
-              {item.label}
-            </Link>
-            );
-          })}
-          <div className="mt-6 flex flex-col gap-3">
-            <Button href="/contacto" variant="primary" className="w-full justify-center">
-              Contacto
-            </Button>
-            <Button href="/diagnostico" variant="secondary" className="w-full justify-center">
-              Calcular eficiencias
-            </Button>
-          </div>
-          </nav>
-        </div>
-      )}
+      {mobileMenu}
     </header>
   );
 }
