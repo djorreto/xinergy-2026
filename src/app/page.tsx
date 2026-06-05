@@ -6,6 +6,7 @@ import { TrustLogosSection } from "@/components/shared/TrustLogosSection";
 import { HeroMotion } from "@/components/shared/HeroMotion";
 import { HeroChartCaption } from "@/components/shared/HeroChartCaption";
 import { HeroStatsGrid } from "@/components/shared/HeroStatsGrid";
+import { StrongPhraseBlock } from "@/components/shared/StrongPhraseBlock";
 import { MessagingFramework } from "@/components/shared/MessagingFramework";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { brand, home, capabilities } from "@/lib/content";
@@ -15,9 +16,9 @@ export default function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="gradient-hero hero-below-header relative overflow-hidden text-white lg:hero-offset lg:min-h-[36rem]">
+      <section className="gradient-hero hero-below-header relative overflow-hidden text-white lg:hero-offset">
         <HeroMotion />
-        <Container className="relative z-10 pb-12 pt-0 sm:pb-16 sm:pt-12 lg:py-32">
+        <Container className="relative z-10 pb-10 pt-0 sm:pb-12 sm:pt-12 lg:pb-14 lg:pt-28 xl:pt-32">
           <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl">
             <p className="label-editorial-light max-lg:text-[0.6875rem] max-lg:leading-relaxed max-lg:tracking-[0.1em] max-lg:text-white/75">
               {brand.heroEyebrow}
@@ -38,33 +39,18 @@ export default function HomePage() {
             </Button>
           </div>
           <HeroStatsGrid variant="hero" />
+          <StrongPhraseBlock className="mt-8 hidden lg:block xl:mt-10" />
         </Container>
       </section>
 
-      {/* Stats en banda sólida — móvil (sin gráfico detrás) */}
+      {/* Stats + frase — móvil */}
       <section className="border-t border-white/8 bg-[#2a2433] py-8 lg:hidden">
         <Container>
           <p className="label-editorial-light mb-4 !text-[0.625rem] !tracking-[0.18em]">
             Impacto medible
           </p>
           <HeroStatsGrid variant="band" />
-        </Container>
-      </section>
-
-      {/* Frase fuerte */}
-      <section className="section-pad bg-xinergy-charcoal text-white">
-        <Container>
-          <blockquote className="max-w-3xl border-l-2 border-dotted border-xinergy-orange pl-4 sm:pl-8">
-            <p
-              className={`${ttForsDisplay.className} brand-phrase text-lg leading-snug break-words sm:text-3xl lg:text-[2.125rem] lg:leading-snug`}
-            >
-              <span className="font-bold">{brand.strongPhrase.lead}</span>
-              <br />
-              <span className="text-xinergy-orange">{brand.strongPhrase.highlight}</span>
-              <br />
-              <span className="font-normal text-white/90">{brand.strongPhrase.body}</span>
-            </p>
-          </blockquote>
+          <StrongPhraseBlock className="mt-8" />
         </Container>
       </section>
 

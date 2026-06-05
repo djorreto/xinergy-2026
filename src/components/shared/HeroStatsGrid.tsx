@@ -30,12 +30,12 @@ export function HeroStatsGrid({ variant = "hero", className = "" }: HeroStatsGri
 
   return (
     <dl
-      className={`mt-10 hidden grid-cols-2 gap-x-4 gap-y-6 border-t border-white/10 pt-6 sm:mt-16 sm:gap-x-14 sm:gap-y-6 sm:pt-10 lg:mt-16 lg:flex lg:flex-wrap lg:pt-10 ${className}`}
+      className={`mt-10 hidden grid-cols-2 gap-x-4 gap-y-6 border-t border-white/10 pt-6 sm:mt-12 sm:gap-x-14 sm:gap-y-6 sm:pt-8 lg:mt-10 lg:flex lg:flex-wrap lg:pt-8 ${className}`}
     >
       {heroStats.map((s) => (
         <div key={s.label} className="min-w-0">
           <dt
-            className={`${ttForsDisplay.className} brand-phrase text-lg text-xinergy-orange sm:text-3xl lg:text-4xl`}
+            className={`${ttForsDisplay.className} brand-phrase text-2xl leading-none text-xinergy-orange sm:text-4xl lg:text-5xl xl:text-[3.25rem]`}
           >
             {s.value}
           </dt>
