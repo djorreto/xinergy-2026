@@ -224,3 +224,7 @@ export function formatUsd(n: number): string {
   if (n >= 1_000) return `USD ${(n / 1_000).toFixed(0)}K`;
   return `USD ${n.toLocaleString("es-CL")}`;
 }
+
+/** Aviso legal — resultados de la calculadora referenciales, no vinculantes. */
+export const CALCULATOR_RESULTS_DISCLAIMER =
+  "Estimación referencial elaborada con base en la información ingresada. No constituye oferta comercial, asesoría vinculante ni garantía de resultados; los montos y supuestos definitivos estarán sujetos a un assessment y a la validación de la información.";

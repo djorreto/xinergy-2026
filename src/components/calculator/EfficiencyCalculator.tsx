@@ -10,6 +10,7 @@ import {
   toolQuestions,
   calculateOpportunity,
   formatUsd,
+  CALCULATOR_RESULTS_DISCLAIMER,
   type CalculatorInput,
   type IndustryId,
   type SpendBand,
@@ -304,6 +305,10 @@ export function EfficiencyCalculator() {
                   </span>
                 </p>
               </div>
+
+              <p className="text-[11px] leading-relaxed text-xinergy-slate/80">
+                {CALCULATOR_RESULTS_DISCLAIMER}
+              </p>
             </div>
           )}
 
@@ -351,7 +356,7 @@ export function EfficiencyCalculator() {
             )}
             {step === 2 && resultsUnlocked && (
               <Link href={contactHref("diagnostico")} className="btn-primary w-full text-center sm:w-auto">
-                Agendar diagnóstico sin costo
+                Agendar diagnóstico
               </Link>
             )}
           </div>
@@ -410,9 +415,8 @@ export function EfficiencyCalculator() {
                 No cobramos por horas. El fee se vincula a eficiencias reales e impacto en el P&L
                 — verificable por finanzas.
               </p>
-              <p className="mt-8 text-[11px] italic text-white/40">
-                *Estimación ilustrativa. La propuesta formal se define tras el diagnóstico sin
-                costo.
+              <p className="mt-8 text-[11px] leading-relaxed italic text-white/40">
+                {CALCULATOR_RESULTS_DISCLAIMER}
               </p>
             </>
           )}

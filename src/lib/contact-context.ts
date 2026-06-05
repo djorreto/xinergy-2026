@@ -6,7 +6,7 @@ export const contactContexts = {
   },
   diagnostico: {
     eyebrow: "Diagnóstico",
-    title: "Agenda tu diagnóstico sin costo",
+    title: "Agenda tu diagnóstico",
     description:
       "Cuéntanos sobre tu operación y profundizamos las eficiencias que viste en el cálculo.",
   },
