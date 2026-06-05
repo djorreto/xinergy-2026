@@ -10,7 +10,7 @@ import { ttForsDisplay } from "@/lib/fonts";
 export const metadata: Metadata = {
   title: "Diagnóstico de eficiencia",
   description:
-    "#Fitness for business — calcula cuántas eficiencias puedes conseguir. Sin costo. Modelo cash neutral.",
+    "#Fitness for business — calcula cuántas eficiencias puedes conseguir. Modelo cash neutral.",
 };
 
 export default function DiagnosticoPage() {
@@ -20,7 +20,7 @@ export default function DiagnosticoPage() {
         <div className="hero-motion hero-motion--static" aria-hidden />
         <Container className="relative z-10 py-8 sm:py-16 lg:py-24">
           <p className="hero-mobile-eyebrow label-editorial-light max-lg:before:hidden">
-            Diagnóstico de oportunidades sin costo
+            Diagnóstico de eficiencias
           </p>
           <p
             className={`${ttForsDisplay.className} hero-mobile-accent mt-3 max-lg:text-lg max-lg:leading-snug lg:hidden`}
@@ -54,11 +54,11 @@ export default function DiagnosticoPage() {
             align="center"
             eyebrow="Cash neutral"
             title="Alineados a resultados, no a horas"
-            intro="Sin costo para empezar. Compartimos riesgos: nuestros honorarios se vinculan a eficiencias reales e impacto verificable en el P&L — ganamos cuando tú capturas valor."
+            intro="Compartimos riesgos: nuestros honorarios se vinculan a eficiencias reales e impacto verificable en el P&L — ganamos cuando tú capturas valor."
             titleClassName="text-2xl sm:text-3xl"
           />
           <p className="mt-10 text-center text-sm text-xinergy-slate">
-            ¿Prefiere hablar con nosotros?{" "}
+            ¿Prefieres hablar con nosotros?{" "}
             <Link href={contactHref("diagnostico")} className="font-semibold text-xinergy-orange hover:underline">
               Agendar conversación estratégica →
             </Link>

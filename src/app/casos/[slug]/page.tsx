@@ -24,8 +24,8 @@ export default async function CasoPage({ params }: Props) {
   if (!c) notFound();
 
   const sections = [
-    { label: "Challenge", body: c.challenge },
-    { label: "Approach", body: c.approach },
+    { label: "Desafío", body: c.challenge },
+    { label: "Enfoque", body: c.approach },
   ];
 
   return (
@@ -48,7 +48,7 @@ export default async function CasoPage({ params }: Props) {
           ))}
           <article>
             <h2 className="text-xs font-bold uppercase tracking-widest text-xinergy-orange">
-              Results
+              Resultados
             </h2>
             <ul className="mt-4 space-y-3">
               {c.results.map((r) => (

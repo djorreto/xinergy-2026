@@ -367,7 +367,7 @@ export function EfficiencyCalculator() {
           {step < 2 || !resultsUnlocked ? (
             <>
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-xinergy-orange">
-                Sin costo para ti
+                Cómo seguimos
               </p>
               <h3 className="mt-4 font-display text-xl font-semibold leading-snug">
                 Próximos pasos con Xinergy
@@ -386,8 +386,8 @@ export function EfficiencyCalculator() {
                   },
                   {
                     n: "03",
-                    t: "Propuesta cash neutral",
-                    d: "Honorarios ligados a eficiencias verificadas en P&L.",
+                    t: "Propuesta alineada a resultados",
+                    d: "Compartimos riesgos: ganamos cuando tú capturas valor en el P&L.",
                   },
                 ].map((item) => (
                   <li key={item.n} className="flex gap-4">
@@ -412,8 +412,8 @@ export function EfficiencyCalculator() {
                 Compartimos riesgos: ganamos cuando tú capturas valor
               </h3>
               <p className="mt-4 text-sm leading-relaxed text-white/65">
-                No cobramos por horas. El fee se vincula a eficiencias reales e impacto en el P&L
-                — verificable por finanzas.
+                Nuestro modelo se vincula a eficiencias reales e impacto verificable en el P&L
+                — ganamos cuando tú capturas valor.
               </p>
               <p className="mt-8 text-[11px] leading-relaxed italic text-white/40">
                 {CALCULATOR_RESULTS_DISCLAIMER}

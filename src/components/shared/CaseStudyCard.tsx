@@ -37,7 +37,7 @@ export function CaseStudyCard({ caseStudy: c, variant = "full" }: CaseStudyCardP
           {c.challenge}
         </p>
         <Link
-          href={contactHref("casos")}
+          href={`/casos/${c.slug}`}
           className="mt-4 text-[10px] font-semibold uppercase tracking-wider text-xinergy-orange hover:underline"
         >
           Más información →
@@ -64,7 +64,7 @@ export function CaseStudyCard({ caseStudy: c, variant = "full" }: CaseStudyCardP
             {c.challenge}
           </p>
           <Button
-            href={contactHref("casos")}
+            href={`/casos/${c.slug}`}
             variant="secondary"
             className="mt-4 !px-4 !py-2 !text-[10px]"
           >
@@ -125,10 +125,10 @@ export function CaseStudyCard({ caseStudy: c, variant = "full" }: CaseStudyCardP
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-xinergy-charcoal/8 pt-8">
         <p className="max-w-md text-xs text-xinergy-slate">
-          ¿Quieres conocer más sobre un caso similar? Escríbenos y te compartimos el detalle..
+          ¿Quieres explorar un caso similar? Escríbenos y te compartimos el detalle.
         </p>
         <Button href={contactHref("casos")} variant="primary" className="!px-6 !py-3 !text-xs">
-          Más información
+          Hablemos
         </Button>
       </div>
     </article>

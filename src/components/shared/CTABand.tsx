@@ -20,11 +20,11 @@ export function CTABand() {
           </p>
         </div>
         <div className="cta-band-actions flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
-          <Button href="/contacto" variant="primary" className="max-lg:w-full max-lg:justify-center">
-            {brand.cta}
-          </Button>
-          <Button href="/diagnostico" variant="light" className="max-lg:w-full max-lg:justify-center">
+          <Button href="/diagnostico" variant="primary" className="max-lg:w-full max-lg:justify-center">
             Calcular eficiencias
+          </Button>
+          <Button href="/contacto" variant="light" className="max-lg:w-full max-lg:justify-center">
+            {brand.cta}
           </Button>
         </div>
       </Container>

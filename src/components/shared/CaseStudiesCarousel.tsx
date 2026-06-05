@@ -76,7 +76,7 @@ function CarouselTrack({ slides, columns, className }: CarouselTrackProps) {
       onBlurCapture={() => setPaused(false)}
     >
       <div
-        className="overflow-hidden touch-pan-y"
+        className="overflow-x-clip touch-pan-y"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
@@ -86,7 +86,7 @@ function CarouselTrack({ slides, columns, className }: CarouselTrackProps) {
           aria-live="polite"
         >
           {slides.map((group, slideIndex) => (
-            <div key={slideIndex} className={slideGridClass}>
+            <div key={slideIndex} className={`${slideGridClass} items-start`}>
               {group.map((caseStudy) => (
                 <CaseStudyCarouselCard key={caseStudy.slug} caseStudy={caseStudy} />
               ))}

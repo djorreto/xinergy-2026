@@ -28,7 +28,7 @@ export const clientLogos: readonly ClientLogo[] = [
   { name: "ITF Labomed", src: "/clients/itf_labomed_transparente.png" },
   { name: "AMSA", src: "/clients/Amsa.png" },
   { name: "Marcobre", src: "/clients/Marcobre.png" },
-  { name: "Huchipat", src: "/clients/Huchipato.png" },
+  { name: "Huchipato", src: "/clients/Huchipato.png" },
   { name: "Manuka", src: "/clients/Manuka.png" },
   { name: "Flesan", src: "/clients/Flesan.png" },
   { name: "Brinks", src: "/clients/BRINKS.png" },
@@ -38,6 +38,6 @@ export const clientLogos: readonly ClientLogo[] = [
   { name: "Gentera", src: "/clients/Gentera.png" },
   { name: "SAAM", src: "/clients/Saam.png" },
   { name: "Botero Soto", src: "/clients/botero_soto.png" },
-  { name: "Banmedica", src: "/clients/banme_dica.png" },
+  { name: "Banmédica", src: "/clients/banme_dica.png" },
   { name: "Teletón", src: "/clients/teleton.png" },
 ] as const;

@@ -36,15 +36,15 @@ export default function HomePage() {
               </p>
             </div>
             <div className="mobile-actions hero-mobile-actions mt-8 max-lg:mt-10 sm:mt-10">
-              <Button href="/contacto" className="max-lg:w-full max-lg:rounded-full max-lg:py-4 max-lg:text-[0.6875rem] max-lg:tracking-[0.1em]">
-                {brand.cta}
+              <Button href="/diagnostico" className="max-lg:w-full max-lg:rounded-full max-lg:py-4 max-lg:text-[0.6875rem] max-lg:tracking-[0.1em]">
+                Calcular eficiencias
               </Button>
               <Button
-                href="/diagnostico"
+                href="/contacto"
                 variant="light"
                 className="max-lg:w-full max-lg:rounded-full max-lg:py-4 max-lg:text-[0.6875rem] max-lg:tracking-[0.1em]"
               >
-                Calcular eficiencias
+                {brand.cta}
               </Button>
             </div>
           </div>
@@ -139,7 +139,7 @@ export default function HomePage() {
           <SectionHeader
             dark
             align="center"
-            eyebrow="Diagnóstico de oportunidades sin costo"
+            eyebrow="Diagnóstico de eficiencias"
             title="¿Cuánta eficiencia puede liberar tu empresa?"
             intro="En unos minutos, con datos básicos de tu gasto y operación."
           />
@@ -188,9 +188,9 @@ export default function HomePage() {
                 {home.cta.intro}
               </p>
               <div className="mobile-actions cta-band-actions mt-8 justify-center sm:mt-10">
-                <Button href="/contacto">{brand.cta}</Button>
-                <Button href="/diagnostico" variant="secondary">
-                  Calcular eficiencias
+                <Button href="/diagnostico">Calcular eficiencias</Button>
+                <Button href="/contacto" variant="secondary">
+                  {brand.cta}
                 </Button>
               </div>
             </div>

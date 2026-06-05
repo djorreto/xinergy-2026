@@ -83,11 +83,11 @@ export function SiteHeader() {
                 );
               })}
               <div className="mt-auto flex flex-col gap-3 border-t border-xinergy-charcoal/8 pt-6 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-                <Button href="/contacto" variant="primary" className="w-full justify-center">
-                  Contacto
-                </Button>
-                <Button href="/diagnostico" variant="secondary" className="w-full justify-center">
+                <Button href="/diagnostico" variant="primary" className="w-full justify-center">
                   Calcular eficiencias
+                </Button>
+                <Button href="/contacto" variant="secondary" className="w-full justify-center">
+                  Contacto
                 </Button>
               </div>
             </nav>
@@ -144,12 +144,12 @@ export function SiteHeader() {
         <div className="hidden items-center gap-3 lg:flex">
           <Button
             href="/diagnostico"
-            variant={useSolidHeader ? "secondary" : "light"}
+            variant="primary"
             className="!px-4 !py-2.5 !text-[11px]"
           >
             Calcular eficiencias
           </Button>
-          <Button href="/contacto" variant="primary" className="!px-5 !py-2.5 !text-[11px]">
+          <Button href="/contacto" variant={useSolidHeader ? "secondary" : "light"} className="!px-5 !py-2.5 !text-[11px]">
             Contacto
           </Button>
         </div>

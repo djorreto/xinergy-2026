@@ -3,7 +3,7 @@ export const brand = {
   tagline: "Ejecutamos eficiencias con impacto real.",
   claim: "#Fitness for business",
   strongPhrase: {
-    emphasis: "Compartimos riesgos",
+    emphasis: "Compartimos riesgos,",
     body: "medimos, y somos tus socios en la implementación y ejecución.",
   },
   pitchLine:
@@ -171,20 +171,10 @@ export const home = {
     intro:
       "Desafío, enfoque y resultados verificables en retail, seguros, automotriz y más.",
   },
-  insights: {
-    title: "Ideas y tendencias",
-    intro: "Lo que observamos en eficiencia y compras en la región.",
-  },
-  careers: {
-    title: "Trabaja con nosotros",
-    intro:
-      "Buscamos personas que quieran impacto visible: proyectos con clientes líderes, aprendizaje continuo y cultura de equipo en LATAM.",
-    emailLabel: "Escríbenos a",
-  },
   cta: {
     eyebrow: "Siguiente paso",
     title: "¿Cuándo conversamos?",
-    intro: "Diagnóstico de oportunidades sin costo en minutos. Compartimos riesgos desde el primer paso.",
+    intro: "Estima oportunidades en minutos. Compartimos riesgos desde el primer paso.",
   },
   chartBand: {
     title: "¿Cómo son los resultados con Xinergy?",
@@ -244,7 +234,7 @@ export const faqs: FAQ[] = [
     a: "Depende del spend y madurez. El diagnóstico toma días; las primeras palancas de ahorro suelen activarse en semanas con quick wins priorizados.",
   },
   {
-    q: "¿Qué necesito para el diagnóstico de oportunidades sin costo?",
+    q: "¿Qué necesito para la calculadora de eficiencias?",
     a: "Industria, gasto con proveedores y cinco preguntas de madurez. Ingresa tu correo para ver el rango de eficiencia potencial en ~2 minutos.",
   },
   {
@@ -268,7 +258,7 @@ export const homeFaqs: FAQ[] = [
   },
   {
     q: "¿Cómo empiezo?",
-    a: "Con el diagnóstico de oportunidades sin costo: unas preguntas sobre tu gasto y madurez, y una estimación de oportunidad en minutos.",
+    a: "Con la calculadora de eficiencias: unas preguntas sobre tu gasto y madurez, y una estimación de oportunidad en minutos.",
   },
 ];
 
@@ -285,7 +275,7 @@ export const heroStats = [
   },
   {
     value: "6+",
-    label: `Presentes en más de 6 países · entre ellos, oficinas en ${officesLabel}.`,
+    label: `Presencia en 6 países · oficinas en ${officesLabel}.`,
     detail: `Operación en ${presenceLabel} con equipos locales y proyectos multi-país.`,
   },
   {
@@ -784,7 +774,7 @@ export const insights = [
       "Xinergy venderá e implementará las plataformas de GEP — compras digitales, gestión de contratos, licitaciones, riesgo de proveedores y gestión de gastos — para que las empresas sean más ágiles, resilientes y competitivas frente a inflación, presión de costos y volatilidad industrial.",
       "«Esta alianza une las capacidades globales de GEP con la presencia local y el profundo conocimiento de mercado de Xinergy y Matrix Consulting. Nos permitirá brindar una oferta única, adaptada a las necesidades locales, que impulsará la reducción de costos y la digitalización de compras en la región», afirmó Roberto Uauy, Socio Fundador y Gerente General de Xinergy.",
       "Ken Legge, vicepresidente de Alianzas de GEP, destacó que Xinergy aportará innovación tecnológica, localización y experiencia en la industria, especialmente en LATAM, donde la presencia local y el soporte lingüístico son clave.",
-      "Para conocer más sobre las ventajas de esta alianza, escríbanos a contacto@xinergy.cl.",
+      "Para conocer más sobre las ventajas de esta alianza, escríbenos a contacto@xinergy.cl.",
     ],
   },
   {

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { contactHref } from "@/lib/contact-context";
 
 type CaseStudy = {
   slug: string;
@@ -29,7 +28,7 @@ export function CaseStudyCarouselCard({ caseStudy: c, index = 0 }: CaseStudyCaro
       role="button"
       tabIndex={0}
       aria-expanded={open}
-      className={`case-carousel-card group flex h-full min-h-[15.5rem] flex-col rounded-xl border border-xinergy-charcoal/10 bg-white p-5 sm:min-h-[16.5rem] sm:p-6 ${open ? "is-open" : ""}`}
+      className={`case-carousel-card group flex h-full min-h-[15.5rem] flex-col rounded-xl border border-xinergy-charcoal/10 bg-white p-5 sm:min-h-[16.5rem] sm:p-6 ${open ? "is-open relative z-10" : ""}`}
       onClick={() => setOpen((v) => !v)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -65,7 +64,7 @@ export function CaseStudyCarouselCard({ caseStudy: c, index = 0 }: CaseStudyCaro
       </p>
 
       <Link
-        href={contactHref("casos")}
+        href={`/casos/${c.slug}`}
         onClick={(e) => e.stopPropagation()}
         className="mt-4 text-[10px] font-semibold uppercase tracking-wider text-xinergy-orange hover:underline"
       >

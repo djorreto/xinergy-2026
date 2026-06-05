@@ -498,7 +498,7 @@ body {
 
   .stat-card:hover .stat-card-detail,
   .case-carousel-card:hover .case-carousel-extra {
-    max-height: 6rem;
+    max-height: 24rem;
     margin-top: 0.5rem;
     opacity: 1;
   }
@@ -565,12 +565,14 @@ body {
 .case-carousel-card.is-open .case-carousel-teaser {
   -webkit-line-clamp: unset;
   display: block;
+  overflow: visible;
 }
 
 .case-carousel-card.is-open .case-carousel-extra {
-  max-height: 7rem;
+  max-height: 24rem;
   margin-top: 0.5rem;
   opacity: 1;
+  overflow: visible;
 }
 
 @media (prefers-reduced-motion: reduce) {
