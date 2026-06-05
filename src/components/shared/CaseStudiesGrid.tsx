@@ -1,11 +1,11 @@
 import { cases } from "@/lib/content";
-import { CaseStudyCard } from "@/components/shared/CaseStudyCard";
+import { CaseStudyCarouselCard } from "@/components/shared/CaseStudyCarouselCard";
 
 export function CaseStudiesGrid() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {cases.map((caseStudy) => (
-        <CaseStudyCard key={caseStudy.slug} caseStudy={caseStudy} variant="carousel" />
+    <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+      {cases.map((caseStudy, i) => (
+        <CaseStudyCarouselCard key={caseStudy.slug} caseStudy={caseStudy} index={i} />
       ))}
     </div>
   );

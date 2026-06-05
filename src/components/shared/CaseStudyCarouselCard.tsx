@@ -14,11 +14,14 @@ type CaseStudy = {
   highlightLabel: string;
 };
 
+const popDelays = ["stat-pop-delay-0", "stat-pop-delay-1", "stat-pop-delay-2", "stat-pop-delay-3", "stat-pop-delay-4"];
+
 type CaseStudyCarouselCardProps = {
   caseStudy: CaseStudy;
+  index?: number;
 };
 
-export function CaseStudyCarouselCard({ caseStudy: c }: CaseStudyCarouselCardProps) {
+export function CaseStudyCarouselCard({ caseStudy: c, index = 0 }: CaseStudyCarouselCardProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -40,7 +43,7 @@ export function CaseStudyCarouselCard({ caseStudy: c }: CaseStudyCarouselCardPro
       </span>
 
       <div className="mt-3 flex flex-wrap items-end gap-x-2 gap-y-1">
-        <span className="brand-phrase stat-pop stat-pop-delay-0 text-3xl leading-none text-xinergy-orange sm:text-4xl">
+        <span className={`brand-phrase stat-pop leading-none text-xinergy-orange text-3xl sm:text-4xl ${popDelays[index % popDelays.length]}`}>
           {c.highlight}
         </span>
         <span className="pb-0.5 text-[10px] leading-tight text-xinergy-slate sm:text-[11px]">
