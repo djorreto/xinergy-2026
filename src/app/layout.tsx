@@ -6,6 +6,7 @@ import { brand } from "@/lib/content";
 import { ttForsDisplay, univers } from "@/lib/fonts";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://xinergy.lat"),
   title: {
     default: `${brand.name} | ${brand.claim}`,
     template: `%s | ${brand.name}`,
