@@ -21,11 +21,8 @@ export default function HomePage() {
         <Container className="relative z-10 pb-10 pt-0 sm:pb-12 sm:pt-12 lg:flex lg:min-h-[100dvh] lg:flex-col lg:justify-between lg:pb-16 lg:pt-24 xl:pt-28">
           <div className="hero-mobile-content max-lg:flex max-lg:min-h-[calc(100svh-var(--site-header-height,3.5rem)-env(safe-area-inset-top,0px)-2rem)] max-lg:flex-col max-lg:justify-center">
             <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl">
-              <p className="hero-mobile-eyebrow label-editorial-light max-lg:before:hidden">
-                {brand.heroEyebrow}
-              </p>
               <h1
-                className={`${ttForsDisplay.className} brand-phrase mt-4 max-lg:mt-5 max-lg:text-[2.75rem] max-lg:leading-[1.04] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:mt-3 lg:text-[3.5rem] xl:text-[4rem]`}
+                className={`${ttForsDisplay.className} brand-phrase max-lg:text-[2.75rem] max-lg:leading-[1.04] sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
               >
                 {brand.claim}
               </h1>
