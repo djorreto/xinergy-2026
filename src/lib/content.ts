@@ -48,7 +48,7 @@ export const messaging = {
     intro:
       "Transformamos operación y abastecimiento de punta a punta — diseño, implementación y ejecución en terreno, con impacto en ahorro, EBITDA y caja.",
     points: [
-      "Proyectos de Strategic Sourcing y abastecimiento estratégico",
+      "Eficiencias mediante abastecimiento estratégico",
       "BPO de áreas de compra y gestión de contratos",
       "Soluciones de cash management y supply chain finance",
       "Tecnología, Procuretech y habilitación digital",
@@ -244,7 +244,7 @@ export const faqs: FAQ[] = [
   },
   {
     q: "¿Qué necesito para el diagnóstico gratuito?",
-    a: "Industria, gasto con proveedores, países y cinco preguntas de madurez. Ingresa tu correo para ver el rango de eficiencia potencial en ~2 minutos.",
+    a: "Industria, gasto con proveedores y cinco preguntas de madurez. Ingresa tu correo para ver el rango de eficiencia potencial en ~2 minutos.",
   },
   {
     q: "¿Cómo miden el éxito?",

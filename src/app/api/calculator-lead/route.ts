@@ -12,7 +12,6 @@ function isCalculatorInput(value: unknown): value is CalculatorInput {
   return (
     typeof v.industry === "string" &&
     typeof v.spendBand === "string" &&
-    typeof v.countries === "number" &&
     Array.isArray(v.maturityAnswers) &&
     v.maturityAnswers.length === 5 &&
     v.maturityAnswers.every((a) => typeof a === "number")

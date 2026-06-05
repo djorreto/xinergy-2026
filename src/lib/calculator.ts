@@ -17,7 +17,6 @@ export type SpendBand =
 export interface CalculatorInput {
   industry: IndustryId;
   spendBand: SpendBand;
-  countries: number;
   maturityAnswers: number[]; // 1-4 each, 5 questions
 }
 
@@ -147,10 +146,8 @@ export function calculateOpportunity(input: CalculatorInput): CalculatorResult {
   const addressableSpendUsd = spend.midpointUsd * addressablePct;
 
   const maturityGap = 1 - maturityPct;
-  const countryFactor = 1 + Math.min(input.countries - 1, 5) * 0.025;
 
-  const expectedRateRaw =
-    industry.baseRate * (1 + maturityGap * 0.55) * countryFactor;
+  const expectedRateRaw = industry.baseRate * (1 + maturityGap * 0.55);
   const expectedRate = Math.max(expectedRateRaw, MIN_SAVINGS_RATE);
   const rateConservative = Math.max(expectedRate * 0.65, MIN_SAVINGS_RATE);
   const rateAggressive = Math.max(expectedRate * 1.35, rateConservative * 1.1);

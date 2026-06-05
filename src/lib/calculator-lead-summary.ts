@@ -28,7 +28,6 @@ export function buildCalculatorLeadSummary(
     "═══ PASO 1 · EMPRESA ═══",
     `Industria: ${industryLabel(input.industry)}`,
     `Gasto anual con proveedores: ${spendLabel(input.spendBand)}`,
-    `Países donde operan compras: ${input.countries}`,
     "",
     "═══ PASO 2 · MADUREZ ═══",
     ...maturityQuestions.map((q, i) => {

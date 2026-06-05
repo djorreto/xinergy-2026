@@ -22,7 +22,6 @@ export function EfficiencyCalculator() {
   const [step, setStep] = useState(0);
   const [industry, setIndustry] = useState<IndustryId>("retail");
   const [spendBand, setSpendBand] = useState<SpendBand>("25-100");
-  const [countries, setCountries] = useState(2);
   const [answers, setAnswers] = useState<number[]>(defaultAnswers);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -33,10 +32,9 @@ export function EfficiencyCalculator() {
     () => ({
       industry,
       spendBand,
-      countries,
       maturityAnswers: answers,
     }),
-    [industry, spendBand, countries, answers],
+    [industry, spendBand, answers],
   );
 
   const result = useMemo(
@@ -136,24 +134,6 @@ export function EfficiencyCalculator() {
                     </button>
                   ))}
                 </div>
-              </fieldset>
-
-              <fieldset>
-                <legend className="label-editorial">Países donde operan compras</legend>
-                <input
-                  type="range"
-                  min={1}
-                  max={12}
-                  value={countries}
-                  onChange={(e) => setCountries(Number(e.target.value))}
-                  className="mt-4 w-full accent-xinergy-orange"
-                />
-                <p className="mt-2 text-2xl font-semibold tabular-nums text-xinergy-charcoal">
-                  {countries}
-                  <span className="ml-2 text-sm font-normal text-xinergy-slate">
-                    {countries === 1 ? "país" : "países"}
-                  </span>
-                </p>
               </fieldset>
             </div>
           )}
