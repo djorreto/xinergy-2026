@@ -128,6 +128,46 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+@media (min-width: 1024px) {
+  /* Suaviza el corte inferior del gráfico en pantallas altas */
+  .hero-motion:not(.hero-motion--static) {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 55%,
+      rgba(0, 0, 0, 0.92) 72%,
+      rgba(0, 0, 0, 0.45) 88%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 55%,
+      rgba(0, 0, 0, 0.92) 72%,
+      rgba(0, 0, 0, 0.45) 88%,
+      transparent 100%
+    );
+  }
+
+  .gradient-hero::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: clamp(7rem, 20vh, 15rem);
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      color-mix(in srgb, var(--xinergy-charcoal) 35%, transparent) 45%,
+      color-mix(in srgb, var(--xinergy-charcoal) 88%, transparent) 78%,
+      var(--xinergy-charcoal) 100%
+    );
+  }
+}
+
 /* Fondo estático en móvil / tablet (sin canvas animado) */
 .hero-motion--static {
   position: relative;
