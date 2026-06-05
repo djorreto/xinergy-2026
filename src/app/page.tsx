@@ -139,7 +139,7 @@ export default function HomePage() {
           <SectionHeader
             dark
             align="center"
-            eyebrow="Diagnóstico gratuito"
+            eyebrow="Diagnóstico de oportunidades sin costo"
             title="¿Cuánta eficiencia puede liberar su empresa?"
             intro="En unos minutos, con datos básicos de su gasto y operación."
           />

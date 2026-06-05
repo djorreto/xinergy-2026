@@ -20,7 +20,7 @@ export default function DiagnosticoPage() {
         <div className="hero-motion hero-motion--static" aria-hidden />
         <Container className="relative z-10 py-8 sm:py-16 lg:py-24">
           <p className="hero-mobile-eyebrow label-editorial-light max-lg:before:hidden">
-            Diagnóstico gratuito
+            Diagnóstico de oportunidades sin costo
           </p>
           <p
             className={`${ttForsDisplay.className} hero-mobile-accent mt-3 max-lg:text-lg max-lg:leading-snug lg:hidden`}

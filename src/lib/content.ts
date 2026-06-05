@@ -182,7 +182,7 @@ export const home = {
   cta: {
     eyebrow: "Siguiente paso",
     title: "¿Conversamos?",
-    intro: "Diagnóstico gratuito en minutos. Sin compromiso.",
+    intro: "Diagnóstico de oportunidades sin costo en minutos. Sin compromiso.",
   },
   chartBand: {
     title: "¿Cómo son los resultados con Xinergy?",
@@ -242,7 +242,7 @@ export const faqs: FAQ[] = [
     a: "Depende del spend y madurez. El diagnóstico toma días; las primeras palancas de ahorro suelen activarse en semanas con quick wins priorizados.",
   },
   {
-    q: "¿Qué necesito para el diagnóstico gratuito?",
+    q: "¿Qué necesito para el diagnóstico de oportunidades sin costo?",
     a: "Industria, gasto con proveedores y cinco preguntas de madurez. Ingresa tu correo para ver el rango de eficiencia potencial en ~2 minutos.",
   },
   {
@@ -266,7 +266,7 @@ export const homeFaqs: FAQ[] = [
   },
   {
     q: "¿Cómo empiezo?",
-    a: "Con el diagnóstico gratuito: unas preguntas sobre su gasto y madurez, y una estimación de oportunidad en minutos.",
+    a: "Con el diagnóstico de oportunidades sin costo: unas preguntas sobre su gasto y madurez, y una estimación de oportunidad en minutos.",
   },
 ];
 
