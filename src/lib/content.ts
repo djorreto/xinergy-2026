@@ -185,6 +185,9 @@ export const home = {
     title: "¿Conversamos?",
     intro: "Diagnóstico gratuito en minutos. Sin compromiso.",
   },
+  chartBand: {
+    title: "¿Cómo son los resultados con Xinergy?",
+  },
 } as const;
 
 export const processSteps = [

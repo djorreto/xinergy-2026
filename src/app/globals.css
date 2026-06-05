@@ -182,14 +182,13 @@ body {
   }
 }
 
-/* Banda del gráfico CTA — chart limpio + transición fina al crema */
-.hero-chart-band {
+/* Bloque gráfico CTA — chart + copy en morado, transición al crema */
+.hero-chart-block {
   position: relative;
-  overflow: hidden;
   background: var(--xinergy-charcoal);
 }
 
-.hero-chart-band::after {
+.hero-chart-block::after {
   content: "";
   position: absolute;
   left: 0;
@@ -203,6 +202,12 @@ body {
     transparent,
     color-mix(in srgb, var(--xinergy-cream) 55%, var(--xinergy-charcoal))
   );
+}
+
+.hero-chart-band {
+  position: relative;
+  overflow: hidden;
+  background: transparent;
 }
 
 /* Fondo estático en móvil / tablet (sin canvas animado) */

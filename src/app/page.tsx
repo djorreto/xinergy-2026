@@ -143,13 +143,20 @@ export default function HomePage() {
 
       {/* CTA — gráfico + cierre crema */}
       <section className="overflow-hidden">
-        <div className="hero-chart-band relative h-52 sm:h-64 lg:h-[22rem] xl:h-[24rem]">
-          <HeroMotion variant="band" />
+        <div className="hero-chart-block bg-xinergy-charcoal text-white">
+          <div className="hero-chart-band relative h-52 sm:h-64 lg:h-[20rem] xl:h-[22rem]">
+            <HeroMotion variant="band" />
+          </div>
+          <Container className="relative z-10 pb-10 pt-1 sm:pb-12 lg:pb-14">
+            <h3 className="font-display max-w-2xl text-lg leading-snug sm:text-xl lg:text-2xl">
+              {home.chartBand.title}
+            </h3>
+            <HeroChartCaption dark className="mt-4" />
+          </Container>
         </div>
         <div className="bg-xinergy-cream section-pad-lg text-xinergy-charcoal">
           <Container>
             <div className="max-w-xl">
-              <HeroChartCaption className="mb-10 sm:mb-12" />
               <SectionHeader
                 eyebrow={home.cta.eyebrow}
                 title={home.cta.title}
