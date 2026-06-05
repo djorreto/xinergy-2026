@@ -46,6 +46,29 @@ export default function NosotrosPage() {
           </blockquote>
         </Container>
       </section>
+
+      <section className="section-pad border-t border-xinergy-charcoal/8 bg-xinergy-ivory">
+        <Container>
+          <p className="label-editorial">Cultura</p>
+          <h2 className="font-display mt-3 max-w-lg text-3xl text-xinergy-charcoal">
+            Cómo trabajamos
+          </h2>
+          <div className="mt-10 grid gap-6 lg:grid-cols-3">
+            {cultureValues.map((value) => (
+              <article
+                key={value.title}
+                className="rounded-2xl border border-xinergy-charcoal/10 bg-white p-6 lg:p-8"
+              >
+                <h3 className="brand-phrase text-lg text-xinergy-orange">{value.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-xinergy-slate">
+                  {value.summary}
+                </p>
+              </article>
+            ))}
+          </div>
+        </Container>
+      </section>
+
       <section className="py-20">
         <Container>
           <div className="grid gap-16 lg:grid-cols-2">
@@ -74,28 +97,6 @@ export default function NosotrosPage() {
                 </div>
               ))}
             </dl>
-          </div>
-        </Container>
-      </section>
-
-      <section className="section-pad border-t border-xinergy-charcoal/8 bg-xinergy-ivory">
-        <Container>
-          <p className="label-editorial">Cultura</p>
-          <h2 className="font-display mt-3 max-w-lg text-3xl text-xinergy-charcoal">
-            Cómo trabajamos
-          </h2>
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {cultureValues.map((value) => (
-              <article
-                key={value.title}
-                className="rounded-2xl border border-xinergy-charcoal/10 bg-white p-6 lg:p-8"
-              >
-                <h3 className="brand-phrase text-lg text-xinergy-orange">{value.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-xinergy-slate">
-                  {value.summary}
-                </p>
-              </article>
-            ))}
           </div>
         </Container>
       </section>
