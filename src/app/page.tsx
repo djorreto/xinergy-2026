@@ -156,8 +156,9 @@ export default function HomePage() {
         </div>
         <div className="bg-xinergy-cream section-pad-lg text-xinergy-charcoal">
           <Container>
-            <div className="max-w-xl">
+            <div className="mx-auto max-w-xl text-center">
               <SectionHeader
+                align="center"
                 eyebrow={home.cta.eyebrow}
                 title={home.cta.title}
                 titleClassName="text-2xl sm:text-3xl lg:text-5xl"
@@ -167,10 +168,10 @@ export default function HomePage() {
               >
                 {brand.claim}
               </p>
-              <p className="mt-3 max-w-xl text-sm leading-relaxed text-xinergy-slate sm:text-base">
+              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-xinergy-slate sm:text-base">
                 {home.cta.intro}
               </p>
-              <div className="mobile-actions mt-8 sm:mt-10">
+              <div className="mobile-actions mt-8 justify-center sm:mt-10">
                 <Button href="/contacto">{brand.cta}</Button>
                 <Button href="/diagnostico" variant="secondary">
                   Calcular eficiencias
