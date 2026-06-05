@@ -275,7 +275,7 @@ export const heroStats = [
   { value: "3B+", label: "Gasto bajo gestión en programas recientes" },
   { value: "15+", label: "Años generando eficiencias para clientes" },
   {
-    value: "+6",
+    value: "6+",
     label: `Presentes en más de 6 países · entre ellos, oficinas en ${officesLabel}`,
   },
   { value: "50+", label: "Más de 50 clientes" },
