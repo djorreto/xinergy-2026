@@ -12,7 +12,7 @@ export const brand = {
     "Implementamos y ejecutamos eficiencias que se ven en ahorros, EBITDA y caja. Compartimos riesgos, medimos y acompañamos.",
   heroSubline:
     "Ejecución · Strategic Sourcing · BPO · Cash management · Procuretech",
-  cta: "Agendar conversación",
+  cta: "Hablemos",
   email: "contacto@xinergy.cl",
   careersEmail: "seleccion@xinergy.cl",
   address:
