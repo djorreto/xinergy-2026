@@ -52,27 +52,27 @@ export default function DiagnosticoPage() {
                 Cómo funciona en la práctica
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-xinergy-slate">
-                Xinergy no factura por horas. El fee se vincula a eficiencias que finanzas
-                valida en el P&L. El flujo de valor del programa cubre el costo del
-                servicio — típicamente en pocos meses.
+                Xinergy no factura por horas. El modelo cash neutral se vincula a eficiencias
+                reales e impacto en resultados de la compañía — verificables por finanzas en el
+                P&L.
               </p>
             </article>
             <div className="grid gap-8 sm:grid-cols-2 lg:col-span-2">
               {[
                 {
-                  title: "Mes 0 — Sin costo",
+                  title: "Sin costo",
                   body: "Diagnóstico y opportunity assessment con su equipo. Ustedes no desembolsan honorarios por adelantado.",
                 },
                 {
-                  title: "Mes 1–3 — Quick wins",
+                  title: "Quick wins",
                   body: "Primeras negociaciones y categorías de impacto. Las eficiencias empiezan a materializarse.",
                 },
                 {
-                  title: "Mes 3+ — Cash neutral",
-                  body: "El acumulado de eficiencias supera el fee variable. Desde ahí, el programa se autofinancia.",
+                  title: "Cash neutral",
+                  body: "El fee se vincula a eficiencias reales e impacto en resultados de la compañía, validado en el P&L.",
                 },
                 {
-                  title: "Después — Valor neto",
+                  title: "Valor neto",
                   body: "Eficiencias recurrentes en contratos y procesos. Su área queda más madura y digitalizada.",
                 },
               ].map((item) => (

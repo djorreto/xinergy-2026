@@ -342,8 +342,8 @@ export function EfficiencyCalculator() {
                 {[
                   {
                     n: "01",
-                    t: "Diagnóstico de 60 min",
-                    d: "Validamos datos, categorías y quick wins con su equipo.",
+                    t: "NDA y envío de información",
+                    d: "Firmamos confidencialidad y recibimos la información base de su operación y categorías.",
                   },
                   {
                     n: "02",
@@ -365,6 +365,9 @@ export function EfficiencyCalculator() {
                   </li>
                 ))}
               </ol>
+              <p className="mt-6 text-xs leading-relaxed text-white/45">
+                El assessment estará sujeto a una evaluación preliminar del equipo.
+              </p>
             </>
           ) : (
             <>
@@ -375,17 +378,17 @@ export function EfficiencyCalculator() {
                 El programa se paga solo
               </h3>
               <p className="mt-4 text-sm leading-relaxed text-white/65">
-                No cobramos por horas. Nuestros honorarios se vinculan a{" "}
-                <strong className="text-white">eficiencias reales</strong> que su equipo de finanzas
-                puede verificar en el P&L.
+                No cobramos por horas. El cash neutral se vincula a{" "}
+                <strong className="text-white">eficiencias reales</strong> e impacto en resultados
+                de la compañía — verificables por su equipo de finanzas en el P&L.
               </p>
               <div className="mt-8 rounded-sm border border-white/10 bg-white/5 p-5">
-                <p className="text-3xl font-semibold text-xinergy-orange">
-                  ~{result?.monthsToNeutral ?? 4} meses
+                <p className="text-sm font-semibold leading-snug text-white">
+                  Alineados a resultados, no a horas
                 </p>
-                <p className="mt-2 text-xs text-white/55">
-                  Ventana típica para que el flujo de eficiencias cubra el fee del programa — sin
-                  desembolso neto adicional.
+                <p className="mt-2 text-xs leading-relaxed text-white/55">
+                  El fee del programa depende de eficiencias capturadas e impacto verificable en el
+                  P&L — sin comprometer plazos fijos por adelantado.
                 </p>
               </div>
               <ul className="mt-8 space-y-3 text-xs text-white/55">
