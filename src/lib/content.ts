@@ -879,14 +879,9 @@ export const careersPage = {
     "y nuestro equipo de RRHH se pondrá en contacto contigo por cualquier oportunidad.",
 } as const;
 
-export const careersNav = {
-  label: "Trabaja con nosotros",
-  href: "/trabaja-con-nosotros",
-} as const;
-
 export const nav = [
   { label: "Nosotros", href: "/nosotros" },
   { label: "Casos", href: "/casos" },
   { label: "Insights", href: "/insights" },
-  { label: "Contacto", href: "/contacto" },
+  { label: "Trabaja con nosotros", href: "/trabaja-con-nosotros" },
 ] as const;

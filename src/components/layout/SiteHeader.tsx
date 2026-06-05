@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { nav, careersNav } from "@/lib/content";
+import { nav } from "@/lib/content";
 import { Button } from "@/components/ui/Button";
 import { XinergyLogo } from "@/components/shared/XinergyLogo";
 import { ExpertiseNavMenu } from "@/components/layout/ExpertiseNavMenu";
@@ -77,18 +77,6 @@ export function SiteHeader() {
           >
             Calcular eficiencias
           </Button>
-          <Link
-            href={careersNav.href}
-            className={`px-2 py-2 text-[11px] font-semibold uppercase tracking-wide transition ${
-              useSolidHeader
-                ? "text-xinergy-slate hover:text-xinergy-charcoal"
-                : "text-white/75 hover:text-white"
-            } ${
-              pathname === careersNav.href ? (useSolidHeader ? "!text-xinergy-charcoal" : "!text-white") : ""
-            }`}
-          >
-            {careersNav.label}
-          </Link>
           <Button href="/contacto" variant="primary" className="!px-5 !py-2.5 !text-[11px]">
             Contacto
           </Button>
@@ -130,9 +118,6 @@ export function SiteHeader() {
           <div className="mt-4 flex flex-col gap-3">
             <Button href="/contacto" variant="primary">
               Contacto
-            </Button>
-            <Button href={careersNav.href} variant="secondary">
-              {careersNav.label}
             </Button>
             <Button href="/diagnostico" variant="secondary">
               Calcular eficiencias

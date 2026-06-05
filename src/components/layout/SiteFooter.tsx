@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { brand, nav, presenceLabel, officesLabel, careersNav } from "@/lib/content";
+import { brand, nav, presenceLabel, officesLabel } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
 
 export function SiteFooter() {
@@ -48,14 +48,6 @@ export function SiteFooter() {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link
-                  href={careersNav.href}
-                  className="text-sm text-white/60 hover:text-xinergy-orange"
-                >
-                  {careersNav.label}
-                </Link>
-              </li>
               <li>
                 <Link
                   href="/diagnostico"
