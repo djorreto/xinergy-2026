@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { EfficiencyCalculator } from "@/components/calculator/EfficiencyCalculator";
+import { SectionHeader } from "@/components/shared/SectionHeader";
 import { Container } from "@/components/ui/Container";
 import { brand } from "@/lib/content";
 import { contactHref } from "@/lib/contact-context";
@@ -45,52 +46,14 @@ export default function DiagnosticoPage() {
 
       <section className="border-t border-xinergy-charcoal/8 bg-white section-pad">
         <Container>
-          <div className="grid gap-16 lg:grid-cols-3">
-            <article className="lg:col-span-1">
-              <p className="label-editorial">Cash neutral</p>
-              <h2 className="font-display mt-4 text-2xl text-xinergy-charcoal">
-                Cómo funciona en la práctica
-              </h2>
-              <p className="mt-4 text-sm leading-relaxed text-xinergy-slate">
-                Xinergy no factura por horas. El modelo cash neutral se vincula a eficiencias
-                reales e impacto en resultados de la compañía — verificables por finanzas en el
-                P&L.
-              </p>
-            </article>
-            <div className="grid gap-8 sm:grid-cols-2 lg:col-span-2">
-              {[
-                {
-                  title: "Sin costo",
-                  body: "Diagnóstico y opportunity assessment con su equipo. Ustedes no desembolsan honorarios por adelantado.",
-                },
-                {
-                  title: "Quick wins",
-                  body: "Primeras negociaciones y categorías de impacto. Las eficiencias empiezan a materializarse.",
-                },
-                {
-                  title: "Cash neutral",
-                  body: "El fee se vincula a eficiencias reales e impacto en resultados de la compañía, validado en el P&L.",
-                },
-                {
-                  title: "Valor neto",
-                  body: "Eficiencias recurrentes en contratos y procesos. Su área queda más madura y digitalizada.",
-                },
-              ].map((item) => (
-                <div
-                  key={item.title}
-                  className="border-l-2 border-xinergy-orange pl-5"
-                >
-                  <h3 className="text-sm font-semibold text-xinergy-charcoal">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-xinergy-slate">
-                    {item.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <p className="mt-12 text-center text-sm text-xinergy-slate">
+          <SectionHeader
+            align="center"
+            eyebrow="Cash neutral"
+            title="Alineados a resultados, no a horas"
+            intro="Sin costo para empezar. Si avanzamos, nuestros honorarios se vinculan a eficiencias reales e impacto verificable en el P&L — ganamos cuando ustedes capturan valor."
+            titleClassName="text-2xl sm:text-3xl"
+          />
+          <p className="mt-10 text-center text-sm text-xinergy-slate">
             ¿Prefiere hablar con nosotros?{" "}
             <Link href={contactHref("diagnostico")} className="font-semibold text-xinergy-orange hover:underline">
               Agendar conversación estratégica →

@@ -375,27 +375,12 @@ export function EfficiencyCalculator() {
                 Cash neutral
               </p>
               <h3 className="mt-4 font-display text-xl font-semibold leading-snug">
-                El programa se paga solo
+                Ganamos cuando ustedes capturan valor
               </h3>
               <p className="mt-4 text-sm leading-relaxed text-white/65">
-                No cobramos por horas. El cash neutral se vincula a{" "}
-                <strong className="text-white">eficiencias reales</strong> e impacto en resultados
-                de la compañía — verificables por su equipo de finanzas en el P&L.
+                No cobramos por horas. El fee se vincula a eficiencias reales e impacto en el P&L
+                — verificable por finanzas.
               </p>
-              <div className="mt-8 rounded-sm border border-white/10 bg-white/5 p-5">
-                <p className="text-sm font-semibold leading-snug text-white">
-                  Alineados a resultados, no a horas
-                </p>
-                <p className="mt-2 text-xs leading-relaxed text-white/55">
-                  El fee del programa depende de eficiencias capturadas e impacto verificable en el
-                  P&L — sin comprometer plazos fijos por adelantado.
-                </p>
-              </div>
-              <ul className="mt-8 space-y-3 text-xs text-white/55">
-                <li>· Ustedes no financian el programa por adelantado</li>
-                <li>· El riesgo de delivery lo asumimos con ustedes</li>
-                <li>· Alineación total: ganamos cuando ustedes capturan eficiencias</li>
-              </ul>
               <p className="mt-8 text-[11px] italic text-white/40">
                 *Estimación ilustrativa. La propuesta formal se define tras el diagnóstico sin
                 costo.
