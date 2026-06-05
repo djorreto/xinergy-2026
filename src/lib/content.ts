@@ -885,7 +885,7 @@ export const teamOffsite = {
   quote:
     "Los desafíos más exigentes se conquistan en equipo — en la montaña y en el negocio.",
   body:
-    "En 2024 nos reunimos en el sur de Chile para un offsite en Torres del Paine. Caminamos hasta la base de las torres con el mismo espíritu con el que somos tus socios en la ejecución: preparación, esfuerzo compartido y llegar a destino.",
+    "En 2024 nos reunimos en el sur de Chile para un offsite en Torres del Paine. Caminamos hasta la base de las torres con el mismo espíritu con el que somos tus socios en la ejecución: nos preparamos, nos esforzamos y llegamos juntos al destino.",
   image: "/team/equipo-torres-paine-2024.png",
   imageAlt: "Equipo Xinergy en la base de las Torres del Paine, offsite 2024",
 } as const;
