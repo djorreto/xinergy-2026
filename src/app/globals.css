@@ -129,8 +129,8 @@ body {
 }
 
 @media (min-width: 1024px) {
-  /* Suaviza el corte inferior del gráfico en pantallas altas */
-  .hero-motion:not(.hero-motion--static) {
+  /* Suaviza el corte inferior del gráfico hero (home arriba) */
+  .gradient-hero .hero-motion:not(.hero-motion--static) {
     -webkit-mask-image: linear-gradient(
       to bottom,
       #000 0%,
@@ -166,6 +166,66 @@ body {
       var(--xinergy-charcoal) 100%
     );
   }
+}
+
+/* Banda del gráfico CTA — difuminado arriba (blanco) y abajo (crema) */
+.hero-chart-band {
+  position: relative;
+  overflow: hidden;
+  background: var(--xinergy-cream);
+}
+
+.hero-chart-band::before,
+.hero-chart-band::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-chart-band::before {
+  top: 0;
+  height: clamp(2.75rem, 22%, 5rem);
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    color-mix(in srgb, #ffffff 55%, transparent) 55%,
+    transparent 100%
+  );
+}
+
+.hero-chart-band::after {
+  bottom: 0;
+  height: clamp(3.25rem, 30%, 6.5rem);
+  background: linear-gradient(
+    to top,
+    var(--xinergy-cream) 0%,
+    color-mix(in srgb, var(--xinergy-cream) 60%, transparent) 50%,
+    transparent 100%
+  );
+}
+
+.hero-chart-band .hero-motion {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.35) 8%,
+    #000 18%,
+    #000 72%,
+    rgba(0, 0, 0, 0.4) 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.35) 8%,
+    #000 18%,
+    #000 72%,
+    rgba(0, 0, 0, 0.4) 88%,
+    transparent 100%
+  );
 }
 
 /* Fondo estático en móvil / tablet (sin canvas animado) */
