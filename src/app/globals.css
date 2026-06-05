@@ -470,18 +470,72 @@ body {
   gap: 0.75rem;
 }
 
+/* Hero móvil — jerarquía tipo Inverto: titular grande, acento naranja, CTAs pill */
+@media (max-width: 1023px) {
+  .hero-mobile {
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+
+  .hero-mobile-eyebrow {
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    line-height: 1.4;
+    color: color-mix(in srgb, white 68%, transparent);
+  }
+
+  .hero-mobile-accent {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--xinergy-orange);
+  }
+
+  .hero-mobile-body {
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: color-mix(in srgb, white 80%, transparent);
+  }
+
+  .hero-mobile-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 20rem;
+  }
+
+  .hero-mobile-actions .btn-primary {
+    min-height: 3.25rem;
+    border-radius: 9999px;
+    box-shadow: 0 10px 28px -10px color-mix(in srgb, var(--xinergy-orange) 55%, transparent);
+  }
+
+  .hero-mobile-actions .btn-light {
+    min-height: 3rem;
+    border-radius: 9999px;
+    border-color: color-mix(in srgb, white 40%, transparent);
+  }
+
+  .hero-below-header.hero-mobile {
+    margin-top: 0;
+    padding-top: calc(
+      var(--site-header-height, 3.5rem) + env(safe-area-inset-top, 0px) + 1rem
+    );
+  }
+}
+
 @media (max-width: 639px) {
-  .mobile-actions {
+  .mobile-actions:not(.hero-mobile-actions) {
     flex-flow: row wrap;
     gap: 0.5rem;
   }
 
-  .mobile-actions > .btn-primary,
-  .mobile-actions > .btn-secondary,
-  .mobile-actions > .btn-light,
-  .mobile-actions > a.btn-primary,
-  .mobile-actions > a.btn-secondary,
-  .mobile-actions > a.btn-light {
+  .mobile-actions:not(.hero-mobile-actions) > .btn-primary,
+  .mobile-actions:not(.hero-mobile-actions) > .btn-secondary,
+  .mobile-actions:not(.hero-mobile-actions) > .btn-light,
+  .mobile-actions:not(.hero-mobile-actions) > a.btn-primary,
+  .mobile-actions:not(.hero-mobile-actions) > a.btn-secondary,
+  .mobile-actions:not(.hero-mobile-actions) > a.btn-light {
     flex: 1 1 calc(50% - 0.25rem);
     width: auto;
     min-width: 0;
@@ -495,7 +549,7 @@ body {
 }
 
 @media (min-width: 640px) {
-  .mobile-actions {
+  .mobile-actions:not(.hero-mobile-actions) {
     flex-flow: row wrap;
     gap: 1rem;
   }
@@ -579,7 +633,7 @@ body {
 
 /* Móvil/tablet: hero empieza claramente bajo el header fijo */
 @media (max-width: 1023px) {
-  .hero-below-header {
+  .hero-below-header:not(.hero-mobile) {
     margin-top: 0;
     padding-top: calc(
       var(--site-header-height, 3.5rem) + env(safe-area-inset-top, 0px) + 3.5rem

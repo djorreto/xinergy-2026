@@ -16,26 +16,37 @@ export default function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="gradient-hero hero-below-header relative overflow-hidden text-white lg:hero-offset lg:min-h-[100dvh]">
+      <section className="gradient-hero hero-below-header hero-mobile relative overflow-hidden text-white lg:hero-offset lg:min-h-[100dvh]">
         <HeroMotion />
         <Container className="relative z-10 pb-10 pt-0 sm:pb-12 sm:pt-12 lg:flex lg:min-h-[100dvh] lg:flex-col lg:justify-between lg:pb-16 lg:pt-24 xl:pt-28">
-          <div>
+          <div className="hero-mobile-content max-lg:flex max-lg:min-h-[calc(100svh-var(--site-header-height,3.5rem)-env(safe-area-inset-top,0px)-2rem)] max-lg:flex-col max-lg:justify-center">
             <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl">
-              <p className="label-editorial-light max-lg:text-[0.6875rem] max-lg:leading-relaxed max-lg:tracking-[0.1em] max-lg:text-white/75">
+              <p className="hero-mobile-eyebrow label-editorial-light max-lg:before:hidden">
                 {brand.heroEyebrow}
               </p>
               <h1
-                className={`${ttForsDisplay.className} brand-phrase mt-3 text-[2rem] leading-[1.08] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
+                className={`${ttForsDisplay.className} brand-phrase mt-4 max-lg:mt-5 max-lg:text-[2.75rem] max-lg:leading-[1.04] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:mt-3 lg:text-[3.5rem] xl:text-[4rem]`}
               >
                 {brand.claim}
               </h1>
-              <p className="mt-3 max-w-lg text-base leading-relaxed text-white/72 sm:mt-5 sm:text-base lg:text-lg">
+              <p
+                className={`${ttForsDisplay.className} hero-mobile-accent mt-3 max-lg:text-lg max-lg:leading-snug lg:hidden`}
+              >
+                {brand.tagline}
+              </p>
+              <p className="hero-mobile-body mt-4 max-w-md text-base leading-relaxed text-white/72 sm:mt-5 sm:text-base lg:mt-3 lg:max-w-lg lg:text-lg">
                 {brand.promise}
               </p>
             </div>
-            <div className="mobile-actions mt-5 sm:mt-10">
-              <Button href="/contacto">{brand.cta}</Button>
-              <Button href="/diagnostico" variant="light">
+            <div className="mobile-actions hero-mobile-actions mt-8 max-lg:mt-10 sm:mt-10">
+              <Button href="/contacto" className="max-lg:w-full max-lg:rounded-full max-lg:py-4 max-lg:text-[0.6875rem] max-lg:tracking-[0.1em]">
+                {brand.cta}
+              </Button>
+              <Button
+                href="/diagnostico"
+                variant="light"
+                className="max-lg:w-full max-lg:rounded-full max-lg:py-4 max-lg:text-[0.6875rem] max-lg:tracking-[0.1em]"
+              >
                 Calcular eficiencias
               </Button>
             </div>
@@ -48,7 +59,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats + frase — móvil */}
-      <section className="border-t border-white/8 bg-[#2a2433] py-8 text-white lg:hidden">
+      <section className="border-t border-white/8 bg-[#2a2433] py-10 text-white max-lg:py-12 lg:hidden">
         <Container>
           <p className="label-editorial-light mb-4 !text-[0.625rem] !tracking-[0.18em]">
             Impacto medible

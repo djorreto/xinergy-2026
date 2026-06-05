@@ -35,7 +35,7 @@ export function SiteHeader() {
       className={`site-header fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         useSolidHeader
           ? "border-b border-xinergy-charcoal/8 bg-white/95 shadow-sm backdrop-blur-md"
-          : "border-b border-white/10 bg-xinergy-charcoal/40 backdrop-blur-sm"
+          : "border-b border-white/10 bg-xinergy-charcoal/95 backdrop-blur-md max-lg:shadow-sm lg:bg-xinergy-charcoal/40"
       }`}
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
