@@ -214,8 +214,8 @@ body {
   height: clamp(1.5rem, 12%, 3rem);
   background: linear-gradient(
     to top,
-    var(--xinergy-charcoal) 0%,
-    color-mix(in srgb, var(--xinergy-charcoal) 35%, transparent) 100%
+    var(--xinergy-cream) 0%,
+    color-mix(in srgb, var(--xinergy-cream) 35%, transparent) 100%
   );
 }
 

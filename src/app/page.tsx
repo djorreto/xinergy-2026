@@ -152,15 +152,14 @@ export default function HomePage() {
       </section>
 
       {/* CTA — gráfico difuminado + cierre oscuro */}
-      <section className="overflow-hidden text-white">
-        <div className="hero-chart-band relative h-44 bg-xinergy-charcoal sm:h-52 lg:h-80">
+      <section className="overflow-hidden">
+        <div className="hero-chart-band relative h-44 bg-xinergy-charcoal text-white sm:h-52 lg:h-80">
           <HeroMotion variant="band" />
           <HeroChartCaption />
         </div>
-        <div className="gradient-hero border-t border-white/10 section-pad-lg">
+        <div className="bg-xinergy-cream section-pad-lg text-xinergy-charcoal">
           <Container className="text-center">
             <SectionHeader
-              dark
               align="center"
               eyebrow={home.cta.eyebrow}
               title={home.cta.title}
@@ -169,13 +168,13 @@ export default function HomePage() {
               titleClassName="text-2xl sm:text-3xl lg:text-5xl"
             />
             <p
-              className={`${ttForsDisplay.className} brand-phrase mx-auto mt-4 text-lg text-xinergy-beige sm:mt-5 sm:text-xl lg:text-2xl`}
+              className={`${ttForsDisplay.className} brand-phrase mx-auto mt-4 text-lg text-xinergy-orange sm:mt-5 sm:text-xl lg:text-2xl`}
             >
               {brand.claim}
             </p>
             <div className="mobile-actions mt-8 justify-center sm:mt-10">
               <Button href="/contacto">{brand.cta}</Button>
-              <Button href="/diagnostico" variant="light">
+              <Button href="/diagnostico" variant="secondary">
                 Calcular eficiencias
               </Button>
             </div>
