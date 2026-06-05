@@ -279,7 +279,7 @@ export const heroStats = [
     label: "Países con presencia · oficinas en Chile, Brasil, México y Colombia",
   },
   { value: "50+", label: "Más de 50 clientes" },
-  { value: "120", label: "Personas en la organización" },
+  { value: "+120", label: "Personas en la organización" },
 ] as const;
 
 export const stats = [
