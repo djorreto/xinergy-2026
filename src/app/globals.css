@@ -255,7 +255,7 @@ body {
 }
 
 @media (max-width: 1023px) {
-  .hero-motion__canvas {
+  .hero-motion:not(.hero-motion--band) .hero-motion__canvas {
     display: none !important;
   }
 

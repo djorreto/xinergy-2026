@@ -13,7 +13,7 @@ export function StrongPhraseBlock({
       className={`max-w-3xl border-l-2 border-dotted border-xinergy-orange pl-4 sm:pl-8 ${className}`}
     >
       <p
-        className={`${ttForsDisplay.className} brand-phrase leading-snug break-words ${
+        className={`${ttForsDisplay.className} brand-phrase text-white leading-snug break-words ${
           compact
             ? "text-lg sm:text-3xl lg:text-xl lg:leading-snug xl:text-2xl"
             : "text-lg sm:text-3xl lg:text-[2.125rem] lg:leading-snug"

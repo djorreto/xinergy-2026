@@ -29,6 +29,21 @@ function useHeroAnimationEnabled() {
   return enabled;
 }
 
+/** Banda CTA: animación en móvil también (solo esta sección) */
+function useBandAnimationEnabled() {
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const motionMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setEnabled(!motionMq.matches);
+    update();
+    motionMq.addEventListener("change", update);
+    return () => motionMq.removeEventListener("change", update);
+  }, []);
+
+  return enabled;
+}
+
 function HeroMotionStatic() {
   return (
     <div className="hero-motion hero-motion--static" aria-hidden>
@@ -431,7 +446,7 @@ function drawNarrativeLabel(
 ) {
   if (!label || opacity < 0.08) return;
 
-  const fontSize = compact ? 6.5 : 8;
+  const fontSize = compact ? 7 : 8;
   ctx.font = `600 ${fontSize}px Helvetica, Arial, sans-serif`;
   const color =
     kind === "bad"
@@ -464,20 +479,39 @@ function chartLayout(w: number, h: number, variant: MotionVariant = "hero") {
   if (variant === "band") {
     const amp = h * (mobile ? 0.072 : 0.062);
     const outcomeAmp = h * (mobile ? 0.068 : 0.058);
-    const topPad = h * (mobile ? 0.2 : 0.17);
-    const bottomPad = h * (mobile ? 0.3 : 0.26);
+
+    if (mobile) {
+      const topPad = h * 0.14;
+      const bottomPad = h * 0.2;
+      const usable = h - topPad - bottomPad;
+      const chartAmp = usable * 0.34;
+      const chartOutcomeAmp = usable * 0.32;
+      const mid = topPad + usable * 0.5;
+      return {
+        left: w * 0.03,
+        right: w * 0.99,
+        baseY: mid + chartAmp * 0.5,
+        amp: chartAmp,
+        outcomeAmp: chartOutcomeAmp,
+        outcomeBaseY: mid - chartOutcomeAmp * 0.62,
+        compact: true,
+      };
+    }
+
+    const topPad = h * 0.17;
+    const bottomPad = h * 0.26;
     const usable = h - topPad - bottomPad;
     const mid = topPad + usable * 0.5;
     const baseY = mid + amp * 0.95;
     const outcomeBaseY = mid - outcomeAmp * 0.78;
     return {
-      left: w * (mobile ? 0.07 : 0.08),
+      left: w * 0.08,
       right: w * 0.94,
       baseY,
       amp,
       outcomeAmp,
       outcomeBaseY,
-      compact: mobile,
+      compact: false,
     };
   }
 
@@ -531,8 +565,8 @@ function drawSpendChartChrome(
   const spendBot = baseY + amp * 0.12;
   const outcomeTop = outcomeBaseY - outcomeAmp;
   const fade = 0.55 + xinergyRecoveryAt(reveal) * 0.45;
-  const labelSize = compact ? 7 : isBand ? 10 : 9;
-  const smallSize = compact ? 6 : isBand ? 8 : 8;
+  const labelSize = compact && isBand ? 9 : compact ? 7 : isBand ? 10 : 9;
+  const smallSize = compact && isBand ? 7.5 : compact ? 6 : isBand ? 8 : 8;
 
   const zoneGrad = ctx.createRadialGradient(
     (left + right) * 0.5,
@@ -894,7 +928,7 @@ function HeroMotionCanvas({ variant = "hero" }: { variant?: MotionVariant }) {
   }, []);
 
   return (
-    <div className="hero-motion" aria-hidden>
+    <div className={`hero-motion${variant === "band" ? " hero-motion--band" : ""}`} aria-hidden>
       <canvas ref={canvasRef} className="hero-motion__canvas" />
       <div className="hero-motion__grain" />
     </div>
@@ -904,12 +938,9 @@ function HeroMotionCanvas({ variant = "hero" }: { variant?: MotionVariant }) {
 export function HeroMotion({ variant = "hero" }: { variant?: MotionVariant }) {
   if (variant === "band") {
     return (
-      <>
-        <div className="hero-motion hero-motion--static absolute inset-0 lg:hidden" aria-hidden />
-        <div className="absolute inset-0 hidden lg:block">
-          <HeroMotionDesktop variant="band" />
-        </div>
-      </>
+      <div className="absolute inset-0">
+        <HeroMotionBand />
+      </div>
     );
   }
 
@@ -921,6 +952,14 @@ export function HeroMotion({ variant = "hero" }: { variant?: MotionVariant }) {
       </div>
     </>
   );
+}
+
+function HeroMotionBand() {
+  const animationEnabled = useBandAnimationEnabled();
+  if (!animationEnabled) {
+    return <div className="hero-motion hero-motion--static absolute inset-0" aria-hidden />;
+  }
+  return <HeroMotionCanvas variant="band" />;
 }
 
 function HeroMotionDesktop({ variant = "hero" }: { variant?: MotionVariant }) {

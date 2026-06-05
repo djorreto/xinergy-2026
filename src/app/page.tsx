@@ -48,7 +48,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats + frase — móvil */}
-      <section className="border-t border-white/8 bg-[#2a2433] py-8 lg:hidden">
+      <section className="border-t border-white/8 bg-[#2a2433] py-8 text-white lg:hidden">
         <Container>
           <p className="label-editorial-light mb-4 !text-[0.625rem] !tracking-[0.18em]">
             Impacto medible
@@ -153,7 +153,7 @@ export default function HomePage() {
                 </h3>
               </Container>
               <div
-                className="h-40 sm:h-48 lg:h-52 xl:h-56"
+                className="h-44 sm:h-48 lg:h-52 xl:h-56"
                 aria-hidden
               />
               <Container className="pb-8 lg:pb-10">
