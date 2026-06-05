@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { heroStats } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
 
@@ -6,44 +9,93 @@ type HeroStatsGridProps = {
   className?: string;
 };
 
+const popDelays = ["stat-pop-delay-0", "stat-pop-delay-1", "stat-pop-delay-2", "stat-pop-delay-3", "stat-pop-delay-4"];
+
+function StatCard({
+  value,
+  label,
+  detail,
+  index,
+  size,
+}: {
+  value: string;
+  label: string;
+  detail?: string;
+  index: number;
+  size: "band" | "hero";
+}) {
+  const [open, setOpen] = useState(false);
+
+  const numberClass =
+    size === "hero"
+      ? "text-4xl sm:text-5xl lg:text-5xl xl:text-6xl"
+      : "text-4xl sm:text-[2.75rem]";
+
+  return (
+    <div
+      role="listitem"
+      tabIndex={0}
+      aria-expanded={open}
+      className={`stat-card group ${open ? "is-active" : ""}`}
+      onClick={() => setOpen((v) => !v)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setOpen((v) => !v);
+        }
+      }}
+    >
+      <p
+        className={`${ttForsDisplay.className} brand-phrase stat-pop leading-none text-xinergy-orange ${popDelays[index]} ${numberClass}`}
+      >
+        {value}
+      </p>
+      <p className="mt-2 text-[0.8125rem] leading-snug text-white/62 sm:mt-2.5 lg:text-xs xl:text-[0.8125rem]">
+        {label}
+      </p>
+      {detail && <p className="stat-card-detail text-xs leading-relaxed text-white/48">{detail}</p>}
+    </div>
+  );
+}
+
 export function HeroStatsGrid({ variant = "hero", className = "" }: HeroStatsGridProps) {
   const isBand = variant === "band";
 
   if (isBand) {
     return (
-      <dl className={`divide-y divide-white/10 ${className}`}>
-        {heroStats.map((s) => (
-          <div key={s.label} className="flex items-start gap-4 py-3.5 first:pt-0 last:pb-0">
-            <dt
-              className={`${ttForsDisplay.className} brand-phrase w-[3.25rem] shrink-0 text-xl leading-none text-xinergy-orange`}
-            >
-              {s.value}
-            </dt>
-            <dd className="min-w-0 pt-0.5 text-[0.8125rem] leading-snug text-white/58">
-              {s.label}
-            </dd>
-          </div>
+      <div
+        className={`grid grid-cols-2 gap-3 sm:gap-4 [&>div:last-child:nth-child(odd)]:col-span-2 ${className}`}
+        role="list"
+      >
+        {heroStats.map((s, i) => (
+          <StatCard
+            key={s.label}
+            value={s.value}
+            label={s.label}
+            detail={s.detail}
+            index={i}
+            size="band"
+          />
         ))}
-      </dl>
+      </div>
     );
   }
 
   return (
-    <dl
-      className={`mt-10 hidden w-full border-t border-white/10 pt-6 lg:mt-8 lg:grid lg:grid-cols-5 lg:gap-4 lg:pt-6 xl:gap-6 ${className}`}
+    <div
+      className={`mt-10 hidden w-full border-t border-white/10 pt-6 lg:mt-8 lg:grid lg:grid-cols-5 lg:gap-3 lg:pt-6 xl:gap-4 ${className}`}
+      role="list"
     >
-      {heroStats.map((s) => (
-        <div key={s.label} className="min-w-0">
-          <dt
-            className={`${ttForsDisplay.className} brand-phrase text-2xl leading-none text-xinergy-orange lg:text-3xl xl:text-4xl`}
-          >
-            {s.value}
-          </dt>
-          <dd className="mt-1.5 max-w-[10rem] text-xs leading-snug text-white/55 lg:mt-2 lg:max-w-none lg:pr-1 lg:text-[0.6875rem] xl:text-xs">
-            {s.label}
-          </dd>
-        </div>
+      {heroStats.map((s, i) => (
+        <StatCard
+          key={s.label}
+          value={s.value}
+          label={s.label}
+          detail={s.detail}
+          index={i}
+          size="hero"
+        />
       ))}
-    </dl>
+    </div>
   );
 }

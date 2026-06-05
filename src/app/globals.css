@@ -436,6 +436,151 @@ body {
   }
 }
 
+/* —— Stat pop + interactive cards —— */
+@keyframes stat-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.84) translateY(10px);
+  }
+  65% {
+    transform: scale(1.05) translateY(-3px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.stat-pop {
+  display: inline-block;
+  text-shadow: 0 10px 28px color-mix(in srgb, var(--xinergy-orange) 42%, transparent);
+  animation: stat-pop-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.stat-pop-delay-0 { animation-delay: 0s; }
+.stat-pop-delay-1 { animation-delay: 0.07s; }
+.stat-pop-delay-2 { animation-delay: 0.14s; }
+.stat-pop-delay-3 { animation-delay: 0.21s; }
+.stat-pop-delay-4 { animation-delay: 0.28s; }
+
+.stat-card {
+  border-radius: 0.875rem;
+  border: 1px solid color-mix(in srgb, white 12%, transparent);
+  background: color-mix(in srgb, white 5%, transparent);
+  padding: 1rem 1.125rem;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.3s ease,
+    background 0.3s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease;
+}
+
+.stat-card-detail {
+  max-height: 0;
+  margin-top: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-height 0.35s ease,
+    opacity 0.3s ease,
+    margin-top 0.35s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stat-card:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--xinergy-orange) 38%, transparent);
+    background: color-mix(in srgb, white 9%, transparent);
+    box-shadow: 0 18px 42px -22px rgba(0, 0, 0, 0.45);
+  }
+
+  .stat-card:hover .stat-card-detail,
+  .case-carousel-card:hover .case-carousel-extra {
+    max-height: 6rem;
+    margin-top: 0.5rem;
+    opacity: 1;
+  }
+
+  .case-carousel-card:hover .case-carousel-teaser {
+    -webkit-line-clamp: unset;
+    display: block;
+  }
+}
+
+.stat-card.is-active {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--xinergy-orange) 38%, transparent);
+  background: color-mix(in srgb, white 9%, transparent);
+  box-shadow: 0 14px 36px -20px rgba(0, 0, 0, 0.4);
+}
+
+.stat-card.is-active .stat-card-detail {
+  max-height: 6rem;
+  margin-top: 0.5rem;
+  opacity: 1;
+}
+
+.case-carousel-card {
+  cursor: pointer;
+  transition:
+    border-color 0.3s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease;
+}
+
+.case-carousel-teaser {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.case-carousel-extra {
+  max-height: 0;
+  margin-top: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-height 0.35s ease,
+    opacity 0.3s ease,
+    margin-top 0.35s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .case-carousel-card:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--xinergy-orange) 32%, transparent);
+    box-shadow: 0 22px 48px -24px color-mix(in srgb, var(--xinergy-charcoal) 22%, transparent);
+  }
+}
+
+.case-carousel-card.is-open {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--xinergy-orange) 32%, transparent);
+  box-shadow: 0 18px 40px -22px color-mix(in srgb, var(--xinergy-charcoal) 20%, transparent);
+}
+
+.case-carousel-card.is-open .case-carousel-teaser {
+  -webkit-line-clamp: unset;
+  display: block;
+}
+
+.case-carousel-card.is-open .case-carousel-extra {
+  max-height: 7rem;
+  margin-top: 0.5rem;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-pop {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* —— Section rhythm —— */
 .section-pad {
   padding-top: 3rem;

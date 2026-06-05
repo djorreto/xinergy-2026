@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cases } from "@/lib/content";
-import { CaseStudyCard } from "@/components/shared/CaseStudyCard";
+import { CaseStudyCarouselCard } from "@/components/shared/CaseStudyCarouselCard";
 
 const INTERVAL_MS = 10_000;
 const SWIPE_THRESHOLD = 48;
@@ -88,7 +88,7 @@ function CarouselTrack({ slides, columns, className }: CarouselTrackProps) {
           {slides.map((group, slideIndex) => (
             <div key={slideIndex} className={slideGridClass}>
               {group.map((caseStudy) => (
-                <CaseStudyCard key={caseStudy.slug} caseStudy={caseStudy} variant="carousel" />
+                <CaseStudyCarouselCard key={caseStudy.slug} caseStudy={caseStudy} />
               ))}
             </div>
           ))}

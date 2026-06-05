@@ -271,14 +271,31 @@ export const homeFaqs: FAQ[] = [
 ];
 
 export const heroStats = [
-  { value: "3B+", label: "Gasto bajo gestión en programas recientes" },
-  { value: "15+", label: "Años generando eficiencias para clientes" },
+  {
+    value: "3B+",
+    label: "Gasto bajo gestión en programas recientes",
+    detail: "Spend directo e indirecto en sourcing, BPO y transformación de abastecimiento en Latinoamérica.",
+  },
+  {
+    value: "15+",
+    label: "Años generando eficiencias para clientes",
+    detail: "Trayectoria regional ejecutando eficiencias con impacto verificable en P&L y caja.",
+  },
   {
     value: "6+",
     label: `Presentes en más de 6 países · entre ellos, oficinas en ${officesLabel}`,
+    detail: `Operación en ${presenceLabel} con equipos locales y proyectos multi-país.`,
   },
-  { value: "50+", label: "Más de 50 clientes" },
-  { value: "120+", label: "Personas en la organización" },
+  {
+    value: "50+",
+    label: "Más de 50 clientes",
+    detail: "Empresas líderes en retail, minería, seguros, financiero, energía y manufactura.",
+  },
+  {
+    value: "120+",
+    label: "Personas en la organización",
+    detail: "Consultores, especialistas de sourcing y equipos BPO dedicados a capturar valor en terreno.",
+  },
 ] as const;
 
 export const stats = [
