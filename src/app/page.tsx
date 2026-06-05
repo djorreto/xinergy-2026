@@ -158,7 +158,7 @@ export default function HomePage() {
           <div className="hero-chart-band relative">
             <HeroMotion variant="band" />
             <div className="relative z-10 flex flex-col">
-              <Container className="pt-8 lg:pt-10">
+              <Container className="hidden pt-8 lg:block lg:pt-10">
                 <h3 className="font-display max-w-2xl text-lg leading-snug sm:text-xl lg:text-2xl">
                   {home.chartBand.title}
                 </h3>
