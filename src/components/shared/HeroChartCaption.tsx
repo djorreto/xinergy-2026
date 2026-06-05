@@ -1,6 +1,6 @@
 import { brand } from "@/lib/content";
 
-/** Leyenda del gráfico narrativo — debajo del chart, en banda morada */
+/** Leyenda del gráfico narrativo — superpuesta al chart animado */
 export function HeroChartCaption({
   className = "",
   dark = false,

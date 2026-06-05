@@ -182,7 +182,7 @@ body {
   }
 }
 
-/* Bloque gráfico CTA — chart + copy en morado, transición al crema */
+/* Bloque gráfico CTA — chart animado + copy superpuesto, transición al crema */
 .hero-chart-block {
   position: relative;
   background: var(--xinergy-charcoal);

@@ -143,16 +143,16 @@ export default function HomePage() {
 
       {/* CTA — gráfico + cierre crema */}
       <section className="overflow-hidden">
-        <div className="hero-chart-block bg-xinergy-charcoal text-white">
-          <div className="hero-chart-band relative h-52 sm:h-64 lg:h-[20rem] xl:h-[22rem]">
+        <div className="hero-chart-block relative overflow-hidden text-white">
+          <div className="hero-chart-band relative h-[22rem] sm:h-[26rem] lg:h-[28rem] xl:h-[30rem]">
             <HeroMotion variant="band" />
+            <Container className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-xinergy-charcoal/95 via-xinergy-charcoal/55 to-transparent pb-8 pt-20 sm:pb-10 sm:pt-24 lg:pb-12 lg:pt-28">
+              <h3 className="font-display max-w-2xl text-lg leading-snug sm:text-xl lg:text-2xl">
+                {home.chartBand.title}
+              </h3>
+              <HeroChartCaption dark className="mt-3 sm:mt-4" />
+            </Container>
           </div>
-          <Container className="relative z-10 pb-10 pt-1 sm:pb-12 lg:pb-14">
-            <h3 className="font-display max-w-2xl text-lg leading-snug sm:text-xl lg:text-2xl">
-              {home.chartBand.title}
-            </h3>
-            <HeroChartCaption dark className="mt-4" />
-          </Container>
         </div>
         <div className="bg-xinergy-cream section-pad-lg text-xinergy-charcoal">
           <Container>
