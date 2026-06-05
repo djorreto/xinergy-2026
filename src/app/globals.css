@@ -210,6 +210,11 @@ body {
   background: transparent;
 }
 
+.hero-chart-band .hero-motion {
+  position: absolute;
+  inset: 0;
+}
+
 /* Fondo estático en móvil / tablet (sin canvas animado) */
 .hero-motion--static {
   position: relative;

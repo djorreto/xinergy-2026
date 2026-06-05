@@ -462,14 +462,14 @@ function chartLayout(w: number, h: number, variant: MotionVariant = "hero") {
   const mobile = w < 640;
 
   if (variant === "band") {
-    const amp = h * (mobile ? 0.078 : 0.068);
-    const outcomeAmp = h * (mobile ? 0.074 : 0.064);
-    const topPad = h * (mobile ? 0.1 : 0.1);
-    const bottomPad = h * (mobile ? 0.42 : 0.4);
+    const amp = h * (mobile ? 0.072 : 0.062);
+    const outcomeAmp = h * (mobile ? 0.068 : 0.058);
+    const topPad = h * (mobile ? 0.2 : 0.17);
+    const bottomPad = h * (mobile ? 0.3 : 0.26);
     const usable = h - topPad - bottomPad;
-    const mid = topPad + usable * 0.48;
-    const baseY = mid + amp * 1.02;
-    const outcomeBaseY = mid - outcomeAmp * 0.82;
+    const mid = topPad + usable * 0.5;
+    const baseY = mid + amp * 0.95;
+    const outcomeBaseY = mid - outcomeAmp * 0.78;
     return {
       left: w * (mobile ? 0.07 : 0.08),
       right: w * 0.94,
