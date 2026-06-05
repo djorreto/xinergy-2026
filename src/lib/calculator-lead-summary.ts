@@ -3,6 +3,7 @@ import {
   formatUsd,
   industries,
   maturityQuestions,
+  toolQuestions,
   spendBands,
   type CalculatorInput,
 } from "@/lib/calculator";
@@ -36,6 +37,13 @@ export function buildCalculatorLeadSummary(
     }),
     "",
     `Puntaje madurez: ${result.maturityScore}/20 · Nivel: ${result.maturityLevel}`,
+    "",
+    "═══ HERRAMIENTAS ═══",
+    ...toolQuestions.map((q, i) => {
+      const answer =
+        i === 0 ? input.hasNegotiationTool : input.hasStockPlanningTool;
+      return `${i + 6}. ${q.question}\n   Respuesta: ${answer ? "Sí" : "No"}`;
+    }),
     "",
     "═══ PASO 3 · RESULTADO ═══",
     `Correo: ${email}`,

@@ -7,6 +7,7 @@ import {
   industries,
   spendBands,
   maturityQuestions,
+  toolQuestions,
   calculateOpportunity,
   formatUsd,
   type CalculatorInput,
@@ -23,6 +24,8 @@ export function EfficiencyCalculator() {
   const [industry, setIndustry] = useState<IndustryId>("retail");
   const [spendBand, setSpendBand] = useState<SpendBand>("25-100");
   const [answers, setAnswers] = useState<number[]>(defaultAnswers);
+  const [hasNegotiationTool, setHasNegotiationTool] = useState<boolean | null>(null);
+  const [hasStockPlanningTool, setHasStockPlanningTool] = useState<boolean | null>(null);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -33,9 +36,13 @@ export function EfficiencyCalculator() {
       industry,
       spendBand,
       maturityAnswers: answers,
+      hasNegotiationTool: hasNegotiationTool ?? false,
+      hasStockPlanningTool: hasStockPlanningTool ?? false,
     }),
-    [industry, spendBand, answers],
+    [industry, spendBand, answers, hasNegotiationTool, hasStockPlanningTool],
   );
+
+  const toolsAnswered = hasNegotiationTool !== null && hasStockPlanningTool !== null;
 
   const result = useMemo(
     () => (step === 2 && resultsUnlocked ? calculateOpportunity(input) : null),
@@ -141,8 +148,8 @@ export function EfficiencyCalculator() {
           {step === 1 && (
             <div className="space-y-10">
               <p className="text-sm leading-relaxed text-xinergy-slate">
-                Cinco preguntas para estimar madurez. No hay respuestas correctas — solo
-                diagnóstico.
+                Siete preguntas para estimar madurez y herramientas. No hay respuestas
+                correctas — solo diagnóstico.
               </p>
               {maturityQuestions.map((q, qi) => (
                 <fieldset key={q.id}>
@@ -171,6 +178,43 @@ export function EfficiencyCalculator() {
                   </div>
                 </fieldset>
               ))}
+
+              <div className="space-y-8 border-t border-xinergy-charcoal/8 pt-8">
+                <p className="label-editorial">Herramientas</p>
+                {toolQuestions.map((q, qi) => {
+                  const value =
+                    qi === 0 ? hasNegotiationTool : hasStockPlanningTool;
+                  const setValue =
+                    qi === 0 ? setHasNegotiationTool : setHasStockPlanningTool;
+
+                  return (
+                    <fieldset key={q.id}>
+                      <legend className="text-sm font-medium leading-snug text-xinergy-charcoal">
+                        {qi + 6}. {q.question}
+                      </legend>
+                      <div className="mt-4 grid grid-cols-2 gap-2">
+                        {[
+                          { label: "Sí", answer: true },
+                          { label: "No", answer: false },
+                        ].map(({ label, answer }) => (
+                          <button
+                            key={label}
+                            type="button"
+                            onClick={() => setValue(answer)}
+                            className={`h-11 rounded-sm border text-sm font-medium transition ${
+                              value === answer
+                                ? "border-xinergy-orange bg-xinergy-orange/10 text-xinergy-charcoal"
+                                : "border-xinergy-charcoal/12 text-xinergy-slate hover:border-xinergy-charcoal/25"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    </fieldset>
+                  );
+                })}
+              </div>
             </div>
           )}
 
@@ -286,7 +330,12 @@ export function EfficiencyCalculator() {
               </button>
             )}
             {step === 1 && (
-              <button type="button" onClick={() => setStep(2)} className="btn-primary w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => setStep(2)}
+                disabled={!toolsAnswered}
+                className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+              >
                 Ver mis eficiencias
               </button>
             )}

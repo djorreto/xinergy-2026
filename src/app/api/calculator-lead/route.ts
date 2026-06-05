@@ -14,7 +14,9 @@ function isCalculatorInput(value: unknown): value is CalculatorInput {
     typeof v.spendBand === "string" &&
     Array.isArray(v.maturityAnswers) &&
     v.maturityAnswers.length === 5 &&
-    v.maturityAnswers.every((a) => typeof a === "number")
+    v.maturityAnswers.every((a) => typeof a === "number") &&
+    typeof v.hasNegotiationTool === "boolean" &&
+    typeof v.hasStockPlanningTool === "boolean"
   );
 }
 

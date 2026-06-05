@@ -19,6 +19,8 @@ export interface CalculatorInput {
   industry: IndustryId;
   spendBand: SpendBand;
   maturityAnswers: number[]; // 1-4 each, 5 questions
+  hasNegotiationTool: boolean;
+  hasStockPlanningTool: boolean;
 }
 
 export interface CalculatorResult {
@@ -41,18 +43,27 @@ export interface CalculatorResult {
 export const industries: {
   id: IndustryId;
   label: string;
-  baseRate: number;
+  minRate: number;
+  upsideRate: number;
   addressableBoost: number;
 }[] = [
-  { id: "retail", label: "Retail & consumo", baseRate: 0.055, addressableBoost: 0.05 },
-  { id: "mineria", label: "Minería", baseRate: 0.058, addressableBoost: 0.04 },
-  { id: "seguros", label: "Seguros", baseRate: 0.065, addressableBoost: 0.04 },
-  { id: "financiero", label: "Servicios financieros", baseRate: 0.07, addressableBoost: 0.06 },
-  { id: "automotriz", label: "Automotriz", baseRate: 0.045, addressableBoost: 0.03 },
-  { id: "energia", label: "Energía & recursos", baseRate: 0.04, addressableBoost: 0.02 },
-  { id: "manufactura", label: "Manufactura", baseRate: 0.05, addressableBoost: 0.03 },
-  { id: "otro", label: "Otra industria", baseRate: 0.05, addressableBoost: 0.03 },
+  { id: "retail", label: "Retail & consumo", minRate: 0.055, upsideRate: 0.1, addressableBoost: 0.05 },
+  { id: "mineria", label: "Minería", minRate: 0.058, upsideRate: 0.095, addressableBoost: 0.04 },
+  { id: "seguros", label: "Seguros", minRate: 0.062, upsideRate: 0.098, addressableBoost: 0.04 },
+  { id: "financiero", label: "Servicios financieros", minRate: 0.065, upsideRate: 0.115, addressableBoost: 0.06 },
+  { id: "automotriz", label: "Automotriz", minRate: 0.048, upsideRate: 0.085, addressableBoost: 0.03 },
+  { id: "energia", label: "Energía & recursos", minRate: 0.042, upsideRate: 0.078, addressableBoost: 0.02 },
+  { id: "manufactura", label: "Manufactura", minRate: 0.052, upsideRate: 0.088, addressableBoost: 0.03 },
+  { id: "otro", label: "Otra industria", minRate: 0.05, upsideRate: 0.09, addressableBoost: 0.03 },
 ];
+
+const spendRateModifiers: Record<SpendBand, number> = {
+  "5-25": 0.012,
+  "25-100": 0.008,
+  "100-500": 0.004,
+  "500-2000": 0,
+  "2000+": -0.004,
+};
 
 export const spendBands: { id: SpendBand; label: string; midpointUsd: number }[] = [
   { id: "5-25", label: "USD 5 – 25 millones", midpointUsd: 15_000_000 },
@@ -95,6 +106,17 @@ export const maturityQuestions = [
   },
 ] as const;
 
+export const toolQuestions = [
+  {
+    id: "negotiationTool",
+    question: "¿Cuenta con una herramienta especializada para negociaciones y licitaciones?",
+  },
+  {
+    id: "stockPlanningTool",
+    question: "¿Cuenta con una herramienta para compras de stock planificadas?",
+  },
+] as const;
+
 const serviceMap: Record<string, string[]> = {
   visibility: ["Abastecimiento estratégico", "Procurement Transformation"],
   governance: ["Procurement Transformation", "BPO de Abastecimiento"],
@@ -102,9 +124,6 @@ const serviceMap: Record<string, string[]> = {
   digital: ["Cadena de suministro digital", "Automatización"],
   savings: ["Abastecimiento estratégico", "Procurement Transformation"],
 };
-
-/** Piso de tasa de ahorro sobre gasto addressable (rango prudente). */
-const MIN_SAVINGS_RATE = 0.119;
 
 function getMaturityLevel(score: number): CalculatorResult["maturityLevel"] {
   if (score <= 6) return "Inicial";
@@ -148,11 +167,15 @@ export function calculateOpportunity(input: CalculatorInput): CalculatorResult {
   const addressableSpendUsd = spend.midpointUsd * addressablePct;
 
   const maturityGap = 1 - maturityPct;
+  const spendModifier = spendRateModifiers[input.spendBand];
+  const toolModifier =
+    (input.hasNegotiationTool ? 0 : 0.004) + (input.hasStockPlanningTool ? 0 : 0.003);
 
-  const expectedRateRaw = industry.baseRate * (1 + maturityGap * 0.55);
-  const expectedRate = Math.max(expectedRateRaw, MIN_SAVINGS_RATE);
-  const rateConservative = Math.max(expectedRate * 0.65, MIN_SAVINGS_RATE);
-  const rateAggressive = Math.max(expectedRate * 1.35, rateConservative * 1.1);
+  const expectedRateRaw =
+    industry.minRate + maturityGap * industry.upsideRate + spendModifier + toolModifier;
+  const expectedRate = Math.max(expectedRateRaw, 0.035);
+  const rateConservative = Math.max(expectedRate * 0.72, 0.028);
+  const rateAggressive = expectedRate * 1.28;
 
   const savingsExpected = Math.round(addressableSpendUsd * expectedRate);
   const savingsConservative = Math.round(addressableSpendUsd * rateConservative);
