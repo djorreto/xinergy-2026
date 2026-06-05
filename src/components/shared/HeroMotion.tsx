@@ -462,13 +462,16 @@ function chartLayout(w: number, h: number, variant: MotionVariant = "hero") {
   const mobile = w < 640;
 
   if (variant === "band") {
-    const amp = h * (mobile ? 0.09 : 0.082);
-    const outcomeAmp = h * (mobile ? 0.088 : 0.08);
-    const mid = h * 0.46;
-    const baseY = mid + amp * 1.15;
-    const outcomeBaseY = mid - outcomeAmp * 0.95;
+    const amp = h * (mobile ? 0.078 : 0.07);
+    const outcomeAmp = h * (mobile ? 0.074 : 0.066);
+    const topPad = h * (mobile ? 0.14 : 0.16);
+    const bottomPad = h * (mobile ? 0.12 : 0.14);
+    const usable = h - topPad - bottomPad;
+    const mid = topPad + usable * 0.5;
+    const baseY = mid + amp * 1.02;
+    const outcomeBaseY = mid - outcomeAmp * 0.82;
     return {
-      left: w * 0.06,
+      left: w * (mobile ? 0.07 : 0.08),
       right: w * 0.94,
       baseY,
       amp,
@@ -521,14 +524,15 @@ function drawSpendChartChrome(
   outcomeAmp: number,
   reveal: number,
   compact = false,
+  isBand = false,
 ) {
-  const axisX = left - (compact ? 6 : 10);
+  const axisX = left - (compact ? 6 : isBand ? 14 : 10);
   const spendTop = baseY - amp;
   const spendBot = baseY + amp * 0.12;
   const outcomeTop = outcomeBaseY - outcomeAmp;
   const fade = 0.55 + xinergyRecoveryAt(reveal) * 0.45;
-  const labelSize = compact ? 7 : 9;
-  const smallSize = compact ? 6 : 8;
+  const labelSize = compact ? 7 : isBand ? 10 : 9;
+  const smallSize = compact ? 6 : isBand ? 8 : 8;
 
   const zoneGrad = ctx.createRadialGradient(
     (left + right) * 0.5,
@@ -567,21 +571,21 @@ function drawSpendChartChrome(
 
   ctx.font = `600 ${labelSize}px Helvetica, Arial, sans-serif`;
   ctx.fillStyle = `rgba(255, 255, 255, ${0.36 * fade})`;
-  ctx.fillText("GASTO", left - 4, spendTop - (compact ? 10 : 14));
+  ctx.fillText("GASTO", left - 4, spendTop - (compact ? 10 : isBand ? 16 : 14));
 
   if (reveal > 0.02) {
     const ebitdaLabelFade = smootherstep(0.02, 0.1, reveal);
     ctx.font = `600 ${labelSize}px Helvetica, Arial, sans-serif`;
     ctx.fillStyle = `rgba(140, 225, 170, ${0.5 * fade * ebitdaLabelFade})`;
-    ctx.fillText("EBITDA", left - 2, outcomeTop - (compact ? 8 : 12));
+    ctx.fillText("EBITDA", left - 2, outcomeTop - (compact ? 8 : isBand ? 14 : 12));
     ctx.fillStyle = `rgba(170, 210, 255, ${0.4 * fade * ebitdaLabelFade})`;
-    ctx.fillText("SLA", left + (compact ? 36 : 44), outcomeTop - (compact ? 8 : 12));
+    ctx.fillText("SLA", left + (compact ? 36 : isBand ? 48 : 44), outcomeTop - (compact ? 8 : isBand ? 14 : 12));
   }
 
   if (!compact) {
     ctx.font = `500 ${smallSize}px Helvetica, Arial, sans-serif`;
     ctx.fillStyle = `rgba(255, 255, 255, ${0.18 * fade})`;
-    ctx.fillText("tiempo →", right - 52, spendBot + 18);
+    ctx.fillText("tiempo →", right - 52, spendBot + (isBand ? 20 : 18));
   }
 }
 
@@ -638,7 +642,7 @@ function drawSpendStory(
   ctx.save();
   ctx.globalAlpha = chartFade;
 
-  drawSpendChartChrome(ctx, left, right, baseY, amp, outcomeBaseY, outcomeAmp, reveal, compact);
+  drawSpendChartChrome(ctx, left, right, baseY, amp, outcomeBaseY, outcomeAmp, reveal, compact, variant === "band");
 
   const ebitdaVisible = trimToReveal(ebitdaCoords, reveal);
   const slaVisible = trimToReveal(slaCoords, reveal);

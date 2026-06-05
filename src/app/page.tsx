@@ -139,7 +139,7 @@ export default function HomePage() {
 
       {/* CTA — gráfico + cierre crema */}
       <section className="overflow-hidden">
-        <div className="hero-chart-band relative h-48 sm:h-56 lg:h-[17.5rem]">
+        <div className="hero-chart-band relative h-52 sm:h-64 lg:h-[22rem] xl:h-[24rem]">
           <HeroMotion variant="band" />
         </div>
         <div className="bg-xinergy-cream section-pad-lg text-xinergy-charcoal">
