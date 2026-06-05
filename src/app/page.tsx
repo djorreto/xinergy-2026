@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { TrustLogosSection } from "@/components/shared/TrustLogosSection";
 import { HeroMotion } from "@/components/shared/HeroMotion";
+import { HeroChartCaption } from "@/components/shared/HeroChartCaption";
 import { HeroStatsGrid } from "@/components/shared/HeroStatsGrid";
 import { MessagingFramework } from "@/components/shared/MessagingFramework";
 import { CareersSection } from "@/components/shared/CareersSection";
@@ -156,6 +157,7 @@ export default function HomePage() {
       <section className="overflow-hidden text-white">
         <div className="relative h-44 overflow-hidden bg-xinergy-charcoal sm:h-52 lg:h-80">
           <HeroMotion variant="band" />
+          <HeroChartCaption />
         </div>
         <div className="gradient-hero border-t border-white/10 section-pad-lg">
           <Container className="text-center">
