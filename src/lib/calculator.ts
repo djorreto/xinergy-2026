@@ -9,6 +9,7 @@ export type IndustryId =
   | "otro";
 
 export type SpendBand =
+  | "0-5"
   | "5-25"
   | "25-100"
   | "100-500"
@@ -58,6 +59,7 @@ export const industries: {
 ];
 
 const spendRateModifiers: Record<SpendBand, number> = {
+  "0-5": 0.016,
   "5-25": 0.012,
   "25-100": 0.008,
   "100-500": 0.004,
@@ -66,6 +68,7 @@ const spendRateModifiers: Record<SpendBand, number> = {
 };
 
 export const spendBands: { id: SpendBand; label: string; midpointUsd: number }[] = [
+  { id: "0-5", label: "Menos de USD 5 millones", midpointUsd: 2_500_000 },
   { id: "5-25", label: "USD 5 – 25 millones", midpointUsd: 15_000_000 },
   { id: "25-100", label: "USD 25 – 100 millones", midpointUsd: 60_000_000 },
   { id: "100-500", label: "USD 100 – 500 millones", midpointUsd: 250_000_000 },
