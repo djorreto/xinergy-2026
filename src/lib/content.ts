@@ -5,7 +5,7 @@ export const brand = {
   strongPhrase: {
     lead: "Expertos en generación de eficiencias",
     highlight: "con impacto real,",
-    body: "compartimos riesgos, medimos y acompañamos a nuestros clientes.",
+    body: "compartimos riesgos, medimos resultados y acompañamos a nuestros clientes.",
   },
   promise:
     "Implementamos y ejecutamos eficiencias que se ven en ahorros, EBITDA y caja. Compartimos riesgos, medimos y acompañamos.",
