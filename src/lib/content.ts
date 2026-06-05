@@ -88,7 +88,7 @@ export const capabilities = [
     href: "/servicios/abastecimiento-estrategico",
   },
   {
-    title: "BPO / Externalización Compras",
+    title: "Business process outsourcing (BPO) / Externalización Compras",
     description:
       "Operamos compras y contratos con SLAs, trazabilidad y mejora continua.",
     href: "/servicios/bpo-abastecimiento",
@@ -102,7 +102,7 @@ export const capabilities = [
   {
     title: "Implementación de Eficiencias",
     description:
-      "VRO, change management e implementación en terreno hasta capturar valor en P&L y caja.",
+      "Value Realization Office (VRO), change management e implementación en terreno hasta capturar valor en P&L y caja.",
     href: "/servicios/implementacion-eficiencias",
   },
 ] as const;

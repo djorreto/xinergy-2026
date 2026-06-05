@@ -102,17 +102,17 @@ export default function HomePage() {
               <Link
                 key={cap.title}
                 href={cap.href}
-                className="card-premium card-hover group block p-6"
+                className="card-premium card-hover group block p-6 sm:p-7"
               >
                 <span
                   className={`${ttForsDisplay.className} brand-phrase text-2xl text-xinergy-orange lg:text-3xl`}
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="mt-4 text-sm font-semibold leading-snug text-xinergy-charcoal group-hover:text-xinergy-orange">
+                <h3 className="mt-4 text-base font-semibold leading-snug text-xinergy-charcoal group-hover:text-xinergy-orange sm:text-lg">
                   {cap.title}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-xinergy-slate">
+                <p className="mt-3 text-base leading-relaxed text-xinergy-slate">
                   {cap.description}
                 </p>
               </Link>

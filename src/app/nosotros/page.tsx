@@ -4,7 +4,6 @@ import { PageHero } from "@/components/shared/PageHero";
 import { CTABand } from "@/components/shared/CTABand";
 import { Container } from "@/components/ui/Container";
 import { MessagingFramework } from "@/components/shared/MessagingFramework";
-import { LogoMarqueeStrip } from "@/components/shared/LogoMarqueeStrip";
 import {
   stats,
   brand,
@@ -14,7 +13,6 @@ import {
   cultureValues,
   teamOffsite,
 } from "@/lib/content";
-import { partnerLogos } from "@/lib/partners";
 import { ttForsDisplay } from "@/lib/fonts";
 
 export const metadata: Metadata = {
@@ -168,12 +166,8 @@ export default function NosotrosPage() {
           <h2 className="text-2xl font-bold text-xinergy-charcoal">Carbono neutral</h2>
           <p className="mt-4 max-w-2xl text-xinergy-slate">
             Certificación internacional que comprueba nuestro compromiso con
-            emisiones neto cero. Exigimos el mismo estándar a partners y proveedores
-            en programas de eficiencia sostenible.
+            emisiones neto cero en nuestra operación y en programas de eficiencia sostenible.
           </p>
-          <div className="mt-10 rounded-2xl border border-xinergy-charcoal/8 bg-xinergy-ivory py-8 [--logo-fade:var(--xinergy-ivory)]">
-            <LogoMarqueeStrip logos={partnerLogos} duration={115} />
-          </div>
         </Container>
       </section>
       <CTABand />
