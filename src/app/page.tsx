@@ -71,11 +71,18 @@ export default function HomePage() {
       {/* Casos — prueba social */}
       <section className="section-pad bg-xinergy-ivory">
         <Container>
-          <p className="label-editorial">Casos</p>
+          <p className="label-editorial">{home.cases.label}</p>
           <h2 className="font-display mt-3 max-w-lg text-3xl text-xinergy-charcoal lg:text-4xl">
             {home.cases.title}
           </h2>
-          <p className="mt-3 max-w-md text-sm text-xinergy-slate">{home.cases.intro}</p>
+          <p
+            className={`${ttForsDisplay.className} brand-phrase mt-2 text-lg text-xinergy-orange sm:text-xl`}
+          >
+            {home.cases.subtitle}
+          </p>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-xinergy-slate sm:text-base">
+            {home.cases.intro}
+          </p>
           <div className="mt-10">
             <CaseStudiesCarousel />
           </div>

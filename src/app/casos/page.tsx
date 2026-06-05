@@ -14,7 +14,7 @@ export default function CasosPage() {
     <>
       <PageHero
         dark
-        eyebrow="Casos"
+        eyebrow="Casos de éxito"
         title="Resultados que hablan"
         description="Desafío, enfoque y resultados — sin presentaciones vacías. Pídanos más detalle sobre cualquier caso."
       />

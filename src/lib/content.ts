@@ -164,8 +164,11 @@ export const home = {
     intro: "Presencia en 6 países, con oficinas en Chile, Brasil, México y Colombia.",
   },
   cases: {
-    title: "Resultados que hablan",
-    intro: "Casos reales en retail, seguros, automotriz y más.",
+    label: "Casos de éxito",
+    title: "Casos de éxito",
+    subtitle: "Resultados que hablan",
+    intro:
+      "Desafío, enfoque y resultados verificables en retail, seguros, automotriz y más.",
   },
   insights: {
     title: "Ideas y tendencias",
