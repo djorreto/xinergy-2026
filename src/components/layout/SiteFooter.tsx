@@ -1,18 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
-import { brand, nav, presenceLabel, officesLabel } from "@/lib/content";
+import { brand, nav, presenceLabel, officesLabel, careersNav } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
-import { CareersFooterLink } from "@/components/shared/CareersFooterLink";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
     <footer className="border-t border-xinergy-charcoal/10 bg-xinergy-charcoal text-white">
-      {/* Móvil: copyright + carreras */}
+      {/* Móvil: copyright */}
       <div className="px-5 py-6 lg:hidden">
-        <CareersFooterLink />
-        <p className="mt-5 text-center text-[11px] text-white/35">
+        <p className="text-center text-[11px] text-white/35">
           © {year} {brand.name}
         </p>
       </div>
@@ -52,6 +50,14 @@ export function SiteFooter() {
               ))}
               <li>
                 <Link
+                  href={careersNav.href}
+                  className="text-sm text-white/60 hover:text-xinergy-orange"
+                >
+                  {careersNav.label}
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/diagnostico"
                   className="text-sm font-medium text-xinergy-orange hover:underline"
                 >
@@ -85,8 +91,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="mt-12 border-t border-white/10 pt-8">
-          <CareersFooterLink />
-          <p className="mt-6 text-xs tracking-wide text-white/40">{presenceLabel}</p>
+          <p className="text-xs tracking-wide text-white/40">{presenceLabel}</p>
           <p className="mt-2 text-xs text-white/30">
             Oficinas en {officesLabel}
           </p>

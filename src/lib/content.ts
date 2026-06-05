@@ -867,6 +867,23 @@ export const teamOffsite = {
   imageAlt: "Equipo Xinergy en la base de las Torres del Paine, offsite 2024",
 } as const;
 
+export const careersPage = {
+  title: "Trabaja con nosotros",
+  eyebrow: "Carreras",
+  lead: "En Xinergy siempre estamos buscando al mejor talento.",
+  socialIntro:
+    "Revisa nuestras redes sociales o LinkedIn para conocer la cultura del equipo y las oportunidades abiertas.",
+  linkedInLabel: "LinkedIn de Xinergy",
+  emailIntro: "También puedes dejarnos tus datos y CV en",
+  emailOutro:
+    "y nuestro equipo de RRHH se pondrá en contacto contigo por cualquier oportunidad.",
+} as const;
+
+export const careersNav = {
+  label: "Trabaja con nosotros",
+  href: "/trabaja-con-nosotros",
+} as const;
+
 export const nav = [
   { label: "Nosotros", href: "/nosotros" },
   { label: "Casos", href: "/casos" },
