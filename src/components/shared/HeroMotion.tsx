@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 
 const ANIMATION_MIN_WIDTH = 1024;
 
+type MotionVariant = "hero" | "band";
+
 function useHeroAnimationEnabled() {
   const [enabled, setEnabled] = useState(false);
 
@@ -455,9 +457,25 @@ function drawNarrativeLabel(
   ctx.fillText(label, x - w / 2, y);
 }
 
-function chartLayout(w: number, h: number) {
+function chartLayout(w: number, h: number, variant: MotionVariant = "hero") {
   const wide = w >= 900;
   const mobile = w < 640;
+
+  if (variant === "band") {
+    const amp = h * (mobile ? 0.11 : 0.1);
+    const outcomeAmp = h * (mobile ? 0.1 : 0.095);
+    const baseY = h * 0.72;
+    const outcomeBaseY = h * 0.28;
+    return {
+      left: w * 0.06,
+      right: w * 0.94,
+      baseY,
+      amp,
+      outcomeAmp,
+      outcomeBaseY,
+      compact: mobile,
+    };
+  }
 
   if (mobile) {
     const zoneTop = h * 0.52;
@@ -573,8 +591,9 @@ function drawSpendStory(
   h: number,
   elapsed: number,
   reducedMotion: boolean,
+  variant: MotionVariant = "hero",
 ) {
-  const { left, right, baseY, amp, outcomeAmp, outcomeBaseY, compact } = chartLayout(w, h);
+  const { left, right, baseY, amp, outcomeAmp, outcomeBaseY, compact } = chartLayout(w, h, variant);
   const points = CHART_POINTS;
   const { reveal, chartFade } = drawTimeline(elapsed, reducedMotion);
 
@@ -766,11 +785,13 @@ function drawSpendStory(
   ctx.restore();
 }
 
-function HeroMotionCanvas() {
+function HeroMotionCanvas({ variant = "hero" }: { variant?: MotionVariant }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const blobsRef = useRef(BLOBS.map((b) => ({ ...b })));
   const rafRef = useRef<number>(0);
   const startRef = useRef<number | null>(null);
+  const variantRef = useRef(variant);
+  variantRef.current = variant;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -854,7 +875,7 @@ function HeroMotionCanvas() {
         ctx.stroke();
       }
 
-      drawSpendStory(ctx, w, h, elapsed, reducedMotion);
+      drawSpendStory(ctx, w, h, elapsed, reducedMotion, variantRef.current);
 
       rafRef.current = requestAnimationFrame(draw);
     };
@@ -875,19 +896,30 @@ function HeroMotionCanvas() {
   );
 }
 
-export function HeroMotion() {
+export function HeroMotion({ variant = "hero" }: { variant?: MotionVariant }) {
+  if (variant === "band") {
+    return (
+      <>
+        <div className="hero-motion hero-motion--static absolute inset-0 lg:hidden" aria-hidden />
+        <div className="absolute inset-0 hidden lg:block">
+          <HeroMotionDesktop variant="band" />
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <div className="hero-motion hero-motion--static lg:hidden" aria-hidden />
       <div className="hidden lg:contents">
-        <HeroMotionDesktop />
+        <HeroMotionDesktop variant="hero" />
       </div>
     </>
   );
 }
 
-function HeroMotionDesktop() {
+function HeroMotionDesktop({ variant = "hero" }: { variant?: MotionVariant }) {
   const animationEnabled = useHeroAnimationEnabled();
   if (!animationEnabled) return <HeroMotionStatic />;
-  return <HeroMotionCanvas />;
+  return <HeroMotionCanvas variant={variant} />;
 }

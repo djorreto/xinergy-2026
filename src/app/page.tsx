@@ -152,23 +152,30 @@ export default function HomePage() {
 
       <CareersSection />
 
-      {/* CTA */}
-      {/* CTA — sin animación en móvil (HeroMotion ya lo maneja) */}
-      <section className="gradient-hero relative min-h-0 overflow-hidden section-pad-lg text-white">
-        <HeroMotion />
-        <Container className="relative z-10 text-center">
-          <h2 className="font-display mx-auto max-w-xl text-2xl sm:text-3xl lg:text-5xl">{home.cta.title}</h2>
-          <p className={`${ttForsDisplay.className} brand-phrase mx-auto mt-4 text-lg text-xinergy-beige sm:mt-5 sm:text-xl lg:text-2xl`}>
-            {brand.claim}
-          </p>
-          <p className="mx-auto mt-4 max-w-md text-sm text-white/55 sm:mt-5">{home.cta.intro}</p>
-          <div className="mobile-actions mt-8 justify-center sm:mt-10">
-            <Button href="/contacto">{brand.cta}</Button>
-            <Button href="/diagnostico" variant="light">
-              Calcular mi oportunidad
-            </Button>
-          </div>
-        </Container>
+      {/* CTA — gráfico arriba, copy abajo (sin superposición) */}
+      <section className="overflow-hidden text-white">
+        <div className="relative h-44 overflow-hidden bg-xinergy-charcoal sm:h-52 lg:h-80">
+          <HeroMotion variant="band" />
+        </div>
+        <div className="gradient-hero border-t border-white/10 section-pad-lg">
+          <Container className="text-center">
+            <h2 className="font-display mx-auto max-w-xl text-2xl sm:text-3xl lg:text-5xl">
+              {home.cta.title}
+            </h2>
+            <p
+              className={`${ttForsDisplay.className} brand-phrase mx-auto mt-4 text-lg text-xinergy-beige sm:mt-5 sm:text-xl lg:text-2xl`}
+            >
+              {brand.claim}
+            </p>
+            <p className="mx-auto mt-4 max-w-md text-sm text-white/55 sm:mt-5">{home.cta.intro}</p>
+            <div className="mobile-actions mt-8 justify-center sm:mt-10">
+              <Button href="/contacto">{brand.cta}</Button>
+              <Button href="/diagnostico" variant="light">
+                Calcular mi oportunidad
+              </Button>
+            </div>
+          </Container>
+        </div>
       </section>
     </>
   );
