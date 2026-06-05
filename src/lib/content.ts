@@ -181,7 +181,7 @@ export const home = {
   },
   cta: {
     eyebrow: "Siguiente paso",
-    title: "¿Conversamos?",
+    title: "¿Cuándo conversamos?",
     intro: "Diagnóstico de oportunidades sin costo en minutos. Sin compromiso.",
   },
   chartBand: {
