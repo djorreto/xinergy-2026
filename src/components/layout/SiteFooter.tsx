@@ -17,6 +17,32 @@ export function SiteFooter() {
           height={24}
           className="h-7 w-auto object-contain object-left"
         />
+        <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/45">{brand.promise}</p>
+        <div className="mt-8">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-white/35">
+            Navegación
+          </p>
+          <ul className="mt-3 space-y-2">
+            {nav.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="text-sm text-white/60 hover:text-xinergy-orange"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                href="/diagnostico"
+                className="text-sm font-medium text-xinergy-orange hover:underline"
+              >
+                Diagnóstico de eficiencia
+              </Link>
+            </li>
+          </ul>
+        </div>
         <div className="mt-8">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-white/35">
             Contacto

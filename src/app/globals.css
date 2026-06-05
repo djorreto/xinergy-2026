@@ -430,8 +430,10 @@ body {
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
 }
 
-.card-hover:hover {
-  transform: translateY(-3px);
+@media (hover: hover) and (pointer: fine) {
+  .card-hover:hover {
+    transform: translateY(-3px);
+  }
 }
 
 /* —— Section rhythm —— */
@@ -525,17 +527,17 @@ body {
 }
 
 @media (max-width: 639px) {
-  .mobile-actions:not(.hero-mobile-actions) {
+  .mobile-actions:not(.hero-mobile-actions):not(.cta-band-actions):not(.calculator-actions) {
     flex-flow: row wrap;
     gap: 0.5rem;
   }
 
-  .mobile-actions:not(.hero-mobile-actions) > .btn-primary,
-  .mobile-actions:not(.hero-mobile-actions) > .btn-secondary,
-  .mobile-actions:not(.hero-mobile-actions) > .btn-light,
-  .mobile-actions:not(.hero-mobile-actions) > a.btn-primary,
-  .mobile-actions:not(.hero-mobile-actions) > a.btn-secondary,
-  .mobile-actions:not(.hero-mobile-actions) > a.btn-light {
+  .mobile-actions:not(.hero-mobile-actions):not(.cta-band-actions):not(.calculator-actions) > .btn-primary,
+  .mobile-actions:not(.hero-mobile-actions):not(.cta-band-actions):not(.calculator-actions) > .btn-secondary,
+  .mobile-actions:not(.hero-mobile-actions):not(.cta-band-actions):not(.calculator-actions) > .btn-light,
+  .mobile-actions:not(.hero-mobile-actions):not(.cta-band-actions):not(.calculator-actions) > a.btn-primary,
+  .mobile-actions:not(.hero-mobile-actions):not(.cta-band-actions):not(.calculator-actions) > a.btn-secondary,
+  .mobile-actions:not(.hero-mobile-actions):not(.cta-band-actions):not(.calculator-actions) > a.btn-light {
     flex: 1 1 calc(50% - 0.25rem);
     width: auto;
     min-width: 0;
@@ -545,6 +547,29 @@ body {
     letter-spacing: 0.05em;
     line-height: 1.2;
     text-align: center;
+  }
+}
+
+@media (max-width: 1023px) {
+  .cta-band-actions,
+  .calculator-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .cta-band-actions .btn-primary,
+  .cta-band-actions .btn-secondary,
+  .cta-band-actions .btn-light,
+  .calculator-actions .btn-primary,
+  .calculator-actions .btn-secondary,
+  .calculator-actions .btn-light {
+    width: 100%;
+    min-height: 2.75rem;
+    justify-content: center;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
   }
 }
 
@@ -574,6 +599,13 @@ body {
 .logo-marquee::after {
   right: 0;
   background: linear-gradient(270deg, var(--logo-fade, white) 0%, transparent 100%);
+}
+
+@media (max-width: 639px) {
+  .logo-marquee::before,
+  .logo-marquee::after {
+    width: 2.5rem;
+  }
 }
 
 /* Carrusel sin hueco: dos grupos iguales, desplazamiento exacto -50% */

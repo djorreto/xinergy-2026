@@ -164,7 +164,7 @@ export default function HomePage() {
                 </h3>
               </Container>
               <div
-                className="h-44 sm:h-48 lg:h-52 xl:h-56"
+                className="h-48 sm:h-48 lg:h-52 xl:h-56"
                 aria-hidden
               />
               <Container className="pb-8 lg:pb-10">
@@ -190,7 +190,7 @@ export default function HomePage() {
               <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-xinergy-slate sm:text-base">
                 {home.cta.intro}
               </p>
-              <div className="mobile-actions mt-8 justify-center sm:mt-10">
+              <div className="mobile-actions cta-band-actions mt-8 justify-center sm:mt-10">
                 <Button href="/contacto">{brand.cta}</Button>
                 <Button href="/diagnostico" variant="secondary">
                   Calcular eficiencias

@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cases } from "@/lib/content";
 import { CaseStudyCard } from "@/components/shared/CaseStudyCard";
 
 const INTERVAL_MS = 10_000;
+const SWIPE_THRESHOLD = 48;
 
 function chunkCases<T>(items: readonly T[], size: number): T[][] {
   const chunks: T[][] = [];
@@ -23,6 +24,7 @@ type CarouselTrackProps = {
 function CarouselTrack({ slides, columns, className }: CarouselTrackProps) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const touchStartX = useRef<number | null>(null);
 
   const goTo = useCallback(
     (target: number) => {
@@ -48,6 +50,23 @@ function CarouselTrack({ slides, columns, className }: CarouselTrackProps) {
         ? "grid w-full shrink-0 grid-cols-2 gap-4"
         : "grid w-full shrink-0 grid-cols-1 gap-4";
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0]?.clientX ?? null;
+    setPaused(true);
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const endX = e.changedTouches[0]?.clientX;
+    if (endX === undefined) return;
+    const delta = endX - touchStartX.current;
+    if (Math.abs(delta) >= SWIPE_THRESHOLD) {
+      goTo(index + (delta < 0 ? 1 : -1));
+    }
+    touchStartX.current = null;
+    setPaused(false);
+  };
+
   return (
     <div
       className={className}
@@ -56,7 +75,11 @@ function CarouselTrack({ slides, columns, className }: CarouselTrackProps) {
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      <div className="overflow-hidden">
+      <div
+        className="overflow-hidden touch-pan-y"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         <div
           className="flex transition-transform duration-700 ease-out motion-reduce:transition-none"
           style={{ transform: `translateX(-${index * 100}%)` }}
@@ -73,19 +96,19 @@ function CarouselTrack({ slides, columns, className }: CarouselTrackProps) {
       </div>
 
       {slides.length > 1 && (
-        <div className="mt-6 flex items-center justify-center gap-4">
+        <div className="mt-6 flex items-center justify-center gap-3 sm:gap-4">
           <button
             type="button"
             onClick={() => goTo(index - 1)}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-xinergy-charcoal/15 text-xinergy-charcoal transition hover:border-xinergy-orange hover:text-xinergy-orange"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-xinergy-charcoal/15 text-xinergy-charcoal transition hover:border-xinergy-orange hover:text-xinergy-orange"
             aria-label="Casos anteriores"
           >
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
 
-          <div className="flex items-center gap-2" role="tablist" aria-label="Casos de éxito">
+          <div className="flex items-center gap-1" role="tablist" aria-label="Casos de éxito">
             {slides.map((_, i) => (
               <button
                 key={i}
@@ -94,22 +117,26 @@ function CarouselTrack({ slides, columns, className }: CarouselTrackProps) {
                 aria-selected={i === index}
                 aria-label={`Grupo de casos ${i + 1}`}
                 onClick={() => goTo(i)}
-                className={`h-1.5 rounded-full transition-all ${
-                  i === index
-                    ? "w-5 bg-xinergy-orange"
-                    : "w-1.5 bg-xinergy-charcoal/20 hover:bg-xinergy-charcoal/35"
-                }`}
-              />
+                className="flex min-h-11 min-w-11 items-center justify-center p-3"
+              >
+                <span
+                  className={`block rounded-full transition-all ${
+                    i === index
+                      ? "h-2 w-5 bg-xinergy-orange"
+                      : "h-2 w-2 bg-xinergy-charcoal/20"
+                  }`}
+                />
+              </button>
             ))}
           </div>
 
           <button
             type="button"
             onClick={() => goTo(index + 1)}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-xinergy-charcoal/15 text-xinergy-charcoal transition hover:border-xinergy-orange hover:text-xinergy-orange"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-xinergy-charcoal/15 text-xinergy-charcoal transition hover:border-xinergy-orange hover:text-xinergy-orange"
             aria-label="Siguientes casos"
           >
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>

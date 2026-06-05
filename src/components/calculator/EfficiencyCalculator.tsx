@@ -169,9 +169,9 @@ export function EfficiencyCalculator() {
                   <legend className="text-sm font-medium leading-snug text-xinergy-charcoal">
                     {qi + 1}. {q.question}
                   </legend>
-                  <div className="mt-4 flex justify-between text-[10px] uppercase tracking-wider text-xinergy-slate/60">
-                    <span>{q.lowLabel}</span>
-                    <span>{q.highLabel}</span>
+                  <div className="mt-4 flex flex-col gap-1 text-[10px] uppercase tracking-wider text-xinergy-slate/60 sm:flex-row sm:justify-between sm:gap-4">
+                    <span className="sm:max-w-[42%]">{q.lowLabel}</span>
+                    <span className="sm:max-w-[42%] sm:text-right">{q.highLabel}</span>
                   </div>
                   <div className="mt-2 grid grid-cols-4 gap-2">
                     {[1, 2, 3, 4].map((v) => (
@@ -283,7 +283,7 @@ export function EfficiencyCalculator() {
             </div>
           )}
 
-          <div className="mobile-actions mt-8 border-t border-xinergy-charcoal/8 pt-6 sm:mt-10 sm:flex-wrap sm:pt-8">
+          <div className="calculator-actions mobile-actions mt-8 flex flex-col gap-3 border-t border-xinergy-charcoal/8 pt-6 sm:mt-10 sm:flex-row sm:flex-wrap sm:gap-4 sm:pt-8">
             {step > 0 && !(step === 2 && resultsUnlocked) && (
               <button
                 type="button"

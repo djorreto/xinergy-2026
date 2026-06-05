@@ -50,7 +50,7 @@ export function TrustLogosSection() {
                 role="tab"
                 aria-selected={active === tab.id}
                 onClick={() => setActive(tab.id)}
-                className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider transition ${
+                className={`rounded-full px-4 py-3 text-xs font-semibold uppercase tracking-wider transition max-lg:min-h-11 ${
                   active === tab.id
                     ? "bg-xinergy-charcoal text-white"
                     : "text-xinergy-slate hover:text-xinergy-charcoal"

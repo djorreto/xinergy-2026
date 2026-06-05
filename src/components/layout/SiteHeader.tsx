@@ -21,6 +21,15 @@ export function SiteHeader() {
   }, [pathname]);
 
   useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 48);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -88,8 +97,11 @@ export function SiteHeader() {
 
         <button
           type="button"
-          className={`lg:hidden ${useSolidHeader ? "text-xinergy-charcoal" : "text-white"}`}
+          className={`flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2.5 -mr-1 lg:hidden ${
+            useSolidHeader ? "text-xinergy-charcoal" : "text-white"
+          }`}
           onClick={() => setOpen(!open)}
+          aria-expanded={open}
           aria-label="Menú"
         >
           <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -103,7 +115,17 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <div className="border-t border-xinergy-charcoal/10 bg-white px-6 py-6 lg:hidden">
+        <div className="fixed inset-0 z-40 lg:hidden">
+          <button
+            type="button"
+            className="absolute inset-0 bg-xinergy-charcoal/55"
+            aria-label="Cerrar menú"
+            onClick={() => setOpen(false)}
+          />
+          <nav
+            className="absolute inset-x-0 bottom-0 top-[calc(var(--site-header-height,3.5rem)+env(safe-area-inset-top,0px))] overflow-y-auto overscroll-contain border-t border-xinergy-charcoal/10 bg-white px-6 py-6 shadow-xl"
+            aria-label="Navegación móvil"
+          >
           <ExpertiseNavMenu
             useSolidHeader
             variant="mobile"
@@ -116,7 +138,7 @@ export function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className={`block rounded py-2.5 text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-xinergy-orange ${
+              className={`block rounded py-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-xinergy-orange ${
                 isActive
                   ? "text-xinergy-charcoal ring-1 ring-xinergy-orange"
                   : "text-xinergy-charcoal"
@@ -127,14 +149,15 @@ export function SiteHeader() {
             </Link>
             );
           })}
-          <div className="mt-4 flex flex-col gap-3">
-            <Button href="/contacto" variant="primary">
+          <div className="mt-6 flex flex-col gap-3">
+            <Button href="/contacto" variant="primary" className="w-full justify-center">
               Contacto
             </Button>
-            <Button href="/diagnostico" variant="secondary">
+            <Button href="/diagnostico" variant="secondary" className="w-full justify-center">
               Calcular eficiencias
             </Button>
           </div>
+          </nav>
         </div>
       )}
     </header>

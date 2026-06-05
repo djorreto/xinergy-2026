@@ -446,7 +446,7 @@ function drawNarrativeLabel(
 ) {
   if (!label || opacity < 0.08) return;
 
-  const fontSize = compact ? 7 : 8;
+  const fontSize = compact ? 7.5 : 8;
   ctx.font = `600 ${fontSize}px Helvetica, Arial, sans-serif`;
   const color =
     kind === "bad"
@@ -565,8 +565,8 @@ function drawSpendChartChrome(
   const spendBot = baseY + amp * 0.12;
   const outcomeTop = outcomeBaseY - outcomeAmp;
   const fade = 0.55 + xinergyRecoveryAt(reveal) * 0.45;
-  const labelSize = compact && isBand ? 9 : compact ? 7 : isBand ? 10 : 9;
-  const smallSize = compact && isBand ? 7.5 : compact ? 6 : isBand ? 8 : 8;
+  const labelSize = compact && isBand ? 10 : compact ? 8 : isBand ? 10 : 9;
+  const smallSize = compact && isBand ? 8 : compact ? 7 : isBand ? 8 : 8;
 
   const zoneGrad = ctx.createRadialGradient(
     (left + right) * 0.5,

@@ -18,8 +18,9 @@ export default function IndustriasPage() {
         eyebrow="Industrias"
         title="Cada industria tiene sus propias palancas de eficiencia"
         description="Hablamos el idioma de su sector — con casos, métricas y equipos que conocen sus categorías críticas."
+        titleClassName="text-balance max-sm:text-[1.5rem] sm:text-3xl lg:text-5xl"
       />
-      <section className="py-20">
+      <section className="py-12 sm:py-20 lg:py-20">
         <Container>
           <div className="grid gap-8 md:grid-cols-2">
             {industries.map((ind) => (

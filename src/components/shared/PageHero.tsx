@@ -7,6 +7,7 @@ export function PageHero({
   description,
   dark = false,
   brandTitle = false,
+  titleClassName = "",
 }: {
   eyebrow?: string;
   title: string;
@@ -14,6 +15,7 @@ export function PageHero({
   dark?: boolean;
   /** Usa TT Fors Display (claim, titulares de marca) */
   brandTitle?: boolean;
+  titleClassName?: string;
 }) {
   return (
     <section
@@ -29,7 +31,7 @@ export function PageHero({
           <p className={dark ? "label-editorial-light" : "label-editorial"}>{eyebrow}</p>
         )}
         <h1
-          className={`${brandTitle ? ttForsDisplay.className : "font-display"} mt-3 max-w-3xl text-[1.75rem] leading-[1.12] tracking-tight sm:mt-4 sm:text-3xl lg:text-5xl ${dark ? "text-white" : "text-xinergy-charcoal"}`}
+          className={`${brandTitle ? ttForsDisplay.className : "font-display"} mt-3 max-w-3xl text-[1.75rem] leading-[1.12] tracking-tight text-balance sm:mt-4 sm:text-3xl lg:text-5xl ${dark ? "text-white" : "text-xinergy-charcoal"} ${titleClassName}`}
         >
           {title}
         </h1>
