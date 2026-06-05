@@ -37,7 +37,7 @@ export default function DiagnosticoPage() {
         </Container>
       </section>
 
-      <section className="relative -mt-8 pb-20 lg:-mt-12 lg:pb-28">
+      <section className="relative z-20 -mt-6 pb-20 sm:-mt-8 lg:-mt-12 lg:pb-28">
         <Container>
           <EfficiencyCalculator />
         </Container>
