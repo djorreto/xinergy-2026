@@ -3,12 +3,11 @@ export const brand = {
   tagline: "Ejecutamos eficiencias con impacto real",
   claim: "#Fitness for business",
   strongPhrase: {
-    lead: "Expertos en generación de eficiencias",
-    highlight: "con impacto real,",
-    body: "compartimos riesgos, medimos resultados y acompañamos a nuestros clientes.",
+    emphasis: "Compartimos riesgos",
+    body: "medimos, y somos tus socios en la implementación y ejecución.",
   },
   promise:
-    "Implementamos y ejecutamos eficiencias que se ven en ahorros, EBITDA y caja. Compartimos riesgos, medimos y acompañamos.",
+    "Implementamos y ejecutamos eficiencias que se ven en ahorros, EBITDA y caja. Compartimos riesgos, medimos, y somos tus socios en la implementación y ejecución.",
   heroSubline:
     "Ejecución · Strategic Sourcing · BPO · Cash management · Procuretech",
   cta: "Hablemos",

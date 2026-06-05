@@ -3,6 +3,7 @@ import Image from "next/image";
 import { PageHero } from "@/components/shared/PageHero";
 import { CTABand } from "@/components/shared/CTABand";
 import { Container } from "@/components/ui/Container";
+import { StrongPhraseBlock } from "@/components/shared/StrongPhraseBlock";
 import { MessagingFramework } from "@/components/shared/MessagingFramework";
 import {
   stats,
@@ -33,15 +34,7 @@ export default function NosotrosPage() {
       />
       <section className="section-pad bg-xinergy-charcoal text-white">
         <Container>
-          <blockquote className="max-w-3xl border-l-2 border-dotted border-xinergy-orange pl-6 sm:pl-8">
-            <p
-              className={`${ttForsDisplay.className} brand-phrase text-2xl leading-snug sm:text-3xl lg:text-4xl`}
-            >
-              <span className="font-bold">{brand.strongPhrase.lead}</span>{" "}
-              <span className="text-xinergy-orange">{brand.strongPhrase.highlight}</span>{" "}
-              <span className="font-normal text-white/90">{brand.strongPhrase.body}</span>
-            </p>
-          </blockquote>
+          <StrongPhraseBlock />
         </Container>
       </section>
 
