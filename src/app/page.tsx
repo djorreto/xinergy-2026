@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { InsightCard } from "@/components/shared/InsightCard";
 import { CaseStudiesCarousel } from "@/components/shared/CaseStudiesCarousel";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -7,7 +6,8 @@ import { TrustLogosSection } from "@/components/shared/TrustLogosSection";
 import { HeroMotion } from "@/components/shared/HeroMotion";
 import { HeroStatsGrid } from "@/components/shared/HeroStatsGrid";
 import { MessagingFramework } from "@/components/shared/MessagingFramework";
-import { brand, insights, home, capabilities } from "@/lib/content";
+import { CareersSection } from "@/components/shared/CareersSection";
+import { brand, home, capabilities } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
 
 export default function HomePage() {
@@ -150,56 +150,7 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* Insights — 2 piezas */}
-      <section className="section-pad border-y border-xinergy-charcoal/8 bg-xinergy-ivory">
-        <Container>
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="label-editorial">Insights</p>
-              <h2 className="font-display mt-3 text-3xl text-xinergy-charcoal">
-                {home.insights.title}
-              </h2>
-            </div>
-            <Link
-              href="/insights"
-              className="text-xs font-semibold uppercase tracking-wider text-xinergy-orange hover:underline"
-            >
-              Ver todos →
-            </Link>
-          </div>
-          <div className="mt-10 flex flex-col gap-4">
-            {insights.slice(0, 2).map((item) => (
-              <InsightCard key={item.slug} item={item} compact />
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* Trabaja con nosotros */}
-      <section className="section-pad bg-white">
-        <Container>
-          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-            <div>
-              <p className="label-editorial">Equipo</p>
-              <h2 className="font-display mt-3 text-3xl text-xinergy-charcoal lg:text-4xl">
-                {home.careers.title}
-              </h2>
-              <p className="mt-4 text-sm leading-relaxed text-xinergy-slate lg:text-base">
-                {home.careers.intro}
-              </p>
-            </div>
-            <div className="lg:text-right">
-              <p className="text-sm text-xinergy-slate">{home.careers.emailLabel}</p>
-              <a
-                href={`mailto:${brand.careersEmail}`}
-                className="mt-2 inline-block text-xl font-semibold text-xinergy-orange hover:underline sm:text-2xl"
-              >
-                {brand.careersEmail}
-              </a>
-            </div>
-          </div>
-        </Container>
-      </section>
+      <CareersSection />
 
       {/* CTA */}
       {/* CTA — sin animación en móvil (HeroMotion ya lo maneja) */}
