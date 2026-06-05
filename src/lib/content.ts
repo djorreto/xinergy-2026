@@ -74,13 +74,13 @@ export const capabilities = [
     title: "Eficiencias & Optimización de procesos",
     description:
       "Assessment, mejora de procesos y cultura operativa con foco en impacto medible.",
-    href: "/servicios/procurement-transformation",
+    href: "/servicios/eficiencias-optimizacion",
   },
   {
     title: "Transformación Abastecimiento",
     description:
       "Rediseño del modelo de abastecimiento: gobierno, operating model y habilitación del área.",
-    href: "/servicios/procurement-transformation",
+    href: "/servicios/transformacion-abastecimiento",
   },
   {
     title: "Strategic Sourcing",
@@ -306,7 +306,7 @@ export const pillars = [
     subtitle: "Procesos y cultura",
     description:
       "Assessment, mejora de procesos y preparación operativa con impacto medible.",
-    href: "/servicios/procurement-transformation",
+    href: "/servicios/eficiencias-optimizacion",
     services: [
       "Assessment del cliente",
       "Optimización de procesos",
@@ -320,7 +320,7 @@ export const pillars = [
     subtitle: "Modelo y gobierno",
     description:
       "Rediseñamos cómo opera el abastecimiento: gobierno, modelo operacional y roadmap.",
-    href: "/servicios/procurement-transformation",
+    href: "/servicios/transformacion-abastecimiento",
     services: [
       "Madurez y gobierno",
       "Operating model",
@@ -388,22 +388,42 @@ export const pillars = [
 
 export const services = [
   {
-    slug: "procurement-transformation",
-    title: "Procurement Transformation",
-    pillar: "Consulting",
-    headline: "El proceso de compras que tu negocio necesita para competir",
+    slug: "eficiencias-optimizacion",
+    title: "Eficiencias & Optimización de procesos",
+    pillar: "Diagnóstico & Procesos",
+    headline: "Identificamos y capturamos eficiencias donde hoy se pierde valor",
     intro:
-      "Rediseñamos en conjunto el procurement del futuro: madurez, gobierno, modelo operacional y stack tecnológico — con foco en EBIT, agilidad y ESG.",
+      "Partimos con un assessment riguroso del gasto y la operación, priorizamos quick wins y mejoramos procesos y cultura — con impacto medible en P&L antes de una transformación de fondo.",
     outcomes: [
-      "Diagnóstico de madurez con plan de acción priorizado",
-      "Gobierno y operating model alineados al C-suite",
-      "Eliminación de ineficiencias y adopción de mejores prácticas",
-      "Selección e implementación de plataformas world-class",
+      "Mapa de eficiencias por categoría y proceso con baseline audit-able",
+      "Quick wins priorizados con owners y plazos de captura",
+      "Procesos de compra más ágiles, con menos fricción y retrabajo",
+      "Capacidades del equipo alineadas a resultados, no solo a actividad",
     ],
     approach: [
-      "Evaluación de madurez y benchmarking",
-      "Diseño de estrategia y governance",
-      "Transformación del modelo operacional",
+      "Assessment de gasto, madurez y procesos críticos",
+      "Diseño de palancas y plan de captura por oleadas",
+      "Optimización de procesos y reglas operativas",
+      "Coaching y habilitación hasta ver impacto en P&L",
+    ],
+  },
+  {
+    slug: "transformacion-abastecimiento",
+    title: "Transformación de Abastecimiento",
+    pillar: "Transformación",
+    headline: "El modelo de abastecimiento que tu negocio necesita para competir",
+    intro:
+      "Rediseñamos gobierno, operating model y roadmap del área de compras — alineados al C-suite, con foco en EBIT, agilidad, resiliencia y ESG.",
+    outcomes: [
+      "Gobierno y comités con roles claros entre negocio y procurement",
+      "Operating model y organigrama alineados a categorías estratégicas",
+      "Roadmap de transformación con hitos, inversión y beneficios",
+      "Stack tecnológico y partners definidos para escalar el nuevo modelo",
+    ],
+    approach: [
+      "Evaluación de madurez y benchmarking vs. referentes",
+      "Diseño de estrategia, governance y modelo operacional",
+      "Plan de transformación por oleadas con change management",
       "Habilitación tecnológica con partners certificados",
     ],
   },
