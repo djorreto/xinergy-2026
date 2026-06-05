@@ -26,7 +26,7 @@ PARTNERS: list[tuple[str, str, bool]] = [
     ("DUX-", "dux.png", False),
     ("EY_logo_2019.svg-", "ey.png", False),
     ("GEP-", "gep.png", False),
-    ("Globant-", "globant.png", False),
+    ("Globant-", "globant.png", True),  # wordmark oscuro: no quitar negro; preferir globant.svg + sharp
     ("iconstruye-", "iconstruye.png", False),
     ("iNDEXA-", "indexa.png", False),
     ("jaggaer-", "jaggaer.png", False),
