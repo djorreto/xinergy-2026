@@ -1,5 +1,6 @@
 export type IndustryId =
   | "retail"
+  | "mineria"
   | "seguros"
   | "automotriz"
   | "energia"
@@ -44,6 +45,7 @@ export const industries: {
   addressableBoost: number;
 }[] = [
   { id: "retail", label: "Retail & consumo", baseRate: 0.055, addressableBoost: 0.05 },
+  { id: "mineria", label: "Minería", baseRate: 0.058, addressableBoost: 0.04 },
   { id: "seguros", label: "Seguros", baseRate: 0.065, addressableBoost: 0.04 },
   { id: "financiero", label: "Servicios financieros", baseRate: 0.07, addressableBoost: 0.06 },
   { id: "automotriz", label: "Automotriz", baseRate: 0.045, addressableBoost: 0.03 },
