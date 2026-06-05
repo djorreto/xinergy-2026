@@ -182,40 +182,32 @@ body {
   }
 }
 
-/* Banda del gráfico CTA — difuminado sutil arriba/abajo (no tapa el gráfico) */
+/* Banda del gráfico CTA — difuminado mínimo en bordes (máscara, sin tapar el chart) */
 .hero-chart-band {
   position: relative;
   overflow: hidden;
-  background: var(--xinergy-charcoal);
-}
-
-.hero-chart-band::before,
-.hero-chart-band::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.hero-chart-band::before {
-  top: 0;
-  height: clamp(1.25rem, 10%, 2.5rem);
   background: linear-gradient(
-    to bottom,
+    180deg,
     var(--xinergy-charcoal) 0%,
-    color-mix(in srgb, var(--xinergy-charcoal) 40%, transparent) 100%
+    var(--xinergy-charcoal) 84%,
+    var(--xinergy-cream) 100%
   );
 }
 
-.hero-chart-band::after {
-  bottom: 0;
-  height: clamp(1.5rem, 12%, 3rem);
-  background: linear-gradient(
-    to top,
-    var(--xinergy-cream) 0%,
-    color-mix(in srgb, var(--xinergy-cream) 35%, transparent) 100%
+.hero-chart-band .hero-motion {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 4%,
+    #000 91%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 4%,
+    #000 91%,
+    transparent 100%
   );
 }
 
