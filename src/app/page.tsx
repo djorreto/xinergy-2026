@@ -16,30 +16,34 @@ export default function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="gradient-hero hero-below-header relative overflow-hidden text-white lg:hero-offset">
+      <section className="gradient-hero hero-below-header relative overflow-hidden text-white lg:hero-offset lg:min-h-[100dvh]">
         <HeroMotion />
-        <Container className="relative z-10 pb-10 pt-0 sm:pb-12 sm:pt-12 lg:pb-12 lg:pt-24 xl:pt-28">
-          <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl">
-            <p className="label-editorial-light max-lg:text-[0.6875rem] max-lg:leading-relaxed max-lg:tracking-[0.1em] max-lg:text-white/75">
-              {brand.heroEyebrow}
-            </p>
-            <h1
-              className={`${ttForsDisplay.className} brand-phrase mt-3 text-[2rem] leading-[1.08] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
-            >
-              {brand.claim}
-            </h1>
-            <p className="mt-3 max-w-lg text-base leading-relaxed text-white/72 sm:mt-5 sm:text-base lg:text-lg">
-              {brand.promise}
-            </p>
+        <Container className="relative z-10 pb-10 pt-0 sm:pb-12 sm:pt-12 lg:flex lg:min-h-[100dvh] lg:flex-col lg:justify-between lg:pb-16 lg:pt-24 xl:pt-28">
+          <div>
+            <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl">
+              <p className="label-editorial-light max-lg:text-[0.6875rem] max-lg:leading-relaxed max-lg:tracking-[0.1em] max-lg:text-white/75">
+                {brand.heroEyebrow}
+              </p>
+              <h1
+                className={`${ttForsDisplay.className} brand-phrase mt-3 text-[2rem] leading-[1.08] sm:mt-5 sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
+              >
+                {brand.claim}
+              </h1>
+              <p className="mt-3 max-w-lg text-base leading-relaxed text-white/72 sm:mt-5 sm:text-base lg:text-lg">
+                {brand.promise}
+              </p>
+            </div>
+            <div className="mobile-actions mt-5 sm:mt-10">
+              <Button href="/contacto">{brand.cta}</Button>
+              <Button href="/diagnostico" variant="light">
+                Calcular eficiencias
+              </Button>
+            </div>
           </div>
-          <div className="mobile-actions mt-5 sm:mt-10">
-            <Button href="/contacto">{brand.cta}</Button>
-            <Button href="/diagnostico" variant="light">
-              Calcular eficiencias
-            </Button>
+          <div className="hidden lg:block">
+            <HeroStatsGrid variant="hero" />
+            <StrongPhraseBlock compact className="mt-6 xl:mt-7" />
           </div>
-          <HeroStatsGrid variant="hero" />
-          <StrongPhraseBlock compact className="mt-6 hidden lg:block xl:mt-7" />
         </Container>
       </section>
 
