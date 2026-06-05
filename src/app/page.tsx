@@ -149,13 +149,15 @@ export default function HomePage() {
               <SectionHeader
                 eyebrow={home.cta.eyebrow}
                 title={home.cta.title}
-                intro={home.cta.intro}
                 titleClassName="text-2xl sm:text-3xl lg:text-5xl"
               />
               <p
-                className={`${ttForsDisplay.className} brand-phrase mt-4 text-lg text-xinergy-orange sm:mt-5 sm:text-xl lg:text-2xl`}
+                className={`${ttForsDisplay.className} brand-phrase mt-2 text-lg text-xinergy-orange sm:text-xl lg:text-2xl`}
               >
                 {brand.claim}
+              </p>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-xinergy-slate sm:text-base">
+                {home.cta.intro}
               </p>
               <div className="mobile-actions mt-8 sm:mt-10">
                 <Button href="/contacto">{brand.cta}</Button>
