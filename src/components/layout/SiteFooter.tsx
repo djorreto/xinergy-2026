@@ -2,15 +2,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { brand, nav, presenceLabel, officesLabel } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
+import { CareersFooterLink } from "@/components/shared/CareersFooterLink";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
     <footer className="border-t border-xinergy-charcoal/10 bg-xinergy-charcoal text-white">
-      {/* Móvil: solo copyright — nav y contacto están en el menú */}
+      {/* Móvil: copyright + carreras */}
       <div className="px-5 py-6 lg:hidden">
-        <p className="text-center text-[11px] text-white/35">
+        <CareersFooterLink />
+        <p className="mt-5 text-center text-[11px] text-white/35">
           © {year} {brand.name}
         </p>
       </div>
@@ -83,7 +85,8 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="mt-12 border-t border-white/10 pt-8">
-          <p className="text-xs tracking-wide text-white/40">{presenceLabel}</p>
+          <CareersFooterLink />
+          <p className="mt-6 text-xs tracking-wide text-white/40">{presenceLabel}</p>
           <p className="mt-2 text-xs text-white/30">
             Oficinas en {officesLabel}
           </p>

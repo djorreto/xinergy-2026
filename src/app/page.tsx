@@ -7,7 +7,6 @@ import { HeroMotion } from "@/components/shared/HeroMotion";
 import { HeroChartCaption } from "@/components/shared/HeroChartCaption";
 import { HeroStatsGrid } from "@/components/shared/HeroStatsGrid";
 import { MessagingFramework } from "@/components/shared/MessagingFramework";
-import { CareersSection } from "@/components/shared/CareersSection";
 import { brand, home, capabilities } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
 
@@ -157,8 +156,6 @@ export default function HomePage() {
           </div>
         </Container>
       </section>
-
-      <CareersSection />
 
       {/* CTA — gráfico arriba, copy abajo (sin superposición) */}
       <section className="overflow-hidden text-white">
