@@ -30,7 +30,7 @@ export default function DiagnosticoPage() {
           <h1
             className={`${ttForsDisplay.className} mt-2 max-w-3xl text-[1.75rem] leading-[1.08] text-balance max-lg:mt-3 max-lg:text-[2.125rem] sm:mt-4 sm:text-4xl sm:leading-[1.1] lg:mt-4 lg:text-[3.25rem]`}
           >
-            ¿Cuánta eficiencia puede liberar su empresa?
+            ¿Cuánta eficiencia puede liberar tu empresa?
           </h1>
           <p className={`${ttForsDisplay.className} mt-2 hidden text-base text-white/80 sm:mt-3 sm:text-lg lg:block`}>
             {brand.tagline}

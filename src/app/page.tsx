@@ -140,7 +140,7 @@ export default function HomePage() {
             dark
             align="center"
             eyebrow="Diagnóstico de oportunidades sin costo"
-            title="¿Cuánta eficiencia puede liberar su empresa?"
+            title="¿Cuánta eficiencia puede liberar tu empresa?"
             intro="En unos minutos, con datos básicos de su gasto y operación."
           />
           <div className="mt-8 text-center">
