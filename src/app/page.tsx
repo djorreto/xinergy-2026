@@ -158,25 +158,25 @@ export default function HomePage() {
           <HeroChartCaption />
         </div>
         <div className="bg-xinergy-cream section-pad-lg text-xinergy-charcoal">
-          <Container className="text-center">
-            <SectionHeader
-              align="center"
-              eyebrow={home.cta.eyebrow}
-              title={home.cta.title}
-              intro={home.cta.intro}
-              className="max-w-xl"
-              titleClassName="text-2xl sm:text-3xl lg:text-5xl"
-            />
-            <p
-              className={`${ttForsDisplay.className} brand-phrase mx-auto mt-4 text-lg text-xinergy-orange sm:mt-5 sm:text-xl lg:text-2xl`}
-            >
-              {brand.claim}
-            </p>
-            <div className="mobile-actions mt-8 justify-center sm:mt-10">
-              <Button href="/contacto">{brand.cta}</Button>
-              <Button href="/diagnostico" variant="secondary">
-                Calcular eficiencias
-              </Button>
+          <Container>
+            <div className="mx-auto max-w-xl">
+              <SectionHeader
+                eyebrow={home.cta.eyebrow}
+                title={home.cta.title}
+                intro={home.cta.intro}
+                titleClassName="text-2xl sm:text-3xl lg:text-5xl"
+              />
+              <p
+                className={`${ttForsDisplay.className} brand-phrase mt-4 text-lg text-xinergy-orange sm:mt-5 sm:text-xl lg:text-2xl`}
+              >
+                {brand.claim}
+              </p>
+              <div className="mobile-actions mt-8 sm:mt-10">
+                <Button href="/contacto">{brand.cta}</Button>
+                <Button href="/diagnostico" variant="secondary">
+                  Calcular eficiencias
+                </Button>
+              </div>
             </div>
           </Container>
         </div>
