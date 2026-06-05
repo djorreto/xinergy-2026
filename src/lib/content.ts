@@ -153,6 +153,7 @@ export const home = {
   },
   framework: {
     title: "Cómo generamos impacto",
+    headline: "Por qué, qué y cómo lo hacemos",
     intro: "Un mismo estándar: eficiencias con resultados que se ven en el negocio.",
   },
   services: {
@@ -165,8 +166,7 @@ export const home = {
   },
   cases: {
     label: "Casos de éxito",
-    title: "Casos de éxito",
-    subtitle: "Resultados que hablan",
+    title: "Resultados que hablan",
     intro:
       "Desafío, enfoque y resultados verificables en retail, seguros, automotriz y más.",
   },
@@ -181,6 +181,7 @@ export const home = {
     emailLabel: "Escríbenos a",
   },
   cta: {
+    eyebrow: "Siguiente paso",
     title: "¿Conversamos?",
     intro: "Diagnóstico gratuito en minutos. Sin compromiso.",
   },

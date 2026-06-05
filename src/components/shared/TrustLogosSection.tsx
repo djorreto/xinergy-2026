@@ -4,6 +4,7 @@ import { useState } from "react";
 import { clientLogos } from "@/lib/clients";
 import { partnerLogos } from "@/lib/partners";
 import { LogoMarqueeStrip } from "@/components/shared/LogoMarqueeStrip";
+import { SectionHeader } from "@/components/shared/SectionHeader";
 
 const tabs = [
   {
@@ -29,11 +30,14 @@ export function TrustLogosSection() {
   return (
     <section className="border-y border-xinergy-charcoal/8 bg-xinergy-ivory py-12 lg:py-16 [--logo-fade:var(--xinergy-ivory)]">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="flex max-w-lg items-start gap-3 text-left text-sm leading-snug text-xinergy-charcoal sm:text-base">
-            <span className="mt-2.5 h-px w-6 flex-shrink-0 bg-xinergy-orange" aria-hidden />
-            {current.title}
-          </p>
+        <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <SectionHeader
+            key={current.id}
+            eyebrow={current.label}
+            title={current.title}
+            className="max-w-lg"
+            titleClassName="text-2xl sm:text-3xl lg:text-4xl"
+          />
           <div
             className="inline-flex rounded-full border border-xinergy-charcoal/10 bg-white p-1"
             role="tablist"

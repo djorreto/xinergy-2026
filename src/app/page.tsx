@@ -7,6 +7,7 @@ import { HeroMotion } from "@/components/shared/HeroMotion";
 import { HeroChartCaption } from "@/components/shared/HeroChartCaption";
 import { HeroStatsGrid } from "@/components/shared/HeroStatsGrid";
 import { MessagingFramework } from "@/components/shared/MessagingFramework";
+import { SectionHeader } from "@/components/shared/SectionHeader";
 import { brand, home, capabilities } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
 
@@ -70,18 +71,12 @@ export default function HomePage() {
       {/* Casos — prueba social */}
       <section className="section-pad bg-xinergy-ivory">
         <Container>
-          <p className="label-editorial">{home.cases.label}</p>
-          <h2 className="font-display mt-3 max-w-lg text-3xl text-xinergy-charcoal lg:text-4xl">
-            {home.cases.title}
-          </h2>
-          <p
-            className={`${ttForsDisplay.className} brand-phrase mt-2 text-lg text-xinergy-orange sm:text-xl`}
-          >
-            {home.cases.subtitle}
-          </p>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-xinergy-slate sm:text-base">
-            {home.cases.intro}
-          </p>
+          <SectionHeader
+            eyebrow={home.cases.label}
+            title={home.cases.title}
+            intro={home.cases.intro}
+            titleClassName="max-w-lg"
+          />
           <div className="mt-10">
             <CaseStudiesCarousel />
           </div>
@@ -99,15 +94,11 @@ export default function HomePage() {
       {/* Lo que hacemos + marco Por qué / Qué / Cómo */}
       <section id="expertise" className="section-pad bg-white scroll-mt-24">
         <Container>
-          <div className="max-w-2xl">
-            <p className="label-editorial">{home.capabilities.title}</p>
-            <h2 className="font-display mt-3 text-3xl text-xinergy-charcoal lg:text-4xl">
-              {home.capabilities.headline}
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-xinergy-slate">
-              {home.capabilities.intro}
-            </p>
-          </div>
+          <SectionHeader
+            eyebrow={home.capabilities.title}
+            title={home.capabilities.headline}
+            intro={home.capabilities.intro}
+          />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {capabilities.map((cap, i) => (
               <Link
@@ -135,23 +126,26 @@ export default function HomePage() {
       {/* Por qué / Qué / Cómo */}
       <section className="section-pad border-t border-xinergy-charcoal/8 bg-xinergy-ivory">
         <Container>
-          <p className="label-editorial">{home.framework.title}</p>
-          <p className="mt-2 max-w-xl text-sm text-xinergy-slate">{home.framework.intro}</p>
+          <SectionHeader
+            eyebrow={home.framework.title}
+            title={home.framework.headline}
+            intro={home.framework.intro}
+          />
           <MessagingFramework className="mt-10" />
         </Container>
       </section>
 
       {/* Diagnóstico */}
       <section className="section-pad-lg bg-xinergy-charcoal text-white">
-        <Container className="max-w-2xl text-center lg:mx-auto">
-          <p className="label-editorial-light">Diagnóstico gratuito</p>
-          <h2 className="font-display mt-4 text-3xl lg:text-4xl">
-            ¿Cuánta eficiencia puede liberar su empresa?
-          </h2>
-          <p className="mt-4 text-sm leading-relaxed text-white/65 lg:text-base">
-            En unos minutos, con datos básicos de su gasto y operación.
-          </p>
-          <div className="mt-8">
+        <Container className="lg:mx-auto">
+          <SectionHeader
+            dark
+            align="center"
+            eyebrow="Diagnóstico gratuito"
+            title="¿Cuánta eficiencia puede liberar su empresa?"
+            intro="En unos minutos, con datos básicos de su gasto y operación."
+          />
+          <div className="mt-8 text-center">
             <Button href="/diagnostico">Calcular eficiencias</Button>
           </div>
         </Container>
@@ -165,15 +159,20 @@ export default function HomePage() {
         </div>
         <div className="gradient-hero border-t border-white/10 section-pad-lg">
           <Container className="text-center">
-            <h2 className="font-display mx-auto max-w-xl text-2xl sm:text-3xl lg:text-5xl">
-              {home.cta.title}
-            </h2>
+            <SectionHeader
+              dark
+              align="center"
+              eyebrow={home.cta.eyebrow}
+              title={home.cta.title}
+              intro={home.cta.intro}
+              className="max-w-xl"
+              titleClassName="text-2xl sm:text-3xl lg:text-5xl"
+            />
             <p
               className={`${ttForsDisplay.className} brand-phrase mx-auto mt-4 text-lg text-xinergy-beige sm:mt-5 sm:text-xl lg:text-2xl`}
             >
               {brand.claim}
             </p>
-            <p className="mx-auto mt-4 max-w-md text-sm text-white/55 sm:mt-5">{home.cta.intro}</p>
             <div className="mobile-actions mt-8 justify-center sm:mt-10">
               <Button href="/contacto">{brand.cta}</Button>
               <Button href="/diagnostico" variant="light">
