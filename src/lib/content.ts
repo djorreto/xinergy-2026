@@ -279,7 +279,7 @@ export const heroStats = [
     label: `Presentes en más de 6 países · entre ellos, oficinas en ${officesLabel}`,
   },
   { value: "50+", label: "Más de 50 clientes" },
-  { value: "+120", label: "Personas en la organización" },
+  { value: "120+", label: "Personas en la organización" },
 ] as const;
 
 export const stats = [
