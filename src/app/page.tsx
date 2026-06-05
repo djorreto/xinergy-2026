@@ -151,15 +151,15 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* CTA — gráfico difuminado + cierre oscuro */}
+      {/* CTA — gráfico + cierre crema */}
       <section className="overflow-hidden">
-        <div className="hero-chart-band relative h-44 bg-xinergy-charcoal text-white sm:h-52 lg:h-80">
+        <div className="hero-chart-band relative h-48 sm:h-56 lg:h-[17.5rem]">
           <HeroMotion variant="band" />
-          <HeroChartCaption />
         </div>
         <div className="bg-xinergy-cream section-pad-lg text-xinergy-charcoal">
           <Container>
             <div className="mx-auto max-w-xl">
+              <HeroChartCaption className="mb-10 sm:mb-12" />
               <SectionHeader
                 eyebrow={home.cta.eyebrow}
                 title={home.cta.title}
