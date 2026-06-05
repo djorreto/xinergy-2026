@@ -48,25 +48,29 @@ export function SiteHeader() {
 
         <nav className="hidden items-center lg:flex">
           <ExpertiseNavMenu useSolidHeader={useSolidHeader} />
-          {nav.map((item) => (
+          {nav.map((item) => {
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + "/");
+            return (
             <Link
               key={item.href}
               href={item.href}
-              className={`px-3.5 py-2 text-[13px] font-medium tracking-wide transition ${
+              className={`rounded px-3.5 py-2 text-[13px] font-medium tracking-wide transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-xinergy-orange ${
                 useSolidHeader
                   ? "text-xinergy-slate hover:text-xinergy-charcoal"
                   : "text-white/80 hover:text-white"
               } ${
-                pathname === item.href || pathname.startsWith(item.href + "/")
+                isActive
                   ? useSolidHeader
-                    ? "!text-xinergy-charcoal"
-                    : "!text-white"
+                    ? "ring-1 ring-xinergy-orange !text-xinergy-charcoal"
+                    : "ring-1 ring-xinergy-orange !text-white"
                   : ""
               }`}
             >
               {item.label}
             </Link>
-          ))}
+            );
+          })}
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
@@ -105,16 +109,24 @@ export function SiteHeader() {
             variant="mobile"
             onNavigate={() => setOpen(false)}
           />
-          {nav.map((item) => (
+          {nav.map((item) => {
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + "/");
+            return (
             <Link
               key={item.href}
               href={item.href}
-              className="block py-2.5 text-sm font-medium text-xinergy-charcoal"
+              className={`block rounded py-2.5 text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-xinergy-orange ${
+                isActive
+                  ? "text-xinergy-charcoal ring-1 ring-xinergy-orange"
+                  : "text-xinergy-charcoal"
+              }`}
               onClick={() => setOpen(false)}
             >
               {item.label}
             </Link>
-          ))}
+            );
+          })}
           <div className="mt-4 flex flex-col gap-3">
             <Button href="/contacto" variant="primary">
               Contacto

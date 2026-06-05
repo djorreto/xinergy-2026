@@ -15,7 +15,7 @@ export default function InsightsPage() {
       <PageHero
         dark
         eyebrow="Insights"
-        title="Thought leadership que abre puertas"
+        title="Perspectivas que abren puertas"
         description="Informes, alianzas y análisis que posicionan a Xinergy como referente regional — no como un blog más."
       />
       <section className="section-pad bg-xinergy-ivory">
