@@ -30,16 +30,16 @@ export function HeroStatsGrid({ variant = "hero", className = "" }: HeroStatsGri
 
   return (
     <dl
-      className={`mt-10 hidden grid-cols-2 gap-x-4 gap-y-6 border-t border-white/10 pt-6 sm:mt-12 sm:gap-x-14 sm:gap-y-6 sm:pt-8 lg:mt-10 lg:flex lg:flex-wrap lg:pt-8 ${className}`}
+      className={`mt-10 hidden grid-cols-2 gap-x-4 gap-y-6 border-t border-white/10 pt-6 sm:mt-12 sm:gap-x-14 sm:gap-y-6 sm:pt-8 lg:mt-8 lg:flex lg:flex-wrap lg:gap-x-10 lg:pt-6 xl:gap-x-12 ${className}`}
     >
       {heroStats.map((s) => (
         <div key={s.label} className="min-w-0">
           <dt
-            className={`${ttForsDisplay.className} brand-phrase text-2xl leading-none text-xinergy-orange sm:text-4xl lg:text-5xl xl:text-[3.25rem]`}
+            className={`${ttForsDisplay.className} brand-phrase text-2xl leading-none text-xinergy-orange sm:text-4xl lg:text-3xl xl:text-4xl`}
           >
             {s.value}
           </dt>
-          <dd className="mt-1.5 max-w-[10rem] text-xs leading-snug text-white/55 sm:mt-2 sm:max-w-[12rem] sm:text-xs sm:text-white/50 lg:max-w-[13rem]">
+          <dd className="mt-1.5 max-w-[10rem] text-xs leading-snug text-white/55 sm:mt-2 sm:max-w-[12rem] lg:max-w-[11rem] lg:text-[0.6875rem] xl:max-w-[12rem]">
             {s.label}
           </dd>
         </div>

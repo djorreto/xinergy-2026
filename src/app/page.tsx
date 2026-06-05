@@ -18,7 +18,7 @@ export default function HomePage() {
       {/* Hero */}
       <section className="gradient-hero hero-below-header relative overflow-hidden text-white lg:hero-offset">
         <HeroMotion />
-        <Container className="relative z-10 pb-10 pt-0 sm:pb-12 sm:pt-12 lg:pb-14 lg:pt-28 xl:pt-32">
+        <Container className="relative z-10 pb-10 pt-0 sm:pb-12 sm:pt-12 lg:pb-12 lg:pt-24 xl:pt-28">
           <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl">
             <p className="label-editorial-light max-lg:text-[0.6875rem] max-lg:leading-relaxed max-lg:tracking-[0.1em] max-lg:text-white/75">
               {brand.heroEyebrow}
@@ -39,7 +39,7 @@ export default function HomePage() {
             </Button>
           </div>
           <HeroStatsGrid variant="hero" />
-          <StrongPhraseBlock className="mt-8 hidden lg:block xl:mt-10" />
+          <StrongPhraseBlock compact className="mt-6 hidden lg:block xl:mt-7" />
         </Container>
       </section>
 
