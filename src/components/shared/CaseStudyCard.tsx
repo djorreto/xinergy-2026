@@ -125,7 +125,7 @@ export function CaseStudyCard({ caseStudy: c, variant = "full" }: CaseStudyCardP
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-xinergy-charcoal/8 pt-8">
         <p className="max-w-md text-xs text-xinergy-slate">
-          ¿Quiere conocer más sobre un caso similar? Escríbanos y le compartimos el detalle.
+          ¿Quieres conocer más sobre un caso similar? Escríbenos y te compartimos el detalle.
         </p>
         <Button href={contactHref("casos")} variant="primary" className="!px-6 !py-3 !text-xs">
           Más información

@@ -6,6 +6,8 @@ export const brand = {
     emphasis: "Compartimos riesgos",
     body: "medimos, y somos tus socios en la implementación y ejecución.",
   },
+  pitchLine:
+    "Compartimos riesgos, medimos, y somos tus socios en la implementación y ejecución.",
   promise:
     "Implementamos y ejecutamos eficiencias que se ven en ahorros, EBITDA y caja. Compartimos riesgos, medimos, y somos tus socios en la implementación y ejecución.",
   heroSubline:
@@ -32,7 +34,7 @@ export const leadNotifyEmails = [
 export const messaging = {
   why: {
     title: "Por qué",
-    intro: "Entendemos su operación antes de mover la aguja.",
+    intro: "Entendemos tu operación antes de mover la aguja.",
     points: [
       "Assessment y diagnóstico del cliente",
       "Mejora de procesos y flujos operativos",
@@ -55,13 +57,14 @@ export const messaging = {
   },
   how: {
     title: "Cómo lo hacemos",
-    intro: "De la ejecución al impacto real, con acompañamiento continuo.",
+    intro:
+      "Compartimos riesgos, medimos y somos tus socios en la implementación y ejecución.",
     points: [
       "VRO para seguimiento de implementación y captura de valor",
       "Change management y gestión del cambio",
       "Implementación en terreno y capacitaciones",
       "Sourcing coach y transferencia al equipo interno",
-      "Modelo alineado a resultados — compartimos riesgos",
+      "Compartimos riesgos — incentivos alineados a resultados",
     ],
   },
 } as const;
@@ -139,7 +142,7 @@ export const problemSection = {
     { value: "4–8%", label: "de eficiencia típica en el primer año, según industria" },
     { value: "100%", label: "de nuestro modelo ligado a ahorros reales" },
   ],
-  opportunity: "La oportunidad: mejorar el negocio sin poner caja de su bolsillo.",
+  opportunity: "La oportunidad: mejorar el negocio sin poner caja de tu bolsillo.",
 } as const;
 
 /** Copy simplificado para la home (menos densidad, lenguaje claro) */
@@ -152,11 +155,12 @@ export const home = {
   framework: {
     title: "Cómo generamos impacto",
     headline: "Por qué, qué y cómo lo hacemos",
-    intro: "Un mismo estándar: eficiencias con resultados que se ven en el negocio.",
+    intro:
+      "Compartimos riesgos, medimos y somos tus socios en la implementación y ejecución.",
   },
   services: {
     title: "Seis líneas de ejecución",
-    intro: "Elija una o combínelas según su momento.",
+    intro: "Elige una o combínalas según tu momento.",
   },
   industries: {
     title: "Industrias donde entregamos",
@@ -181,7 +185,7 @@ export const home = {
   cta: {
     eyebrow: "Siguiente paso",
     title: "¿Cuándo conversamos?",
-    intro: "Diagnóstico de oportunidades sin costo en minutos. Sin compromiso.",
+    intro: "Diagnóstico de oportunidades sin costo en minutos. Compartimos riesgos desde el primer paso.",
   },
   chartBand: {
     title: "¿Cómo son los resultados con Xinergy?",
@@ -226,7 +230,7 @@ export type FAQ = { q: string; a: string };
 export const faqs: FAQ[] = [
   {
     q: "¿Qué significa «cash neutral»?",
-    a: "El programa se financia con el ahorro generado. El cliente no desembolsa honorarios netos: nuestro modelo está ligado a eficiencias verificables en P&L.",
+    a: "Compartimos riesgos: el programa se financia con el ahorro generado. Tú no desembolsas honorarios netos — nuestro modelo está ligado a eficiencias verificables en P&L.",
   },
   {
     q: "¿En qué industrias trabajan?",
@@ -234,7 +238,7 @@ export const faqs: FAQ[] = [
   },
   {
     q: "¿Solo asesoran o también ejecutan?",
-    a: "Ejecutamos e implementamos de punta a punta: desde assessment y diseño hasta sourcing, BPO, cash management, plataformas (GEP, SAP Ariba, Jaggaer) y VRO para captura de valor.",
+    a: "Ejecutamos e implementamos de punta a punta — somos tus socios en la ejecución: assessment, diseño, sourcing, BPO, cash management, plataformas (GEP, SAP Ariba, Jaggaer) y VRO para captura de valor.",
   },
   {
     q: "¿Cuánto tarda ver resultados?",
@@ -253,11 +257,11 @@ export const faqs: FAQ[] = [
 export const homeFaqs: FAQ[] = [
   {
     q: "¿Qué significa «sin riesgo de caja»?",
-    a: "El ahorro que generamos financia el trabajo. Usted no desembolsa honorarios netos por el programa.",
+    a: "Compartimos riesgos: el ahorro que generamos financia el trabajo. Tú no desembolsas honorarios netos por el programa.",
   },
   {
     q: "¿Solo asesoran o también ejecutan?",
-    a: "Ejecutamos e implementamos: assessment, sourcing, BPO, tecnología y acompañamiento con VRO hasta que el impacto quede en sus números.",
+    a: "Somos tus socios en la ejecución: assessment, sourcing, BPO, tecnología y VRO hasta que el impacto quede en tus números.",
   },
   {
     q: "¿En qué países trabajan?",
@@ -265,7 +269,7 @@ export const homeFaqs: FAQ[] = [
   },
   {
     q: "¿Cómo empiezo?",
-    a: "Con el diagnóstico de oportunidades sin costo: unas preguntas sobre su gasto y madurez, y una estimación de oportunidad en minutos.",
+    a: "Con el diagnóstico de oportunidades sin costo: unas preguntas sobre tu gasto y madurez, y una estimación de oportunidad en minutos.",
   },
 ];
 
@@ -309,11 +313,11 @@ export const differentiators = [
   },
   {
     title: "Compartimos riesgos",
-    description: "El programa se financia con la eficiencia que generamos.",
+    description: "Compartimos riesgos contigo — el programa se alinea a eficiencias verificables en P&L.",
   },
   {
-    title: "Ejecutamos e implementamos",
-    description: "Assessment, sourcing, BPO, tecnología y VRO en un solo partner.",
+    title: "Somos tus socios en la ejecución",
+    description: "Medimos, implementamos y ejecutamos en terreno contigo hasta capturar valor.",
   },
   {
     title: "Carbono neutral",
@@ -831,7 +835,7 @@ export const insights = [
     body: [
       "Ante la evidencia de los riesgos del cambio climático, múltiples empresas en diversas industrias a nivel global han comprometido voluntariamente metas de descarbonización en los últimos años.",
       "En dicho contexto, contamos con la certificación CarbonNeutral, compromiso que nos permite impulsar con fuerza en nuestros clientes un enfoque de sustentabilidad y prácticas de ESG en sus procesos de abastecimiento y supply chain.",
-      "Exigimos el mismo estándar a partners y proveedores en programas de eficiencia sostenible: la cadena externa es parte del impacto real que medimos y acompañamos.",
+      "Exigimos el mismo estándar en programas de eficiencia sostenible: la cadena externa es parte del impacto real que medimos y ejecutamos contigo.",
     ],
     externalUrl:
       "https://xinergy.cl/la-importancia-de-contar-con-partners-y-proveedores-carbono-neutral/",
@@ -881,7 +885,7 @@ export const teamOffsite = {
   quote:
     "Los desafíos más exigentes se conquistan en equipo — en la montaña y en el negocio.",
   body:
-    "En 2024 nos reunimos en el sur de Chile para un offsite en Torres del Paine. Caminamos hasta la base de las torres con el mismo espíritu con el que acompañamos a nuestros clientes: preparación, esfuerzo compartido y llegar a destino.",
+    "En 2024 nos reunimos en el sur de Chile para un offsite en Torres del Paine. Caminamos hasta la base de las torres con el mismo espíritu con el que somos tus socios en la ejecución: preparación, esfuerzo compartido y llegar a destino.",
   image: "/team/equipo-torres-paine-2024.png",
   imageAlt: "Equipo Xinergy en la base de las Torres del Paine, offsite 2024",
 } as const;

@@ -54,7 +54,7 @@ export default function DiagnosticoPage() {
             align="center"
             eyebrow="Cash neutral"
             title="Alineados a resultados, no a horas"
-            intro="Sin costo para empezar. Si avanzamos, nuestros honorarios se vinculan a eficiencias reales e impacto verificable en el P&L — ganamos cuando ustedes capturan valor."
+            intro="Sin costo para empezar. Compartimos riesgos: nuestros honorarios se vinculan a eficiencias reales e impacto verificable en el P&L — ganamos cuando tú capturas valor."
             titleClassName="text-2xl sm:text-3xl"
           />
           <p className="mt-10 text-center text-sm text-xinergy-slate">

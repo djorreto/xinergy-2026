@@ -16,7 +16,7 @@ export default function CasosPage() {
         dark
         eyebrow="Casos de éxito"
         title="Resultados que hablan"
-        description="Desafío, enfoque y resultados — sin presentaciones vacías. Pídanos más detalle sobre cualquier caso."
+        description="Desafío, enfoque y resultados — sin presentaciones vacías. Pídenos más detalle sobre cualquier caso."
       />
       <section className="section-pad bg-xinergy-ivory">
         <Container>

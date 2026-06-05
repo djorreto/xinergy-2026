@@ -362,7 +362,7 @@ export function EfficiencyCalculator() {
           {step < 2 || !resultsUnlocked ? (
             <>
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-xinergy-orange">
-                Sin costo para ustedes
+                Sin costo para ti
               </p>
               <h3 className="mt-4 font-display text-xl font-semibold leading-snug">
                 Próximos pasos con Xinergy
@@ -372,7 +372,7 @@ export function EfficiencyCalculator() {
                   {
                     n: "01",
                     t: "NDA y envío de información",
-                    d: "Firmamos confidencialidad y recibimos la información base de su operación y categorías.",
+                    d: "Firmamos confidencialidad y recibimos la información base de tu operación y categorías.",
                   },
                   {
                     n: "02",
@@ -404,7 +404,7 @@ export function EfficiencyCalculator() {
                 Cash neutral
               </p>
               <h3 className="mt-4 font-display text-xl font-semibold leading-snug">
-                Ganamos cuando ustedes capturan valor
+                Compartimos riesgos: ganamos cuando tú capturas valor
               </h3>
               <p className="mt-4 text-sm leading-relaxed text-white/65">
                 No cobramos por horas. El fee se vincula a eficiencias reales e impacto en el P&L

@@ -63,7 +63,7 @@ export default async function InsightPage({ params }: Props) {
             </span>
           </p>
           <p className="mt-10 border-t border-xinergy-charcoal/10 pt-8 text-sm text-xinergy-slate">
-            ¿Quiere profundizar en eficiencias, ESG o tecnología para su operación?{" "}
+            ¿Quieres profundizar en eficiencias, ESG o tecnología para tu operación?{" "}
             <Link href={contactHref("insights")} className="font-semibold text-xinergy-orange hover:underline">
               Contáctenos
             </Link>

@@ -19,7 +19,7 @@ import { ttForsDisplay } from "@/lib/fonts";
 export const metadata: Metadata = {
   title: "Nosotros",
   description:
-    "Expertos en generación de eficiencias con impacto real. Ejecutamos e implementamos en Latinoamérica.",
+    "Compartimos riesgos, medimos, y somos tus socios en la implementación y ejecución. Ejecutamos e implementamos en Latinoamérica.",
 };
 
 export default function NosotrosPage() {
@@ -66,15 +66,15 @@ export default function NosotrosPage() {
             <div>
               <h2 className="brand-phrase text-2xl text-xinergy-charcoal">{brand.claim}</h2>
               <p className="mt-4 text-xinergy-slate leading-relaxed">
-                Ejecutamos e implementamos eficiencias en procesos, abastecimiento y
-                operación — con impacto en ahorros, EBITDA y caja. No nos quedamos en
-                la presentación: assessment, sourcing, BPO, cash management y
+                {brand.pitchLine} Ejecutamos e implementamos eficiencias en procesos,
+                abastecimiento y operación — con impacto en ahorros, EBITDA y caja. No nos
+                quedamos en la presentación: assessment, sourcing, BPO, cash management y
                 Procuretech según lo que cada desafío requiera.
               </p>
               <p className="mt-4 text-xinergy-slate leading-relaxed">
                 Presencia en 6 países ({presenceLabel}), con oficinas en {officesLabel}.
-                Acompañamos con VRO, change management y un ecosistema de partners
-                tecnológicos certificados.
+                Medimos, implementamos y ejecutamos contigo — con VRO, change management y
+                tecnología certificada.
               </p>
             </div>
             <dl className="grid grid-cols-2 gap-6">

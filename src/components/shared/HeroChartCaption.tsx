@@ -26,7 +26,7 @@ export function HeroChartCaption({
       <span className={`font-medium ${dark ? "text-[#8de0b0]" : "text-[#2d8a55]"}`}>
         {brand.claim}
       </span>{" "}
-      a sus clientes: el{" "}
+      a tu operación: el{" "}
       <span className={`font-medium ${dark ? "text-[#aad4ff]" : "text-[#4a7ab8]"}`}>SLA</span> y
       los resultados se sostienen — o mejoran — mientras el gasto se optimiza.
     </p>

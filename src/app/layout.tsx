@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     template: `%s | ${brand.name}`,
   },
   description:
-    "#Fitness for business — ejecutamos eficiencias con impacto real en Latinoamérica. Strategic Sourcing, BPO, cash management y Procuretech. Compartimos riesgos.",
+    "#Fitness for business — ejecutamos eficiencias con impacto real en Latinoamérica. Compartimos riesgos, medimos, y somos tus socios en la implementación y ejecución.",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
