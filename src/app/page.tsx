@@ -133,22 +133,22 @@ export default function HomePage() {
       </section>
 
       {/* Por qué / Qué / Cómo */}
-      <section className="section-pad bg-xinergy-charcoal text-white">
+      <section className="section-pad border-t border-xinergy-charcoal/8 bg-xinergy-ivory">
         <Container>
-          <p className="label-editorial-light">{home.framework.title}</p>
-          <p className="mt-2 max-w-xl text-sm text-white/60">{home.framework.intro}</p>
-          <MessagingFramework className="mt-10" variant="dark" />
+          <p className="label-editorial">{home.framework.title}</p>
+          <p className="mt-2 max-w-xl text-sm text-xinergy-slate">{home.framework.intro}</p>
+          <MessagingFramework className="mt-10" />
         </Container>
       </section>
 
       {/* Diagnóstico */}
-      <section className="section-pad-lg border-t border-xinergy-charcoal/8 bg-white text-xinergy-charcoal">
+      <section className="section-pad-lg bg-xinergy-charcoal text-white">
         <Container className="max-w-2xl text-center lg:mx-auto">
-          <p className="label-editorial">Diagnóstico gratuito</p>
+          <p className="label-editorial-light">Diagnóstico gratuito</p>
           <h2 className="font-display mt-4 text-3xl lg:text-4xl">
             ¿Cuánta eficiencia puede liberar su empresa?
           </h2>
-          <p className="mt-4 text-sm leading-relaxed text-xinergy-slate lg:text-base">
+          <p className="mt-4 text-sm leading-relaxed text-white/65 lg:text-base">
             En unos minutos, con datos básicos de su gasto y operación.
           </p>
           <div className="mt-8">
@@ -157,28 +157,26 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* CTA — gráfico difuminado + cierre crema */}
-      <section className="overflow-hidden">
-        <div className="hero-chart-band relative h-44 text-white sm:h-52 lg:h-80">
+      {/* CTA — gráfico difuminado + cierre oscuro */}
+      <section className="overflow-hidden text-white">
+        <div className="hero-chart-band relative h-44 bg-xinergy-charcoal sm:h-52 lg:h-80">
           <HeroMotion variant="band" />
           <HeroChartCaption />
         </div>
-        <div className="bg-xinergy-cream section-pad-lg text-xinergy-charcoal">
+        <div className="gradient-hero border-t border-white/10 section-pad-lg">
           <Container className="text-center">
             <h2 className="font-display mx-auto max-w-xl text-2xl sm:text-3xl lg:text-5xl">
               {home.cta.title}
             </h2>
             <p
-              className={`${ttForsDisplay.className} brand-phrase mx-auto mt-4 text-lg text-xinergy-orange sm:mt-5 sm:text-xl lg:text-2xl`}
+              className={`${ttForsDisplay.className} brand-phrase mx-auto mt-4 text-lg text-xinergy-beige sm:mt-5 sm:text-xl lg:text-2xl`}
             >
               {brand.claim}
             </p>
-            <p className="mx-auto mt-4 max-w-md text-sm text-xinergy-slate sm:mt-5">
-              {home.cta.intro}
-            </p>
+            <p className="mx-auto mt-4 max-w-md text-sm text-white/55 sm:mt-5">{home.cta.intro}</p>
             <div className="mobile-actions mt-8 justify-center sm:mt-10">
               <Button href="/contacto">{brand.cta}</Button>
-              <Button href="/diagnostico" variant="secondary">
+              <Button href="/diagnostico" variant="light">
                 Calcular eficiencias
               </Button>
             </div>
