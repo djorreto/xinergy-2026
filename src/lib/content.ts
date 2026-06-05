@@ -1,6 +1,6 @@
 export const brand = {
   name: "Xinergy",
-  tagline: "Ejecutamos eficiencias con impacto real",
+  tagline: "Ejecutamos eficiencias con impacto real.",
   claim: "#Fitness for business",
   strongPhrase: {
     emphasis: "Compartimos riesgos",
@@ -36,11 +36,11 @@ export const messaging = {
     title: "Por qué",
     intro: "Entendemos tu operación antes de mover la aguja.",
     points: [
-      "Assessment y diagnóstico del cliente",
-      "Mejora de procesos y flujos operativos",
-      "Cultura y capacidades del equipo interno",
-      "Priorización con impacto en EBITDA y caja",
-      "Equipo y cultura listos para sostener el cambio",
+      "Assessment y diagnóstico del cliente.",
+      "Mejora de procesos y flujos operativos.",
+      "Cultura y capacidades del equipo interno.",
+      "Priorización con impacto en EBITDA y caja.",
+      "Equipo y cultura listos para sostener el cambio.",
     ],
   },
   what: {
@@ -48,11 +48,11 @@ export const messaging = {
     intro:
       "Transformamos operación y abastecimiento de punta a punta — diseño, implementación y ejecución en terreno, con impacto en ahorro, EBITDA y caja.",
     points: [
-      "Eficiencias mediante abastecimiento estratégico",
-      "BPO de áreas de compra y gestión de contratos",
-      "Soluciones de cash management y supply chain finance",
-      "Tecnología, Procuretech y habilitación digital",
-      "Ahorros, mejora de EBITDA y liberación de caja",
+      "Eficiencias mediante abastecimiento estratégico.",
+      "BPO de áreas de compra y gestión de contratos.",
+      "Soluciones de cash management y supply chain finance.",
+      "Tecnología, Procuretech y habilitación digital.",
+      "Ahorros, mejora de EBITDA y liberación de caja.",
     ],
   },
   how: {
@@ -60,11 +60,11 @@ export const messaging = {
     intro:
       "Compartimos riesgos, medimos y somos tus socios en la implementación y ejecución.",
     points: [
-      "VRO para seguimiento de implementación y captura de valor",
-      "Change management y gestión del cambio",
-      "Implementación en terreno y capacitaciones",
-      "Sourcing coach y transferencia al equipo interno",
-      "Compartimos riesgos — incentivos alineados a resultados",
+      "VRO para seguimiento de implementación y captura de valor.",
+      "Change management y gestión del cambio.",
+      "Implementación en terreno y capacitaciones.",
+      "Sourcing coach y transferencia al equipo interno.",
+      "Compartimos riesgos — incentivos alineados a resultados.",
     ],
   },
 } as const;
@@ -135,12 +135,12 @@ export const regions = presenceCountries;
 export const regionsLabel = presenceLabel;
 
 export const problemSection = {
-  title: "Cuando el gasto no se ve, la eficiencia se pierde",
+  title: "Cuando el gasto no se ve, la eficiencia se pierde.",
   intro:
     "Muchas empresas compran sin una vista clara del gasto total. Eso presiona el margen y deja al equipo de compras apagando incendios.",
   stats: [
-    { value: "4–8%", label: "de eficiencia típica en el primer año, según industria" },
-    { value: "100%", label: "de nuestro modelo ligado a ahorros reales" },
+    { value: "4–8%", label: "de eficiencia típica en el primer año, según industria." },
+    { value: "100%", label: "de nuestro modelo ligado a ahorros reales." },
   ],
   opportunity: "La oportunidad: mejorar el negocio sin poner caja de tu bolsillo.",
 } as const;
@@ -149,12 +149,12 @@ export const problemSection = {
 export const home = {
   capabilities: {
     title: "Lo que hacemos",
-    headline: "Ejecutamos e implementamos eficiencias",
+    headline: "Ejecutamos e implementamos eficiencias.",
     intro: "En proyectos, operación y tecnología — con impacto en P&L, EBITDA y caja.",
   },
   framework: {
     title: "Cómo generamos impacto",
-    headline: "Por qué, qué y cómo lo hacemos",
+    headline: "Por qué, qué y cómo lo hacemos.",
     intro:
       "Compartimos riesgos, medimos y somos tus socios en la implementación y ejecución.",
   },
@@ -168,7 +168,7 @@ export const home = {
   },
   cases: {
     label: "Casos de éxito",
-    title: "Resultados que hablan",
+    title: "Resultados que hablan.",
     intro:
       "Desafío, enfoque y resultados verificables en retail, seguros, automotriz y más.",
   },
@@ -276,34 +276,34 @@ export const homeFaqs: FAQ[] = [
 export const heroStats = [
   {
     value: "3B+",
-    label: "Gasto bajo gestión en programas recientes",
+    label: "Gasto bajo gestión en programas recientes.",
     detail: "Spend directo e indirecto en sourcing, BPO y transformación de abastecimiento en Latinoamérica.",
   },
   {
     value: "15+",
-    label: "Años generando eficiencias para clientes",
+    label: "Años generando eficiencias para clientes.",
     detail: "Trayectoria regional ejecutando eficiencias con impacto verificable en P&L y caja.",
   },
   {
     value: "6+",
-    label: `Presentes en más de 6 países · entre ellos, oficinas en ${officesLabel}`,
+    label: `Presentes en más de 6 países · entre ellos, oficinas en ${officesLabel}.`,
     detail: `Operación en ${presenceLabel} con equipos locales y proyectos multi-país.`,
   },
   {
     value: "50+",
-    label: "Más de 50 clientes",
+    label: "Más de 50 clientes.",
     detail: "Empresas líderes en retail, minería, seguros, financiero, energía y manufactura.",
   },
   {
     value: "120+",
-    label: "Personas en la organización",
+    label: "Personas en la organización.",
     detail: "Consultores, especialistas de sourcing y equipos BPO dedicados a capturar valor en terreno.",
   },
 ] as const;
 
 export const stats = [
   ...heroStats,
-  { value: "100%", label: "Modelo alineado a ahorros reales" },
+  { value: "100%", label: "Modelo alineado a ahorros reales." },
 ] as const;
 
 export const differentiators = [
@@ -679,7 +679,7 @@ export const cases = [
       "Capacidad escalable para picos de demanda operacional",
     ],
     highlight: "35+",
-    highlightLabel: "personas en equipo BPO",
+    highlightLabel: "personas en equipo BPO.",
   },
   {
     slug: "retail-conglomerado-latam",
@@ -696,7 +696,7 @@ export const cases = [
       "Modelo de gobierno replicable entre divisiones",
     ],
     highlight: "USD 19B+",
-    highlightLabel: "escala de ventas del cliente",
+    highlightLabel: "escala de ventas del cliente.",
   },
   {
     slug: "seguros-latam",
@@ -713,7 +713,7 @@ export const cases = [
       "Capacidad interna desarrollada en el proceso",
     ],
     highlight: "Integral",
-    highlightLabel: "transformación end-to-end",
+    highlightLabel: "transformación end-to-end.",
   },
   {
     slug: "retail-software-factory",
@@ -730,7 +730,7 @@ export const cases = [
       "Base de proveedores rationalizada",
     ],
     highlight: "1.2M+",
-    highlightLabel: "horas bajo gestión anual",
+    highlightLabel: "horas bajo gestión anual.",
   },
   {
     slug: "automotriz-savings",
@@ -747,7 +747,7 @@ export const cases = [
       "Gobernanza y reporting para gerencia",
     ],
     highlight: "Dual",
-    highlightLabel: "savings + capability build",
+    highlightLabel: "savings + capability build.",
   },
   {
     slug: "energia-recursos",
@@ -764,7 +764,7 @@ export const cases = [
       "Programas de eficiencia alineados a descarbonización",
     ],
     highlight: "CAPEX",
-    highlightLabel: "y OPEX bajo gestión",
+    highlightLabel: "y OPEX bajo gestión.",
   },
 ] as const;
 

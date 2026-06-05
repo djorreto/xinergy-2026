@@ -4,13 +4,11 @@ import { PageHero } from "@/components/shared/PageHero";
 import { CTABand } from "@/components/shared/CTABand";
 import { Container } from "@/components/ui/Container";
 import { StrongPhraseBlock } from "@/components/shared/StrongPhraseBlock";
-import { MessagingFramework } from "@/components/shared/MessagingFramework";
 import {
   stats,
   brand,
   presenceLabel,
   officesLabel,
-  capabilities,
   cultureValues,
   teamOffsite,
 } from "@/lib/content";
@@ -127,30 +125,6 @@ export default function NosotrosPage() {
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-xinergy-charcoal/50 via-transparent to-transparent" />
             </div>
-          </div>
-        </Container>
-      </section>
-
-      <section className="section-pad bg-xinergy-ivory">
-        <Container>
-          <MessagingFramework />
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {capabilities.map((cap, i) => (
-              <article
-                key={cap.title}
-                className="rounded-2xl border border-xinergy-charcoal/10 bg-white p-6"
-              >
-                <span
-                  className={`${ttForsDisplay.className} brand-phrase text-2xl text-xinergy-orange`}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-4 text-sm font-semibold text-xinergy-charcoal">{cap.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-xinergy-slate">
-                  {cap.description}
-                </p>
-              </article>
-            ))}
           </div>
         </Container>
       </section>

@@ -16,7 +16,7 @@ export function CTABand() {
             <span className="text-white/90">medimos y ejecutamos contigo</span>
           </h2>
           <p className="mt-2 text-sm text-white/55">
-            Diagnóstico · Resultados verificables · Cash neutral
+            Diagnóstico · Resultados verificables · Cash neutral.
           </p>
         </div>
         <div className="cta-band-actions flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
