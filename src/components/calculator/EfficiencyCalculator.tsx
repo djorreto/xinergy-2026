@@ -1,26 +1,29 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { useState, useMemo } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { contactHref } from "@/lib/contact-context";
 import {
   industries,
   spendBands,
-  maturityQuestions,
-  toolQuestions,
   calculateOpportunity,
-  formatUsd,
-  CALCULATOR_RESULTS_DISCLAIMER,
   type CalculatorInput,
   type IndustryId,
   type SpendBand,
 } from "@/lib/calculator";
+import { getCalculatorCopy, formatUsd } from "@/lib/calculator-i18n";
 import { isValidEmail, submitCalculatorLead } from "@/lib/calculator-lead";
 
-const STEPS = ["Empresa", "Madurez", "Resultado"] as const;
 const defaultAnswers = [2, 2, 2, 2, 2];
 
 export function EfficiencyCalculator() {
+  const locale = useLocale();
+  const t = useTranslations("ui.calculator");
+  const copy = useMemo(() => getCalculatorCopy(locale), [locale]);
+
+  const steps = [t("steps.company"), t("steps.maturity"), t("steps.result")] as const;
+
   const [step, setStep] = useState(0);
   const [industry, setIndustry] = useState<IndustryId>("retail");
   const [spendBand, setSpendBand] = useState<SpendBand>("25-100");
@@ -46,8 +49,8 @@ export function EfficiencyCalculator() {
   const toolsAnswered = hasNegotiationTool !== null && hasStockPlanningTool !== null;
 
   const result = useMemo(
-    () => (step === 2 && resultsUnlocked ? calculateOpportunity(input) : null),
-    [step, resultsUnlocked, input],
+    () => (step === 2 && resultsUnlocked ? calculateOpportunity(input, copy) : null),
+    [step, resultsUnlocked, input, copy],
   );
 
   const setAnswer = (index: number, value: number) => {
@@ -61,7 +64,7 @@ export function EfficiencyCalculator() {
   const handleUnlockResults = async () => {
     const trimmed = email.trim();
     if (!isValidEmail(trimmed)) {
-      setEmailError("Ingresa un correo válido.");
+      setEmailError(t("emailInvalid"));
       return;
     }
 
@@ -72,20 +75,22 @@ export function EfficiencyCalculator() {
     setResultsUnlocked(true);
   };
 
+  const maturityLevelLabel = (level: string) =>
+    t(`maturityLevels.${level}` as "maturityLevels.Inicial");
+
   return (
     <div className="overflow-hidden border border-xinergy-charcoal/10 bg-white shadow-[0_32px_64px_-24px_rgba(63,55,75,0.18)]">
-      {/* Progress */}
       <div className="border-b border-xinergy-charcoal/8 bg-xinergy-cream/60 px-4 py-4 sm:px-6 sm:py-5 lg:px-10">
         <div className="flex items-center justify-between gap-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-xinergy-slate">
-            Diagnóstico de eficiencias
+            {t("title")}
           </p>
           <p className="text-xs text-xinergy-slate/70">
-            Paso {step + 1} de {STEPS.length}
+            {t("stepOf", { current: step + 1, total: steps.length })}
           </p>
         </div>
         <div className="mt-4 flex gap-2">
-          {STEPS.map((label, i) => (
+          {steps.map((label, i) => (
             <div key={label} className="flex-1">
               <div
                 className={`h-0.5 rounded-full transition-colors ${
@@ -105,12 +110,11 @@ export function EfficiencyCalculator() {
       </div>
 
       <div className="grid lg:grid-cols-5">
-        {/* Form */}
         <div className="lg:col-span-3 p-4 sm:p-6 lg:p-10">
           {step === 0 && (
             <div className="space-y-8 animate-in">
               <fieldset>
-                <legend className="label-editorial">Industria</legend>
+                <legend className="label-editorial">{t("industry")}</legend>
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
                   {industries.map((ind) => (
                     <button
@@ -119,17 +123,15 @@ export function EfficiencyCalculator() {
                       onClick={() => setIndustry(ind.id)}
                       className={`option-tile ${industry === ind.id ? "option-tile-active" : ""}`}
                     >
-                      {ind.label}
+                      {copy.industries[ind.id]}
                     </button>
                   ))}
                 </div>
               </fieldset>
 
               <fieldset>
-                <legend className="label-editorial">Gasto anual con proveedores (aprox.)</legend>
-                <p className="mt-1 text-xs text-xinergy-slate/80">
-                  Compras directas e indirectas consolidadas
-                </p>
+                <legend className="label-editorial">{t("annualSpend")}</legend>
+                <p className="mt-1 text-xs text-xinergy-slate/80">{t("spendHint")}</p>
                 <div className="mt-3 space-y-2">
                   {spendBands.map((band) => (
                     <button
@@ -138,7 +140,7 @@ export function EfficiencyCalculator() {
                       onClick={() => setSpendBand(band.id)}
                       className={`option-tile w-full text-left ${spendBand === band.id ? "option-tile-active" : ""}`}
                     >
-                      {band.label}
+                      {copy.spendBands[band.id]}
                     </button>
                   ))}
                 </div>
@@ -148,11 +150,8 @@ export function EfficiencyCalculator() {
 
           {step === 1 && (
             <div className="space-y-10">
-              <p className="text-sm leading-relaxed text-xinergy-slate">
-                Siete preguntas para estimar madurez y herramientas. No hay respuestas
-                correctas — solo diagnóstico.
-              </p>
-              {maturityQuestions.map((q, qi) => (
+              <p className="text-sm leading-relaxed text-xinergy-slate">{t("maturityIntro")}</p>
+              {copy.maturityQuestions.map((q, qi) => (
                 <fieldset key={q.id}>
                   <legend className="text-sm font-medium leading-snug text-xinergy-charcoal">
                     {qi + 1}. {q.question}
@@ -181,8 +180,8 @@ export function EfficiencyCalculator() {
               ))}
 
               <div className="space-y-8 border-t border-xinergy-charcoal/8 pt-8">
-                <p className="label-editorial">Herramientas</p>
-                {toolQuestions.map((q, qi) => {
+                <p className="label-editorial">{t("tools")}</p>
+                {copy.toolQuestions.map((q, qi) => {
                   const value =
                     qi === 0 ? hasNegotiationTool : hasStockPlanningTool;
                   const setValue =
@@ -195,8 +194,8 @@ export function EfficiencyCalculator() {
                       </legend>
                       <div className="mt-4 grid grid-cols-2 gap-2">
                         {[
-                          { label: "Sí", answer: true },
-                          { label: "No", answer: false },
+                          { label: t("yes"), answer: true },
+                          { label: t("no"), answer: false },
                         ].map(({ label, answer }) => (
                           <button
                             key={label}
@@ -222,19 +221,18 @@ export function EfficiencyCalculator() {
           {step === 2 && !resultsUnlocked && (
             <div className="space-y-6">
               <div>
-                <p className="label-editorial">Tu resultado está listo</p>
+                <p className="label-editorial">{t("resultReady")}</p>
                 <h3 className="mt-3 text-xl font-semibold text-xinergy-charcoal">
-                  Ingresa tu correo para verlo
+                  {t("enterEmail")}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-xinergy-slate">
-                  Te mostramos cuántas eficiencias puedes conseguir al instante. Solo usamos tu email para
-                  dar seguimiento si quieres profundizar.
+                  {t("emailFollowUp")}
                 </p>
               </div>
               <fieldset>
-                <legend className="sr-only">Correo electrónico</legend>
+                <legend className="sr-only">{t("email")}</legend>
                 <label htmlFor="calculator-email" className="label-editorial">
-                  Correo electrónico
+                  {t("email")}
                 </label>
                 <input
                   id="calculator-email"
@@ -246,7 +244,7 @@ export function EfficiencyCalculator() {
                     setEmail(e.target.value);
                     if (emailError) setEmailError(null);
                   }}
-                  placeholder="tu@empresa.com"
+                  placeholder={t("emailPlaceholder")}
                   className={`mt-3 w-full border bg-white px-4 py-3 text-sm text-xinergy-charcoal outline-none transition focus:border-xinergy-orange ${
                     emailError
                       ? "border-red-400"
@@ -263,31 +261,30 @@ export function EfficiencyCalculator() {
           {step === 2 && resultsUnlocked && result && (
             <div className="space-y-8">
               <div>
-                <p className="label-editorial">Eficiencias estimadas (año 1)</p>
+                <p className="label-editorial">{t("estimatedSavings")}</p>
                 <p className="mt-3 font-display text-3xl font-semibold tracking-tight text-xinergy-charcoal sm:mt-4 sm:text-4xl lg:text-5xl">
-                  {formatUsd(result.savingsExpected)}
+                  {formatUsd(result.savingsExpected, locale)}
                 </p>
                 <p className="mt-2 text-sm text-xinergy-slate">
-                  Rango prudente: {formatUsd(result.savingsConservative)} –{" "}
-                  {formatUsd(result.savingsAggressive)} sobre{" "}
-                  <strong>{formatUsd(result.addressableSpendUsd)}</strong> de gasto
-                  addressable (~{result.addressablePct}% del total).
+                  {formatUsd(result.savingsConservative, locale)} –{" "}
+                  {formatUsd(result.savingsAggressive, locale)} ·{" "}
+                  {t("rangeCopy", { pct: result.addressablePct })}
                 </p>
               </div>
 
               <dl className="grid gap-4 sm:grid-cols-2">
                 <div className="metric-cell">
-                  <dt>Madurez en compras</dt>
-                  <dd>{result.maturityLevel}</dd>
+                  <dt>{t("maturityPurchasing")}</dt>
+                  <dd>{maturityLevelLabel(result.maturityLevel)}</dd>
                 </div>
                 <div className="metric-cell">
-                  <dt>Tasa esperada</dt>
-                  <dd>{result.rateExpected}% del addressable</dd>
+                  <dt>{t("expectedRate")}</dt>
+                  <dd>{result.rateExpected}%</dd>
                 </div>
               </dl>
 
               <div>
-                <p className="label-editorial">Palancas prioritarias con Xinergy</p>
+                <p className="label-editorial">{t("priorityLevers")}</p>
                 <ul className="mt-3 space-y-2">
                   {result.priorityLevers.map((lever) => (
                     <li
@@ -299,7 +296,7 @@ export function EfficiencyCalculator() {
                   ))}
                 </ul>
                 <p className="mt-4 text-xs text-xinergy-slate">
-                  Servicios sugeridos:{" "}
+                  {t("suggestedServices")}{" "}
                   <span className="font-medium text-xinergy-charcoal">
                     {result.recommendedServices.join(" · ")}
                   </span>
@@ -307,7 +304,7 @@ export function EfficiencyCalculator() {
               </div>
 
               <p className="text-[11px] leading-relaxed text-xinergy-slate/80">
-                {CALCULATOR_RESULTS_DISCLAIMER}
+                {copy.disclaimer}
               </p>
             </div>
           )}
@@ -326,12 +323,12 @@ export function EfficiencyCalculator() {
                 className="btn-secondary w-full sm:w-auto"
                 disabled={submitting}
               >
-                Atrás
+                {t("back")}
               </button>
             )}
             {step < 1 && (
               <button type="button" onClick={() => setStep(step + 1)} className="btn-primary w-full sm:w-auto">
-                Continuar
+                {t("continue")}
               </button>
             )}
             {step === 1 && (
@@ -341,7 +338,7 @@ export function EfficiencyCalculator() {
                 disabled={!toolsAnswered}
                 className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
               >
-                Ver mis eficiencias
+                {t("seeResults")}
               </button>
             )}
             {step === 2 && !resultsUnlocked && (
@@ -351,72 +348,56 @@ export function EfficiencyCalculator() {
                 disabled={submitting}
                 className="btn-primary w-full disabled:opacity-60 sm:w-auto"
               >
-                {submitting ? "Un momento…" : "Ver mis eficiencias"}
+                {submitting ? t("waiting") : t("seeResults")}
               </button>
             )}
             {step === 2 && resultsUnlocked && (
               <Link href={contactHref("diagnostico")} className="btn-primary w-full text-center sm:w-auto">
-                Agendar diagnóstico
+                {t("scheduleDiagnostic")}
               </Link>
             )}
           </div>
         </div>
 
-        {/* Sidebar */}
         <aside className="border-t border-xinergy-charcoal/8 bg-xinergy-charcoal p-4 text-white sm:p-6 lg:col-span-2 lg:border-t-0 lg:border-l">
           {step < 2 || !resultsUnlocked ? (
             <>
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-xinergy-orange">
-                Cómo seguimos
+                {t("sidebarHow")}
               </p>
               <h3 className="mt-4 font-display text-xl font-semibold leading-snug">
-                Próximos pasos con Xinergy
+                {t("sidebarNextSteps")}
               </h3>
               <ol className="mt-6 space-y-5">
-                {[
-                  {
-                    n: "01",
-                    t: "NDA y envío de información",
-                    d: "Firmamos confidencialidad y recibimos la información base de tu operación y categorías.",
-                  },
-                  {
-                    n: "02",
-                    t: "Opportunity assessment",
-                    d: "Cuantificamos eficiencias por categoría con metodología audit-able.",
-                  },
-                  {
-                    n: "03",
-                    t: "Propuesta alineada a resultados",
-                    d: "Compartimos riesgos: ganamos cuando tú capturas valor en el P&L.",
-                  },
-                ].map((item) => (
-                  <li key={item.n} className="flex gap-4">
-                    <span className="text-xs font-bold text-xinergy-orange/80">{item.n}</span>
+                {(["1", "2", "3"] as const).map((n) => (
+                  <li key={n} className="flex gap-4">
+                    <span className="text-xs font-bold text-xinergy-orange/80">0{n}</span>
                     <div>
-                      <p className="text-sm font-semibold">{item.t}</p>
-                      <p className="mt-1 text-xs leading-relaxed text-white/55">{item.d}</p>
+                      <p className="text-sm font-semibold">{t(`sidebarSteps.${n}title`)}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-white/55">
+                        {t(`sidebarSteps.${n}desc`)}
+                      </p>
                     </div>
                   </li>
                 ))}
               </ol>
               <p className="mt-6 text-xs leading-relaxed text-white/45">
-                El assessment estará sujeto a una evaluación preliminar del equipo.
+                {t("sidebarDisclaimer")}
               </p>
             </>
           ) : (
             <>
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-xinergy-orange">
-                Cash neutral
+                {t("resultsCashNeutral")}
               </p>
               <h3 className="mt-4 font-display text-xl font-semibold leading-snug">
-                Compartimos riesgos: ganamos cuando tú capturas valor
+                {t("resultsRiskShare")}
               </h3>
               <p className="mt-4 text-sm leading-relaxed text-white/65">
-                Nuestro modelo se vincula a eficiencias reales e impacto verificable en el P&L
-                — ganamos cuando tú capturas valor.
+                {t("resultsModel")}
               </p>
               <p className="mt-8 text-[11px] leading-relaxed italic text-white/40">
-                {CALCULATOR_RESULTS_DISCLAIMER}
+                {copy.disclaimer}
               </p>
             </>
           )}

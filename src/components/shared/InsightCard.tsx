@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { InsightIcon, type InsightIconKey } from "@/components/shared/InsightIcon";
 
 type InsightItem = {

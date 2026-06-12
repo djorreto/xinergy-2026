@@ -1,4 +1,7 @@
-import { brand } from "@/lib/content";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { ttForsDisplay } from "@/lib/fonts";
 
 export function StrongPhraseBlock({
@@ -8,6 +11,8 @@ export function StrongPhraseBlock({
   className?: string;
   compact?: boolean;
 }) {
+  const { brand } = useSiteContent();
+
   const emphasisClass = compact
     ? "text-2xl sm:text-3xl lg:text-[1.75rem] xl:text-[2rem]"
     : "text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-[3.25rem]";

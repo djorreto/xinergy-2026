@@ -1,4 +1,6 @@
-import { messaging } from "@/lib/content";
+"use client";
+
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { ttForsDisplay } from "@/lib/fonts";
 
 export function MessagingFramework({
@@ -8,6 +10,7 @@ export function MessagingFramework({
   className?: string;
   variant?: "light" | "dark";
 }) {
+  const { messaging } = useSiteContent();
   const isDark = variant === "dark";
 
   return (

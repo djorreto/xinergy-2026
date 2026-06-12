@@ -1,0 +1,151 @@
+{
+  "header": {
+    "calculateEfficiencies": "Calcular eficiências",
+    "contact": "Contato",
+    "expertise": "Expertise",
+    "viewAllLines": "Ver todas as linhas →",
+    "viewOnHome": "Ver na página inicial",
+    "allLines": "Todas as linhas →",
+    "closeMenu": "Fechar menu",
+    "mobileNav": "Navegação móvel",
+    "menu": "Menu",
+    "language": "Idioma"
+  },
+  "footer": {
+    "navigation": "Navegação",
+    "efficiencyDiagnostic": "Diagnóstico de eficiência",
+    "contact": "Contato",
+    "officesIn": "Escritórios em"
+  },
+  "home": {
+    "measurableImpact": "Impacto mensurável",
+    "viewAllCases": "Ver todos os casos →",
+    "efficiencyDiagnostic": "Diagnóstico de eficiências",
+    "efficiencyQuestion": "Quanto de eficiência sua empresa pode liberar?",
+    "efficiencyIntro": "Em poucos minutos, com dados básicos do seu gasto e operação."
+  },
+  "cases": {
+    "challenge": "Desafio",
+    "approach": "Abordagem",
+    "approachLabel": "Abordagem: ",
+    "results": "Resultados",
+    "moreInfo": "Saiba mais →",
+    "moreInfoShort": "Saiba mais",
+    "letsTalk": "Vamos conversar",
+    "similarCase": "Quer explorar um caso similar? Escreva para nós e compartilhamos os detalhes.",
+    "prevCases": "Casos anteriores",
+    "nextCases": "Próximos casos",
+    "casesTablist": "Casos de sucesso",
+    "caseGroup": "Grupo de casos {n}"
+  },
+  "trust": {
+    "clients": "Clientes",
+    "clientsTitle": "Organizações líderes na América Latina.",
+    "partners": "Parceiros de tecnologia e consultoria"
+  },
+  "cta": {
+    "measureExecute": "medimos e executamos com você",
+    "tagline": "Diagnóstico · Resultados verificáveis · Cash neutral."
+  },
+  "faq": {
+    "title": "Perguntas frequentes",
+    "subtitle": "Respostas objetivas para equipes de compras e finanças"
+  },
+  "chart": {
+    "caption": "Mesmo sob pressão de mercado, o gasto se estabiliza e o EBITDA melhora quando a operação de abastecimento executa com foco em eficiências verificáveis."
+  },
+  "contact": {
+    "office": "Escritório",
+    "commercialModel": "Modelo comercial",
+    "commercialCopy": "Compartilhamos riscos com um modelo único.",
+    "cashNeutral": "Cash neutral",
+    "cashNeutralDetail": "a economia financia o projeto.",
+    "presence": "Presença",
+    "offices": "Escritórios"
+  },
+  "diagnostico": {
+    "metaDescription": "#Fitness for business — calcule quantas eficiências você pode obter. Modelo cash neutral.",
+    "eyebrow": "Diagnóstico de eficiências",
+    "subtitle": "Estimativa em 2 minutos com base em indústria, gasto com fornecedores e maturidade da área. Sem compromisso.",
+    "cashNeutralEyebrow": "Cash neutral",
+    "cashNeutralTitle": "Alinhados a resultados, não a horas",
+    "cashNeutralIntro": "Compartilhamos riscos: nossos honorários estão vinculados a eficiências reais e impacto verificável no P&L — ganhamos quando você captura valor.",
+    "preferTalk": "Prefere falar conosco?",
+    "scheduleConversation": "Agendar conversa estratégica →"
+  },
+  "services": {
+    "outcomes": "Outcomes",
+    "howWeDoIt": "Como fazemos"
+  },
+  "industries": {
+    "challenges": "Desafios do setor",
+    "howWeHelp": "Como ajudamos",
+    "experience": "Experiência:"
+  },
+  "insights": {
+    "publishedOriginally": "Publicado originalmente em",
+    "writeUs": "Escreva para nós",
+    "deepenPrompt": "Quer aprofundar em eficiências, ESG ou tecnologia para sua operação?",
+    "pagination": "Paginação de insights",
+    "page": "Página {n}"
+  },
+  "nosotros": {
+    "culture": "Cultura",
+    "howWeWork": "Como trabalhamos",
+    "carbonNeutral": "Carbono neutral"
+  },
+  "calculator": {
+    "steps": {
+      "company": "Empresa",
+      "maturity": "Maturidade",
+      "result": "Resultado"
+    },
+    "title": "Diagnóstico de eficiências",
+    "stepOf": "Passo {current} de {total}",
+    "industry": "Indústria",
+    "annualSpend": "Gasto anual com fornecedores (aprox.)",
+    "spendHint": "Compras diretas e indiretas consolidadas",
+    "maturityIntro": "Cinco perguntas sobre visibilidade, governança, sourcing, digitalização e tracking de eficiências. Suas respostas nos ajudam a calibrar a oportunidade.",
+    "tools": "Ferramentas",
+    "yes": "Sim",
+    "no": "Não",
+    "resultReady": "Seu resultado está pronto",
+    "enterEmail": "Informe seu e-mail para visualizar",
+    "emailFollowUp": "Enviamos os detalhes e um especialista pode entrar em contato se quiser aprofundar.",
+    "email": "E-mail",
+    "emailPlaceholder": "voce@empresa.com",
+    "emailInvalid": "Informe um e-mail válido.",
+    "estimatedSavings": "Eficiências estimadas (ano 1)",
+    "rangeCopy": "Faixa conservadora–agressiva sobre gasto endereçável (~{pct}% do total).",
+    "maturityPurchasing": "Maturidade em compras",
+    "expectedRate": "Taxa esperada",
+    "priorityLevers": "Alavancas prioritárias com Xinergy",
+    "suggestedServices": "Serviços sugeridos:",
+    "back": "Voltar",
+    "continue": "Continuar",
+    "seeResults": "Ver minhas eficiências",
+    "waiting": "Um momento…",
+    "scheduleDiagnostic": "Agendar diagnóstico",
+    "sidebarHow": "Como seguimos",
+    "sidebarNextSteps": "Próximos passos com Xinergy",
+    "sidebarSteps": {
+      "1title": "NDA e envio de informações",
+      "1desc": "Assinamos confidencialidade e recebemos as informações base da sua operação e categorias.",
+      "2title": "Opportunity assessment",
+      "2desc": "Quantificamos eficiências por categoria com metodologia auditável.",
+      "3title": "Proposta alinhada a resultados",
+      "3desc": "Compartilhamos riscos: ganhamos quando você captura valor no P&L."
+    },
+    "sidebarDisclaimer": "O assessment estará sujeito a uma avaliação preliminar da equipe.",
+    "resultsCashNeutral": "Cash neutral",
+    "resultsRiskShare": "Compartilhamos riscos: ganhamos quando você captura valor",
+    "resultsModel": "Nosso modelo está vinculado a eficiências reais e impacto verificável no P&L — ganhamos quando você captura valor.",
+    "maturityLevels": {
+      "Inicial": "Inicial",
+      "En desarrollo": "Em desenvolvimento",
+      "Definido": "Definido",
+      "Avanzado": "Avançado",
+      "Optimizado": "Otimizado"
+    }
+  }
+}

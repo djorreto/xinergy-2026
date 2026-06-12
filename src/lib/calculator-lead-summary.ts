@@ -1,37 +1,38 @@
 import {
   calculateOpportunity,
   formatUsd,
-  industries,
-  maturityQuestions,
-  toolQuestions,
-  spendBands,
   type CalculatorInput,
 } from "@/lib/calculator";
+import { getCalculatorCopy } from "@/lib/calculator-i18n";
 
 export const CALCULATOR_LEAD_SOURCE = "calculo eficiencias pagina web";
 
-function industryLabel(id: CalculatorInput["industry"]): string {
-  return industries.find((i) => i.id === id)?.label ?? id;
+function industryLabel(id: CalculatorInput["industry"], locale = "es"): string {
+  const copy = getCalculatorCopy(locale);
+  return copy.industries[id] ?? id;
 }
 
-function spendLabel(id: CalculatorInput["spendBand"]): string {
-  return spendBands.find((s) => s.id === id)?.label ?? id;
+function spendLabel(id: CalculatorInput["spendBand"], locale = "es"): string {
+  const copy = getCalculatorCopy(locale);
+  return copy.spendBands[id] ?? id;
 }
 
 export function buildCalculatorLeadSummary(
   input: CalculatorInput,
   email: string,
+  locale = "es",
 ): string {
-  const result = calculateOpportunity(input);
+  const copy = getCalculatorCopy(locale);
+  const result = calculateOpportunity(input, copy);
   const lines = [
     CALCULATOR_LEAD_SOURCE,
     "",
     "═══ PASO 1 · EMPRESA ═══",
-    `Industria: ${industryLabel(input.industry)}`,
-    `Gasto anual con proveedores: ${spendLabel(input.spendBand)}`,
+    `Industria: ${industryLabel(input.industry, locale)}`,
+    `Gasto anual con proveedores: ${spendLabel(input.spendBand, locale)}`,
     "",
     "═══ PASO 2 · MADUREZ ═══",
-    ...maturityQuestions.map((q, i) => {
+    ...copy.maturityQuestions.map((q, i) => {
       const answer = input.maturityAnswers[i];
       return `${i + 1}. ${q.question}\n   Respuesta: ${answer}/4 (${q.lowLabel} → ${q.highLabel})`;
     }),
@@ -39,7 +40,7 @@ export function buildCalculatorLeadSummary(
     `Puntaje madurez: ${result.maturityScore}/20 · Nivel: ${result.maturityLevel}`,
     "",
     "═══ HERRAMIENTAS ═══",
-    ...toolQuestions.map((q, i) => {
+    ...copy.toolQuestions.map((q, i) => {
       const answer =
         i === 0 ? input.hasNegotiationTool : input.hasStockPlanningTool;
       return `${i + 6}. ${q.question}\n   Respuesta: ${answer ? "Sí" : "No"}`;

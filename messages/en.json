@@ -1,0 +1,151 @@
+{
+  "header": {
+    "calculateEfficiencies": "Calculate efficiencies",
+    "contact": "Contact",
+    "expertise": "Expertise",
+    "viewAllLines": "View all lines →",
+    "viewOnHome": "View on homepage",
+    "allLines": "All lines →",
+    "closeMenu": "Close menu",
+    "mobileNav": "Mobile navigation",
+    "menu": "Menu",
+    "language": "Language"
+  },
+  "footer": {
+    "navigation": "Navigation",
+    "efficiencyDiagnostic": "Efficiency diagnostic",
+    "contact": "Contact",
+    "officesIn": "Offices in"
+  },
+  "home": {
+    "measurableImpact": "Measurable impact",
+    "viewAllCases": "View all cases →",
+    "efficiencyDiagnostic": "Efficiency diagnostic",
+    "efficiencyQuestion": "How much efficiency can your company unlock?",
+    "efficiencyIntro": "In a few minutes, with basic data on your spend and operations."
+  },
+  "cases": {
+    "challenge": "Challenge",
+    "approach": "Approach",
+    "approachLabel": "Approach: ",
+    "results": "Results",
+    "moreInfo": "Learn more →",
+    "moreInfoShort": "Learn more",
+    "letsTalk": "Let's talk",
+    "similarCase": "Want to explore a similar case? Write to us and we'll share the details.",
+    "prevCases": "Previous cases",
+    "nextCases": "Next cases",
+    "casesTablist": "Success stories",
+    "caseGroup": "Case group {n}"
+  },
+  "trust": {
+    "clients": "Clients",
+    "clientsTitle": "Leading organizations across Latin America.",
+    "partners": "Technology and consulting partners"
+  },
+  "cta": {
+    "measureExecute": "we measure and execute with you",
+    "tagline": "Diagnostic · Verifiable results · Cash neutral."
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "subtitle": "Concise answers for procurement and finance teams"
+  },
+  "chart": {
+    "caption": "Even under market pressure, spend stabilizes and EBITDA improves when procurement executes with a focus on verifiable efficiencies."
+  },
+  "contact": {
+    "office": "Office",
+    "commercialModel": "Commercial model",
+    "commercialCopy": "We share risks with a unique model.",
+    "cashNeutral": "Cash neutral",
+    "cashNeutralDetail": "savings fund the program.",
+    "presence": "Presence",
+    "offices": "Offices"
+  },
+  "diagnostico": {
+    "metaDescription": "#Fitness for business — calculate how much efficiency you can unlock. Cash neutral model.",
+    "eyebrow": "Efficiency diagnostic",
+    "subtitle": "Estimate in 2 minutes based on industry, supplier spend, and procurement maturity. No commitment.",
+    "cashNeutralEyebrow": "Cash neutral",
+    "cashNeutralTitle": "Aligned to results, not hours",
+    "cashNeutralIntro": "We share risks: our fees are tied to real efficiencies and verifiable P&L impact — we win when you capture value.",
+    "preferTalk": "Prefer to talk with us?",
+    "scheduleConversation": "Schedule a strategic conversation →"
+  },
+  "services": {
+    "outcomes": "Outcomes",
+    "howWeDoIt": "How we do it"
+  },
+  "industries": {
+    "challenges": "Sector challenges",
+    "howWeHelp": "How we help",
+    "experience": "Experience:"
+  },
+  "insights": {
+    "publishedOriginally": "Originally published on",
+    "writeUs": "Write to us",
+    "deepenPrompt": "Want to go deeper on efficiencies, ESG, or technology for your operations?",
+    "pagination": "Insights pagination",
+    "page": "Page {n}"
+  },
+  "nosotros": {
+    "culture": "Culture",
+    "howWeWork": "How we work",
+    "carbonNeutral": "Carbon neutral"
+  },
+  "calculator": {
+    "steps": {
+      "company": "Company",
+      "maturity": "Maturity",
+      "result": "Results"
+    },
+    "title": "Efficiency diagnostic",
+    "stepOf": "Step {current} of {total}",
+    "industry": "Industry",
+    "annualSpend": "Annual supplier spend (approx.)",
+    "spendHint": "Consolidated direct and indirect purchasing",
+    "maturityIntro": "Five questions on visibility, governance, sourcing, digitalization, and efficiency tracking. Your answers help us calibrate the opportunity.",
+    "tools": "Tools",
+    "yes": "Yes",
+    "no": "No",
+    "resultReady": "Your result is ready",
+    "enterEmail": "Enter your email to view it",
+    "emailFollowUp": "We'll send you the details and a specialist can reach out if you want to go deeper.",
+    "email": "Email",
+    "emailPlaceholder": "you@company.com",
+    "emailInvalid": "Enter a valid email.",
+    "estimatedSavings": "Estimated efficiencies (year 1)",
+    "rangeCopy": "Conservative–aggressive range on addressable spend (~{pct}% of total).",
+    "maturityPurchasing": "Procurement maturity",
+    "expectedRate": "Expected rate",
+    "priorityLevers": "Priority levers with Xinergy",
+    "suggestedServices": "Suggested services:",
+    "back": "Back",
+    "continue": "Continue",
+    "seeResults": "See my efficiencies",
+    "waiting": "One moment…",
+    "scheduleDiagnostic": "Schedule diagnostic",
+    "sidebarHow": "What happens next",
+    "sidebarNextSteps": "Next steps with Xinergy",
+    "sidebarSteps": {
+      "1title": "NDA and information sharing",
+      "1desc": "We sign confidentiality and receive baseline information on your operations and categories.",
+      "2title": "Opportunity assessment",
+      "2desc": "We quantify efficiencies by category with an audit-able methodology.",
+      "3title": "Results-aligned proposal",
+      "3desc": "We share risks: we win when you capture value in the P&L."
+    },
+    "sidebarDisclaimer": "The assessment is subject to a preliminary review by our team.",
+    "resultsCashNeutral": "Cash neutral",
+    "resultsRiskShare": "We share risks: we win when you capture value",
+    "resultsModel": "Our model is tied to real efficiencies and verifiable P&L impact — we win when you capture value.",
+    "maturityLevels": {
+      "Inicial": "Initial",
+      "En desarrollo": "Developing",
+      "Definido": "Defined",
+      "Avanzado": "Advanced",
+      "Optimizado": "Optimized"
+    }
+  }
+}

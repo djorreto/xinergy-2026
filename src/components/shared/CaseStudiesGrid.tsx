@@ -1,7 +1,11 @@
-import { cases } from "@/lib/content";
+"use client";
+
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { CaseStudyCarouselCard } from "@/components/shared/CaseStudyCarouselCard";
 
 export function CaseStudiesGrid() {
+  const { cases } = useSiteContent();
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
       {cases.map((caseStudy, i) => (

@@ -1,9 +1,18 @@
-import Link from "next/link";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { brand, nav, presenceLabel, officesLabel } from "@/lib/content";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { ttForsDisplay } from "@/lib/fonts";
 
-export function SiteFooter() {
+type SiteFooterProps = {
+  locale: string;
+};
+
+export function SiteFooter({ locale: _locale }: SiteFooterProps) {
+  const t = useTranslations("ui.footer");
+  const { brand, nav, presenceLabel, officesLabel } = useSiteContent();
   const year = new Date().getFullYear();
 
   return (
@@ -20,7 +29,7 @@ export function SiteFooter() {
         <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/45">{brand.promise}</p>
         <div className="mt-8">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-white/35">
-            Navegación
+            {t("navigation")}
           </p>
           <ul className="mt-3 space-y-2">
             {nav.map((item) => (
@@ -38,14 +47,14 @@ export function SiteFooter() {
                 href="/diagnostico"
                 className="text-sm font-medium text-xinergy-orange hover:underline"
               >
-                Diagnóstico de eficiencia
+                {t("efficiencyDiagnostic")}
               </Link>
             </li>
           </ul>
         </div>
         <div className="mt-8">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-white/35">
-            Contacto
+            {t("contact")}
           </p>
           <p className="mt-3 text-sm leading-relaxed text-white/55">{brand.address}</p>
           <a
@@ -68,7 +77,9 @@ export function SiteFooter() {
         </div>
         <div className="mt-8 border-t border-white/10 pt-6">
           <p className="text-xs leading-relaxed tracking-wide text-white/40">{presenceLabel}</p>
-          <p className="mt-2 text-xs text-white/30">Oficinas en {officesLabel}</p>
+          <p className="mt-2 text-xs text-white/30">
+            {t("officesIn")} {officesLabel}
+          </p>
         </div>
         <p className="mt-8 text-center text-[11px] text-white/35">
           © {year} {brand.name}
@@ -95,7 +106,7 @@ export function SiteFooter() {
           </div>
           <div className="lg:col-span-3">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-white/35">
-              Navegación
+              {t("navigation")}
             </p>
             <ul className="mt-4 space-y-2">
               {nav.map((item) => (
@@ -113,14 +124,14 @@ export function SiteFooter() {
                   href="/diagnostico"
                   className="text-sm font-medium text-xinergy-orange hover:underline"
                 >
-                  Diagnóstico de eficiencia
+                  {t("efficiencyDiagnostic")}
                 </Link>
               </li>
             </ul>
           </div>
           <div className="lg:col-span-4">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-white/35">
-              Contacto
+              {t("contact")}
             </p>
             <p className="mt-4 text-sm text-white/55">{brand.address}</p>
             <a
@@ -145,7 +156,7 @@ export function SiteFooter() {
         <div className="mt-12 border-t border-white/10 pt-8">
           <p className="text-xs tracking-wide text-white/40">{presenceLabel}</p>
           <p className="mt-2 text-xs text-white/30">
-            Oficinas en {officesLabel}
+            {t("officesIn")} {officesLabel}
           </p>
           <p className="mt-6 text-[11px] text-white/30">
             © {year} {brand.name}.

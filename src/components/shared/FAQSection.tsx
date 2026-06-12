@@ -1,26 +1,31 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import type { FAQ } from "@/lib/content";
 
 export function FAQSection({
   items,
-  title = "Preguntas frecuentes",
-  subtitle = "Respuestas concisas para equipos de compras y finanzas",
+  title,
+  subtitle,
 }: {
   items: readonly FAQ[];
   title?: string;
   subtitle?: string;
 }) {
+  const t = useTranslations("ui.faq");
   const [open, setOpen] = useState<number | null>(null);
+
+  const sectionTitle = title ?? t("title");
+  const sectionSubtitle = subtitle ?? t("subtitle");
 
   return (
     <section className="section-pad bg-xinergy-ivory">
       <Container>
-        <p className="label-editorial">{title}</p>
+        <p className="label-editorial">{sectionTitle}</p>
         <h2 className="font-display mt-3 max-w-xl text-3xl text-xinergy-charcoal lg:text-4xl">
-          {subtitle}
+          {sectionSubtitle}
         </h2>
         <div className="mt-12 divide-y divide-xinergy-charcoal/10 border border-xinergy-charcoal/10 bg-white">
           {items.map((item, i) => (

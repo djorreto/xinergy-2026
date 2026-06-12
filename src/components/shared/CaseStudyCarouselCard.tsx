@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useState } from "react";
 
 type CaseStudy = {
@@ -21,6 +22,7 @@ type CaseStudyCarouselCardProps = {
 };
 
 export function CaseStudyCarouselCard({ caseStudy: c, index = 0 }: CaseStudyCarouselCardProps) {
+  const t = useTranslations("ui.cases");
   const [open, setOpen] = useState(false);
 
   return (
@@ -59,7 +61,7 @@ export function CaseStudyCarouselCard({ caseStudy: c, index = 0 }: CaseStudyCaro
       </p>
 
       <p className="case-carousel-extra mt-2 text-xs leading-relaxed text-xinergy-slate/85 sm:text-[0.8125rem]">
-        <span className="font-semibold text-xinergy-orange">Enfoque: </span>
+        <span className="font-semibold text-xinergy-orange">{t("approachLabel")}</span>
         {c.approach}
       </p>
 
@@ -68,7 +70,7 @@ export function CaseStudyCarouselCard({ caseStudy: c, index = 0 }: CaseStudyCaro
         onClick={(e) => e.stopPropagation()}
         className="mt-4 text-[10px] font-semibold uppercase tracking-wider text-xinergy-orange hover:underline"
       >
-        Más información →
+        {t("moreInfo")}
       </Link>
     </article>
   );

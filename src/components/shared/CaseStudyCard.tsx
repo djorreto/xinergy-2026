@@ -1,4 +1,7 @@
-import Link from "next/link";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/Button";
 import { contactHref } from "@/lib/contact-context";
 
@@ -20,6 +23,8 @@ type CaseStudyCardProps = {
 };
 
 export function CaseStudyCard({ caseStudy: c, variant = "full" }: CaseStudyCardProps) {
+  const t = useTranslations("ui.cases");
+
   if (variant === "carousel") {
     return (
       <article className="flex h-full flex-col rounded-xl border border-xinergy-charcoal/10 bg-white p-5">
@@ -40,7 +45,7 @@ export function CaseStudyCard({ caseStudy: c, variant = "full" }: CaseStudyCardP
           href={`/casos/${c.slug}`}
           className="mt-4 text-[10px] font-semibold uppercase tracking-wider text-xinergy-orange hover:underline"
         >
-          Más información →
+          {t("moreInfo")}
         </Link>
       </article>
     );
@@ -68,7 +73,7 @@ export function CaseStudyCard({ caseStudy: c, variant = "full" }: CaseStudyCardP
             variant="secondary"
             className="mt-4 !px-4 !py-2 !text-[10px]"
           >
-            Más información
+            {t("moreInfoShort")}
           </Button>
         </div>
       </article>
@@ -97,13 +102,13 @@ export function CaseStudyCard({ caseStudy: c, variant = "full" }: CaseStudyCardP
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
         <div>
           <h3 className="text-[10px] font-bold uppercase tracking-widest text-xinergy-orange">
-            Desafío
+            {t("challenge")}
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-xinergy-slate">{c.challenge}</p>
         </div>
         <div>
           <h3 className="text-[10px] font-bold uppercase tracking-widest text-xinergy-orange">
-            Enfoque
+            {t("approach")}
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-xinergy-slate">{c.approach}</p>
         </div>
@@ -111,7 +116,7 @@ export function CaseStudyCard({ caseStudy: c, variant = "full" }: CaseStudyCardP
 
       <div className="mt-8 border-t border-xinergy-charcoal/8 pt-8">
         <h3 className="text-[10px] font-bold uppercase tracking-widest text-xinergy-orange">
-          Resultados
+          {t("results")}
         </h3>
         <ul className="mt-4 grid gap-2 sm:grid-cols-2">
           {c.results.map((result) => (
@@ -124,11 +129,9 @@ export function CaseStudyCard({ caseStudy: c, variant = "full" }: CaseStudyCardP
       </div>
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-xinergy-charcoal/8 pt-8">
-        <p className="max-w-md text-xs text-xinergy-slate">
-          ¿Quieres explorar un caso similar? Escríbenos y te compartimos el detalle.
-        </p>
+        <p className="max-w-md text-xs text-xinergy-slate">{t("similarCase")}</p>
         <Button href={contactHref("casos")} variant="primary" className="!px-6 !py-3 !text-xs">
-          Hablemos
+          {t("letsTalk")}
         </Button>
       </div>
     </article>

@@ -1,4 +1,6 @@
-import { brand } from "@/lib/content";
+"use client";
+
+import { useTranslations } from "next-intl";
 
 /** Leyenda del gráfico narrativo — superpuesta al chart animado */
 export function HeroChartCaption({
@@ -8,27 +10,15 @@ export function HeroChartCaption({
   className?: string;
   dark?: boolean;
 }) {
+  const t = useTranslations("ui.chart");
+
   return (
     <p
       className={`max-w-2xl border-l-2 border-xinergy-orange/80 pl-4 text-sm leading-relaxed sm:text-[0.9375rem] ${
         dark ? "text-white/60" : "text-xinergy-slate"
       } ${className}`}
     >
-      Aun con{" "}
-      <span className={`font-medium ${dark ? "text-[#f09080]" : "text-[#c45a48]"}`}>
-        presión de mercado
-      </span>{" "}
-      o{" "}
-      <span className={`font-medium ${dark ? "text-[#f09080]" : "text-[#c45a48]"}`}>
-        choques globales
-      </span>
-      , <span className="font-semibold text-xinergy-orange">Xinergy</span> lleva{" "}
-      <span className={`font-medium ${dark ? "text-[#8de0b0]" : "text-[#2d8a55]"}`}>
-        {brand.claim}
-      </span>{" "}
-      a tu operación: el{" "}
-      <span className={`font-medium ${dark ? "text-[#aad4ff]" : "text-[#4a7ab8]"}`}>SLA</span> y
-      los resultados se sostienen — o mejoran — mientras el gasto se optimiza.
+      {t("caption")}
     </p>
   );
 }

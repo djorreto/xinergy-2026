@@ -1,3 +1,5 @@
+import type { CalculatorCopy } from "./calculator-i18n";
+
 export type IndustryId =
   | "retail"
   | "mineria"
@@ -120,12 +122,12 @@ export const toolQuestions = [
   },
 ] as const;
 
-const serviceMap: Record<string, string[]> = {
-  visibility: ["Abastecimiento estratégico", "Procurement Transformation"],
-  governance: ["Procurement Transformation", "BPO de Abastecimiento"],
-  sourcing: ["Abastecimiento estratégico", "Automatización"],
-  digital: ["Cadena de suministro digital", "Automatización"],
-  savings: ["Abastecimiento estratégico", "Procurement Transformation"],
+const serviceKeys: Record<string, string> = {
+  visibility: "visibility",
+  governance: "governance",
+  sourcing: "sourcing",
+  digital: "digital",
+  savings: "savings",
 };
 
 function getMaturityLevel(score: number): CalculatorResult["maturityLevel"] {
@@ -136,27 +138,17 @@ function getMaturityLevel(score: number): CalculatorResult["maturityLevel"] {
   return "Optimizado";
 }
 
-function getWeakestLevers(answers: number[]): string[] {
+function getWeakestLevers(answers: number[], copy: CalculatorCopy): string[] {
   const levers: string[] = [];
-  maturityQuestions.forEach((q, i) => {
+  copy.maturityQuestions.forEach((q, i) => {
     if (answers[i] <= 2) {
-      levers.push(
-        q.id === "visibility"
-          ? "Spend analytics y visibilidad de gasto"
-          : q.id === "governance"
-            ? "Gobierno y operating model de procurement"
-            : q.id === "sourcing"
-              ? "Strategic sourcing en categorías de mayor spend"
-              : q.id === "digital"
-                ? "Digitalización y e-procurement"
-                : "Savings assurance y tracking a P&L",
-      );
+      levers.push(copy.priorityLevers[q.id] ?? copy.priorityLevers.default);
     }
   });
-  return levers.length ? levers.slice(0, 3) : ["Optimización de categorías tácticas y estratégicas"];
+  return levers.length ? levers.slice(0, 3) : [copy.priorityLevers.default];
 }
 
-export function calculateOpportunity(input: CalculatorInput): CalculatorResult {
+export function calculateOpportunity(input: CalculatorInput, copy: CalculatorCopy): CalculatorResult {
   const industry = industries.find((i) => i.id === input.industry)!;
   const spend = spendBands.find((s) => s.id === input.spendBand)!;
 
@@ -191,13 +183,15 @@ export function calculateOpportunity(input: CalculatorInput): CalculatorResult {
   const recommended = new Set<string>();
   input.maturityAnswers.forEach((ans, i) => {
     if (ans <= 2) {
-      const key = maturityQuestions[i].id;
-      serviceMap[key]?.forEach((s) => recommended.add(s));
+      const key = copy.maturityQuestions[i].id;
+      const svcKey = serviceKeys[key];
+      const svc = svcKey ? copy.recommendedServices[svcKey] : undefined;
+      if (svc) recommended.add(svc);
     }
   });
   if (recommended.size === 0) {
-    recommended.add("Abastecimiento estratégico");
-    recommended.add("Gestión de riesgo de proveedores");
+    recommended.add(copy.recommendedServices.default1);
+    recommended.add(copy.recommendedServices.default2);
   }
 
   return {
@@ -213,7 +207,7 @@ export function calculateOpportunity(input: CalculatorInput): CalculatorResult {
     rateExpected: Math.round(expectedRate * 1000) / 10,
     rateAggressive: Math.round(rateAggressive * 1000) / 10,
     monthsToNeutral,
-    priorityLevers: getWeakestLevers(input.maturityAnswers),
+    priorityLevers: getWeakestLevers(input.maturityAnswers, copy),
     recommendedServices: [...recommended].slice(0, 3),
   };
 }

@@ -1,11 +1,13 @@
-import { brand, officeCountries, presenceCountries } from "@/lib/content";
+import { getContent } from "@/lib/content";
 
-export function OrganizationJsonLd() {
+export function OrganizationJsonLd({ locale }: { locale: string }) {
+  const { brand, officeCountries, presenceCountries } = getContent(locale);
+
   const schema = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: brand.name,
-    url: "https://xinergy.lat",
+    url: `https://xinergy.lat/${locale}`,
     logo: "https://xinergy.lat/brand/logo-color.png",
     email: brand.email,
     description: brand.promise,

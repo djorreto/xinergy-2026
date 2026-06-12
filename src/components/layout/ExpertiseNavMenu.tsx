@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useRef, useState } from "react";
-import { capabilities, home } from "@/lib/content";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { ttForsDisplay } from "@/lib/fonts";
 
 type ExpertiseNavMenuProps = {
@@ -16,6 +17,8 @@ export function ExpertiseNavMenu({
   onNavigate,
   variant = "desktop",
 }: ExpertiseNavMenuProps) {
+  const t = useTranslations("ui.header");
+  const { capabilities, home } = useSiteContent();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +63,7 @@ export function ExpertiseNavMenu({
           aria-expanded={open}
           onClick={() => setOpen(!open)}
         >
-          Expertise
+          {t("expertise")}
           <svg
             className={`h-4 w-4 shrink-0 transition ${open ? "rotate-180" : ""}`}
             fill="none"
@@ -105,7 +108,7 @@ export function ExpertiseNavMenu({
                 className="mt-1 block rounded-lg px-3 py-3 text-xs font-semibold uppercase tracking-wider text-xinergy-orange active:bg-white"
                 onClick={close}
               >
-                Ver todas las líneas →
+                {t("viewAllLines")}
               </Link>
             </div>
           </div>
@@ -123,7 +126,7 @@ export function ExpertiseNavMenu({
         aria-haspopup="true"
         onClick={() => setOpen(!open)}
       >
-        Expertise
+        {t("expertise")}
         <svg
           className={`h-3.5 w-3.5 transition ${open ? "rotate-180" : ""}`}
           fill="none"
@@ -180,14 +183,14 @@ export function ExpertiseNavMenu({
               className="text-xs text-xinergy-slate hover:text-xinergy-charcoal"
               onClick={close}
             >
-              Ver en la portada
+              {t("viewOnHome")}
             </Link>
             <Link
               href="/servicios"
               className="text-xs font-semibold uppercase tracking-wider text-xinergy-orange hover:underline"
               onClick={close}
             >
-              Todas las líneas →
+              {t("allLines")}
             </Link>
           </div>
         </div>

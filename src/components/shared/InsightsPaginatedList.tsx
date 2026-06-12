@@ -1,12 +1,15 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { insights } from "@/lib/content";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { InsightCard } from "@/components/shared/InsightCard";
 
 const PER_PAGE = 3;
 
 export function InsightsPaginatedList() {
+  const t = useTranslations("ui.insights");
+  const { insights } = useSiteContent();
   const totalPages = Math.ceil(insights.length / PER_PAGE);
   const [page, setPage] = useState(1);
 
@@ -24,7 +27,7 @@ export function InsightsPaginatedList() {
       {totalPages > 1 && (
         <nav
           className="mt-10 flex items-center justify-center gap-2"
-          aria-label="Paginación de insights"
+          aria-label={t("pagination")}
         >
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
             <button
@@ -38,7 +41,7 @@ export function InsightsPaginatedList() {
                   : "border border-xinergy-charcoal/15 text-xinergy-slate hover:border-xinergy-orange hover:text-xinergy-orange"
               }`}
             >
-              Página {n}
+              {t("page", { n })}
             </button>
           ))}
         </nav>

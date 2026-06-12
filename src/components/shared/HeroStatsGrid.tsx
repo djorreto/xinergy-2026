@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { heroStats } from "@/lib/content";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { ttForsDisplay } from "@/lib/fonts";
 
 type HeroStatsGridProps = {
@@ -59,6 +59,7 @@ function StatCard({
 }
 
 export function HeroStatsGrid({ variant = "hero", className = "" }: HeroStatsGridProps) {
+  const { heroStats } = useSiteContent();
   const isBand = variant === "band";
 
   if (isBand) {

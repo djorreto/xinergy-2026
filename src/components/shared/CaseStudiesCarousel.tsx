@@ -1,11 +1,15 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { cases } from "@/lib/content";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { CaseStudyCarouselCard } from "@/components/shared/CaseStudyCarouselCard";
+import type { SiteContent } from "@/lib/content";
 
 const INTERVAL_MS = 10_000;
 const SWIPE_THRESHOLD = 48;
+
+type CaseStudy = SiteContent["cases"][number];
 
 function chunkCases<T>(items: readonly T[], size: number): T[][] {
   const chunks: T[][] = [];
@@ -16,12 +20,13 @@ function chunkCases<T>(items: readonly T[], size: number): T[][] {
 }
 
 type CarouselTrackProps = {
-  slides: (typeof cases)[number][][];
+  slides: CaseStudy[][];
   columns: 1 | 2 | 3;
   className?: string;
 };
 
 function CarouselTrack({ slides, columns, className }: CarouselTrackProps) {
+  const t = useTranslations("ui.cases");
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchStartX = useRef<number | null>(null);
@@ -101,21 +106,21 @@ function CarouselTrack({ slides, columns, className }: CarouselTrackProps) {
             type="button"
             onClick={() => goTo(index - 1)}
             className="flex h-11 w-11 items-center justify-center rounded-full border border-xinergy-charcoal/15 text-xinergy-charcoal transition hover:border-xinergy-orange hover:text-xinergy-orange"
-            aria-label="Casos anteriores"
+            aria-label={t("prevCases")}
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
 
-          <div className="flex items-center gap-1" role="tablist" aria-label="Casos de éxito">
+          <div className="flex items-center gap-1" role="tablist" aria-label={t("casesTablist")}>
             {slides.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 role="tab"
                 aria-selected={i === index}
-                aria-label={`Grupo de casos ${i + 1}`}
+                aria-label={t("caseGroup", { n: i + 1 })}
                 onClick={() => goTo(i)}
                 className="flex min-h-11 min-w-11 items-center justify-center p-3"
               >
@@ -134,7 +139,7 @@ function CarouselTrack({ slides, columns, className }: CarouselTrackProps) {
             type="button"
             onClick={() => goTo(index + 1)}
             className="flex h-11 w-11 items-center justify-center rounded-full border border-xinergy-charcoal/15 text-xinergy-charcoal transition hover:border-xinergy-orange hover:text-xinergy-orange"
-            aria-label="Siguientes casos"
+            aria-label={t("nextCases")}
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -147,9 +152,10 @@ function CarouselTrack({ slides, columns, className }: CarouselTrackProps) {
 }
 
 export function CaseStudiesCarousel() {
-  const desktopSlides = useMemo(() => chunkCases(cases, 3), []);
-  const tabletSlides = useMemo(() => chunkCases(cases, 2), []);
-  const mobileSlides = useMemo(() => chunkCases(cases, 1), []);
+  const { cases } = useSiteContent();
+  const desktopSlides = useMemo(() => chunkCases(cases, 3), [cases]);
+  const tabletSlides = useMemo(() => chunkCases(cases, 2), [cases]);
+  const mobileSlides = useMemo(() => chunkCases(cases, 1), [cases]);
 
   return (
     <>
