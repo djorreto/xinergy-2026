@@ -33,7 +33,7 @@ export function LanguageSwitcher({ useSolidHeader }: { useSolidHeader: boolean }
     ? "border-xinergy-charcoal/15 bg-white"
     : "border-white/20 bg-xinergy-charcoal/90 backdrop-blur-md";
 
-  const chevronClass = useSolidHeader ? "text-xinergy-slate" : "text-white/70";
+  const chevronClass = useSolidHeader ? "text-xinergy-charcoal" : "text-white/70";
 
   return (
     <div ref={ref} className="relative">

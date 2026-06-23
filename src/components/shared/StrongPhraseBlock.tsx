@@ -32,7 +32,8 @@ export function StrongPhraseBlock({
           {brand.strongPhrase.emphasis}
         </span>
         <span className={`mt-2 block font-normal text-white/90 ${bodyClass}`}>
-          {brand.strongPhrase.body}
+          {brand.strongPhrase.body.charAt(0).toUpperCase()}
+          {brand.strongPhrase.body.slice(1)}
         </span>
       </p>
     </blockquote>

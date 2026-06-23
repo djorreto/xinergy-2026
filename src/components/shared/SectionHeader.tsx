@@ -31,15 +31,15 @@ export function SectionHeader({
         {eyebrow}
       </p>
       <h2
-        className={`font-display mt-3 text-2xl leading-tight text-balance sm:text-3xl lg:text-4xl ${
+        className={`font-display mt-3 text-balance leading-tight ${
           dark ? "text-white" : "text-xinergy-charcoal"
-        } ${centered ? "mx-auto" : ""} ${titleClassName}`}
+        } ${centered ? "mx-auto" : ""} ${titleClassName || "text-[length:var(--type-section)]"}`}
       >
         {title}
       </h2>
       {intro && (
         <p
-          className={`mt-4 text-sm leading-relaxed sm:text-base ${
+          className={`type-body mt-4 ${
             dark ? "text-white/65" : "text-xinergy-slate"
           } ${centered ? "mx-auto max-w-md" : "max-w-xl"}`}
         >

@@ -4,7 +4,14 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { PageHero } from "@/components/shared/PageHero";
 import { CTABand } from "@/components/shared/CTABand";
 import { Container } from "@/components/ui/Container";
+import { WorkingCapitalShowcase } from "@/components/shared/WorkingCapitalShowcase";
+import { WorkingCapitalSections } from "@/components/shared/WorkingCapitalSections";
+import { BpoSections } from "@/components/shared/BpoSections";
+import { StrategicSourcingSections } from "@/components/shared/StrategicSourcingSections";
 import { getContent } from "@/lib/content";
+import { getServiceBpo } from "@/lib/content/bpo";
+import { getServiceSs } from "@/lib/content/ss";
+import { getServiceWcs } from "@/lib/content/wcs";
 import { routing } from "@/i18n/routing";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
@@ -32,6 +39,10 @@ export default async function ServicioPage({ params }: Props) {
   if (!service) notFound();
   const t = await getTranslations("ui.services");
 
+  const wcs = getServiceWcs(service);
+  const ss = getServiceSs(service);
+  const bpo = getServiceBpo(service);
+
   return (
     <>
       <PageHero
@@ -44,10 +55,10 @@ export default async function ServicioPage({ params }: Props) {
         <Container>
           <div className="grid gap-16 lg:grid-cols-2">
             <div>
-              <h2 className="text-xl font-bold text-xinergy-charcoal">{t("outcomes")}</h2>
+              <h2 className="text-xl font-bold text-xinergy-charcoal sm:text-2xl">{t("outcomes")}</h2>
               <ul className="mt-4 space-y-3">
                 {service.outcomes.map((o) => (
-                  <li key={o} className="flex gap-3 text-sm text-xinergy-slate">
+                  <li key={o} className="type-body flex gap-3 text-xinergy-slate">
                     <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-xinergy-orange" />
                     {o}
                   </li>
@@ -62,7 +73,7 @@ export default async function ServicioPage({ params }: Props) {
                     <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-xinergy-orange text-sm font-bold text-xinergy-charcoal">
                       {i + 1}
                     </span>
-                    <span className="text-sm text-xinergy-slate pt-1">{step}</span>
+                    <span className="type-body pt-1 text-xinergy-slate">{step}</span>
                   </li>
                 ))}
               </ol>
@@ -70,6 +81,47 @@ export default async function ServicioPage({ params }: Props) {
           </div>
         </Container>
       </section>
+      {wcs ? (
+        <>
+          <WorkingCapitalShowcase
+            eyebrow={wcs.platform.eyebrow}
+            title={wcs.platform.title}
+            intro={wcs.platform.intro}
+            tourHintAuto={wcs.platform.tourHintAuto}
+            tourHintLocked={wcs.platform.tourHintLocked}
+            steps={wcs.platformSteps}
+          />
+          <WorkingCapitalSections
+            pillarsTitle={wcs.pillarsTitle}
+            pillarsIntro={wcs.pillarsIntro}
+            pillars={wcs.pillars}
+            differentiatorsTitle={wcs.differentiatorsTitle}
+            differentiators={wcs.differentiators}
+            partnersTitle={wcs.partnersTitle}
+            partnerNames={wcs.partnerNames}
+          />
+        </>
+      ) : null}
+      {ss ? (
+        <StrategicSourcingSections
+          assessment={ss.assessment}
+          model={ss.model}
+          capture={ss.capture}
+          methodology={ss.methodology}
+          successPillars={ss.successPillars}
+          tools={ss.tools}
+        />
+      ) : null}
+      {bpo ? (
+        <BpoSections
+          vision={bpo.vision}
+          operatingModel={bpo.operatingModel}
+          spendSegments={bpo.spendSegments}
+          operationModels={bpo.operationModels}
+          measurement={bpo.measurement}
+          platform={bpo.platform}
+        />
+      ) : null}
       <CTABand />
     </>
   );

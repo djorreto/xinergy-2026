@@ -32,27 +32,27 @@ export default async function HomePage({ params }: Props) {
           <div className="hero-mobile-content max-lg:flex max-lg:min-h-[calc(100svh-var(--site-header-height,3.5rem)-env(safe-area-inset-top,0px)-2rem)] max-lg:flex-col max-lg:justify-center">
             <div className="max-w-xl sm:max-w-2xl lg:max-w-3xl">
               <h1
-                className={`${ttForsDisplay.className} brand-phrase max-lg:text-[2.75rem] max-lg:leading-[1.04] sm:text-[2.5rem] sm:leading-[1.06] lg:text-[3.5rem] xl:text-[4rem]`}
+                className={`${ttForsDisplay.className} brand-phrase text-[length:var(--type-hero)] leading-[1.06] max-lg:leading-[1.04]`}
               >
                 {brand.claim}
               </h1>
               <p
-                className={`${ttForsDisplay.className} hero-mobile-accent mt-3 max-lg:text-lg max-lg:leading-snug lg:hidden`}
+                className={`${ttForsDisplay.className} hero-mobile-accent type-lead mt-3 max-lg:leading-snug lg:hidden`}
               >
                 {brand.tagline}
               </p>
-              <p className="hero-mobile-body mt-4 max-w-md text-base leading-relaxed text-white/72 sm:mt-5 sm:text-base lg:mt-3 lg:max-w-lg lg:text-lg">
+              <p className="hero-mobile-body type-lead mt-4 max-w-md sm:mt-5 lg:mt-3 lg:max-w-lg">
                 {brand.promise}
               </p>
             </div>
             <div className="mobile-actions hero-mobile-actions mt-8 max-lg:mt-10 sm:mt-10">
-              <Button href="/diagnostico" className="max-lg:w-full max-lg:rounded-full max-lg:py-4 max-lg:text-[0.6875rem] max-lg:tracking-[0.1em]">
+              <Button href="/diagnostico" className="max-lg:w-full max-lg:rounded-full max-lg:py-4">
                 {tHeader("calculateEfficiencies")}
               </Button>
               <Button
                 href="/contacto"
                 variant="light"
-                className="max-lg:w-full max-lg:rounded-full max-lg:py-4 max-lg:text-[0.6875rem] max-lg:tracking-[0.1em]"
+                className="max-lg:w-full max-lg:rounded-full max-lg:py-4"
               >
                 {brand.cta}
               </Button>
@@ -67,7 +67,7 @@ export default async function HomePage({ params }: Props) {
 
       <section className="border-t border-white/8 bg-[#2a2433] py-10 text-white max-lg:py-12 lg:hidden">
         <Container>
-          <p className="label-editorial-light mb-4 !text-[0.625rem] !tracking-[0.18em]">
+          <p className="label-editorial-light mb-4">
             {t("measurableImpact")}
           </p>
           <HeroStatsGrid variant="band" />
@@ -88,7 +88,7 @@ export default async function HomePage({ params }: Props) {
           </div>
           <Link
             href="/casos"
-            className="mt-8 inline-block text-xs font-semibold uppercase tracking-wider text-xinergy-orange hover:underline"
+            className="type-body-sm mt-8 inline-block font-semibold uppercase tracking-wider text-xinergy-orange hover:underline"
           >
             {t("viewAllCases")}
           </Link>
@@ -119,7 +119,7 @@ export default async function HomePage({ params }: Props) {
                 <h3 className="mt-4 text-base font-semibold leading-snug text-xinergy-charcoal group-hover:text-xinergy-orange sm:text-lg">
                   {cap.title}
                 </h3>
-                <p className="mt-3 text-base leading-relaxed text-xinergy-slate">
+                <p className="type-body mt-3 text-xinergy-slate">
                   {cap.description}
                 </p>
               </Link>
@@ -188,7 +188,7 @@ export default async function HomePage({ params }: Props) {
               >
                 {brand.claim}
               </p>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-xinergy-slate sm:text-base">
+              <p className="type-body mx-auto mt-3 max-w-md text-xinergy-slate">
                 {home.cta.intro}
               </p>
               <div className="mobile-actions cta-band-actions mt-8 justify-center sm:mt-10">

@@ -61,7 +61,31 @@
     "cashNeutral": "Cash neutral",
     "cashNeutralDetail": "savings fund the program.",
     "presence": "Presence",
-    "offices": "Offices"
+    "offices": "Offices",
+    "form": {
+      "eyebrow": "Write to us",
+      "title": "Tell us about your challenge",
+      "subtitle": "We respond within one business day.",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "company": "Company",
+      "role": "Role",
+      "message": "Let's talk",
+      "submit": "Send message",
+      "sending": "Sending…",
+      "successEyebrow": "Received",
+      "successTitle": "Thank you for reaching out",
+      "successBody": "A Xinergy specialist will review your message and contact you soon.",
+      "sendAnother": "Send another message",
+      "errors": {
+        "generic": "We couldn't send the form. Try again or email us directly.",
+        "network_error": "Connection error. Check your network and try again.",
+        "invalid_name": "Please enter your name.",
+        "invalid_email": "Please enter a valid email.",
+        "invalid_message": "Message must be at least 10 characters."
+      }
+    }
   },
   "diagnostico": {
     "metaDescription": "#Fitness for business — calculate how much efficiency you can unlock. Cash neutral model.",
@@ -92,7 +116,14 @@
   "nosotros": {
     "culture": "Culture",
     "howWeWork": "How we work",
-    "carbonNeutral": "Carbon neutral"
+    "carbonNeutral": "Carbon neutral",
+    "fitnessJourney": {
+      "ariaLabel": "Without a dedicated team savings are delayed; with Xinergy you reach the summit as fast as possible",
+      "panel1Label": "Client",
+      "panel1Caption": "No dedicated team; savings are delayed",
+      "panel2Label": "Client + Xinergy",
+      "panel2Caption": "Knowledge, tools and team — to the summit, as fast as possible"
+    }
   },
   "calculator": {
     "steps": {

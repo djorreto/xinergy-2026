@@ -37,7 +37,7 @@ export function MessagingFramework({
                 {block.title}
               </h3>
               <p
-                className={`mt-3 text-sm leading-relaxed ${
+                className={`mt-3 type-body leading-relaxed ${
                   isDark ? "text-white/60" : "text-xinergy-slate"
                 }`}
               >
@@ -52,7 +52,7 @@ export function MessagingFramework({
               {block.points.map((point, i) => (
                 <li
                   key={point}
-                  className={`flex gap-3 text-sm leading-snug ${
+                  className={`flex gap-3 type-body-sm leading-snug ${
                     isDark ? "text-white/72" : "text-xinergy-slate"
                   }`}
                 >

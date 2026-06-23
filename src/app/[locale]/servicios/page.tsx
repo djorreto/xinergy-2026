@@ -44,8 +44,8 @@ export default async function ServiciosPage({ params }: Props) {
                   {p.title}
                 </span>
                 <h2 className="mt-2 text-xl font-bold">{p.subtitle}</h2>
-                <p className="mt-3 text-sm text-xinergy-slate">{p.description}</p>
-                <Link href={p.href} className="mt-4 inline-block text-sm font-semibold text-xinergy-orange hover:underline">
+                <p className="type-body mt-3 text-xinergy-slate">{p.description}</p>
+                <Link href={p.href} className="type-body-sm mt-4 inline-block font-semibold text-xinergy-orange hover:underline">
                   {servicesPage.viewPrimary}
                 </Link>
               </article>

@@ -3,7 +3,7 @@ export const brand = {
   tagline: "We deliver efficiencies with real impact.",
   claim: "#Fitness for business",
   strongPhrase: {
-    emphasis: "We share risk,",
+    emphasis: "We share risk",
     body: "we measure, and we're your partners in implementation and execution.",
   },
   pitchLine:
@@ -105,6 +105,12 @@ export const capabilities = [
     description:
       "Value Realization Office (VRO), change management, and on-the-ground implementation until value is captured in P&L and cash.",
     href: "/servicios/implementacion-eficiencias",
+  },
+  {
+    title: "Working Capital Solutions",
+    description:
+      "Quantitative diagnostics, DPO/AP program design, multibank SCF, and contract negotiation — with Calculum and Monkey partners.",
+    href: "/servicios/working-capital-solutions",
   },
 ] as const;
 
@@ -274,8 +280,8 @@ export const heroStats = [
     detail: "Regional track record executing efficiencies with verifiable impact on P&L and cash.",
   },
   {
-    value: "6+",
-    label: `Presence in 6 countries · offices in ${officesLabel}.`,
+    value: "6",
+    label: `Countries with presence · offices in ${officesLabel}.`,
     detail: `Operations in ${presenceLabel} with local teams and multi-country projects.`,
   },
   {
@@ -368,6 +374,7 @@ export const pillars = [
       "Purchasing BPO",
       "Contracts management",
       "Cash & PAY programs",
+      "Working Capital Solutions",
       "Risk & providers",
     ],
   },
@@ -406,40 +413,40 @@ export const services = [
     slug: "eficiencias-optimizacion",
     title: "Efficiencies & Process Optimization",
     pillar: "Diagnostics & Processes",
-    headline: "We identify and capture efficiencies where value is lost today",
+    headline: "More margin from the first quarter",
     intro:
-      "We start with a rigorous assessment of spend and operations, prioritize quick wins, and improve processes and culture — with measurable P&L impact before a deep transformation.",
+      "We find where value is lost in your operation, prioritize the highest-impact opportunities, and turn them into measurable P&L results — without waiting for a deep transformation.",
     outcomes: [
-      "Efficiency map by category and process with auditable baseline",
-      "Prioritized quick wins with owners and capture timelines",
-      "More agile procurement processes, with less friction and rework",
-      "Team capabilities aligned to results, not just activity",
+      "Clear opportunity map by category and process",
+      "Quick wins with owners, timelines, and estimated savings",
+      "More agile procurement, with less friction and rework",
+      "Teams focused on results, not just activity",
     ],
     approach: [
-      "Assessment of spend, maturity, and critical processes",
+      "Diagnostics of spend, maturity, and critical processes",
       "Lever design and wave-based capture plan",
       "Process optimization and operating rules",
-      "Coaching and enablement until impact shows in P&L",
+      "Support until impact shows in your numbers",
     ],
   },
   {
     slug: "transformacion-abastecimiento",
     title: "Procurement Transformation",
     pillar: "Transformation",
-    headline: "The procurement model your business needs to compete",
+    headline: "A procurement function ready to compete",
     intro:
-      "We redesign governance, operating model, and the procurement roadmap — aligned to the C-suite, with a focus on EBIT, agility, resilience, and ESG.",
+      "We redesign governance, operating model, and the procurement roadmap aligned to leadership — focused on EBIT, agility, resilience, and ESG.",
     outcomes: [
-      "Governance and committees with clear roles between business and procurement",
-      "Operating model and org chart aligned to strategic categories",
-      "Transformation roadmap with milestones, investment, and benefits",
-      "Technology stack and partners defined to scale the new model",
+      "Clear roles between business and procurement, with committees that work",
+      "Organization and operating model oriented to strategic categories",
+      "Roadmap with milestones, investment, and expected benefits",
+      "Technology and partners defined to scale the new model",
     ],
     approach: [
-      "Maturity assessment and benchmarking vs. peers",
+      "Maturity assessment and benchmarking against market references",
       "Strategy, governance, and operating model design",
       "Wave-based transformation plan with change management",
-      "Technology enablement with certified partners",
+      "Technology implementation with certified partners",
     ],
   },
   {
@@ -448,12 +455,12 @@ export const services = [
     pillar: "Cost & Value",
     headline: "Savings that reach P&L — and stick",
     intro:
-      "We identify opportunities in direct and indirect spend, execute sourcing and negotiation, and ensure tracking through financial close.",
+      "We identify opportunities in direct and indirect spend, negotiate with the market, and track savings until they show up in your results.",
     outcomes: [
       "Cost reduction with verifiable EBIT impact",
-      "New suppliers and optimized contracts",
+      "Better suppliers and more competitive contracts",
       "Spend visibility by category and business unit",
-      "ZBB programs and critical categories under control",
+      "Critical categories and efficiency programs under control",
     ],
     approach: [
       "Spend analytics and opportunity assessment",
@@ -461,39 +468,261 @@ export const services = [
       "Negotiation and e-auctions where applicable",
       "Implementation tracking and savings assurance",
     ],
+    ss: {
+      assessment: {
+        eyebrow: "Where we start",
+        title: "We prioritize where there is most value to capture",
+        intro:
+          "We analyze your spend, identify the categories with the greatest potential, and build a clear plan to turn opportunities into real savings in your P&L.",
+        phases: [
+          {
+            title: "Understand where spend is",
+            bullets: [
+              "We organize and classify your purchase history by category",
+              "We cross OPEX and CAPEX, and review key contracts when needed",
+              "We prioritize categories by savings potential and ease of execution",
+            ],
+          },
+          {
+            title: "Define what to tackle first",
+            bullets: [
+              "We select categories based on impact, maturity, and spend size",
+              "We validate with users and procurement based on criticality and contract expiry",
+              "We agree on what we lead and what your internal team leads",
+            ],
+          },
+          {
+            title: "Open the savings levers",
+            bullets: [
+              "We identify opportunities on the supply and demand side",
+              "We prioritize quick wins by impact and speed of capture",
+              "We classify initiatives by effort and expected return",
+            ],
+          },
+          {
+            title: "Plan the capture",
+            bullets: [
+              "Wave-based timeline based on opportunities and service criticality",
+              "Prioritization by contract expiry and negotiation windows",
+              "Savings projection with milestones you can audit",
+            ],
+          },
+        ],
+      },
+      model: {
+        title: "Strategic sourcing, executed with agility",
+        intro:
+          "We turn initiatives into real efficiencies that impact your results. Proven methodology, from baseline to balance-sheet capture.",
+        laneLabels: {
+          demand: "Demand management",
+          offer: "Supply management",
+          savings: "Savings capture",
+        },
+        steps: [
+          { num: "1", title: "Current state diagnostics", lane: "demand" },
+          { num: "2", title: "Technical and market analysis", lane: "demand" },
+          { num: "3", title: "Category strategy", lane: "demand" },
+          { num: "4", title: "Tender and market launch", lane: "offer" },
+          { num: "5", title: "Proposal evaluation and closing", lane: "offer" },
+          { num: "6", title: "Final negotiation and contracts", lane: "offer" },
+          { num: "7", title: "New model implementation", lane: "savings" },
+          { num: "8", title: "Monitoring and control", lane: "savings" },
+        ],
+        benefits: [
+          "More supplier competition and a stronger supply base",
+          "Demand-side solutions that go beyond price savings",
+          "Digital negotiations with ~15% average savings in the region",
+        ],
+      },
+      capture: {
+        title: "Three speeds to capture value",
+        intro:
+          "We combine fast results with long-term efficiencies, adapting the approach to the urgency and potential of each category.",
+        tracks: [
+          {
+            id: "quick-impact",
+            name: "Quick Impact",
+            tagline: "Results in weeks",
+            focus:
+              "High-volume suppliers that span multiple categories.",
+            bullets: [
+              "Agile negotiation leveraging volume and market data",
+              "Immediate or retroactive discounts when the context allows",
+              "Regional benchmarks that support every capture",
+            ],
+            duration: "1–2 months to start capturing",
+            savings: "5% – 10% average savings",
+          },
+          {
+            id: "rapid-savings",
+            name: "Rapid Savings",
+            tagline: "Category quick wins",
+            focus:
+              "Categories with clear opportunity and fast execution.",
+            bullets: [
+              "Updated reference prices to negotiate from a strong position",
+              "Flexible terms that allow service adjustments later",
+              "Direct negotiation, new suppliers, or rapid operational adjustments",
+            ],
+            duration: "2–3 months to start capturing",
+            savings: "8% – 15% average savings",
+          },
+          {
+            id: "strategic-sourcing",
+            name: "Strategic Sourcing",
+            tagline: "Savings that last",
+            focus:
+              "Service redesign aligned to what the business needs today.",
+            bullets: [
+              "We challenge the current model and optimize demand and structure",
+              "Joint work with users and integration of best practices",
+              "Competitive tenders that renew suppliers and build resilience",
+            ],
+            duration: "4–6 months to start capturing",
+            savings: "15% – 25% average savings + better quality",
+          },
+        ],
+      },
+      methodology: {
+        title: "How we execute strategic sourcing",
+        intro:
+          "Eight steps with concrete deliverables at each phase, from initial diagnostics to savings tracking in your results.",
+        steps: [
+          {
+            num: "1",
+            title: "Current state diagnostics",
+            description:
+              "We understand how the service operates today: levels, penalties, KPIs, and total cost (price, quantity, and quality).",
+            deliverables: ["Baseline", "Category list", "Initiatives"],
+          },
+          {
+            num: "2",
+            title: "Technical and market analysis",
+            description:
+              "We size opportunities, validate feasibility, and read market trends.",
+            deliverables: [],
+          },
+          {
+            num: "3",
+            title: "Category strategy",
+            description:
+              "We define the best negotiation and sourcing route, aligned to what the business needs.",
+            deliverables: ["Category strategy"],
+          },
+          {
+            num: "4",
+            title: "Tender and market launch",
+            description:
+              "We identify suppliers, prepare the tender document, define quotes, and publish the process.",
+            deliverables: ["Tender document"],
+          },
+          {
+            num: "5",
+            title: "Proposal evaluation",
+            description:
+              "We receive bids, evaluate them technically, economically, and financially, and define the closing strategy.",
+            deliverables: ["Preselected suppliers", "Closing strategy"],
+          },
+          {
+            num: "6",
+            title: "Final negotiation and contracts",
+            description:
+              "We close the negotiation, formalize savings, award, and sign contracts.",
+            deliverables: ["Preliminary results", "Signed contracts"],
+          },
+          {
+            num: "7",
+            title: "Implementation",
+            description:
+              "We launch the new service and support the team through the transition.",
+            deliverables: ["Implementation plan"],
+          },
+          {
+            num: "8",
+            title: "Monitoring and control",
+            description:
+              "We track savings capture and correct deviations before value is lost.",
+            deliverables: ["Gap analysis"],
+          },
+        ],
+      },
+      successPillars: {
+        title: "Three factors that make the difference",
+        pillars: [
+          {
+            title: "Leadership commitment",
+            description:
+              "When senior management is involved, decisions move faster and impact reaches the results.",
+          },
+          {
+            title: "Change management",
+            description:
+              "We align the internal team from the start so new models are adopted and sustained.",
+          },
+          {
+            title: "Savings that show in P&L",
+            description:
+              "We do not stop at the plan: we track until savings show up in your numbers.",
+          },
+        ],
+      },
+      tools: {
+        title: "Technology that delivers visibility and control",
+        intro:
+          "Digital platforms to track every category, every negotiation, and every saving — with end-to-end traceability.",
+        categories: [
+          {
+            title: "Project management",
+            bullets: [
+              "Status, pending items, and owners by category",
+              "Timelines, projected savings, and deliverable backup",
+              "Consolidated dashboards and implementation tracking",
+            ],
+          },
+          {
+            title: "Supplier-facing processes",
+            bullets: [
+              "Clear, comparable information for the whole team",
+              "Technical evaluations with visibility for decision-makers",
+              "Electronic closings: reverse auction, sealed bid, and more",
+            ],
+          },
+        ],
+      },
+    },
   },
   {
     slug: "gestion-riesgo-proveedores",
     title: "Supplier Risk Management",
     pillar: "Managed Services",
-    headline: "Resilience across the external supply chain",
+    headline: "Suppliers under control, operations without surprises",
     intro:
-      "We map, measure, and mitigate financial, operational, reputational, and ESG risk across the supplier base.",
+      "We identify, measure, and reduce financial, operational, reputational, and ESG risk across your supplier base — before it impacts the business.",
     outcomes: [
-      "Risk map by supplier and category",
-      "Monitoring and contingency protocols",
-      "Greater operational continuity",
-      "Compliance and traceability for audit",
+      "Clear risk map by supplier and category",
+      "Monitoring protocols and contingency plans",
+      "Greater operational continuity amid disruptions",
+      "Audit-ready compliance and traceability",
     ],
     approach: [
       "Risk assessment and segmentation",
-      "Due diligence and scoring",
+      "Due diligence and supplier scoring",
       "Mitigation and diversification plans",
-      "Governance and executive reporting",
+      "Executive reporting and ongoing governance",
     ],
   },
   {
     slug: "bpo-abastecimiento",
     title: "Procurement BPO",
     pillar: "Managed Services",
-    headline: "Outsourced procurement operations at world-class standard",
+    headline: "Your procurement operation, running smoothly",
     intro:
-      "We take transactional and contract operations so your internal team can focus on strategic categories and business value.",
+      "We take transactional and contract operations off your plate so your team can focus on strategy and business value.",
     outcomes: [
-      "Greater efficiency and operational transparency",
-      "Measurable SLAs on procurement cycle",
-      "Reduction of fixed cost in the function",
-      "Scalability without increasing headcount",
+      "More efficient and transparent operations",
+      "Measurable SLAs across the purchase cycle",
+      "Lower fixed cost for the function",
+      "Scale without increasing headcount",
     ],
     approach: [
       "BPO model design and transition",
@@ -501,63 +730,415 @@ export const services = [
       "Reporting and continuous improvement",
       "Integration with ERP and e-procurement",
     ],
+    bpo: {
+      vision: {
+        eyebrow: "BPO — Managed Services",
+        title: "More than running procurement",
+        intro:
+          "We combine talent, technology, and data so your procurement function delivers more value with less friction — not just more people.",
+        pillars: [
+          {
+            num: "1",
+            title: "Specialized talent",
+            description:
+              "Expert sourcing teams, scalable to your operation and business units.",
+          },
+          {
+            num: "2",
+            title: "Analytics and artificial intelligence",
+            description:
+              "We turn spend data into savings opportunities, consolidation, and purchase channel improvement.",
+          },
+          {
+            num: "3",
+            title: "Contracts and continuity",
+            description:
+              "We monitor contractual compliance and supplier performance so value does not leak away.",
+          },
+          {
+            num: "4",
+            title: "Continuous improvement",
+            description:
+              "We optimize operations proactively, with data and market best practices.",
+          },
+          {
+            num: "5",
+            title: "ESG commitment",
+            description:
+              "We track supplier programs on diversity, female leadership, communities, and carbon footprint.",
+          },
+        ],
+        valueEnablersTitle: "What accelerates value",
+        valueEnablers: [
+          "Category specialists when needed",
+          "Agreed SLA compliance",
+          "Industry best practices",
+        ],
+        automationEnablersTitle: "What automates the operation",
+        automationEnablers: [
+          "Contract management tools and templates",
+          "Catalogs and marketplace",
+          "Procurement technology integrated into the service",
+        ],
+      },
+      operatingModel: {
+        title: "A model for every type of spend",
+        intro:
+          "Strategy, technology, and specialized teams for each segment — from strategic spend to tail spend.",
+        layers: [
+          {
+            title: "Strategic spend — where the greatest value is",
+            items: [
+              "Category management and strategic sourcing",
+              "Cost analysis and key category management",
+              "Agreement and contract administration",
+              "Value capture and transformation",
+            ],
+          },
+          {
+            title: "Tactical and spot spend — speed and control",
+            items: [
+              "Tactical category and tail spend management",
+              "Catalog-based procurement and guided buying",
+              "Help desk and systems support",
+              "Compliance, performance, and supplier risk",
+            ],
+          },
+          {
+            title: "Control tower — full visibility",
+            items: [
+              "Supplier intelligence, analytics, and project tracking",
+              "Contract management and market intelligence",
+              "Corporate governance and process improvement",
+              "Automation and ERP integration",
+            ],
+          },
+          {
+            title: "Technology included in the service",
+            items: [
+              "Category workbench, catalogs, and guided buying",
+              "Simplified sourcing and AI assistants",
+              "Buyer portal integrated with SAP and your systems",
+              "End-to-end visibility for decision-makers",
+            ],
+          },
+        ],
+        technologyNote:
+          "World-class platforms as a service: leading technology without investing in licenses or proprietary systems.",
+      },
+      spendSegments: {
+        title: "Every dollar of spend, well managed",
+        intro:
+          "We free your strategic team to focus on creating value, while tactical operations run with agility and control.",
+        segments: [
+          {
+            id: "strategic",
+            name: "Strategic Spend",
+            spendShare: "~80% of total spend",
+            txShare: "~10% transactions",
+            focus: "Where we negotiate terms that move P&L.",
+            bullets: [
+              "Specification review and total cost of service",
+              "Demand management with an external expert perspective",
+              "Negotiation of exceptional supplier terms",
+              "We implement the change, not just recommend it",
+            ],
+          },
+          {
+            id: "tactical",
+            name: "Tactical Spend",
+            spendShare: "~15% of total spend",
+            txShare: "~30% transactions",
+            focus: "Efficient day-to-day purchasing operations.",
+            bullets: [
+              "Request management aligned to your policies",
+              "Fewer steps and simpler approvals",
+              "Full visibility with outsourced operations",
+              "Optimized purchase channel",
+            ],
+          },
+          {
+            id: "tail",
+            name: "Tail Spend",
+            spendShare: "~5% of total spend",
+            txShare: "~60% transactions",
+            focus: "Agility and control in low-value purchases.",
+            bullets: [
+              "Guided buying that simplifies the process",
+              "Automation and compliance via catalogs",
+              "Adherence to prices and agreements already negotiated",
+              "Proactive management of agreements and relevant categories",
+            ],
+          },
+        ],
+      },
+      operationModels: {
+        title: "The model that fits your need",
+        intro:
+          "Four ways to work together. We choose the one that best matches your urgency, complexity, and business goals.",
+        models: [
+          {
+            id: "staff-augmentation",
+            name: "Staff Augmentation",
+            tagline: "Immediate reinforcement",
+            bullets: [
+              "Professionals with the exact profile you need",
+              "Vacancy coverage, technical fit, and digital tools",
+              "Legal, regulatory, and labor management included",
+              "Ideal for operational continuity or targeted reinforcement",
+            ],
+            economics: "Monthly fee per resource, with supervision from your team.",
+          },
+          {
+            id: "bpo",
+            name: "BPO",
+            tagline: "Full operation",
+            bullets: [
+              "We outsource people, processes, and results",
+              "Control towers and digital models for greater visibility",
+              "Recruitment, training, and management on our side",
+              "Impact in 24–36 months: savings and sustainable operations",
+            ],
+            economics: "Clear monthly fee tied to volume and results.",
+          },
+          {
+            id: "digital-bpo",
+            name: "Digital BPO",
+            tagline: "Technology included",
+            bullets: [
+              "People, processes, and platform in a single service",
+              "Procuretech, control towers, and analytics with no upfront investment",
+              "Standardized processes with real-time visibility",
+              "Multi-country operations on one integrated platform",
+            ],
+            economics: "Monthly fee + usage fee tied to efficiencies achieved.",
+          },
+          {
+            id: "managed-services",
+            name: "Integrated Managed Services",
+            tagline: "End-to-end results",
+            bullets: [
+              "Efficiency and transparency from day one",
+              "We free your team for strategic work",
+              "Integration with ERP, e-procurement, and analytics",
+              "Track record in mining and extractives: +100 FTE in long-term operations",
+            ],
+            economics: "Recurring model aligned to SLAs, volume, and value capture.",
+          },
+        ],
+      },
+      measurement: {
+        title: "Results that are measured and visible",
+        intro:
+          "We track user satisfaction, operational quality, and perceived value — with clear indicators and actionable reports.",
+        bullets: [
+          "Satisfaction surveys by users, operations, and services",
+          "Coverage and ratings by spend segment",
+          "Dashboards with full operational flow visibility",
+          "Timely tracking of purchases and purchase orders",
+        ],
+      },
+      platform: {
+        title: "Full control of the purchase cycle",
+        intro:
+          "We track every initiative end to end: tickets, traceability, progress, and compliance — with permanent visibility for your team.",
+        capabilities: [
+          "Tickets with interaction history per initiative",
+          "PO control, approvals, and automated notifications",
+          "Timelines and results dashboards per purchase order",
+          "Executive summary to activate service improvements",
+        ],
+        flexibilityNote:
+          "We operate on our own platform or adapt to yours, integrating with your processes and policies without friction.",
+      },
+    },
   },
   {
     slug: "pay-scf",
     title: "PAY and Supply Chain Finance",
     pillar: "Managed Services",
-    headline: "Liquidity across the chain without sacrificing supplier relationships",
+    headline: "More cash across the chain, better supplier relationships",
     intro:
-      "We structure financing programs and working capital optimization across the supply chain.",
+      "We design financing programs and working capital optimization that benefit your company and your supplier base.",
     outcomes: [
-      "Payment term extension where viable",
-      "DPO improvement and cash conversion",
+      "Payment term extension where it makes commercial sense",
+      "Better DPO and cash conversion",
       "SCF programs with strategic suppliers",
-      "Commercial win-win with the supply base",
+      "Win-win agreements with your supply chain",
     ],
     approach: [
       "Working capital diagnostics",
       "PAY/SCF program design",
       "Negotiation with banks and suppliers",
-      "Implementation and monitoring",
+      "Implementation and tracking",
     ],
+  },
+  {
+    slug: "working-capital-solutions",
+    title: "Working Capital Solutions",
+    pillar: "Cash & Liquidity",
+    headline: "More cash, with diagnostics before banking",
+    intro:
+      "An integrated four-pillar program: quantitative diagnostics, working capital program design, supply chain financing with the best partners, and contract renegotiation. No conflict of interest.",
+    outcomes: [
+      "DPO, spend, and cash opportunity diagnostics before structuring financing",
+      "Supplier prioritization by cash flow impact",
+      "Multibank SCF programs: confirming, early payment, and supplier portal",
+      "Your KPIs — DPO, EBITDA, and FCF — not the bank's",
+    ],
+    approach: [
+      "Diagnostics and segmentation with the Calculum platform",
+      "DPO, accounts payable, and treasury program design",
+      "SCF implementation with Monkey and multibank partners",
+      "Contract audit and renegotiation of terms and total cost",
+    ],
+    wcs: {
+      platform: {
+        eyebrow: "Platform in action",
+        title: "From diagnostics to execution — in one view",
+        intro:
+          "Executive dashboard, supplier segmentation, cash flow waterfall, and counterparty profile. Illustrative figures; each client starts from their own reality.",
+        tourHintAuto: "Auto tour · click a step to pause",
+        tourHintLocked: "Slide selected. Click another to explore.",
+      },
+      platformSteps: [
+        {
+          id: "dashboard",
+          title: "Executive dashboard",
+          subtitle: "DPO, opportunity, potential cash, and analyzed spend",
+        },
+        {
+          id: "segmentation",
+          title: "Supplier segmentation",
+          subtitle: "Prioritization by impact and feasibility",
+        },
+        {
+          id: "waterfall",
+          title: "Cash flow waterfall",
+          subtitle: "Term extension and potential cash by strategy",
+        },
+        {
+          id: "supplier",
+          title: "Supplier profile",
+          subtitle: "Benchmark, scoring, and strategy per counterparty",
+        },
+      ],
+      pillarsTitle: "Four pillars, one program",
+      pillarsIntro:
+        "Each pillar has an owner, deliverables, and specialized partners. We coordinate the program end to end.",
+      pillars: [
+        {
+          num: "01",
+          title: "Diagnostics",
+          partner: "Calculum",
+          bullets: [
+            "Spend analytics and DPO benchmarks by industry",
+            "Supplier segmentation and scoring",
+            "Baseline to present to the executive committee",
+          ],
+        },
+        {
+          num: "02",
+          title: "Program design",
+          bullets: [
+            "DPO and accounts payable policies",
+            "Treasury, cash forecasting, and automation",
+            "8–12 week capture plan",
+          ],
+        },
+        {
+          num: "03",
+          title: "Supply chain financing",
+          partner: "Monkey",
+          bullets: [
+            "Multibank confirming and early payment",
+            "Supplier portal and onboarding",
+            "Win-win agreements without relying on a single bank",
+          ],
+        },
+        {
+          num: "04",
+          title: "Contracts and total cost",
+          bullets: [
+            "Contract and commercial terms audit",
+            "Renegotiation of terms, price, and volume",
+            "Alignment between legal, procurement, and finance",
+          ],
+        },
+      ],
+      differentiatorsTitle: "What sets us apart",
+      differentiators: [
+        {
+          title: "Diagnostics first",
+          description:
+            "We start with data and segmentation — not a pre-packaged financial product.",
+        },
+        {
+          title: "8–12 weeks",
+          description:
+            "A bounded program with clear milestones from diagnostics to implementation.",
+        },
+        {
+          title: "Your KPIs, not the bank's",
+          description:
+            "We measure DPO, EBITDA, and cash flow for your business — not just volume placed.",
+        },
+        {
+          title: "No conflict of interest",
+          description:
+            "Independent in banking and technology; we choose the best combination for your case.",
+        },
+        {
+          title: "The best partners",
+          description:
+            "Calculum for analytics, Monkey for SCF, GEP and others per your stack.",
+        },
+        {
+          title: "Execution, not slides",
+          description:
+            "We implement, negotiate, and track until cash impact is visible.",
+        },
+      ],
+      partnersTitle: "Program partners",
+      partnerNames: ["Calculum", "Monkey", "GEP"],
+    },
   },
   {
     slug: "cadena-suministro-digital",
     title: "Digital Supply Chain",
     pillar: "Digital Procurement",
-    headline: "Platforms that get implemented — not left on the slide",
+    headline: "Technology that gets adopted — and delivers results",
     intro:
-      "As partners of Ariba, GEP, and Jaggaer, we deliver digitalization end to end: selection, implementation, adoption, and results.",
+      "As partners of Ariba, GEP, and Jaggaer, we deliver digitalization end to end: selection, implementation, adoption, and measurable results.",
     outcomes: [
-      "Greater spend and contract visibility",
-      "Shorter procurement cycles",
+      "Full visibility of spend and contracts",
+      "Shorter purchase cycles",
       "End-to-end compliance and traceability",
       "Measurable ROI in adoption and savings",
     ],
     approach: [
       "Business case and platform selection",
       "Implementation and configuration",
-      "Change management and training",
-      "Hypercare and post go-live optimization",
+      "Training and change management",
+      "Post go-live support and optimization",
     ],
   },
   {
     slug: "automatizacion",
     title: "Automation",
     pillar: "Digital Procurement",
-    headline: "Less friction. More throughput in procurement.",
+    headline: "Less manual work. More capacity for strategic work.",
     intro:
-      "We automate repetitive flows, approvals, and master data to free up the team's analytical capacity.",
+      "We automate repetitive flows, approvals, and master data so your team can focus on analysis and negotiation.",
     outcomes: [
-      "Reduction of manual work",
-      "Fewer master data errors",
-      "More predictable cycle times",
-      "Foundation ready for analytics and AI",
+      "Less manual work on repetitive processes",
+      "Cleaner, more reliable master data",
+      "Predictable cycle times",
+      "Foundation ready for analytics and artificial intelligence",
     ],
     approach: [
       "Process mapping and quick wins",
-      "RPA and digital workflows",
+      "Automation and digital workflows",
       "Integration with ERP and P2P",
       "Productivity measurement",
     ],
@@ -566,14 +1147,14 @@ export const services = [
     slug: "implementacion-eficiencias",
     title: "Efficiency Implementation",
     pillar: "Execution",
-    headline: "From plan to real impact — with VRO and teams on the ground",
+    headline: "From plan to real impact",
     intro:
-      "We support the implementation of efficiency initiatives with VRO, change management, and teams that execute alongside the client until value closes in P&L and cash.",
+      "We support efficiency initiative implementation with teams on the ground and rigorous tracking until value closes in P&L and cash.",
     outcomes: [
-      "Implementation tracking with Value Realization Office (VRO)",
-      "Change management and sustained adoption across the team",
-      "Verifiable savings capture in P&L",
-      "Capability transfer with sourcing coach",
+      "Tracking with Value Realization Office (VRO)",
+      "Sustained adoption across the team",
+      "Verifiable savings in your results",
+      "Capability transfer to your internal team",
     ],
     approach: [
       "Implementation plan and prioritized quick wins",
@@ -867,16 +1448,89 @@ export const cultureValues = [
   },
 ] as const;
 
+export const teamMembers = [
+  {
+    name: "Roberto Uauy",
+    role: "Partner",
+    image: "/team/people/roberto.jpg",
+    objectPosition: "center center",
+  },
+  {
+    name: "Gonzalo de la Barra",
+    role: "Partner",
+    image: "/team/people/gonzalo-de-la-barra.jpg",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Diego Jorreto",
+    role: "Commercial Manager",
+    image: "/team/people/diego-jorreto.jpg",
+    objectPosition: "center 28%",
+  },
+  {
+    name: "Sandra",
+    role: "Commercial Director",
+    image: "/team/people/sandra.jpg",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Esteban Vallejos",
+    role: "Country Manager · Mexico",
+    image: "/team/people/esteban-vallejos.jpg",
+    objectPosition: "center 22%",
+  },
+  {
+    name: "Marcelo Moreno",
+    role: "Country Manager · Colombia",
+    image: "/team/people/marcelo-moreno.jpg",
+    objectPosition: "center 24%",
+  },
+  {
+    name: "Celso Alberti",
+    role: "Partner · Brazil Managing Director",
+    image: "/team/people/celso-alberti.jpg",
+    objectPosition: "center 24%",
+  },
+  {
+    name: "Christophe Le Flech",
+    role: "VP Consulting",
+    image: "/team/people/christophe-le-flech.jpg",
+    objectPosition: "center 26%",
+  },
+  {
+    name: "Pablo Valencia",
+    role: "VP Strategic Sourcing",
+    image: "/team/people/pablo-valencia.jpg",
+  },
+  {
+    name: "Gonzalo Aguirrebeña",
+    role: "Compliance & Legal",
+    image: "/team/people/gonzalo-aguirre.jpg",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Karin Schuster",
+    role: "HR Business Partner",
+    image: "/team/people/karin-schuster.jpg",
+  },
+  {
+    name: "Pedro Pablo Maurel",
+    role: "BPO & Managed Services",
+    image: "/team/people/pedro-pablo-maurel.jpg",
+    objectPosition: "center 24%",
+  },
+] as const;
+
 export const teamOffsite = {
   eyebrow: "The team",
-  title: "We reach the base together",
-  location: "Torres del Paine · Offsite 2024",
+  title: "We reach the summit together",
+  location: "Torres del Paine · 2024",
   quote:
     "The toughest challenges are conquered as a team — on the mountain and in business.",
   body:
-    "In 2024 we gathered in southern Chile for an offsite in Torres del Paine. We hiked to the base of the towers with the same spirit with which we're your partners in execution: we prepare, we push, and we reach the destination together.",
+    "In 2024 we gathered in southern Chile, in Torres del Paine. OneX VPs, directors, advisors, founders and partners hiked to the summit with the same spirit with which we're your partners in execution: we prepare, we push, and we reach the destination together.",
   image: "/team/equipo-torres-paine-2024.png",
-  imageAlt: "Xinergy team at the base of Torres del Paine, offsite 2024",
+  imageAlt: "Xinergy team in Torres del Paine, 2024 — OneX VPs, directors, advisors, founders and partners",
 } as const;
 
 export const careersPage = {
@@ -889,6 +1543,8 @@ export const careersPage = {
   emailIntro: "You can also leave your details and CV at",
   emailOutro:
     "and our HR team will get in touch with you about any opportunity.",
+  cultureTitle: "How we work",
+  cultureLink: "Learn more about us →",
 } as const;
 
 export const nosotrosPage = {
@@ -898,7 +1554,11 @@ export const nosotrosPage = {
     "We execute and implement efficiencies across processes, procurement, and operations — with impact on savings, EBITDA, and cash. We don't stop at slides: assessment, sourcing, BPO, cash management, and Procuretech as each challenge requires.",
   aboutBody2: `Presence in 6 countries (${presenceLabel}), with offices in ${officesLabel}. We measure, implement, and execute with you — with VRO, change management, and certified technology.`,
   carbonNeutralBody:
-    "International certification that demonstrates our commitment to net-zero emissions in our operations and in sustainable efficiency programs.",
+    "International CarbonNeutral Protocol certification: net-zero emissions in our operations and in sustainable efficiency programs.",
+  teamEyebrow: "Team",
+  teamTitle: "Xinergy leadership",
+  teamLead:
+    "Partners, VPs, and regional leaders — part of the broader team that delivers for clients across Latin America.",
 } as const;
 
 export const nav = [

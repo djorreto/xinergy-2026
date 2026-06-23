@@ -38,7 +38,7 @@ export function SiteHeader() {
   }, [open]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 48);
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -106,9 +106,10 @@ export function SiteHeader() {
         open ? "z-[210]" : "z-50"
       } ${
         useSolidHeader
-          ? "border-b border-xinergy-charcoal/8 bg-white/95 shadow-sm backdrop-blur-md"
+          ? "site-header--solid border-b border-xinergy-charcoal/14 bg-white shadow-[0_1px_0_rgba(63,55,75,0.08),0_8px_24px_rgba(42,36,51,0.1)]"
           : "border-b border-white/10 bg-xinergy-charcoal/95 backdrop-blur-md max-lg:shadow-sm lg:bg-xinergy-charcoal/40"
       }`}
+      data-solid={useSolidHeader ? "true" : "false"}
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <div className="mx-auto flex h-[var(--site-header-height,3.5rem)] max-w-7xl items-center justify-between gap-3 px-5 sm:h-[4.25rem] sm:px-6 lg:px-10">
@@ -129,7 +130,7 @@ export function SiteHeader() {
                 href={item.href}
                 className={`rounded px-3.5 py-2 text-[13px] font-medium tracking-wide transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-xinergy-orange ${
                   useSolidHeader
-                    ? "text-xinergy-slate hover:text-xinergy-charcoal"
+                    ? "text-xinergy-charcoal hover:text-xinergy-orange"
                     : "text-white/80 hover:text-white"
                 } ${
                   isActive

@@ -3,7 +3,7 @@ export const brand = {
   tagline: "Executamos eficiências com impacto real.",
   claim: "#Fitness for business",
   strongPhrase: {
-    emphasis: "Compartilhamos riscos,",
+    emphasis: "Compartilhamos riscos",
     body: "medimos e somos seus parceiros na implementação e execução.",
   },
   pitchLine:
@@ -105,6 +105,12 @@ export const capabilities = [
     description:
       "Value Realization Office (VRO), change management e implementação em campo até capturar valor em P&L e caixa.",
     href: "/servicios/implementacion-eficiencias",
+  },
+  {
+    title: "Working Capital Solutions",
+    description:
+      "Diagnóstico quantitativo, design de programa DPO/AP, SCF multibanco e negociação de contratos — com parceiros Calculum e Monkey.",
+    href: "/servicios/working-capital-solutions",
   },
 ] as const;
 
@@ -274,8 +280,8 @@ export const heroStats = [
     detail: "Trajetória regional executando eficiências com impacto verificável em P&L e caixa.",
   },
   {
-    value: "6+",
-    label: `Presença em 6 países · escritórios em ${officesLabel}.`,
+    value: "6",
+    label: `Países com presença · escritórios em ${officesLabel}.`,
     detail: `Operação em ${presenceLabel} com equipes locais e projetos multi-país.`,
   },
   {
@@ -368,6 +374,7 @@ export const pillars = [
       "Purchasing BPO",
       "Contracts management",
       "Cash & PAY programs",
+      "Working Capital Solutions",
       "Risk & providers",
     ],
   },
@@ -406,40 +413,40 @@ export const services = [
     slug: "eficiencias-optimizacion",
     title: "Eficiências & Otimização de processos",
     pillar: "Diagnóstico & Processos",
-    headline: "Identificamos e capturamos eficiências onde hoje se perde valor",
+    headline: "Mais margem desde o primeiro trimestre",
     intro:
-      "Começamos com um assessment rigoroso do gasto e da operação, priorizamos quick wins e melhoramos processos e cultura — com impacto mensurável em P&L antes de uma transformação de fundo.",
+      "Encontramos onde se perde valor na sua operação, priorizamos as oportunidades de maior impacto e as convertemos em resultados mensuráveis em P&L — sem esperar uma transformação de fundo.",
     outcomes: [
-      "Mapa de eficiências por categoria e processo com baseline auditável",
-      "Quick wins priorizados com responsáveis e prazos de captura",
-      "Processos de compra mais ágeis, com menos fricção e retrabalho",
-      "Capacidades da equipe alinhadas a resultados, não só a atividade",
+      "Mapa claro de oportunidades por categoria e processo",
+      "Quick wins com responsáveis, prazos e economia estimada",
+      "Compras mais ágeis, com menos fricção e retrabalho",
+      "Equipes focadas em resultados, não só em atividade",
     ],
     approach: [
-      "Assessment de gasto, maturidade e processos críticos",
+      "Diagnóstico de gasto, maturidade e processos críticos",
       "Design de alavancas e plano de captura por ondas",
       "Otimização de processos e regras operacionais",
-      "Coaching e habilitação até ver impacto em P&L",
+      "Acompanhamento até ver impacto nos seus números",
     ],
   },
   {
     slug: "transformacion-abastecimiento",
     title: "Transformação de Suprimentos",
     pillar: "Transformação",
-    headline: "O modelo de suprimentos que seu negócio precisa para competir",
+    headline: "Uma área de compras preparada para competir",
     intro:
-      "Redesenhamos governança, operating model e roadmap da área de compras — alinhados ao C-suite, com foco em EBIT, agilidade, resiliência e ESG.",
+      "Redesenhamos governança, modelo operacional e roadmap de compras alinhados à direção — com foco em EBIT, agilidade, resiliência e ESG.",
     outcomes: [
-      "Governança e comitês com papéis claros entre negócio e procurement",
-      "Operating model e organograma alinhados a categorias estratégicas",
-      "Roadmap de transformação com marcos, investimento e benefícios",
-      "Stack tecnológico e parceiros definidos para escalar o novo modelo",
+      "Papéis claros entre negócio e compras, com comitês que funcionam",
+      "Organização e modelo operacional orientados a categorias estratégicas",
+      "Roadmap com marcos, investimento e benefícios esperados",
+      "Tecnologia e parceiros definidos para escalar o novo modelo",
     ],
     approach: [
-      "Avaliação de maturidade e benchmarking vs. referências",
+      "Avaliação de maturidade e comparação com referências de mercado",
       "Design de estratégia, governança e modelo operacional",
-      "Plano de transformação por ondas com change management",
-      "Habilitação tecnológica com parceiros certificados",
+      "Plano de transformação por etapas com gestão da mudança",
+      "Implementação tecnológica com parceiros certificados",
     ],
   },
   {
@@ -448,12 +455,12 @@ export const services = [
     pillar: "Cost & Value",
     headline: "Economias que chegam ao P&L — e se sustentam",
     intro:
-      "Identificamos oportunidades em gasto direto e indireto, executamos sourcing e negociação, e garantimos o tracking até o fechamento financeiro.",
+      "Identificamos oportunidades em gasto direto e indireto, negociamos com o mercado e acompanhamos até que a economia se reflita nos seus resultados.",
     outcomes: [
-      "Redução de custos com impacto em EBIT verificável",
-      "Novos fornecedores e contratos otimizados",
+      "Redução de custos com impacto verificável em EBIT",
+      "Melhores fornecedores e contratos mais competitivos",
       "Visibilidade de gasto por categoria e unidade de negócio",
-      "Programas ZBB e categorias críticas sob controle",
+      "Categorias críticas e programas de eficiência sob controle",
     ],
     approach: [
       "Spend analytics e opportunity assessment",
@@ -461,39 +468,261 @@ export const services = [
       "Negociação e e-auctions quando aplicável",
       "Implementation tracking e savings assurance",
     ],
+    ss: {
+      assessment: {
+        eyebrow: "Por onde começamos",
+        title: "Priorizamos onde há mais valor a capturar",
+        intro:
+          "Analisamos seu gasto, identificamos as categorias com maior potencial e montamos um plano claro para converter oportunidades em economias reais em seu P&L.",
+        phases: [
+          {
+            title: "Entendemos onde está o gasto",
+            bullets: [
+              "Organizamos e classificamos seu histórico de compras por categoria",
+              "Cruzamos OPEX e CAPEX, e revisamos contratos-chave quando necessário",
+              "Priorizamos categorias por potencial de economia e facilidade de execução",
+            ],
+          },
+          {
+            title: "Definimos o que abordar primeiro",
+            bullets: [
+              "Selecionamos categorias conforme impacto, maturidade e tamanho do gasto",
+              "Validamos com usuários e compras conforme criticidade e vencimentos",
+              "Acordamos o que lideramos e o que sua equipe interna lidera",
+            ],
+          },
+          {
+            title: "Abrimos as alavancas de economia",
+            bullets: [
+              "Identificamos oportunidades na oferta e na demanda",
+              "Priorizamos quick wins por impacto e velocidade de captura",
+              "Classificamos iniciativas por esforço e retorno esperado",
+            ],
+          },
+          {
+            title: "Planejamos a captura",
+            bullets: [
+              "Cronograma por ondas conforme oportunidades e criticidade do serviço",
+              "Priorização por vencimentos contratuais e janelas de negociação",
+              "Projeção de economias com marcos que você pode auditar",
+            ],
+          },
+        ],
+      },
+      model: {
+        title: "Sourcing estratégico, executado com agilidade",
+        intro:
+          "Convertemos iniciativas em eficiências reais que impactam seu resultado. Metodologia comprovada, da linha base até a captura no balanço.",
+        laneLabels: {
+          demand: "Gestão de demanda",
+          offer: "Gestão de oferta",
+          savings: "Captura de economias",
+        },
+        steps: [
+          { num: "1", title: "Diagnóstico da situação atual", lane: "demand" },
+          { num: "2", title: "Análise técnica e de mercado", lane: "demand" },
+          { num: "3", title: "Estratégia de categoria", lane: "demand" },
+          { num: "4", title: "Licitação e saída ao mercado", lane: "offer" },
+          { num: "5", title: "Avaliação de propostas e fechamento", lane: "offer" },
+          { num: "6", title: "Negociação final e contratos", lane: "offer" },
+          { num: "7", title: "Implementação do novo modelo", lane: "savings" },
+          { num: "8", title: "Monitoramento e controle", lane: "savings" },
+        ],
+        benefits: [
+          "Mais competição entre fornecedores e melhor base de suprimentos",
+          "Soluções de demanda que vão além da economia de preço",
+          "Negociações digitais com economias médias de ~15% na região",
+        ],
+      },
+      capture: {
+        title: "Três velocidades para capturar valor",
+        intro:
+          "Combinamos resultados rápidos com eficiências de longo prazo, adaptando a abordagem à urgência e ao potencial de cada categoria.",
+        tracks: [
+          {
+            id: "quick-impact",
+            name: "Quick Impact",
+            tagline: "Resultados em semanas",
+            focus:
+              "Fornecedores de alto volume que cruzam várias categorias.",
+            bullets: [
+              "Negociação ágil apoiada em volume e dados de mercado",
+              "Descontos imediatos ou retroativos quando o contexto permite",
+              "Benchmarks regionais que sustentam cada captura",
+            ],
+            duration: "1–2 meses para começar a capturar",
+            savings: "5% – 10% de economia média",
+          },
+          {
+            id: "rapid-savings",
+            name: "Rapid Savings",
+            tagline: "Quick wins por categoria",
+            focus:
+              "Categorias com oportunidade clara e execução rápida.",
+            bullets: [
+              "Preços de referência atualizados para negociar de posição forte",
+              "Condições flexíveis que permitem ajustar o serviço depois",
+              "Negociação direta, novos fornecedores ou ajustes operacionais rápidos",
+            ],
+            duration: "2–3 meses para começar a capturar",
+            savings: "8% – 15% de economia média",
+          },
+          {
+            id: "strategic-sourcing",
+            name: "Strategic Sourcing",
+            tagline: "Economia que perdura",
+            focus:
+              "Redesenho do serviço alinhado ao que o negócio precisa hoje.",
+            bullets: [
+              "Questionamos o modelo atual e otimizamos demanda e estrutura",
+              "Trabalho conjunto com usuários e integração de melhores práticas",
+              "Licitações competitivas que renovam fornecedores e dão resiliência",
+            ],
+            duration: "4–6 meses para começar a capturar",
+            savings: "15% – 25% de economia média + melhor qualidade",
+          },
+        ],
+      },
+      methodology: {
+        title: "Como executamos o sourcing estratégico",
+        intro:
+          "Oito passos com entregáveis concretos em cada fase, do diagnóstico inicial ao acompanhamento da economia nos seus resultados.",
+        steps: [
+          {
+            num: "1",
+            title: "Diagnóstico da situação atual",
+            description:
+              "Entendemos como o serviço opera hoje: níveis, penalidades, KPIs e custo total (preço, quantidade e qualidade).",
+            deliverables: ["Linha base", "Lista de categorias", "Iniciativas"],
+          },
+          {
+            num: "2",
+            title: "Análise técnica e de mercado",
+            description:
+              "Dimensionamos oportunidades, validamos viabilidade e lemos tendências de mercado.",
+            deliverables: [],
+          },
+          {
+            num: "3",
+            title: "Estratégia de categoria",
+            description:
+              "Definimos a melhor rota de negociação e abastecimento, alinhada ao que o negócio precisa.",
+            deliverables: ["Estratégia de categoria"],
+          },
+          {
+            num: "4",
+            title: "Licitação e saída ao mercado",
+            description:
+              "Identificamos fornecedores, preparamos o edital, definimos cotações e publicamos o processo.",
+            deliverables: ["Edital de licitação"],
+          },
+          {
+            num: "5",
+            title: "Avaliação de propostas",
+            description:
+              "Recebemos ofertas, avaliamos no técnico, econômico e financeiro, e definimos a estratégia de fechamento.",
+            deliverables: ["Fornecedores pré-selecionados", "Estratégia de fechamento"],
+          },
+          {
+            num: "6",
+            title: "Negociação final e contratos",
+            description:
+              "Fechamos a negociação, formalizamos a economia, adjudicamos e assinamos contratos.",
+            deliverables: ["Resultados preliminares", "Contratos assinados"],
+          },
+          {
+            num: "7",
+            title: "Implementação",
+            description:
+              "Colocamos o novo serviço em operação e apoiamos a equipe na transição.",
+            deliverables: ["Plano de implementação"],
+          },
+          {
+            num: "8",
+            title: "Monitoramento e controle",
+            description:
+              "Acompanhamos a captura de economias e corrigimos desvios antes que se perca valor.",
+            deliverables: ["Análise de lacunas"],
+          },
+        ],
+      },
+      successPillars: {
+        title: "Três fatores que fazem a diferença",
+        pillars: [
+          {
+            title: "Compromisso da direção",
+            description:
+              "Quando a alta gerência participa, as decisões saem mais rápido e o impacto chega aos resultados.",
+          },
+          {
+            title: "Gestão da mudança",
+            description:
+              "Alinhamos a equipe interna desde o início para que os novos modelos sejam adotados e sustentados.",
+          },
+          {
+            title: "Economia que se vê no P&L",
+            description:
+              "Não paramos no plano: acompanhamos até que a economia se reflita nos seus números.",
+          },
+        ],
+      },
+      tools: {
+        title: "Tecnologia que dá visibilidade e controle",
+        intro:
+          "Plataformas digitais para acompanhar cada categoria, cada negociação e cada economia — com rastreabilidade de ponta a ponta.",
+        categories: [
+          {
+            title: "Gestão do projeto",
+            bullets: [
+              "Status, pendências e responsáveis por categoria",
+              "Cronogramas, economias projetadas e respaldo de entregáveis",
+              "Dashboards consolidados e acompanhamento de implementação",
+            ],
+          },
+          {
+            title: "Processos com fornecedores",
+            bullets: [
+              "Informação clara e comparável para toda a equipe",
+              "Avaliações técnicas com visibilidade para quem decide",
+              "Fechamentos eletrônicos: leilão reverso, sobre fechado e mais",
+            ],
+          },
+        ],
+      },
+    },
   },
   {
     slug: "gestion-riesgo-proveedores",
     title: "Gestão de Risco de Fornecedores",
     pillar: "Managed Services",
-    headline: "Resiliência na cadeia externa",
+    headline: "Fornecedores sob controle, operação sem surpresas",
     intro:
-      "Mapeamos, medimos e mitigamos risco financeiro, operacional, reputacional e ESG na base de fornecedores.",
+      "Identificamos, medimos e reduzimos riscos financeiros, operacionais, reputacionais e ESG na sua base de fornecedores — antes que impactem o negócio.",
     outcomes: [
-      "Mapa de risco por fornecedor e categoria",
-      "Protocolos de monitoramento e contingência",
-      "Maior continuidade operacional",
-      "Conformidade e rastreabilidade para auditoria",
+      "Mapa de risco claro por fornecedor e categoria",
+      "Protocolos de monitoramento e planos de contingência",
+      "Maior continuidade operacional diante de disrupções",
+      "Rastreabilidade pronta para auditoria e compliance",
     ],
     approach: [
-      "Risk assessment e segmentação",
-      "Due diligence e scoring",
+      "Avaliação e segmentação de risco",
+      "Due diligence e scoring de fornecedores",
       "Planos de mitigação e diversificação",
-      "Governança e reporting executivo",
+      "Relatórios executivos e governança contínua",
     ],
   },
   {
     slug: "bpo-abastecimiento",
     title: "BPO de Suprimentos",
     pillar: "Managed Services",
-    headline: "Operação de compras terceirizada com padrão de classe mundial",
+    headline: "Sua operação de compras, funcionando perfeitamente",
     intro:
-      "Assumimos a operação transacional e de contratos para que sua equipe interna foque em categorias estratégicas e valor ao negócio.",
+      "Assumimos a operação transacional e de contratos para que sua equipe se concentre no estratégico e em gerar valor ao negócio.",
     outcomes: [
-      "Maior eficiência e transparência operacional",
-      "SLAs mensuráveis no ciclo de compra",
-      "Redução de custo fixo da área",
-      "Escalabilidade sem aumentar headcount",
+      "Operação mais eficiente e transparente",
+      "SLAs mensuráveis em todo o ciclo de compra",
+      "Menor custo fixo da área",
+      "Escala sem aumentar headcount",
     ],
     approach: [
       "Design de modelo BPO e transição",
@@ -501,63 +730,415 @@ export const services = [
       "Reporting e melhoria contínua",
       "Integração com ERP e e-procurement",
     ],
+    bpo: {
+      vision: {
+        eyebrow: "BPO — Managed Services",
+        title: "Mais que operar compras",
+        intro:
+          "Combinamos talento, tecnologia e dados para que sua área de compras gere mais valor com menos fricção — não apenas mais pessoas.",
+        pillars: [
+          {
+            num: "1",
+            title: "Talento especializado",
+            description:
+              "Equipes expertas em sourcing, escaláveis conforme sua operação e unidades de negócio.",
+          },
+          {
+            num: "2",
+            title: "Analítica e inteligência artificial",
+            description:
+              "Convertemos dados de gasto em oportunidades de economia, consolidação e melhoria do canal de compra.",
+          },
+          {
+            num: "3",
+            title: "Contratos e continuidade",
+            description:
+              "Monitoramos cumprimento contratual e desempenho de fornecedores para que não escape valor.",
+          },
+          {
+            num: "4",
+            title: "Melhoria contínua",
+            description:
+              "Otimizamos a operação de forma proativa, com dados e melhores práticas de mercado.",
+          },
+          {
+            num: "5",
+            title: "Compromisso ESG",
+            description:
+              "Acompanhamos programas de fornecedores em diversidade, liderança feminina, comunidades e pegada de carbono.",
+          },
+        ],
+        valueEnablersTitle: "O que acelera o valor",
+        valueEnablers: [
+          "Especialistas por categoria quando necessário",
+          "Cumprimento de SLAs acordados",
+          "Melhores práticas da indústria",
+        ],
+        automationEnablersTitle: "O que automatiza a operação",
+        automationEnablers: [
+          "Ferramentas e templates de gestão de contratos",
+          "Catálogos e marketplace",
+          "Tecnologia de compras integrada ao serviço",
+        ],
+      },
+      operatingModel: {
+        title: "Um modelo para cada tipo de gasto",
+        intro:
+          "Estratégia, tecnologia e equipes especializadas para cada segmento — do gasto estratégico ao tail spend.",
+        layers: [
+          {
+            title: "Gasto estratégico — onde está o maior valor",
+            items: [
+              "Gestão de categorias e sourcing estratégico",
+              "Análise de custos e gestão de categorias-chave",
+              "Administração de convênios e contratos",
+              "Captura de valor e transformação",
+            ],
+          },
+          {
+            title: "Gasto tático e spot — velocidade e controle",
+            items: [
+              "Gestão de categorias táticas e tail spend",
+              "Compras por catálogo e compras guiadas",
+              "Mesa de ajuda e suporte de sistemas",
+              "Compliance, desempenho e risco de fornecedores",
+            ],
+          },
+          {
+            title: "Torre de controle — visibilidade total",
+            items: [
+              "Inteligência de fornecedores, analytics e acompanhamento de projetos",
+              "Gestão de contratos e inteligência de mercado",
+              "Governança corporativa e melhoria de processos",
+              "Automação e integração com ERP",
+            ],
+          },
+          {
+            title: "Tecnologia incluída no serviço",
+            items: [
+              "Workbench de categorias, catálogos e compras guiadas",
+              "Sourcing simplificado e assistentes com IA",
+              "Portal de compradores integrado com SAP e seus sistemas",
+              "Visibilidade de ponta a ponta para quem decide",
+            ],
+          },
+        ],
+        technologyNote:
+          "Plataformas de classe mundial como serviço: tecnologia de ponta sem que você precise investir em licenças nem sistemas próprios.",
+      },
+      spendSegments: {
+        title: "Cada real de gasto, bem gerenciado",
+        intro:
+          "Liberamos sua equipe estratégica para focar em criar valor, enquanto a operação tática corre com agilidade e controle.",
+        segments: [
+          {
+            id: "strategic",
+            name: "Gasto estratégico",
+            spendShare: "~80% do gasto total",
+            txShare: "~10% transações",
+            focus: "Onde negociamos condições que movem o P&L.",
+            bullets: [
+              "Revisão de especificações e custo total do serviço",
+              "Gestão de demanda com visão externa e especializada",
+              "Negociação de condições excepcionais com fornecedores",
+              "Implementamos a mudança, não apenas recomendamos",
+            ],
+          },
+          {
+            id: "tactical",
+            name: "Gasto tático",
+            spendShare: "~15% do gasto total",
+            txShare: "~30% transações",
+            focus: "Operação eficiente de compras do dia a dia.",
+            bullets: [
+              "Gestão de solicitações alinhada às suas políticas",
+              "Menos passos e aprovações mais simples",
+              "Visibilidade total com operação terceirizada",
+              "Canal de compra otimizado",
+            ],
+          },
+          {
+            id: "tail",
+            name: "Tail spend",
+            spendShare: "~5% do gasto total",
+            txShare: "~60% transações",
+            focus: "Agilidade e controle em compras de baixo valor.",
+            bullets: [
+              "Compras guiadas que simplificam o processo",
+              "Automação e compliance via catálogos",
+              "Adesão a preços e convênios já negociados",
+              "Gestão proativa de convênios e categorias relevantes",
+            ],
+          },
+        ],
+      },
+      operationModels: {
+        title: "O modelo que se adapta à sua necessidade",
+        intro:
+          "Quatro formas de trabalhar juntos. Escolhemos a que melhor se encaixa com sua urgência, complexidade e objetivos de negócio.",
+        models: [
+          {
+            id: "staff-augmentation",
+            name: "Staff Augmentation",
+            tagline: "Reforço imediato",
+            bullets: [
+              "Profissionais com o perfil exato que você precisa",
+              "Cobertura de vagas, adequação técnica e ferramentas digitais",
+              "Gestão legal, normativa e trabalhista incluída",
+              "Ideal para continuidade operacional ou reforço pontual",
+            ],
+            economics: "Tarifa mensal por recurso, com supervisão da sua equipe.",
+          },
+          {
+            id: "bpo",
+            name: "BPO",
+            tagline: "Operação completa",
+            bullets: [
+              "Externalizamos pessoas, processos e resultados",
+              "Torres de controle e modelos digitais para mais visibilidade",
+              "Recrutamento, capacitação e gestão a nosso cargo",
+              "Impacto em 24–36 meses: economias e operação sustentável",
+            ],
+            economics: "Tarifa mensal clara, ligada a volume e resultados.",
+          },
+          {
+            id: "digital-bpo",
+            name: "Digital BPO",
+            tagline: "Tecnologia incluída",
+            bullets: [
+              "Pessoas, processos e plataforma em um único serviço",
+              "Procuretech, torres de controle e analytics sem investimento inicial",
+              "Processos padronizados com visibilidade em tempo real",
+              "Operação multi-país em uma plataforma integrada",
+            ],
+            economics: "Tarifa mensal + fee por uso, ligado a eficiências obtidas.",
+          },
+          {
+            id: "managed-services",
+            name: "Managed Services integral",
+            tagline: "Resultados de ponta a ponta",
+            bullets: [
+              "Eficiência e transparência desde o primeiro dia",
+              "Liberamos sua equipe para o estratégico",
+              "Integração com ERP, e-procurement e analytics",
+              "Track record em mineração e extractivas: +100 FTE em operações de longo prazo",
+            ],
+            economics: "Modelo recorrente alinhado a SLAs, volume e captura de valor.",
+          },
+        ],
+      },
+      measurement: {
+        title: "Resultados que se medem e se veem",
+        intro:
+          "Acompanhamos a satisfação de usuários, a qualidade da operação e a percepção de valor — com indicadores claros e relatórios acionáveis.",
+        bullets: [
+          "Pesquisas de satisfação por usuários, operações e serviços",
+          "Cobertura e qualificação por segmento de gasto",
+          "Dashboards com visibilidade do fluxo operacional completo",
+          "Acompanhamento oportuno de compras e ordens de compra",
+        ],
+      },
+      platform: {
+        title: "Controle total do ciclo de compra",
+        intro:
+          "Acompanhamos cada iniciativa de ponta a ponta: tickets, rastreabilidade, avanços e compliance — com visibilidade permanente para sua equipe.",
+        capabilities: [
+          "Tickets com histórico de interações por iniciativa",
+          "Controle de PO, aprovações e notificações automatizadas",
+          "Cronogramas e dashboards de resultados por ordem de compra",
+          "Resumo executivo para ativar melhorias do serviço",
+        ],
+        flexibilityNote:
+          "Operamos com nossa plataforma própria ou nos adaptamos à sua, integrando aos seus processos e políticas sem fricção.",
+      },
+    },
   },
   {
     slug: "pay-scf",
     title: "PAY e Supply Chain Finance",
     pillar: "Managed Services",
-    headline: "Liquidez na cadeia sem sacrificar a relação com fornecedores",
+    headline: "Mais caixa na cadeia, melhores relações com fornecedores",
     intro:
-      "Estruturamos programas de financiamento e otimização de capital de giro na cadeia de suprimentos.",
+      "Desenhamos programas de financiamento e otimização de capital de giro que beneficiam sua empresa e sua base de fornecedores.",
     outcomes: [
-      "Extensão de prazos de pagamento onde é viável",
-      "Melhoria de DPO e cash conversion",
+      "Extensão de prazos de pagamento onde faz sentido comercial",
+      "Melhor DPO e conversão de caixa",
       "Programas SCF com fornecedores estratégicos",
-      "Win-win comercial com a base de supply",
+      "Acordos win-win com sua cadeia de suprimentos",
     ],
     approach: [
-      "Diagnóstico de working capital",
-      "Design de programa PAY/SCF",
+      "Diagnóstico de capital de giro",
+      "Design do programa PAY/SCF",
       "Negociação com bancos e fornecedores",
-      "Implementação e monitoramento",
+      "Implementação e acompanhamento",
     ],
+  },
+  {
+    slug: "working-capital-solutions",
+    title: "Working Capital Solutions",
+    pillar: "Cash & Liquidez",
+    headline: "Mais caixa, com diagnóstico antes do banco",
+    intro:
+      "Programa integral em quatro pilares: diagnóstico quantitativo, design do programa de capital de giro, financiamento de cadeia com os melhores parceiros e renegociação de contratos. Sem conflito de interesse.",
+    outcomes: [
+      "Diagnóstico de DPO, gasto e oportunidade de caixa antes de estruturar financiamento",
+      "Priorização de fornecedores por impacto em fluxo de caixa",
+      "Programas SCF multibanco: confirming, pronto pagamento e portal de fornecedores",
+      "Seus KPIs — DPO, EBITDA e FCF — não os do banco",
+    ],
+    approach: [
+      "Diagnóstico e segmentação com plataforma Calculum",
+      "Design de programa DPO, contas a pagar e tesouraria",
+      "Implementação SCF com Monkey e banca multibanco",
+      "Auditoria e renegociação de contratos e custo total",
+    ],
+    wcs: {
+      platform: {
+        eyebrow: "Plataforma em ação",
+        title: "Do diagnóstico à execução — em uma única visão",
+        intro:
+          "Dashboard executivo, segmentação de fornecedores, cascata de fluxo de caixa e ficha por contraparte. Cifras ilustrativas; cada cliente parte da sua realidade.",
+        tourHintAuto: "Tour automático · clique em um passo para pausar",
+        tourHintLocked: "Lâmina selecionada. Clique em outra para explorar.",
+      },
+      platformSteps: [
+        {
+          id: "dashboard",
+          title: "Dashboard executivo",
+          subtitle: "DPO, oportunidade, caixa potencial e gasto analisado",
+        },
+        {
+          id: "segmentation",
+          title: "Segmentação de fornecedores",
+          subtitle: "Priorização por impacto e viabilidade",
+        },
+        {
+          id: "waterfall",
+          title: "Cascata de fluxo de caixa",
+          subtitle: "Extensão de prazos e caixa potencial por estratégia",
+        },
+        {
+          id: "supplier",
+          title: "Ficha de fornecedor",
+          subtitle: "Benchmark, scoring e estratégia por contraparte",
+        },
+      ],
+      pillarsTitle: "Quatro pilares, um único programa",
+      pillarsIntro:
+        "Cada pilar tem responsável, entregáveis e parceiros especializados. Coordenamos o programa de ponta a ponta.",
+      pillars: [
+        {
+          num: "01",
+          title: "Diagnóstico",
+          partner: "Calculum",
+          bullets: [
+            "Analytics de gasto e benchmarks de DPO por indústria",
+            "Segmentação e scoring de fornecedores",
+            "Linha base para apresentar ao comitê executivo",
+          ],
+        },
+        {
+          num: "02",
+          title: "Design do programa",
+          bullets: [
+            "Políticas de DPO e contas a pagar",
+            "Tesouraria, projeção de caixa e automação",
+            "Plano de captura em 8–12 semanas",
+          ],
+        },
+        {
+          num: "03",
+          title: "Financiamento de cadeia",
+          partner: "Monkey",
+          bullets: [
+            "Confirming multibanco e pronto pagamento",
+            "Portal de fornecedores e onboarding",
+            "Acordos win-win sem depender de um único banco",
+          ],
+        },
+        {
+          num: "04",
+          title: "Contratos e custo total",
+          bullets: [
+            "Auditoria de contratos e condições comerciais",
+            "Renegociação de prazo, preço e volume",
+            "Alinhamento entre jurídico, compras e finanças",
+          ],
+        },
+      ],
+      differentiatorsTitle: "O que nos diferencia",
+      differentiators: [
+        {
+          title: "Diagnóstico primeiro",
+          description:
+            "Partimos com dados e segmentação — não com um produto financeiro empacotado.",
+        },
+        {
+          title: "8–12 semanas",
+          description:
+            "Programa delimitado com marcos claros, do diagnóstico à implementação.",
+        },
+        {
+          title: "Seus KPIs, não os do banco",
+          description:
+            "Medimos DPO, EBITDA e fluxo de caixa do seu negócio — não apenas volume colocado.",
+        },
+        {
+          title: "Sem conflito de interesse",
+          description:
+            "Independentes em banca e tecnologia; escolhemos a melhor combinação para o seu caso.",
+        },
+        {
+          title: "Os melhores parceiros",
+          description:
+            "Calculum para analytics, Monkey para SCF, GEP e outros conforme seu stack.",
+        },
+        {
+          title: "Execução, não slides",
+          description:
+            "Implementamos, negociamos e acompanhamos até ver impacto em caixa.",
+        },
+      ],
+      partnersTitle: "Parceiros do programa",
+      partnerNames: ["Calculum", "Monkey", "GEP"],
+    },
   },
   {
     slug: "cadena-suministro-digital",
     title: "Cadeia de Suprimentos Digital",
     pillar: "Digital Procurement",
-    headline: "Plataformas que são implementadas — não que ficam no slide",
+    headline: "Tecnologia que se adota — e que gera resultados",
     intro:
-      "Como parceiros da Ariba, GEP e Jaggaer, levamos a digitalização de ponta a ponta: seleção, implementação, adoção e resultados.",
+      "Como parceiros da Ariba, GEP e Jaggaer, levamos a digitalização de ponta a ponta: seleção, implementação, adoção e resultados mensuráveis.",
     outcomes: [
-      "Maior visibilidade de gasto e contratos",
+      "Visibilidade total do gasto e dos contratos",
       "Ciclos de compra mais curtos",
-      "Compliance e rastreabilidade end-to-end",
+      "Compliance e rastreabilidade de ponta a ponta",
       "ROI mensurável em adoção e economia",
     ],
     approach: [
       "Business case e seleção de plataforma",
       "Implementação e configuração",
-      "Change management e capacitação",
-      "Hypercare e otimização pós go-live",
+      "Capacitação e gestão da mudança",
+      "Suporte pós go-live e otimização",
     ],
   },
   {
     slug: "automatizacion",
     title: "Automação",
     pillar: "Digital Procurement",
-    headline: "Menos fricção. Mais throughput em procurement.",
+    headline: "Menos tarefas manuais. Mais capacidade para o estratégico.",
     intro:
-      "Automatizamos fluxos repetitivos, aprovações e dados mestres para liberar capacidade analítica da equipe.",
+      "Automatizamos fluxos repetitivos, aprovações e dados mestres para que sua equipe foque em análise e negociação.",
     outcomes: [
-      "Redução de trabalho manual",
-      "Menos erros em dados mestres",
-      "Tempos de ciclo mais previsíveis",
-      "Base pronta para analytics e IA",
+      "Menos trabalho manual em processos repetitivos",
+      "Dados mestres mais limpos e confiáveis",
+      "Tempos de ciclo previsíveis",
+      "Base pronta para analytics e inteligência artificial",
     ],
     approach: [
       "Mapeamento de processos e quick wins",
-      "RPA e workflows digitais",
+      "Automação e workflows digitais",
       "Integração com ERP e P2P",
       "Medição de produtividade",
     ],
@@ -566,14 +1147,14 @@ export const services = [
     slug: "implementacion-eficiencias",
     title: "Implementação de Eficiências",
     pillar: "Execução",
-    headline: "Do plano ao impacto real — com VRO e equipes em campo",
+    headline: "Do plano ao impacto real",
     intro:
-      "Acompanhamos a implementação de iniciativas de eficiência com VRO, gestão da mudança e equipes que executam junto ao cliente até fechar valor em P&L e caixa.",
+      "Acompanhamos a implementação de iniciativas de eficiência com equipes em campo e acompanhamento rigoroso até fechar valor em P&L e caixa.",
     outcomes: [
-      "Acompanhamento de implementação com Value Realization Office (VRO)",
-      "Change management e adoção sustentada na equipe",
-      "Captura de economias verificável em P&L",
-      "Transferência de capacidades com sourcing coach",
+      "Acompanhamento com Value Realization Office (VRO)",
+      "Adoção sustentada na equipe",
+      "Economias verificáveis nos seus resultados",
+      "Transferência de capacidades para a equipe interna",
     ],
     approach: [
       "Plano de implementação e quick wins priorizados",
@@ -867,16 +1448,89 @@ export const cultureValues = [
   },
 ] as const;
 
+export const teamMembers = [
+  {
+    name: "Roberto Uauy",
+    role: "Sócio",
+    image: "/team/people/roberto.jpg",
+    objectPosition: "center center",
+  },
+  {
+    name: "Gonzalo de la Barra",
+    role: "Sócio",
+    image: "/team/people/gonzalo-de-la-barra.jpg",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Diego Jorreto",
+    role: "Gerente Comercial",
+    image: "/team/people/diego-jorreto.jpg",
+    objectPosition: "center 28%",
+  },
+  {
+    name: "Sandra",
+    role: "Diretora Comercial",
+    image: "/team/people/sandra.jpg",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Esteban Vallejos",
+    role: "Country Manager · México",
+    image: "/team/people/esteban-vallejos.jpg",
+    objectPosition: "center 22%",
+  },
+  {
+    name: "Marcelo Moreno",
+    role: "Country Manager · Colômbia",
+    image: "/team/people/marcelo-moreno.jpg",
+    objectPosition: "center 24%",
+  },
+  {
+    name: "Celso Alberti",
+    role: "Sócio · Diretor Brasil",
+    image: "/team/people/celso-alberti.jpg",
+    objectPosition: "center 24%",
+  },
+  {
+    name: "Christophe Le Flech",
+    role: "VP Consulting",
+    image: "/team/people/christophe-le-flech.jpg",
+    objectPosition: "center 26%",
+  },
+  {
+    name: "Pablo Valencia",
+    role: "VP Strategic Sourcing",
+    image: "/team/people/pablo-valencia.jpg",
+  },
+  {
+    name: "Gonzalo Aguirrebeña",
+    role: "Gerente · Compliance e Legal",
+    image: "/team/people/gonzalo-aguirre.jpg",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Karin Schuster",
+    role: "HR Business Partner",
+    image: "/team/people/karin-schuster.jpg",
+  },
+  {
+    name: "Pedro Pablo Maurel",
+    role: "Gerente · BPO & Managed Services",
+    image: "/team/people/pedro-pablo-maurel.jpg",
+    objectPosition: "center 24%",
+  },
+] as const;
+
 export const teamOffsite = {
   eyebrow: "A equipe",
-  title: "Chegamos juntos à base",
-  location: "Torres del Paine · Offsite 2024",
+  title: "Chegamos juntos à meta",
+  location: "Torres del Paine · 2024",
   quote:
     "Os desafios mais exigentes são conquistados em equipe — na montanha e no negócio.",
   body:
-    "Em 2024 nos reunimos no sul do Chile para um offsite em Torres del Paine. Caminhamos até a base das torres com o mesmo espírito com o qual somos seus parceiros na execução: nos preparamos, nos esforçamos e chegamos juntos ao destino.",
+    "Em 2024 nos reunimos no sul do Chile, em Torres del Paine. OneX VPs, diretores, advisors, fundadores e sócios caminharam até a meta com o mesmo espírito com o qual somos seus parceiros na execução: nos preparamos, nos esforçamos e chegamos juntos ao destino.",
   image: "/team/equipo-torres-paine-2024.png",
-  imageAlt: "Equipe Xinergy na base das Torres del Paine, offsite 2024",
+  imageAlt: "Equipe Xinergy em Torres del Paine, 2024 — OneX VPs, diretores, advisors, fundadores e sócios",
 } as const;
 
 export const careersPage = {
@@ -889,6 +1543,8 @@ export const careersPage = {
   emailIntro: "Você também pode deixar seus dados e CV em",
   emailOutro:
     "e nossa equipe de RH entrará em contato com você sobre qualquer oportunidade.",
+  cultureTitle: "Como trabalhamos",
+  cultureLink: "Conheça mais sobre nós →",
 } as const;
 
 export const nosotrosPage = {
@@ -898,7 +1554,11 @@ export const nosotrosPage = {
     "Executamos e implementamos eficiências em processos, abastecimento e operação — com impacto em economia, EBITDA e caixa. Não ficamos na apresentação: assessment, sourcing, BPO, cash management e Procuretech conforme cada desafio exige.",
   aboutBody2: `Presença em 6 países (${presenceLabel}), com escritórios em ${officesLabel}. Medimos, implementamos e executamos com você — com VRO, change management e tecnologia certificada.`,
   carbonNeutralBody:
-    "Certificação internacional que comprova nosso compromisso com emissões líquidas zero em nossa operação e em programas de eficiência sustentável.",
+    "Certificação internacional CarbonNeutral Protocol: emissões líquidas zero em nossa operação e em programas de eficiência sustentável.",
+  teamEyebrow: "Equipe",
+  teamTitle: "Liderança da Xinergy",
+  teamLead:
+    "Sócios, VPs e líderes regionais — parte da equipe que executa e acompanha nossos clientes na América Latina.",
 } as const;
 
 export const nav = [

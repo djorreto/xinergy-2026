@@ -19,7 +19,7 @@ export function CTABand() {
             className={`${ttForsDisplay.className} text-xl text-balance sm:text-2xl`}
           >
             <span className="text-xinergy-orange">{brand.strongPhrase.emphasis}</span>
-            {" — "}
+            {". "}
             <span className="text-white/90">{t("measureExecute")}</span>
           </h2>
           <p className="mt-2 text-sm text-white/55">{t("tagline")}</p>

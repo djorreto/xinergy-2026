@@ -49,7 +49,7 @@ export function ExpertiseNavMenu({
     variant === "desktop"
       ? `inline-flex items-center gap-1 px-3.5 py-2 text-[13px] font-medium tracking-wide transition ${
           useSolidHeader
-            ? "text-xinergy-slate hover:text-xinergy-charcoal"
+            ? "text-xinergy-charcoal/80 hover:text-xinergy-charcoal"
             : "text-white/80 hover:text-white"
         } ${open ? (useSolidHeader ? "!text-xinergy-charcoal" : "!text-white") : ""}`
       : "flex w-full min-h-11 items-center justify-between py-3 text-sm font-semibold text-xinergy-charcoal";

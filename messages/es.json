@@ -61,7 +61,31 @@
     "cashNeutral": "Cash neutral",
     "cashNeutralDetail": "el ahorro financia el proyecto.",
     "presence": "Presencia",
-    "offices": "Oficinas"
+    "offices": "Oficinas",
+    "form": {
+      "eyebrow": "Escríbenos",
+      "title": "Cuéntanos tu desafío",
+      "subtitle": "Respuesta en menos de 24 horas hábiles.",
+      "name": "Nombre",
+      "email": "Correo",
+      "phone": "Teléfono",
+      "company": "Empresa",
+      "role": "Cargo",
+      "message": "Hablemos",
+      "submit": "Enviar mensaje",
+      "sending": "Enviando…",
+      "successEyebrow": "Recibido",
+      "successTitle": "Gracias por escribirnos",
+      "successBody": "Un especialista de Xinergy revisará tu mensaje y te contactará pronto.",
+      "sendAnother": "Enviar otro mensaje",
+      "errors": {
+        "generic": "No pudimos enviar el formulario. Intenta de nuevo o escríbenos directamente por correo.",
+        "network_error": "Error de conexión. Revisa tu red e intenta de nuevo.",
+        "invalid_name": "Ingresa tu nombre.",
+        "invalid_email": "Ingresa un correo válido.",
+        "invalid_message": "El mensaje debe tener al menos 10 caracteres."
+      }
+    }
   },
   "diagnostico": {
     "metaDescription": "#Fitness for business — calcula cuántas eficiencias puedes conseguir. Modelo cash neutral.",
@@ -92,7 +116,14 @@
   "nosotros": {
     "culture": "Cultura",
     "howWeWork": "Cómo trabajamos",
-    "carbonNeutral": "Carbono neutral"
+    "carbonNeutral": "Carbono neutral",
+    "fitnessJourney": {
+      "ariaLabel": "Sin equipo dedicado los ahorros se demoran; junto a Xinergy llegan a la cima lo antes posible",
+      "panel1Label": "Cliente",
+      "panel1Caption": "Sin equipo dedicado; los ahorros se demoran",
+      "panel2Label": "Cliente + Xinergy",
+      "panel2Caption": "Conocimiento, herramientas y equipo — a la cima, lo antes posible"
+    }
   },
   "calculator": {
     "steps": {

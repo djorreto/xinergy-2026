@@ -1,8 +1,22 @@
-export type PartnerLogo = { name: string; src: string };
+export type PartnerLogo = {
+  name: string;
+  src: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageClassName?: string;
+};
 
 /** Logos de partners en /public/partners */
 export const partnerLogos: readonly PartnerLogo[] = [
-  { name: "GEP", src: "/partners/gep.png" },
+  {
+    name: "GEP",
+    src: "/partners/gep.svg",
+    imageWidth: 220,
+    imageHeight: 70,
+    imageClassName: "h-9 w-auto max-w-[11.5rem] sm:h-10 sm:max-w-[12.5rem]",
+  },
+  { name: "Calculum", src: "/partners/calculum.svg" },
+  { name: "Monkey", src: "/partners/monkey.svg" },
   { name: "SAP Ariba", src: "/partners/sap_ariba.png" },
   { name: "Jaggaer", src: "/partners/jaggaer.png" },
   { name: "EY", src: "/partners/ey.png" },
