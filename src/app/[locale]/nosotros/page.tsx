@@ -93,25 +93,36 @@ export default async function NosotrosPage({ params }: Props) {
 
       <section className="relative overflow-hidden bg-xinergy-charcoal text-white">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(245,166,35,0.12),transparent_55%)]" />
-        <Container className="relative grid items-center gap-10 py-16 lg:grid-cols-2 lg:gap-16 lg:py-24">
-          <div className="max-w-lg">
-            <p className="label-editorial-light">{teamOffsite.eyebrow}</p>
-            <h2
-              className={`${ttForsDisplay.className} brand-phrase mt-4 text-3xl leading-tight sm:text-4xl lg:text-[2.75rem]`}
-            >
-              {teamOffsite.title}
-            </h2>
-            <p className="mt-3 text-sm font-semibold uppercase tracking-widest text-xinergy-orange">
-              {teamOffsite.location}
-            </p>
-            <p
-              className={`${ttForsDisplay.className} brand-phrase mt-6 text-lg leading-snug text-xinergy-beige sm:text-xl`}
-            >
-              {teamOffsite.quote}
-            </p>
-            <p className="type-body mt-5 text-white/75 lg:text-[length:var(--type-lead)]">
-              {teamOffsite.body}
-            </p>
+        <Container className="relative grid items-start gap-10 py-16 lg:grid-cols-2 lg:gap-16 lg:py-24">
+          <div className="flex min-w-0 flex-col gap-8 lg:gap-10">
+            <div className="max-w-lg">
+              <p className="label-editorial-light">{teamOffsite.eyebrow}</p>
+              <h2
+                className={`${ttForsDisplay.className} brand-phrase mt-4 text-3xl leading-tight sm:text-4xl lg:text-[2.75rem]`}
+              >
+                {teamOffsite.title}
+              </h2>
+              <p className="mt-3 text-sm font-semibold uppercase tracking-widest text-xinergy-orange">
+                {teamOffsite.location}
+              </p>
+              <p
+                className={`${ttForsDisplay.className} brand-phrase mt-6 text-lg leading-snug text-xinergy-beige sm:text-xl`}
+              >
+                {teamOffsite.quote}
+              </p>
+              <p className="type-body mt-5 text-white/75 lg:text-[length:var(--type-lead)]">
+                {teamOffsite.body}
+              </p>
+            </div>
+            <div className="relative hidden aspect-[2/1] w-full overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/40 lg:block">
+              <Image
+                src={teamOffsite.imageSecondary}
+                alt={teamOffsite.imageSecondaryAlt}
+                fill
+                sizes="(max-width: 1024px) 90vw, 42vw"
+                className="object-cover object-center"
+              />
+            </div>
           </div>
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/40 sm:aspect-[5/6] lg:aspect-[4/5]">
@@ -125,6 +136,15 @@ export default async function NosotrosPage({ params }: Props) {
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-xinergy-charcoal/50 via-transparent to-transparent" />
             </div>
+          </div>
+          <div className="relative aspect-[2/1] w-full overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/40 lg:hidden">
+            <Image
+              src={teamOffsite.imageSecondary}
+              alt={teamOffsite.imageSecondaryAlt}
+              fill
+              sizes="90vw"
+              className="object-cover object-center"
+            />
           </div>
         </Container>
       </section>

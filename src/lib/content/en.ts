@@ -1531,6 +1531,9 @@ export const teamOffsite = {
     "In 2024 we gathered in southern Chile, in Torres del Paine. OneX VPs, directors, advisors, founders and partners hiked to the summit with the same spirit with which we're your partners in execution: we prepare, we push, and we reach the destination together.",
   image: "/team/equipo-torres-paine-2024.png",
   imageAlt: "Xinergy team in Torres del Paine, 2024 — OneX VPs, directors, advisors, founders and partners",
+  imageSecondary: "/team/equipo-grupo-2024.png",
+  imageSecondaryAlt:
+    "Xinergy team gathered — professionals from across the region at our offices",
 } as const;
 
 export const careersPage = {
