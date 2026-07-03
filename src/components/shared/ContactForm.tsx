@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { trackContactLead } from "@/lib/gtag";
 
 const fieldClass =
   "mt-3 w-full border border-xinergy-charcoal/15 bg-white px-4 py-3.5 text-base text-xinergy-charcoal outline-none transition placeholder:text-xinergy-slate/45 focus:border-xinergy-orange sm:text-[length:var(--type-body)]";
@@ -53,6 +54,7 @@ export function ContactForm() {
         return;
       }
       setStatus("success");
+      trackContactLead();
       setName("");
       setEmail("");
       setPhone("");

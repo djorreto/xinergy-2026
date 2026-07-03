@@ -3,6 +3,8 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { GoogleAnalyticsPageView } from "@/components/analytics/GoogleAnalyticsPageView";
 import { OrganizationJsonLd } from "@/components/shared/OrganizationJsonLd";
 import { routing } from "@/i18n/routing";
 import { ttForsDisplay, univers } from "@/lib/fonts";
@@ -31,6 +33,8 @@ export default async function LocaleLayout({ children, params }: Props) {
       <body
         className={`${univers.className} flex min-h-dvh flex-col antialiased overflow-x-clip pb-[env(safe-area-inset-bottom)]`}
       >
+        <GoogleAnalytics />
+        <GoogleAnalyticsPageView />
         <NextIntlClientProvider messages={messages}>
           <OrganizationJsonLd locale={locale} />
           <SiteHeader />
