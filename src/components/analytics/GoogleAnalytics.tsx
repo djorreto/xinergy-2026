@@ -32,9 +32,9 @@ export function GoogleAnalytics() {
     <>
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${scriptId}`}
-        strategy="afterInteractive"
+        strategy="beforeInteractive"
       />
-      <Script id="google-tags-init" strategy="afterInteractive">
+      <Script id="google-tags-init" strategy="beforeInteractive">
         {buildGtagInit()}
       </Script>
     </>
