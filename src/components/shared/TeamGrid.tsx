@@ -30,20 +30,17 @@ export function TeamGrid({
           ) : null}
         </div>
 
-        <ul className="team-grid mt-10 flex flex-wrap justify-center gap-x-3 gap-y-8 sm:gap-x-4 lg:gap-x-5 lg:gap-y-9">
+        <ul className="mt-10 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-4 md:grid-cols-4 lg:grid-cols-5 lg:gap-x-5 lg:gap-y-9">
           {members.map((member) => (
-            <li
-              key={member.name}
-              className="team-grid-item flex flex-col items-center text-center"
-            >
-              <div className="team-photo-frame aspect-square w-[7.25rem] overflow-hidden rounded-xl border border-xinergy-charcoal/10 bg-[#f5f2ed] sm:w-[8rem] sm:rounded-2xl">
+            <li key={member.name} className="flex flex-col items-center text-center">
+              <div className="team-photo-frame aspect-square w-[7.25rem] overflow-hidden rounded-xl border border-xinergy-charcoal/10 bg-[#f5f2ed] sm:w-[8.5rem] sm:rounded-2xl">
                 <Image
                   src={member.image}
                   alt={member.name}
                   width={320}
                   height={320}
                   unoptimized
-                  sizes="(max-width: 640px) 28vw, (max-width: 1024px) 18vw, 128px"
+                  sizes="(max-width: 640px) 40vw, (max-width: 1024px) 22vw, 160px"
                   className="team-photo h-full w-full object-cover"
                   style={{ objectPosition: member.objectPosition ?? "center 22%" }}
                 />
