@@ -1,4 +1,5 @@
-export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+export const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-LMXEEPBX2S";
 export const GOOGLE_ADS_ID =
   process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18294572204";
 export const GOOGLE_ADS_CONTACT_CONVERSION =
@@ -21,11 +22,44 @@ export function getGtagScriptId() {
   return GA_MEASUREMENT_ID ?? GOOGLE_ADS_ID;
 }
 
+function canTrack() {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.gtag === "function" &&
+    Boolean(GA_MEASUREMENT_ID)
+  );
+}
+
 export function trackPageView(url: string) {
-  if (typeof window === "undefined" || typeof window.gtag !== "function") return;
-  if (GA_MEASUREMENT_ID) {
-    window.gtag("config", GA_MEASUREMENT_ID, { page_path: url });
-  }
+  if (!canTrack() || !GA_MEASUREMENT_ID) return;
+  window.gtag!("config", GA_MEASUREMENT_ID, { page_path: url });
+}
+
+export function trackEvent(
+  name: string,
+  params?: Record<string, string | number | boolean | undefined>,
+) {
+  if (!canTrack()) return;
+  window.gtag!("event", name, params);
+}
+
+export function trackLinkClick(params: {
+  link_url: string;
+  link_text?: string;
+  outbound?: boolean;
+  link_classes?: string;
+  cta_name?: string;
+  cta_location?: string;
+}) {
+  const isCta = Boolean(params.cta_name || params.link_classes?.includes("btn-"));
+  trackEvent(isCta ? "cta_click" : "link_click", {
+    link_url: params.link_url,
+    link_text: params.link_text,
+    outbound: params.outbound,
+    link_classes: params.link_classes,
+    cta_name: params.cta_name,
+    cta_location: params.cta_location,
+  });
 }
 
 export function trackGoogleAdsConversion(sendTo: string) {

@@ -46,13 +46,18 @@ export default async function HomePage({ params }: Props) {
               </p>
             </div>
             <div className="mobile-actions hero-mobile-actions mt-8 max-lg:mt-10 sm:mt-10">
-              <Button href="/diagnostico" className="max-lg:w-full max-lg:rounded-full max-lg:py-4">
+              <Button
+                href="/diagnostico"
+                className="max-lg:w-full max-lg:rounded-full max-lg:py-4"
+                gaLocation="hero"
+              >
                 {tHeader("calculateEfficiencies")}
               </Button>
               <Button
                 href="/contacto"
                 variant="light"
                 className="max-lg:w-full max-lg:rounded-full max-lg:py-4"
+                gaLocation="hero"
               >
                 {brand.cta}
               </Button>
@@ -149,7 +154,9 @@ export default async function HomePage({ params }: Props) {
             intro={t("efficiencyIntro")}
           />
           <div className="mt-8 text-center">
-            <Button href="/diagnostico">{tHeader("calculateEfficiencies")}</Button>
+            <Button href="/diagnostico" gaLocation="home_efficiency">
+              {tHeader("calculateEfficiencies")}
+            </Button>
           </div>
         </Container>
       </section>
@@ -192,8 +199,10 @@ export default async function HomePage({ params }: Props) {
                 {home.cta.intro}
               </p>
               <div className="mobile-actions cta-band-actions mt-8 justify-center sm:mt-10">
-                <Button href="/diagnostico">{tHeader("calculateEfficiencies")}</Button>
-                <Button href="/contacto" variant="secondary">
+                <Button href="/diagnostico" gaLocation="home_bottom">
+                  {tHeader("calculateEfficiencies")}
+                </Button>
+                <Button href="/contacto" variant="secondary" gaLocation="home_bottom">
                   {brand.cta}
                 </Button>
               </div>

@@ -87,10 +87,20 @@ export function SiteHeader() {
                 );
               })}
               <div className="mt-auto flex flex-col gap-3 border-t border-xinergy-charcoal/8 pt-6 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-                <Button href="/diagnostico" variant="primary" className="w-full justify-center">
+                <Button
+                  href="/diagnostico"
+                  variant="primary"
+                  className="w-full justify-center"
+                  gaLocation="header_mobile"
+                >
                   {t("calculateEfficiencies")}
                 </Button>
-                <Button href="/contacto" variant="secondary" className="w-full justify-center">
+                <Button
+                  href="/contacto"
+                  variant="secondary"
+                  className="w-full justify-center"
+                  gaLocation="header_mobile"
+                >
                   {t("contact")}
                 </Button>
               </div>
@@ -148,13 +158,19 @@ export function SiteHeader() {
 
         <div className="hidden shrink-0 items-center gap-2 lg:flex">
           <LanguageSwitcher useSolidHeader={useSolidHeader} />
-          <Button href="/diagnostico" variant="primary" className="!px-4 !py-2.5 !text-[11px]">
+          <Button
+            href="/diagnostico"
+            variant="primary"
+            className="!px-4 !py-2.5 !text-[11px]"
+            gaLocation="header"
+          >
             {t("calculateEfficiencies")}
           </Button>
           <Button
             href="/contacto"
             variant={useSolidHeader ? "secondary" : "light"}
             className="!px-5 !py-2.5 !text-[11px]"
+            gaLocation="header"
           >
             {t("contact")}
           </Button>

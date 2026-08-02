@@ -15,14 +15,25 @@ export function Button({
   children,
   variant = "primary",
   className = "",
+  gaCta,
+  gaLocation,
 }: {
   href: string;
   children: React.ReactNode;
   variant?: Variant;
   className?: string;
+  /** Nombre del CTA en GA4 (evento cta_click). Por defecto usa el texto del botón. */
+  gaCta?: string;
+  /** Ubicación del CTA en la página (hero, header, footer, etc.). */
+  gaLocation?: string;
 }) {
   return (
-    <Link href={href} className={`${styles[variant]} ${className}`}>
+    <Link
+      href={href}
+      className={`${styles[variant]} ${className}`}
+      data-ga-cta={gaCta ?? ""}
+      data-ga-location={gaLocation}
+    >
       {children}
     </Link>
   );

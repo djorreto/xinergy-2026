@@ -1,16 +1,18 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname } from "@/i18n/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { GA_MEASUREMENT_ID, trackPageView } from "@/lib/gtag";
 
 export function GoogleAnalyticsPageView() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!GA_MEASUREMENT_ID) return;
-    trackPageView(pathname);
-  }, [pathname]);
+    if (!GA_MEASUREMENT_ID || !pathname) return;
+    const query = searchParams?.toString();
+    trackPageView(query ? `${pathname}?${query}` : pathname);
+  }, [pathname, searchParams]);
 
   return null;
 }

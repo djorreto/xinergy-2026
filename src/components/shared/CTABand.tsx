@@ -25,10 +25,20 @@ export function CTABand() {
           <p className="mt-2 text-sm text-white/55">{t("tagline")}</p>
         </div>
         <div className="cta-band-actions flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
-          <Button href="/diagnostico" variant="primary" className="max-lg:w-full max-lg:justify-center">
+          <Button
+            href="/diagnostico"
+            variant="primary"
+            className="max-lg:w-full max-lg:justify-center"
+            gaLocation="cta_band"
+          >
             {tHeader("calculateEfficiencies")}
           </Button>
-          <Button href="/contacto" variant="light" className="max-lg:w-full max-lg:justify-center">
+          <Button
+            href="/contacto"
+            variant="light"
+            className="max-lg:w-full max-lg:justify-center"
+            gaLocation="cta_band"
+          >
             {brand.cta}
           </Button>
         </div>
