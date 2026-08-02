@@ -50,7 +50,11 @@ const PROFILE = {
     shave: 4,
   },
   "diego-jorreto": { position: "attention", brightness: 1 },
-  "ricardo-bartel": { position: "attention", brightness: 1.04 },
+  "ricardo-bartel": {
+    position: "north",
+    brightness: 1.02,
+    insets: { left: 64, right: 16, top: 16, bottom: 16 },
+  },
   sandra: { position: "attention", brightness: 1.02 },
   "esteban-vallejos": { position: "attention", brightness: 1.06 },
   "javier-pachon": { position: "attention", brightness: 1.05 },
