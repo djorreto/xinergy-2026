@@ -1462,6 +1462,12 @@ export const teamMembers = [
     objectPosition: "center 20%",
   },
   {
+    name: "Ricardo Bartel",
+    role: "Director",
+    image: "/team/people/ricardo-bartel.jpg",
+    objectPosition: "center 22%",
+  },
+  {
     name: "Diego Jorreto",
     role: "Commercial Manager",
     image: "/team/people/diego-jorreto.jpg",
@@ -1480,6 +1486,12 @@ export const teamMembers = [
     objectPosition: "center 22%",
   },
   {
+    name: "Javier Pachón",
+    role: "SME · Colombia / Andean Region",
+    image: "/team/people/javier-pachon.jpg",
+    objectPosition: "center 22%",
+  },
+  {
     name: "Celso Alberti",
     role: "Partner · Brazil Managing Director",
     image: "/team/people/celso-alberti.jpg",
@@ -1492,15 +1504,45 @@ export const teamMembers = [
     objectPosition: "center 26%",
   },
   {
+    name: "Cecilia León",
+    role: "Consulting Manager",
+    image: "/team/people/cecilia-leon.jpg",
+    objectPosition: "center 22%",
+  },
+  {
+    name: "Ricardo Cesario",
+    role: "Consulting Manager",
+    image: "/team/people/ricardo-cesario.jpg",
+    objectPosition: "center 24%",
+  },
+  {
+    name: "María Jesús Suárez",
+    role: "People & HR Lead",
+    image: "/team/people/maria-jesus-suarez.jpg",
+    objectPosition: "center 22%",
+  },
+  {
     name: "Pablo Valencia",
     role: "VP Strategic Sourcing",
     image: "/team/people/pablo-valencia.jpg",
+  },
+  {
+    name: "Iván Leyton",
+    role: "Strategic Sourcing Manager",
+    image: "/team/people/ivan-leyton.jpg",
+    objectPosition: "center 22%",
   },
   {
     name: "Gonzalo Aguirrebeña",
     role: "Compliance & Legal",
     image: "/team/people/gonzalo-aguirre.jpg",
     objectPosition: "center 20%",
+  },
+  {
+    name: "Ignacia Pérez",
+    role: "Administration, Finance & People",
+    image: "/team/people/ignacia-perez.jpg",
+    objectPosition: "center 22%",
   },
   {
     name: "Karin Schuster",
