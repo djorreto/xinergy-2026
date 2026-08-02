@@ -35,7 +35,7 @@ const SOURCES = {
   "ivan-leyton": "Iva_n_Leyton_-_Gerente_Strategic_Sourcing-bdac1b1c-cf01-4611-9b7f-afc0534555cf.png",
   "cristian-ubeda": "Cristian_Ubeda_-_Gerente_Strategic_Sourcing.png",
   "gonzalo-aguirre": "GONZALO_AGUIRREBEN_A__Gerente_de_Cumplimiento_y_Legal__-cfce8562-db10-4349-b1fa-5845ff391e19.png",
-  "ignacia-perez": "Ignacia_Perez-7cd6049c-941b-4aef-8298-dfc6614a82d6.png",
+  "ignacia-perez": "ignacia-perez-cleaned.png",
   "karin-schuster": "karin_schuster-81d39081-700d-44de-a5b1-c5794c5c9f18.png",
   "pedro-pablo-maurel": "Pedro_Pablo_Maurel_-_Gerente_de_BPO___Managed_services-747f74c3-946b-447c-8a96-6cf799478f07.png",
 };
@@ -72,8 +72,8 @@ const PROFILE = {
   },
   "cristian-ubeda": { position: "north", brightness: 1.04 },
   "gonzalo-aguirre": { position: "top", brightness: 1.04 },
-  // Dark original BG — lift harder; keep full-bleed (no cutout)
-  "ignacia-perez": { position: "centre", brightness: 1.18, lift: 48 },
+  // Studio cleaned source (preferred over dark original)
+  "ignacia-perez": { position: "centre", brightness: 1.04 },
   "karin-schuster": { position: "attention", brightness: 1.08 },
   "pedro-pablo-maurel": {
     position: "attention",
