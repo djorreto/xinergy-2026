@@ -29,12 +29,13 @@ const SOURCES = {
   "christophe-le-flech": "Christophe_Le_Flech___VP_Consulting__-cf1ba240-0a84-45cd-b65d-ad6ef98917d5.png",
   "cecilia-leon": "Cecilia_Leo_n_-_Gerente_de_Consultori_a-1b2ce358-ea48-4b85-8415-202146de4119.png",
   "ricardo-cesario": "Ricardo_Cesario_-_Gerente_de_Consultori_a-fa17aa2a-838d-4d93-bffe-4d539e2c5e9b.png",
-  "maria-jesus-suarez": "Maria_Jesus_Suarez_-_People_HR_Lead.png",
+  // Prefer true originals (full-bleed) — not rembg/AI cutouts
+  "maria-jesus-suarez": "Mari_a_Jesus_Suarez-90276175-a1f6-4fd3-bb66-476c612cbb40.png",
   "pablo-valencia": "Pablo_Valencia_-_VP_STRATEGIC_SOURCING__-be679d29-e61b-438d-aade-84d33ed6fd84.png",
   "ivan-leyton": "Iva_n_Leyton_-_Gerente_Strategic_Sourcing-bdac1b1c-cf01-4611-9b7f-afc0534555cf.png",
   "cristian-ubeda": "Cristian_Ubeda_-_Gerente_Strategic_Sourcing.png",
   "gonzalo-aguirre": "GONZALO_AGUIRREBEN_A__Gerente_de_Cumplimiento_y_Legal__-cfce8562-db10-4349-b1fa-5845ff391e19.png",
-  "ignacia-perez": "Ignacia_Perez_-_Admin_Finanzas_Personas.png",
+  "ignacia-perez": "Ignacia_Perez-7cd6049c-941b-4aef-8298-dfc6614a82d6.png",
   "karin-schuster": "karin_schuster-81d39081-700d-44de-a5b1-c5794c5c9f18.png",
   "pedro-pablo-maurel": "Pedro_Pablo_Maurel_-_Gerente_de_BPO___Managed_services-747f74c3-946b-447c-8a96-6cf799478f07.png",
 };
@@ -54,20 +55,21 @@ const PROFILE = {
   "esteban-vallejos": { position: "attention", brightness: 1.06 },
   "javier-pachon": { position: "attention", brightness: 1.05 },
   "celso-alberti": { position: "attention", brightness: 1.03 },
-  "christophe-le-flech": { position: "attention", brightness: 1.1 },
-  "cecilia-leon": { position: "attention", brightness: 1.04 },
-  "ricardo-cesario": { position: "attention", brightness: 1.03 },
-  "maria-jesus-suarez": { position: "attention", brightness: 1.04 },
+  "christophe-le-flech": { position: "north", brightness: 1.1 },
+  "cecilia-leon": { position: "north", brightness: 1.04 },
+  "ricardo-cesario": { position: "north", brightness: 1.03 },
+  "maria-jesus-suarez": { position: "north", brightness: 1.04 },
   "pablo-valencia": { mode: "pablo", brightness: 1.04 },
   "ivan-leyton": {
-    position: "attention",
+    position: "north",
     brightness: 1.02,
     insets: { top: 2, right: 4, bottom: 2, left: 4 },
     shave: 2,
   },
-  "cristian-ubeda": { position: "attention", brightness: 1.04 },
+  "cristian-ubeda": { position: "north", brightness: 1.04 },
   "gonzalo-aguirre": { position: "top", brightness: 1.04 },
-  "ignacia-perez": { position: "attention", brightness: 1.06 },
+  // Dark original BG — lift harder; keep full-bleed (no cutout)
+  "ignacia-perez": { position: "centre", brightness: 1.18, lift: 48 },
   "karin-schuster": { position: "attention", brightness: 1.08 },
   "pedro-pablo-maurel": {
     position: "attention",
@@ -158,11 +160,11 @@ async function processOne(slug, assetFile) {
 
   buffer = await sharp(buffer)
     .grayscale()
-    .linear(1, SHADOW_LIFT)
+    .linear(1, profile.lift ?? SHADOW_LIFT)
     .toBuffer();
 
   const mean = (await sharp(buffer).stats()).channels[0].mean;
-  const tone = clamp((TARGET_MEAN / mean) * (profile.brightness ?? 1), 0.88, 1.22);
+  const tone = clamp((TARGET_MEAN / mean) * (profile.brightness ?? 1), 0.88, 1.35);
 
   await sharp(buffer)
     .modulate({ brightness: tone })
