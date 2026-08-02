@@ -1,16 +1,22 @@
 import Image from "next/image";
 import { Container } from "@/components/ui/Container";
-import type { TeamMember } from "@/lib/content/team-types";
+import type { TeamGroup, TeamMember } from "@/lib/content/team-types";
 
 type TeamGridProps = {
   eyebrow: string;
   title: string;
   lead?: string;
   members: readonly TeamMember[];
+  groupLabels: Record<TeamGroup, string>;
 };
 
-
-export function TeamGrid({ eyebrow, title, lead, members }: TeamGridProps) {
+export function TeamGrid({
+  eyebrow,
+  title,
+  lead,
+  members,
+  groupLabels,
+}: TeamGridProps) {
   return (
     <section className="bg-white py-14 sm:py-16 lg:py-20">
       <Container>
@@ -35,10 +41,14 @@ export function TeamGrid({ eyebrow, title, lead, members }: TeamGridProps) {
                   height={320}
                   unoptimized
                   sizes="(max-width: 640px) 28vw, (max-width: 1024px) 18vw, 128px"
-                  className="team-photo h-full w-full object-cover object-center"
+                  className="team-photo h-full w-full object-cover"
+                  style={{ objectPosition: member.objectPosition ?? "center 22%" }}
                 />
               </div>
-              <p className="mt-2 w-full text-[0.8125rem] font-semibold leading-tight text-xinergy-charcoal sm:text-sm">
+              <p className="team-group-tag mt-2.5">
+                {groupLabels[member.group]}
+              </p>
+              <p className="mt-1 w-full text-[0.8125rem] font-semibold leading-tight text-xinergy-charcoal sm:text-sm">
                 {member.name}
               </p>
               <p className="mt-1 w-full text-[0.6875rem] leading-snug text-xinergy-slate [text-wrap:balance] sm:text-xs">

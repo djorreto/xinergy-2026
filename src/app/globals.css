@@ -1298,4 +1298,17 @@ body {
 
 .team-photo {
   image-rendering: auto;
+  filter: grayscale(1) contrast(1.04) brightness(1.02);
+  transform: scale(1.06);
+  transform-origin: center 28%;
+}
+
+.team-group-tag {
+  width: 100%;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: color-mix(in srgb, var(--xinergy-charcoal) 38%, transparent);
 }

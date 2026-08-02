@@ -27,7 +27,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function NosotrosPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const { brand, cultureValues, teamMembers, teamOffsite, nosotrosPage } = getContent(locale);
+  const { brand, cultureValues, teamMembers, teamGroupLabels, teamOffsite, nosotrosPage } =
+    getContent(locale);
   const t = await getTranslations("ui.nosotros");
 
   return (
@@ -154,6 +155,7 @@ export default async function NosotrosPage({ params }: Props) {
         title={nosotrosPage.teamTitle}
         lead={nosotrosPage.teamLead}
         members={teamMembers}
+        groupLabels={teamGroupLabels}
       />
 
       <section className="border-t border-xinergy-charcoal/8 bg-white py-20">
