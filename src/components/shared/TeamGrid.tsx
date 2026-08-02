@@ -30,9 +30,12 @@ export function TeamGrid({
           ) : null}
         </div>
 
-        <ul className="mt-10 grid grid-cols-3 gap-x-3 gap-y-8 sm:grid-cols-4 sm:gap-x-4 md:grid-cols-5 lg:grid-cols-6 lg:gap-x-5 lg:gap-y-9">
+        <ul className="team-grid mt-10 flex flex-wrap justify-center gap-x-3 gap-y-8 sm:gap-x-4 lg:gap-x-5 lg:gap-y-9">
           {members.map((member) => (
-            <li key={member.name} className="flex flex-col items-center text-center">
+            <li
+              key={member.name}
+              className="team-grid-item flex flex-col items-center text-center"
+            >
               <div className="team-photo-frame aspect-square w-[7.25rem] overflow-hidden rounded-xl border border-xinergy-charcoal/10 bg-[#f5f2ed] sm:w-[8rem] sm:rounded-2xl">
                 <Image
                   src={member.image}
