@@ -1474,7 +1474,7 @@ export const teamMembers = [
     objectPosition: "center 28%",
   },
   {
-    name: "Sandra",
+    name: "Sandra Andrade",
     role: "Directora Comercial",
     image: "/team/people/sandra.jpg",
     objectPosition: "center 20%",
