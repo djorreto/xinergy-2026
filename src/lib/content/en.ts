@@ -1550,6 +1550,13 @@ export const teamMembers = [
     objectPosition: "center 20%",
   },
   {
+    name: "Cristian Ubeda",
+    role: "Strategic Sourcing Manager",
+    image: "/team/people/cristian-ubeda.jpg",
+    group: "sourcing",
+    objectPosition: "center 20%",
+  },
+  {
     name: "Pedro Pablo Maurel",
     role: "BPO & Managed Services",
     image: "/team/people/pedro-pablo-maurel.jpg",
