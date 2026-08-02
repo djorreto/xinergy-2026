@@ -1453,7 +1453,7 @@ export const teamGroupLabels = {
   comercial: "Comercial y países",
   consultoria: "Consultoría",
   sourcing: "Strategic Sourcing",
-  bpo: "BPO",
+  bpo: "BPO y servicios",
   corporate: "Corporate",
 } as const;
 
