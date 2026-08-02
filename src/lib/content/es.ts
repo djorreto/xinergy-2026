@@ -270,9 +270,9 @@ export const homeFaqs: FAQ[] = [
 
 export const heroStats = [
   {
-    value: "3B+",
-    label: "Gasto bajo gestión en programas recientes.",
-    detail: "Spend directo e indirecto en sourcing, BPO y transformación de abastecimiento en Latinoamérica.",
+    value: "10B+",
+    label: "Acumulados en negociaciones.",
+    detail: "Volumen acumulado en sourcing, BPO y transformación de abastecimiento en Latinoamérica.",
   },
   {
     value: "15+",
@@ -1241,14 +1241,14 @@ export const cases = [
     challenge:
       "Operación de abastecimiento de alta complejidad en entorno minero: alto volumen transaccional, múltiples faenas y categorías críticas, con presión por escalar capacidad sin aumentar headcount interno ni perder control.",
     approach:
-      "Despliegue de modelo BPO con equipo Xinergy dedicado de más de 35 profesionales: operación de compras y contratos, SLAs por proceso, reporting ejecutivo, integración con sistemas del cliente y mejora continua en terreno.",
+      "Despliegue de modelo BPO con equipo Xinergy dedicado de más de 50 profesionales: operación de compras y contratos, SLAs por proceso, reporting ejecutivo, integración con sistemas del cliente y mejora continua en terreno.",
     results: [
-      "Equipo operativo de 35+ personas en operación continua",
+      "Equipo operativo de 50+ personas en operación continua",
       "Trazabilidad y control de gasto en categorías de alto impacto",
       "SLAs medibles en ciclo de compra y gestión de contratos",
       "Capacidad escalable para picos de demanda operacional",
     ],
-    highlight: "35+",
+    highlight: "50+",
     highlightLabel: "personas en equipo BPO.",
   },
   {
@@ -1478,12 +1478,6 @@ export const teamMembers = [
     role: "Country Manager · México",
     image: "/team/people/esteban-vallejos.jpg",
     objectPosition: "center 22%",
-  },
-  {
-    name: "Marcelo Moreno",
-    role: "Country Manager · Colombia",
-    image: "/team/people/marcelo-moreno.jpg",
-    objectPosition: "center 24%",
   },
   {
     name: "Celso Alberti",

@@ -270,9 +270,9 @@ export const homeFaqs: FAQ[] = [
 
 export const heroStats = [
   {
-    value: "3B+",
-    label: "Spend under management in recent programs.",
-    detail: "Direct and indirect spend in sourcing, BPO, and procurement transformation across Latin America.",
+    value: "10B+",
+    label: "Accumulated in negotiations.",
+    detail: "Accumulated volume in sourcing, BPO, and procurement transformation across Latin America.",
   },
   {
     value: "15+",
@@ -1241,14 +1241,14 @@ export const cases = [
     challenge:
       "Highly complex procurement operations in a mining environment: high transactional volume, multiple sites and critical categories, with pressure to scale capacity without increasing internal headcount or losing control.",
     approach:
-      "Deployment of a BPO model with a dedicated Xinergy team of more than 35 professionals: procurement and contract operations, process SLAs, executive reporting, integration with client systems, and continuous improvement on the ground.",
+      "Deployment of a BPO model with a dedicated Xinergy team of more than 50 professionals: procurement and contract operations, process SLAs, executive reporting, integration with client systems, and continuous improvement on the ground.",
     results: [
-      "Operational team of 35+ people in continuous operation",
+      "Operational team of 50+ people in continuous operation",
       "Traceability and spend control in high-impact categories",
       "Measurable SLAs on procurement cycle and contract management",
       "Scalable capacity for operational demand peaks",
     ],
-    highlight: "35+",
+    highlight: "50+",
     highlightLabel: "people on the BPO team.",
   },
   {
@@ -1478,12 +1478,6 @@ export const teamMembers = [
     role: "Country Manager · Mexico",
     image: "/team/people/esteban-vallejos.jpg",
     objectPosition: "center 22%",
-  },
-  {
-    name: "Marcelo Moreno",
-    role: "Country Manager · Colombia",
-    image: "/team/people/marcelo-moreno.jpg",
-    objectPosition: "center 24%",
   },
   {
     name: "Celso Alberti",
