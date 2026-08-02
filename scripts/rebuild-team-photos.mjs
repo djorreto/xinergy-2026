@@ -21,7 +21,7 @@ const SOURCES = {
   roberto: "Roberto_-_SOCIO-b24b1fe3-f3d9-47b1-aa92-2d119e362227.png",
   "gonzalo-de-la-barra": "Gonzalo_de_la_Barra_-_SOCIO-a5ec46ac-dcde-4a3a-898a-42d5ae627122.png",
   "diego-jorreto": "Diego_Jorreto_Gerente_Comercial__-c3800fb8-a6c0-4e31-9ae7-902b53f1573d.png",
-  "ricardo-bartel": "Ricardo_Bartel_-_Director.png",
+  "ricardo-bartel": "bartel-studio-bg.png",
   sandra: "Sandra_director_comercial-7cc7eba4-0816-49f2-b8e3-af42784f295c.png",
   "esteban-vallejos": "Esteban_Vallejos__Country_Manager_Mexico-3aef99c5-669c-4ede-aafb-83dcfa52abb0.png",
   "javier-pachon": "Javier_Pachon_-_SME_Colombia.png",
@@ -50,12 +50,7 @@ const PROFILE = {
     shave: 4,
   },
   "diego-jorreto": { position: "attention", brightness: 1 },
-  "ricardo-bartel": {
-    position: "north",
-    brightness: 1.02,
-    // Hi-res outdoor: tighter head-and-shoulders (less vineyard)
-    insets: { left: 96, right: 144, top: 16, bottom: 144 },
-  },
+  "ricardo-bartel": { position: "north", brightness: 1.02, contrast: 0.88, lift: 26, gamma: 1.08 },
   sandra: { position: "attention", brightness: 1.02 },
   "esteban-vallejos": { position: "attention", brightness: 1.06 },
   "javier-pachon": { position: "attention", brightness: 1.05 },
