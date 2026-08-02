@@ -53,7 +53,8 @@ const PROFILE = {
   "ricardo-bartel": {
     position: "north",
     brightness: 1.02,
-    insets: { left: 64, right: 16, top: 16, bottom: 16 },
+    // Hi-res outdoor: tighter head-and-shoulders (less vineyard)
+    insets: { left: 96, right: 144, top: 16, bottom: 144 },
   },
   sandra: { position: "attention", brightness: 1.02 },
   "esteban-vallejos": { position: "attention", brightness: 1.06 },

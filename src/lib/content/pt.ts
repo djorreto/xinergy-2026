@@ -1477,7 +1477,7 @@ export const teamMembers = [
     role: "Diretor",
     image: "/team/people/ricardo-bartel.jpg",
     group: "direccion",
-    objectPosition: "center 20%",
+    objectPosition: "center 28%",
   },
   {
     name: "Diego Jorreto",
