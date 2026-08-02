@@ -27,8 +27,8 @@ const SOURCES = {
   "javier-pachon": "Javier_Pachon_-_SME_Colombia.png",
   "celso-alberti": "Celso_Alberti__Socio_Director_Brasil__-7bf3fd53-3196-4bb2-8d8d-1413ae58900b.png",
   "christophe-le-flech": "Christophe_Le_Flech___VP_Consulting__-cf1ba240-0a84-45cd-b65d-ad6ef98917d5.png",
-  "cecilia-leon": "Cecilia_Leo_n_-_Gerente_de_Consultori_a-1b2ce358-ea48-4b85-8415-202146de4119.png",
-  "ricardo-cesario": "Ricardo_Cesario_-_Gerente_de_Consultori_a-fa17aa2a-838d-4d93-bffe-4d539e2c5e9b.png",
+  "cecilia-leon": "cecilia-studio-bg.png",
+  "ricardo-cesario": "cesario-studio-bg.png",
   // Prefer true originals (full-bleed) — not rembg/AI cutouts
   "maria-jesus-suarez": "Mari_a_Jesus_Suarez-90276175-a1f6-4fd3-bb66-476c612cbb40.png",
   "pablo-valencia": "Pablo_Valencia_-_VP_STRATEGIC_SOURCING__-be679d29-e61b-438d-aade-84d33ed6fd84.png",
@@ -61,8 +61,9 @@ const PROFILE = {
   "javier-pachon": { position: "attention", brightness: 1.05 },
   "celso-alberti": { position: "attention", brightness: 1.03 },
   "christophe-le-flech": { position: "north", brightness: 1.1 },
-  "cecilia-leon": { position: "north", brightness: 1.04 },
-  "ricardo-cesario": { position: "north", brightness: 1.03 },
+  // Soft contrast — avoid crushed blacks / blown highlights
+  "cecilia-leon": { position: "centre", brightness: 1.02, contrast: 0.72, lift: 48, gamma: 1.18 },
+  "ricardo-cesario": { position: "north", brightness: 1.03, contrast: 0.9, lift: 24, gamma: 1.08 },
   "maria-jesus-suarez": { position: "north", brightness: 1.04 },
   "pablo-valencia": { mode: "pablo", brightness: 1.04 },
   "ivan-leyton": {
@@ -165,7 +166,7 @@ async function processOne(slug, assetFile) {
 
   buffer = await sharp(buffer)
     .grayscale()
-    .linear(1, profile.lift ?? SHADOW_LIFT)
+    .linear(profile.contrast ?? 1, profile.lift ?? SHADOW_LIFT)
     .toBuffer();
 
   const mean = (await sharp(buffer).stats()).channels[0].mean;
@@ -173,7 +174,7 @@ async function processOne(slug, assetFile) {
 
   await sharp(buffer)
     .modulate({ brightness: tone })
-    .gamma(HIGHLIGHT_GAMMA)
+    .gamma(profile.gamma ?? HIGHLIGHT_GAMMA)
     .jpeg({ quality: 93, mozjpeg: true })
     .toFile(output);
 
