@@ -56,7 +56,7 @@ const PROFILE = {
   "diego-jorreto": { position: "attention", brightness: 1 },
   "ricardo-bartel": { position: "north", brightness: 1.02, contrast: 0.88, lift: 26, gamma: 1.08 },
   "alejandro-cozzi": { position: "north", brightness: 1.02, contrast: 0.9, lift: 24, gamma: 1.08 },
-  "sergio-morales": { position: "north", brightness: 1.05, contrast: 0.78, lift: 16, gamma: 1.06 },
+  "sergio-morales": { position: "north", brightness: 1.18, contrast: 0.88, lift: 48, gamma: 1.1 },
   "rafael-barbudo": { position: "north", brightness: 1.02, contrast: 0.88, lift: 26, gamma: 1.08 },
   "luis-carlos-restrepo": { position: "north", brightness: 1.02, contrast: 0.9, lift: 24, gamma: 1.08 },
   sandra: { position: "attention", brightness: 1.02 },
