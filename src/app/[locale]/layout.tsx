@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { GoogleAnalyticsPageView } from "@/components/analytics/GoogleAnalyticsPageView";
 import { GoogleAnalyticsClickTracker } from "@/components/analytics/GoogleAnalyticsClickTracker";
+import { Metricool } from "@/components/analytics/Metricool";
 import { OrganizationJsonLd } from "@/components/shared/OrganizationJsonLd";
 import { routing } from "@/i18n/routing";
 import { ttForsDisplay, univers } from "@/lib/fonts";
@@ -34,6 +35,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     <html lang={locale} className={`${ttForsDisplay.variable} ${univers.variable} h-full`}>
       <head>
         <GoogleAnalytics />
+        <Metricool />
       </head>
       <body
         className={`${univers.className} flex min-h-dvh flex-col antialiased overflow-x-clip pb-[env(safe-area-inset-bottom)]`}
