@@ -1,5 +1,6 @@
 export type TeamGroup =
   | "direccion"
+  | "counselors"
   | "comercial"
   | "consultoria"
   | "sourcing"

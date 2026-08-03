@@ -1450,6 +1450,7 @@ export const cultureValues = [
 
 export const teamGroupLabels = {
   direccion: "Leadership",
+  counselors: "Senior Counselors",
   comercial: "Commercial & countries",
   consultoria: "Consulting",
   sourcing: "Strategic Sourcing",
@@ -1478,6 +1479,34 @@ export const teamMembers = [
     image: "/team/people/ricardo-bartel.jpg",
     group: "direccion",
     objectPosition: "center 28%",
+  },
+  {
+    name: "Alejandro Cozzi",
+    role: "Director",
+    image: "/team/people/alejandro-cozzi.jpg",
+    group: "direccion",
+    objectPosition: "center 18%",
+  },
+  {
+    name: "Sergio Morales",
+    role: "Director",
+    image: "/team/people/sergio-morales.jpg",
+    group: "direccion",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Rafael Barbudo",
+    role: "Senior Counselor",
+    image: "/team/people/rafael-barbudo.jpg",
+    group: "counselors",
+    objectPosition: "center 18%",
+  },
+  {
+    name: "Luis Carlos Restrepo",
+    role: "Senior Counselor",
+    image: "/team/people/luis-carlos-restrepo.jpg",
+    group: "counselors",
+    objectPosition: "center 20%",
   },
   {
     name: "Diego Jorreto",
@@ -1565,8 +1594,22 @@ export const teamMembers = [
   },
   {
     name: "María Jesús Suárez",
-    role: "People & HR Lead",
+    role: "HR",
     image: "/team/people/maria-jesus-suarez.jpg",
+    group: "corporate",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Karin Schuster",
+    role: "HR",
+    image: "/team/people/karin-schuster.jpg",
+    group: "corporate",
+    objectPosition: "center 20%",
+  },
+  {
+    name: "Ignacia Pérez",
+    role: "Finance",
+    image: "/team/people/ignacia-perez.jpg",
     group: "corporate",
     objectPosition: "center 20%",
   },
@@ -1576,20 +1619,6 @@ export const teamMembers = [
     image: "/team/people/gonzalo-aguirre.jpg",
     group: "corporate",
     objectPosition: "center 18%",
-  },
-  {
-    name: "Ignacia Pérez",
-    role: "Administration, Finance & People",
-    image: "/team/people/ignacia-perez.jpg",
-    group: "corporate",
-    objectPosition: "center 20%",
-  },
-  {
-    name: "Karin Schuster",
-    role: "HR Business Partner",
-    image: "/team/people/karin-schuster.jpg",
-    group: "corporate",
-    objectPosition: "center 20%",
   },
 ] as const;
 
