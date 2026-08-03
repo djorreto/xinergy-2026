@@ -18,7 +18,7 @@ export const brand = {
   address:
     "Av. Andrés Bello 2457, piso 16, Of. 1603, Providencia, Santiago, Chile",
   phone: "+56 9 8741 9290",
-  whatsapp: "https://wa.me/56987419290",
+  whatsapp: "https://wa.me/56987419290?text=Hola%2C%20vengo%20desde%20xinergy.lat",
   linkedin: "https://cl.linkedin.com/company/xinergy-latam",
   mondayFormUrl:
     "https://forms.monday.com/forms/embed/f9158027a499677bf868b39393bd5019?r=use1",

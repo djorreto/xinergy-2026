@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { ttForsDisplay } from "@/lib/fonts";
+import { WHATSAPP_URL } from "@/lib/whatsapp";
 
 type SiteFooterProps = {
   locale: string;
@@ -64,7 +65,7 @@ export function SiteFooter({ locale: _locale }: SiteFooterProps) {
             {brand.email}
           </a>
           <a
-            href={brand.whatsapp}
+            href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
             data-cta-name="whatsapp"
@@ -154,7 +155,7 @@ export function SiteFooter({ locale: _locale }: SiteFooterProps) {
               {brand.email}
             </a>
             <a
-              href={brand.whatsapp}
+              href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
               data-cta-name="whatsapp"
