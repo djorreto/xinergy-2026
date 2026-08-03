@@ -17,7 +17,8 @@ export const brand = {
   careersEmail: "seleccion@xinergy.cl",
   address:
     "Av. Andrés Bello 2457, piso 16, Of. 1603, Providencia, Santiago, Chile",
-  phone: "+56 2 1234 5678",
+  phone: "+56 9 8741 9290",
+  whatsapp: "https://wa.me/56987419290",
   linkedin: "https://cl.linkedin.com/company/xinergy-latam",
   mondayFormUrl:
     "https://forms.monday.com/forms/embed/f9158027a499677bf868b39393bd5019?r=use1",

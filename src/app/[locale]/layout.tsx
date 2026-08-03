@@ -9,6 +9,7 @@ import { GoogleAnalyticsPageView } from "@/components/analytics/GoogleAnalyticsP
 import { GoogleAnalyticsClickTracker } from "@/components/analytics/GoogleAnalyticsClickTracker";
 import { Metricool } from "@/components/analytics/Metricool";
 import { OrganizationJsonLd } from "@/components/shared/OrganizationJsonLd";
+import { WhatsAppFloat } from "@/components/shared/WhatsAppFloat";
 import { routing } from "@/i18n/routing";
 import { ttForsDisplay, univers } from "@/lib/fonts";
 
@@ -49,6 +50,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <SiteFooter locale={locale} />
+          <WhatsAppFloat />
         </NextIntlClientProvider>
       </body>
     </html>
