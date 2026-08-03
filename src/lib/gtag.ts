@@ -3,7 +3,8 @@ export const GA_MEASUREMENT_ID =
 export const GOOGLE_ADS_ID =
   process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18294572204";
 export const GOOGLE_ADS_CONTACT_CONVERSION =
-  process.env.NEXT_PUBLIC_GOOGLE_ADS_CONTACT_CONVERSION;
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_CONTACT_CONVERSION ??
+  "AW-18294572204/Z0tUCJjp_tocEKyJxJNE";
 
 type Gtag = (...args: unknown[]) => void;
 
