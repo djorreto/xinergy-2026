@@ -178,5 +178,105 @@
       "Avanzado": "Avançado",
       "Optimizado": "Otimizado"
     }
+  },
+  "registro": {
+    "eyebrow": "Convite privado Xinergy",
+    "privateNote": "Página privada · Não indexável · Somente com link de convite.",
+    "form": {
+      "eyebrow": "Sua vaga",
+      "title": "Registre-se agora",
+      "subtitle": "Preencha seus dados. Após o registro, você receberá o convite nas próximas 24 horas.",
+      "name": "Nome",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "company": "Empresa",
+      "role": "Cargo",
+      "submit": "Quero meu convite",
+      "sending": "Enviando…",
+      "successEyebrow": "Pronto",
+      "successTitle": "Registro recebido",
+      "successBody": "Você receberá o convite nas próximas 24 horas.",
+      "contentInterest": {
+        "label": "Que tipo de conteúdo mais te interessa?",
+        "options": {
+          "business": "Visão de Negócios e Estratégia",
+          "workshops": "Workshops Técnicos e Certificações",
+          "both": "Ambos"
+        }
+      },
+      "attendance": {
+        "label": "Sua participação será presencial?",
+        "options": {
+          "inPerson": "Sim, visitarei o evento.",
+          "virtual": "Não, participarei de forma virtual."
+        }
+      },
+      "consent": {
+        "body": "Entendo e aceito que meus dados pessoais poderão ser compartilhados com entidades responsáveis pela produção do evento. Isso pode incluir organizadores, patrocinadores e fornecedores de serviços técnicos, a fim de garantir o correto desenvolvimento e execução do evento no qual estou me registrando.",
+        "checkbox": "Concordo que meus dados possam ser compartilhados com terceiros."
+      },
+      "errors": {
+        "generic": "Não foi possível enviar o formulário. Tente novamente.",
+        "network_error": "Erro de conexão. Verifique sua rede e tente novamente.",
+        "invalid_name": "Informe seu nome.",
+        "invalid_email": "Informe um e-mail válido.",
+        "invalid_invite": "Este link de convite não é válido.",
+        "invalid_consent": "Você deve aceitar o compartilhamento de dados para continuar.",
+        "invalid_content_interest": "Selecione o tipo de conteúdo que te interessa.",
+        "invalid_attendance": "Indique se sua participação será presencial ou virtual."
+      }
+    },
+    "invites": {
+      "evento": {
+        "kicker": "19 de agosto de 2026 · Presencial · Hotel W",
+        "whatIsLabel": "O que é o LTC?",
+        "whatIs": "A Latin America Technology Conference (LTC) é a principal cúpula enterprise de Inteligência Artificial Agêntica da região. Na 3ª edição, DIGEVO, NVIDIA e Oracle reúnem +700 líderes no Hotel W Santiago para sair da teoria e chegar a ROI real com IA.",
+        "facts": [
+          { "label": "Edição", "value": "3ª · LTC 2026" },
+          { "label": "Formato", "value": "Presencial" },
+          { "label": "Foco", "value": "IA Agêntica" }
+        ],
+        "venueCaption": "Sede do evento",
+        "intro": "Um dia completo no Centro de Convenções do Hotel W: estratégia de manhã e Training Labs à tarde.",
+        "learningsTitle": "O que você vai viver",
+        "learnings": [
+          "Manhã (8:30–12:50): keynotes, painéis e visão de negócio com NVIDIA, Oracle e líderes da região.",
+          "Tarde: workshops técnicos hands-on e certificações com stack NVIDIA/Oracle.",
+          "Networking com o ecossistema DIGEVO e casos reais de ROI na LATAM."
+        ],
+        "scheduleTitle": "Horários (Chile)",
+        "schedule": [
+          { "zone": "Credenciamento", "time": "08:30" },
+          { "zone": "Conferência · Negócios e Estratégia", "time": "08:30 – 12:50" },
+          { "zone": "Workshops · Training Labs", "time": "14:00 – 19:30" }
+        ],
+        "dateNote": "Centro de Convenções · Hotel W Santiago · Isidora Goyenechea 3000, Las Condes.",
+        "accessNote": "Indique se prefere visão de negócio, workshops técnicos ou ambos. O convite chega em 24 horas.",
+        "organizersCaption": "Organizam",
+        "partnerNote": "A Xinergy, partner da DIGEVO, estende este convite. A Xinergy não é sponsor do LTC 2026. digevo.com"
+      },
+      "almuerzo": {
+        "kicker": "Mesa C-Level · 19 de agosto · 13:00",
+        "whatIsLabel": "O contexto",
+        "whatIs": "Enquanto o LTC 2026 — a cúpula de IA agêntica da DIGEVO, NVIDIA e Oracle — acontece no Hotel W, a Xinergy abre uma mesa reservada para líderes C-Level no Karai by Mitsuharu: conversa de alto nível, sem palco nem pitch.",
+        "venueCaption": "O lugar",
+        "facts": [
+          { "label": "Horário", "value": "13:00 hrs" },
+          { "label": "Local", "value": "Karai · Hotel W" },
+          { "label": "Perfil", "value": "C-Level" },
+          { "label": "Vagas", "value": "20 assentos" }
+        ],
+        "intro": "Um almoço privado para quem lidera a estratégia: critério, visão e conversa entre pares, em um formato íntimo e seletivo.",
+        "highlightsTitle": "Por que esta mesa",
+        "highlights": [
+          "Encontro íntimo entre líderes C-Level: estratégia, tecnologia e decisões que movem o negócio.",
+          "Karai by Mitsuharu: cozinha nikkei de alto nível no Hotel W Santiago.",
+          "Apenas 20 lugares. Convite pessoal; confirmação sujeita à disponibilidade."
+        ],
+        "contextNote": "Após o registro, você receberá o convite formal nas próximas 24 horas.",
+        "organizersCaption": "LTC organizado por",
+        "partnerNote": "Este almoço é convite Xinergy. O LTC é da DIGEVO e da NVIDIA; a Xinergy atua como partner da DIGEVO, não como sponsor do congresso."
+      }
+    }
   }
 }
