@@ -6,6 +6,8 @@ export type Invite = {
   id: InviteId;
   /** Token opaco en la URL — no adivinable, no indexable. */
   token: string;
+  /** Si true, existe página pública de formulario. Almuerzo = solo confirmación por mail. */
+  publicForm: boolean;
   mondayFormToken: string;
   mondayRegion: "use1";
   /** Campo Boolean obligatorio de consentimiento en Monday. */
@@ -18,6 +20,7 @@ export const INVITES: Invite[] = [
   {
     id: "almuerzo",
     token: "665f2f6b6a192d080c9417d9b032084a",
+    publicForm: false,
     mondayFormToken: "c8b96c687e31df3956b9ba0f1f90d410",
     mondayRegion: "use1",
     mondayConsentField: "booleanj2klu8v4",
@@ -27,14 +30,15 @@ export const INVITES: Invite[] = [
       pt: "Almoço executivo no Karai",
     },
     descriptions: {
-      es: "Una mesa íntima para C-Level. 20 cupos. Karai, Hotel W. El cierre más exclusivo de Xinergy en el día del LTC.",
-      en: "An intimate C-Level table. 20 seats. Karai, Hotel W. Xinergy’s most exclusive close to LTC day.",
-      pt: "Uma mesa íntima para C-Level. 20 vagas. Karai, Hotel W. O fechamento mais exclusivo da Xinergy no dia do LTC.",
+      es: "Almuerzo privado en Karai: una mesa pequeña para conversar, entre pares, sobre IA agéntica y decisiones de negocio.",
+      en: "Private lunch at Karai: a small table to talk, among peers, about agentic AI and business decisions.",
+      pt: "Almoço privado no Karai: uma mesa pequena para conversar, entre pares, sobre IA agêntica e decisões de negócio.",
     },
   },
   {
     id: "evento",
     token: "212a8166f3f26d77f78528b2a3d6772f",
+    publicForm: true,
     mondayFormToken: "2ce543270cd58e7d196512e2da04a0c2",
     mondayRegion: "use1",
     mondayConsentField: "booleankfuxguo4",
@@ -57,8 +61,21 @@ export function getInviteByToken(token: string): Invite | undefined {
   return byToken.get(token);
 }
 
+/** Solo invitaciones con formulario web público (hoy: evento LTC). */
+export function getPublicFormInviteByToken(token: string): Invite | undefined {
+  const invite = byToken.get(token);
+  return invite?.publicForm ? invite : undefined;
+}
+
+export function getPublicFormInvites(): Invite[] {
+  return INVITES.filter((invite) => invite.publicForm);
+}
+
 export function getInvitePath(inviteId: InviteId, locale: Locale = "es"): string {
   const invite = INVITES.find((item) => item.id === inviteId);
   if (!invite) throw new Error(`Unknown invite: ${inviteId}`);
+  if (!invite.publicForm) {
+    throw new Error(`Invite ${inviteId} has no public registration form`);
+  }
   return `/${locale}/registro/${invite.token}`;
 }

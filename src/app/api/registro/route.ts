@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isEventAttendance, isEventContentInterest } from "@/lib/invite-form";
-import { getInviteByToken } from "@/lib/invites";
+import { getPublicFormInviteByToken } from "@/lib/invites";
 import { submitMondayInviteForm } from "@/lib/monday-form-submit";
 
 function isValidEmail(email: string): boolean {
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "invalid_payload" }, { status: 400 });
   }
 
-  const invite = getInviteByToken(token);
+  const invite = getPublicFormInviteByToken(token);
   if (!invite) {
     return NextResponse.json({ ok: false, error: "invalid_invite" }, { status: 404 });
   }

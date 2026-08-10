@@ -6,7 +6,7 @@ import { InviteRegistrationForm } from "@/components/shared/InviteRegistrationFo
 import { InviteVenueBrands } from "@/components/shared/InviteVenueBrands";
 import { Container } from "@/components/ui/Container";
 import { routing, type Locale } from "@/i18n/routing";
-import { getInviteByToken, INVITES } from "@/lib/invites";
+import { getPublicFormInviteByToken, getPublicFormInvites } from "@/lib/invites";
 
 type Props = {
   params: Promise<{ locale: string; token: string }>;
@@ -14,13 +14,13 @@ type Props = {
 
 export function generateStaticParams() {
   return routing.locales.flatMap((locale) =>
-    INVITES.map((invite) => ({ locale, token: invite.token })),
+    getPublicFormInvites().map((invite) => ({ locale, token: invite.token })),
   );
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, token } = await params;
-  const invite = getInviteByToken(token);
+  const invite = getPublicFormInviteByToken(token);
   if (!invite) {
     return { robots: { index: false, follow: false } };
   }
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function RegistroInvitePage({ params }: Props) {
   const { locale, token } = await params;
-  const invite = getInviteByToken(token);
+  const invite = getPublicFormInviteByToken(token);
   if (!invite) notFound();
 
   setRequestLocale(locale);
