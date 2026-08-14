@@ -1511,6 +1511,13 @@ export const teamMembers = [
     objectPosition: "center 20%",
   },
   {
+    name: "Luis Araya",
+    role: "Senior Counselor",
+    image: "/team/people/luis-araya.jpg",
+    group: "counselors",
+    objectPosition: "center 18%",
+  },
+  {
     name: "Diego Jorreto",
     role: "Commercial Manager",
     image: "/team/people/diego-jorreto.jpg",
@@ -1596,21 +1603,21 @@ export const teamMembers = [
   },
   {
     name: "María Jesús Suárez",
-    role: "HR",
+    role: "Head of Human Resources",
     image: "/team/people/maria-jesus-suarez.jpg",
     group: "corporate",
     objectPosition: "center 20%",
   },
   {
     name: "Karin Schuster",
-    role: "HR",
+    role: "HRBP",
     image: "/team/people/karin-schuster.jpg",
     group: "corporate",
     objectPosition: "center 20%",
   },
   {
     name: "Ignacia Pérez",
-    role: "Finance",
+    role: "Head of Finance",
     image: "/team/people/ignacia-perez.jpg",
     group: "corporate",
     objectPosition: "center 20%",
