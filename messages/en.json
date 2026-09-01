@@ -185,17 +185,17 @@
     "form": {
       "eyebrow": "Your seat",
       "title": "Register now",
-      "subtitle": "Share your details. Once registered, you will receive the invitation within the next 24 hours.",
+      "subtitle": "Share your details. You will receive confirmation within the next 24 hours.",
       "name": "Name",
       "email": "Email",
       "phone": "Phone",
       "company": "Company",
       "role": "Role",
-      "submit": "Get my invitation",
+      "submit": "Register for the event",
       "sending": "Sending…",
       "successEyebrow": "Done",
       "successTitle": "Registration received",
-      "successBody": "You will receive the invitation within the next 24 hours.",
+      "successBody": "You will receive confirmation within the next 24 hours.",
       "contentInterest": {
         "label": "What type of content interests you most?",
         "options": {
@@ -228,7 +228,12 @@
     },
     "invites": {
       "evento": {
-        "kicker": "August 19, 2026 · In person · Hotel W",
+        "kicker": "August 19, 2026 · In person · Hotel W, Las Condes",
+        "heroHighlights": [
+          "Morning: conferences and panels",
+          "Afternoon: training labs and workshops (limited seats)",
+          "Confirmation within the next 24 hours"
+        ],
         "whatIsLabel": "What is LTC?",
         "whatIs": "The Latin America Technology Conference (LTC) is the region’s leading enterprise summit on Agentic AI. In its 3rd edition, DIGEVO, NVIDIA and Oracle bring together 700+ leaders at Hotel W Santiago to move from theory to real AI ROI.",
         "facts": [
@@ -251,9 +256,9 @@
           { "zone": "Workshops · Training Labs", "time": "14:00 – 19:30" }
         ],
         "dateNote": "Convention Center · Hotel W Santiago · Isidora Goyenechea 3000, Las Condes.",
-        "accessNote": "Tell us if you prefer business vision, technical workshops, or both. Your invitation arrives within 24 hours.",
+        "accessNote": "Tell us if you prefer business vision, technical workshops, or both. You will receive confirmation within the next 24 hours.",
         "organizersCaption": "Organized by",
-        "partnerNote": "Xinergy, a DIGEVO partner, is extending this invitation. Xinergy is not a sponsor of LTC 2026. digevo.com"
+        "partnerNote": "A Xinergy invitation to LTC 2026, organized by DIGEVO, NVIDIA, and Oracle."
       },
       "almuerzo": {
         "kicker": "C-Level table · August 19 · 1:00 PM",
@@ -278,5 +283,28 @@
         "partnerNote": "This lunch is a Xinergy invitation. LTC is a DIGEVO and NVIDIA event; Xinergy acts as a DIGEVO partner, not as a conference sponsor."
       }
     }
+  },
+  "aniversario": {
+    "eyebrow": "Internal · Team only",
+    "kicker": "5 years",
+    "title": "We gather to celebrate",
+    "lead": "On September 9, the whole Xinergy team meets at Bar Savia. A night for us.",
+    "surprise": "There will be a few surprises for the whole team.",
+    "whenLabel": "When",
+    "when": "Wednesday, September 9",
+    "whenTime": "From 6:30 PM",
+    "whereLabel": "Where",
+    "dressLabel": "Dress code",
+    "dress": "Office casual",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Min",
+    "seconds": "Sec",
+    "live": "It's today. See you at Savia.",
+    "maps": "Get directions",
+    "calendar": "Add to calendar",
+    "privateNote": "Private page · Invitation link only.",
+    "skip": "Wait… · turn up the volume",
+    "hint": "Move the mouse · Click the logo for the encore"
   }
 }

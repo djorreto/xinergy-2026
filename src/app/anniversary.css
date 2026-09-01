@@ -1,0 +1,774 @@
+/* —— Aniversario 5 · show / fiesta —— */
+.anniv-root {
+  --rx: 0deg;
+  --ry: 0deg;
+  --sx: 10deg;
+  --sy: -16deg;
+  --lx: 50%;
+  --ly: 40%;
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #07050a;
+  color: white;
+}
+
+.anniv-root.is-boot,
+.anniv-root.is-slam,
+.anniv-root.is-party,
+.anniv-root.is-hush,
+.anniv-root.is-drop,
+.anniv-root.is-five {
+  height: 100dvh;
+}
+
+.anniv-root.is-show {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.anniv-root.is-drop,
+.anniv-root.is-five {
+  animation: anniv-shake 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.anniv-world {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  perspective: 1100px;
+}
+
+.anniv-particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.anniv-glow {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(circle at var(--lx) var(--ly), rgba(252, 161, 0, 0.2), transparent 30%),
+    linear-gradient(180deg, #07050a 0%, #120f16 60%, #1c1822 100%);
+}
+
+.anniv-root.is-party .anniv-glow {
+  animation: anniv-bass 0.46s ease-in-out infinite;
+}
+
+.anniv-root.is-hush .anniv-glow {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(252, 161, 0, 0.08), transparent 34%),
+    linear-gradient(180deg, #050308 0%, #0b0910 100%);
+}
+
+.anniv-root.is-drop .anniv-glow,
+.anniv-root.is-five .anniv-glow {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(252, 161, 0, 0.7), transparent 26%),
+    radial-gradient(circle at var(--lx) var(--ly), rgba(255, 208, 128, 0.35), transparent 45%),
+    linear-gradient(180deg, #1a1006 0%, #2a1a0a 100%);
+}
+
+.anniv-spots {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.anniv-root.is-party .anniv-spots,
+.anniv-root.is-drop .anniv-spots,
+.anniv-root.is-five .anniv-spots,
+.anniv-root.is-show .anniv-spots {
+  opacity: 1;
+}
+
+.anniv-spot {
+  position: absolute;
+  top: -25%;
+  width: 42vw;
+  height: 160%;
+  background: linear-gradient(to bottom, rgba(252, 161, 0, 0.2), transparent 70%);
+  filter: blur(28px);
+  transform-origin: top center;
+  mix-blend-mode: screen;
+}
+
+.anniv-spot-a {
+  left: 8%;
+  animation: anniv-spot 3.6s ease-in-out infinite;
+}
+
+.anniv-spot-b {
+  left: 38%;
+  animation: anniv-spot 4.4s ease-in-out infinite reverse;
+}
+
+.anniv-spot-c {
+  right: 6%;
+  animation: anniv-spot 3.1s ease-in-out infinite 0.4s;
+}
+
+.anniv-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 36%, rgba(0, 0, 0, 0.7) 100%);
+}
+
+.anniv-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.anniv-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff6e4;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.anniv-root.is-drop .anniv-flash {
+  animation: anniv-flash 0.38s ease-out both;
+}
+
+.anniv-shock {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 4rem;
+  height: 4rem;
+  border: 3px solid rgba(252, 161, 0, 0);
+  border-radius: 999px;
+  translate: -50% -50%;
+}
+
+.anniv-root.is-five .anniv-shock {
+  animation: anniv-shock 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anniv-sculpt {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  perspective: 900px;
+  opacity: 0;
+  transform: scale(0.2);
+}
+
+.anniv-sculpt.is-on {
+  opacity: 0.95;
+  transform: none;
+  transition:
+    opacity 0.2s linear,
+    transform 0.85s cubic-bezier(0.12, 0.8, 0.2, 1);
+}
+
+.anniv-sculpt__inner {
+  position: relative;
+  width: 1px;
+  height: 1px;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--sx)) rotateY(var(--sy));
+}
+
+.anniv-sculpt__layer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: clamp(14rem, 46vw, 30rem);
+  line-height: 0.75;
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  user-select: none;
+}
+
+.anniv-drop5 {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.anniv-drop5.is-on {
+  opacity: 1;
+}
+
+.anniv-drop5 span {
+  font-size: clamp(16rem, 52vw, 34rem);
+  line-height: 0.75;
+  color: #fca100;
+  text-shadow:
+    0 0 40px rgba(252, 161, 0, 0.85),
+    0 20px 80px rgba(0, 0, 0, 0.45);
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+}
+
+.anniv-root.is-five .anniv-drop5 span {
+  animation: anniv-slam 0.72s cubic-bezier(0.12, 0.82, 0.2, 1) both;
+}
+
+.anniv-root.is-show .anniv-drop5 {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.anniv-hero {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 0 1rem;
+  perspective: 1600px;
+}
+
+.anniv-root.is-show .anniv-hero {
+  min-height: 0;
+  padding-top: max(3.2rem, calc(env(safe-area-inset-top) + 2.2rem));
+}
+
+.anniv-word-btn {
+  display: block;
+  width: min(94vw, 72rem);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: white;
+  cursor: pointer;
+  transform: rotateX(var(--rx)) rotateY(var(--ry)) translateZ(70px);
+  transform-style: preserve-3d;
+}
+
+.anniv-root.is-show .anniv-word-btn {
+  width: min(88vw, 58rem);
+}
+
+.anniv-word {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 0.04em;
+  overflow: visible;
+  font-size: clamp(3.6rem, 12.5vw, 8.75rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 0.9;
+}
+
+.anniv-letter {
+  display: inline-block;
+  transform-origin: center;
+}
+
+.anniv-slot {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-width: 0.62em;
+}
+
+.anniv-slot .anniv-letter {
+  grid-area: 1 / 1;
+}
+
+.l-e,
+.l-five {
+  color: #fca100;
+}
+
+.anniv-root.is-boot .anniv-letter {
+  opacity: 0;
+}
+
+.anniv-root.is-slam .anniv-letter:not(.l-five) {
+  animation: anniv-letter-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anniv-root.is-slam .l-x { animation-delay: 0.02s; }
+.anniv-root.is-slam .l-i { animation-delay: 0.1s; }
+.anniv-root.is-slam .l-n { animation-delay: 0.18s; }
+.anniv-root.is-slam .l-e { animation-delay: 0.26s; }
+.anniv-root.is-slam .l-r { animation-delay: 0.34s; }
+.anniv-root.is-slam .l-g { animation-delay: 0.42s; }
+.anniv-root.is-slam .l-y { animation-delay: 0.5s; }
+
+.anniv-root.is-party .anniv-letter:not(.l-five) {
+  animation: anniv-dance 1.15s ease-in-out infinite;
+}
+
+.anniv-root.is-party .l-x { animation-delay: 0s; }
+.anniv-root.is-party .l-i { animation-delay: 0.08s; }
+.anniv-root.is-party .l-n { animation-delay: 0.16s; }
+.anniv-root.is-party .l-e { animation-delay: 0.05s; animation-duration: 0.85s; }
+.anniv-root.is-party .l-r { animation-delay: 0.22s; }
+.anniv-root.is-party .l-g { animation-delay: 0.3s; }
+.anniv-root.is-party .l-y { animation-delay: 0.12s; }
+
+.anniv-root.is-hush .anniv-letter {
+  animation: none;
+  transition: transform 0.35s ease, filter 0.35s ease;
+  filter: brightness(0.75);
+}
+
+.anniv-root.is-hush .l-e {
+  filter: brightness(1.4);
+}
+
+.anniv-root.is-drop .l-e {
+  animation: anniv-yeet-e 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.l-five {
+  opacity: 0;
+}
+
+.anniv-root.is-five .l-e,
+.anniv-root.is-show .l-e {
+  opacity: 0;
+}
+
+.anniv-root.is-show .l-five {
+  opacity: 1;
+  filter: drop-shadow(0 0 16px rgba(252, 161, 0, 0.8));
+}
+
+.anniv-root.is-five .anniv-letter:not(.l-e):not(.l-five),
+.anniv-root.is-show .anniv-letter:not(.l-e) {
+  animation: anniv-hold 2.4s ease-in-out infinite;
+}
+
+.anniv-skip {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: max(1.4rem, env(safe-area-inset-bottom));
+  z-index: 4;
+  margin: 0;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.anniv-root.is-hush .anniv-skip {
+  color: #fca100;
+  letter-spacing: 0.4em;
+}
+
+.anniv-after {
+  position: relative;
+  z-index: 2;
+  width: min(52rem, calc(100% - 2rem));
+  margin: -1.2rem auto 0;
+  padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
+  animation: anniv-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anniv-kicker {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(2.5rem, 8vw, 4.6rem);
+  letter-spacing: -0.04em;
+  color: #fca100;
+  text-shadow: 0 0 42px rgba(252, 161, 0, 0.4);
+}
+
+.anniv-title {
+  margin: 0.15rem 0 0;
+  text-align: center;
+  font-size: clamp(2rem, 6.5vw, 3.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.anniv-lead {
+  margin: 1rem auto 0;
+  max-width: 34rem;
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.anniv-count {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 1.75rem 0 0;
+}
+
+.anniv-tick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0.25rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(10px);
+  animation: anniv-tick-pop 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anniv-tick:nth-child(2) { animation-delay: 0.06s; }
+.anniv-tick:nth-child(3) { animation-delay: 0.12s; }
+.anniv-tick:nth-child(4) { animation-delay: 0.18s; }
+
+.anniv-tick__value {
+  font-size: clamp(2.1rem, 8vw, 4.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+
+.anniv-tick__label {
+  margin-top: 0.45rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.anniv-facts {
+  display: grid;
+  gap: 0.7rem;
+  margin: 1.6rem 0 0;
+}
+
+.anniv-facts div {
+  padding: 0.85rem 1rem;
+  border-left: 2px solid #fca100;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.anniv-facts dt {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fca100;
+}
+
+.anniv-facts dd {
+  margin: 0.3rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.anniv-facts span {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.anniv-surprise {
+  margin: 1.15rem 0 0;
+  text-align: center;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.anniv-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 1.4rem;
+}
+
+.anniv-actions .btn-primary,
+.anniv-actions .btn-light {
+  min-height: 2.85rem;
+  text-decoration: none;
+}
+
+.anniv-ics {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+}
+
+.anniv-ics:hover {
+  color: #fca100;
+}
+
+.anniv-hint,
+.anniv-private {
+  margin: 0.85rem 0 0;
+  text-align: center;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.anniv-live {
+  margin: 1.4rem 0 0;
+  text-align: center;
+}
+
+@keyframes anniv-letter-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--in-x, 0), var(--in-y, -40px), -240px) rotate(var(--in-r, -18deg)) scale(1.6);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+.l-x { --in-x: -80px; --in-y: 30px; --in-r: -24deg; }
+.l-i { --in-x: 10px; --in-y: -70px; --in-r: 16deg; }
+.l-n { --in-x: 60px; --in-y: 50px; --in-r: 20deg; }
+.l-e { --in-x: 0px; --in-y: 80px; --in-r: -8deg; }
+.l-r { --in-x: 70px; --in-y: -40px; --in-r: 14deg; }
+.l-g { --in-x: -30px; --in-y: 60px; --in-r: -20deg; }
+.l-y { --in-x: 90px; --in-y: 20px; --in-r: 26deg; }
+
+@keyframes anniv-dance {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(0, -10px) rotate(-6deg);
+  }
+  50% {
+    transform: translate(0, 4px) rotate(4deg);
+  }
+  75% {
+    transform: translate(0, -6px) rotate(5deg);
+  }
+}
+
+@keyframes anniv-hold {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes anniv-yeet-e {
+  to {
+    transform: translate(-30px, -200px) rotate(-28deg) scale(1.55);
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+
+@keyframes anniv-slam {
+  0% {
+    transform: translate3d(0, -18vh, -900px) scale(3.4) rotate(-22deg);
+    opacity: 0;
+    filter: blur(18px);
+  }
+  58% {
+    transform: translate3d(0, 2vh, 40px) scale(1.12) rotate(4deg);
+    opacity: 1;
+    filter: none;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes anniv-shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  15% {
+    transform: translate(-14px, 8px);
+  }
+  30% {
+    transform: translate(12px, -10px);
+  }
+  45% {
+    transform: translate(-10px, -6px);
+  }
+  60% {
+    transform: translate(8px, 8px);
+  }
+  75% {
+    transform: translate(-5px, 3px);
+  }
+}
+
+@keyframes anniv-flash {
+  0% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes anniv-shock {
+  0% {
+    width: 3rem;
+    height: 3rem;
+    border-color: rgba(255, 255, 255, 0.95);
+    opacity: 1;
+  }
+  100% {
+    width: min(120vw, 60rem);
+    height: min(120vw, 60rem);
+    border-color: rgba(252, 161, 0, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes anniv-bass {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.28);
+  }
+}
+
+@keyframes anniv-spot {
+  0%,
+  100% {
+    transform: rotate(-18deg);
+  }
+  50% {
+    transform: rotate(16deg);
+  }
+}
+
+@keyframes anniv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes anniv-tick-pop {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .anniv-facts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .anniv-facts div {
+    border-left: 0;
+    border-top: 2px solid #fca100;
+  }
+}
+
+@media (max-width: 639px) {
+  .anniv-word-btn {
+    width: 100%;
+    transform: none;
+  }
+
+  .anniv-hero {
+    padding-inline: 1.1rem;
+    overflow: hidden;
+  }
+
+  .anniv-after {
+    width: 100%;
+    padding-inline: 1.1rem;
+    box-sizing: border-box;
+  }
+
+  .anniv-title,
+  .anniv-lead,
+  .anniv-surprise {
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
+
+  .anniv-sculpt.is-on {
+    opacity: 0.35;
+  }
+
+  .anniv-sculpt__layer,
+  .anniv-drop5 span {
+    font-size: 11rem;
+  }
+
+  .anniv-count {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .anniv-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .anniv-actions .btn-primary,
+  .anniv-actions .btn-light {
+    width: 100%;
+  }
+
+  .anniv-ics {
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anniv-letter,
+  .anniv-drop5 span,
+  .anniv-sculpt,
+  .anniv-after,
+  .anniv-spot,
+  .anniv-root.is-drop,
+  .anniv-root.is-five,
+  .anniv-root.is-party .anniv-glow,
+  .anniv-flash,
+  .anniv-shock,
+  .anniv-tick {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .anniv-word-btn {
+    transform: none;
+  }
+
+  .anniv-letter,
+  .l-e {
+    opacity: 1;
+  }
+}

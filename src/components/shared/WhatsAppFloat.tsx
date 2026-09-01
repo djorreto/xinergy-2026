@@ -6,7 +6,7 @@ import { WHATSAPP_URL } from "@/lib/whatsapp";
 export function WhatsAppFloat() {
   const pathname = usePathname();
   // En páginas de registro por invitación no tapar el CTA del formulario (iPhone).
-  if (pathname?.includes("/registro/")) return null;
+  if (pathname?.includes("/registro/") || pathname?.includes("/aniversario/")) return null;
 
   return (
     <a

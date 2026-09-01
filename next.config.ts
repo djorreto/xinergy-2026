@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
         source: "/:locale/registro/:path*",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
       },
+      {
+        source: "/:locale/aniversario/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }],
+      },
     ];
   },
   async redirects() {

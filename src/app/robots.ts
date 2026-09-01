@@ -11,6 +11,10 @@ export default function robots(): MetadataRoute.Robots {
         "/en/registro/",
         "/pt/registro/",
         "/*/registro/",
+        "/es/aniversario/",
+        "/en/aniversario/",
+        "/pt/aniversario/",
+        "/*/aniversario/",
       ],
     },
   };
