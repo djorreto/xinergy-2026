@@ -61,6 +61,8 @@ export default async function AnniversaryPage({ params }: Props) {
         calendar: t("calendar"),
         privateNote: t("privateNote"),
         skip: t("skip"),
+        enter: t("enter"),
+        enterHint: t("enterHint"),
         hint: t("hint"),
       }}
     />

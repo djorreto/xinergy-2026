@@ -304,7 +304,9 @@
     "maps": "Get directions",
     "calendar": "Add to calendar",
     "privateNote": "Private page · Invitation link only.",
-    "skip": "Wait… · turn up the volume",
+    "skip": "Wait…",
+    "enter": "Tap to enter",
+    "enterHint": "Turn up the volume",
     "hint": "Move the mouse · Click the logo for the encore"
   }
 }

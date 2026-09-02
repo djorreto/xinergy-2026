@@ -304,7 +304,9 @@
     "maps": "Como chegar",
     "calendar": "Adicionar ao calendário",
     "privateNote": "Página privada · Somente com este link.",
-    "skip": "Espere… · aumente o volume",
+    "skip": "Espere…",
+    "enter": "Toque para entrar",
+    "enterHint": "Aumente o volume",
     "hint": "Mova o mouse · Clique no logo para o encore"
   }
 }

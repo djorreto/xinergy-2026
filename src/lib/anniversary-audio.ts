@@ -1,72 +1,50 @@
 const SRC = "/invites/cinco-anos-xinergy.mp3";
 
 let el: HTMLAudioElement | null = null;
-let unlocked = false;
-let pending = false;
 
-function getPlayer(): HTMLAudioElement | null {
-  if (typeof window === "undefined") return null;
-  if (el) return el;
-  el = new Audio(SRC);
-  el.preload = "auto";
-  el.loop = false;
-  el.setAttribute("playsinline", "true");
+function getPlayer(): HTMLAudioElement {
+  if (!el) {
+    el = new Audio(SRC);
+    el.preload = "auto";
+    el.loop = false;
+    el.muted = false;
+    el.volume = 1;
+    el.setAttribute("playsinline", "true");
+    el.setAttribute("webkit-playsinline", "true");
+  }
   return el;
 }
 
 export function primeAnniversaryAudio(): void {
-  getPlayer()?.load();
+  if (typeof window === "undefined") return;
+  getPlayer().load();
 }
 
-export async function unlockAnniversaryAudio(): Promise<void> {
-  const audio = getPlayer();
-  if (!audio) return;
-
-  try {
-    audio.muted = true;
-    await audio.play();
-    audio.pause();
-    if (!pending) audio.currentTime = 0;
-    audio.muted = false;
-    unlocked = true;
-    if (pending) {
-      pending = false;
-      await audio.play();
-    }
-  } catch {
-    return;
-  }
-}
-
+/** Call from a click/tap handler only — browsers block autoplay. */
 export function startAnniversaryMusic(): void {
+  if (typeof window === "undefined") return;
   const audio = getPlayer();
-  if (!audio) return;
   audio.muted = false;
-  audio.currentTime = 0;
-  const play = audio.play();
-  if (play) {
-    void play
-      .then(() => {
-        unlocked = true;
-        pending = false;
-      })
-      .catch(() => {
-        pending = true;
-      });
+  audio.volume = 1;
+  try {
+    audio.currentTime = 0;
+  } catch {
+    /* not ready yet */
   }
+  const attempt = audio.play();
+  if (attempt) void attempt.catch(() => undefined);
 }
 
 export function stopAnniversaryMusic(): void {
-  pending = false;
   if (!el) return;
   el.pause();
-  el.currentTime = 0;
+  try {
+    el.currentTime = 0;
+  } catch {
+    /* ignore */
+  }
 }
 
 export function isAnniversaryMusicPlaying(): boolean {
   return Boolean(el && !el.paused && !el.ended);
-}
-
-export function isAnniversaryAudioUnlocked(): boolean {
-  return unlocked;
 }

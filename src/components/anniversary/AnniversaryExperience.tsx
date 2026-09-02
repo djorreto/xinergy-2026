@@ -5,13 +5,7 @@ import { AnniversaryCountdown } from "@/components/anniversary/AnniversaryCountd
 import { AnniversaryScene, type AnniversarySceneHandle } from "@/components/anniversary/AnniversaryScene";
 import { AnniversaryWord } from "@/components/anniversary/AnniversaryWord";
 import { FiveSculpture } from "@/components/anniversary/FiveSculpture";
-import {
-  isAnniversaryMusicPlaying,
-  primeAnniversaryAudio,
-  startAnniversaryMusic,
-  stopAnniversaryMusic,
-  unlockAnniversaryAudio,
-} from "@/lib/anniversary-audio";
+import { primeAnniversaryAudio, startAnniversaryMusic, stopAnniversaryMusic } from "@/lib/anniversary-audio";
 import {
   ANNIVERSARY_ADDRESS,
   ANNIVERSARY_MAPS_URL,
@@ -41,17 +35,20 @@ type Copy = {
   calendar: string;
   privateNote: string;
   skip: string;
+  enter: string;
+  enterHint: string;
   hint: string;
 };
 
-type Act = "boot" | "slam" | "party" | "hush" | "drop" | "five" | "show";
+type Act = "gate" | "boot" | "slam" | "party" | "hush" | "drop" | "five" | "show";
 
 export function AnniversaryExperience({ copy }: { copy: Copy }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<AnniversarySceneHandle>(null);
   const timers = useRef<number[]>([]);
   const dropped = useRef(false);
-  const [act, setAct] = useState<Act>("boot");
+  const entered = useRef(false);
+  const [act, setAct] = useState<Act>("gate");
 
   const clearTimers = () => {
     timers.current.forEach((id) => window.clearTimeout(id));
@@ -69,7 +66,6 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
     setAct("drop");
     sceneRef.current?.setMode("drop");
     sceneRef.current?.burst(280);
-    if (!isAnniversaryMusicPlaying()) startAnniversaryMusic();
     later(220, () => setAct("five"));
     later(1400, () => {
       setAct("show");
@@ -80,7 +76,6 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
   const play = () => {
     clearTimers();
     dropped.current = false;
-    stopAnniversaryMusic();
     startAnniversaryMusic();
     setAct("boot");
     sceneRef.current?.setMode("idle");
@@ -96,31 +91,20 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
     later(6100, drop);
   };
 
-  useEffect(() => {
-    primeAnniversaryAudio();
-    const arm = () => {
-      void unlockAnniversaryAudio();
-    };
-    window.addEventListener("pointerdown", arm);
-    window.addEventListener("pointermove", arm);
-    window.addEventListener("keydown", arm);
-    window.addEventListener("touchstart", arm);
-    return () => {
-      window.removeEventListener("pointerdown", arm);
-      window.removeEventListener("pointermove", arm);
-      window.removeEventListener("keydown", arm);
-      window.removeEventListener("touchstart", arm);
-    };
-  }, []);
-
-  useEffect(() => {
+  const enter = () => {
+    if (entered.current) return;
+    entered.current = true;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      startAnniversaryMusic();
       dropped.current = true;
       setAct("show");
-      startAnniversaryMusic();
-      return () => stopAnniversaryMusic();
+      return;
     }
     play();
+  };
+
+  useEffect(() => {
+    primeAnniversaryAudio();
     return () => {
       clearTimers();
       stopAnniversaryMusic();
@@ -207,9 +191,21 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
         <AnniversaryWord onEncore={showing ? play : undefined} />
       </div>
 
-      {!showing ? (
+      {act === "gate" ? (
+        <button type="button" className="anniv-gate" onPointerDown={enter} onClick={enter}>
+          <span className="anniv-gate-bars" aria-hidden>
+            <i />
+            <i />
+            <i />
+          </span>
+          <span className="anniv-gate-title font-display">{copy.enter}</span>
+          <span className="anniv-gate-hint">{copy.enterHint}</span>
+        </button>
+      ) : null}
+
+      {!showing && act !== "gate" ? (
         <p className="anniv-skip">{copy.skip}</p>
-      ) : (
+      ) : showing ? (
         <div className="anniv-after" onClick={(event) => event.stopPropagation()}>
           <p className="anniv-kicker font-display">{copy.kicker}</p>
           <h1 className="anniv-title font-display">{copy.title}</h1>

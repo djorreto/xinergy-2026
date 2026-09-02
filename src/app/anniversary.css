@@ -15,6 +15,7 @@
 }
 
 .anniv-root.is-boot,
+.anniv-root.is-gate,
 .anniv-root.is-slam,
 .anniv-root.is-party,
 .anniv-root.is-hush,
@@ -305,7 +306,8 @@
   filter: drop-shadow(0 0 12px rgba(252, 161, 0, 0.45));
 }
 
-.anniv-root.is-boot .anniv-letter {
+.anniv-root.is-boot .anniv-letter,
+.anniv-root.is-gate .anniv-letter {
   opacity: 0;
 }
 
@@ -364,6 +366,54 @@
 .anniv-root.is-five .anniv-letter:not(.l-e):not(.l-five),
 .anniv-root.is-show .anniv-letter:not(.l-e) {
   animation: anniv-hold 2.4s ease-in-out infinite;
+}
+
+.anniv-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  margin: 0;
+  padding: 1.5rem;
+  border: 0;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.anniv-gate-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+  width: min(4.6rem, 18vw);
+}
+
+.anniv-gate-bars i {
+  display: block;
+  height: 0.55rem;
+  border-radius: 1px;
+  background: #fca100;
+  box-shadow: 0 0 18px rgba(252, 161, 0, 0.55);
+}
+
+.anniv-gate-title {
+  font-size: clamp(1.35rem, 4.5vw, 2.1rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.anniv-gate-hint {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .anniv-skip {
