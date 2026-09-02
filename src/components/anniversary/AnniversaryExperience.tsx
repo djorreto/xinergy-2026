@@ -5,7 +5,13 @@ import { AnniversaryCountdown } from "@/components/anniversary/AnniversaryCountd
 import { AnniversaryScene, type AnniversarySceneHandle } from "@/components/anniversary/AnniversaryScene";
 import { AnniversaryWord } from "@/components/anniversary/AnniversaryWord";
 import { FiveSculpture } from "@/components/anniversary/FiveSculpture";
-import { playAnniversaryCelebration, unlockAnniversaryAudio } from "@/lib/anniversary-audio";
+import {
+  isAnniversaryMusicPlaying,
+  primeAnniversaryAudio,
+  startAnniversaryMusic,
+  stopAnniversaryMusic,
+  unlockAnniversaryAudio,
+} from "@/lib/anniversary-audio";
 import {
   ANNIVERSARY_ADDRESS,
   ANNIVERSARY_MAPS_URL,
@@ -63,7 +69,7 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
     setAct("drop");
     sceneRef.current?.setMode("drop");
     sceneRef.current?.burst(280);
-    playAnniversaryCelebration();
+    if (!isAnniversaryMusicPlaying()) startAnniversaryMusic();
     later(220, () => setAct("five"));
     later(1400, () => {
       setAct("show");
@@ -74,6 +80,8 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
   const play = () => {
     clearTimers();
     dropped.current = false;
+    stopAnniversaryMusic();
+    startAnniversaryMusic();
     setAct("boot");
     sceneRef.current?.setMode("idle");
     later(180, () => setAct("slam"));
@@ -89,6 +97,7 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
   };
 
   useEffect(() => {
+    primeAnniversaryAudio();
     const arm = () => {
       void unlockAnniversaryAudio();
     };
@@ -108,10 +117,14 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       dropped.current = true;
       setAct("show");
-      return;
+      startAnniversaryMusic();
+      return () => stopAnniversaryMusic();
     }
     play();
-    return clearTimers;
+    return () => {
+      clearTimers();
+      stopAnniversaryMusic();
+    };
   }, []);
 
   useEffect(() => {
