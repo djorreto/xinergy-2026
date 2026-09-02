@@ -4,7 +4,7 @@ import { ttForsDisplay } from "@/lib/fonts";
 
 const LETTERS = ["X", "I", "N", "E", "R", "G", "Y"] as const;
 
-/** E oficial Xinergy: tres barritas naranjas. Sale volando; el 5 entra después. */
+/** E oficial Xinergy: tres barritas. Vuelan, entra el 5, y al final las barritas vuelven. */
 function XinergyEBars() {
   return (
     <svg className="anniv-e-bars" viewBox="0 0 72 84" aria-hidden>
