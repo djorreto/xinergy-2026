@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Xinergy//Anniversary 5//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:xinergy-5-anos-2026@xinergy.lat
+DTSTAMP:20260902T150000Z
+DTSTART:20260909T210000Z
+DTEND:20260910T020000Z
+SUMMARY:Xinergy 5 años
+LOCATION:Bar Savia\, Alonso de Córdova 3080\, Vitacura
+DESCRIPTION:Celebración de aniversario del equipo Xinergy. Vestimenta: casual oficina. A partir de las 18:00.
+END:VEVENT
+END:VCALENDAR

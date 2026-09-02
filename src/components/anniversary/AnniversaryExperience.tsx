@@ -10,9 +10,8 @@ import { primeAnniversaryAudio, startAnniversaryMusic, stopAnniversaryMusic } fr
 import {
   ANNIVERSARY_ADDRESS,
   ANNIVERSARY_MAPS_URL,
+  ANNIVERSARY_OUTLOOK_ICS,
   ANNIVERSARY_VENUE,
-  getAnniversaryCalendarUrl,
-  getAnniversaryIcsHref,
 } from "@/lib/anniversary";
 
 type Copy = {
@@ -247,11 +246,8 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
             <a className="btn-primary" href={ANNIVERSARY_MAPS_URL} target="_blank" rel="noreferrer">
               {copy.maps}
             </a>
-            <a className="btn-light" href={getAnniversaryCalendarUrl()} target="_blank" rel="noreferrer">
+            <a className="btn-light" href={ANNIVERSARY_OUTLOOK_ICS} download="xinergy-5-anos.ics">
               {copy.calendar}
-            </a>
-            <a className="anniv-ics" href={getAnniversaryIcsHref()} download="xinergy-5-anos.ics">
-              .ics
             </a>
           </div>
 
