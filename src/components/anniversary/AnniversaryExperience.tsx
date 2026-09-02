@@ -203,9 +203,9 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
         </button>
       ) : null}
 
-      {!showing && act !== "gate" ? (
-        <p className="anniv-skip">{copy.skip}</p>
-      ) : showing ? (
+      {!showing && act !== "gate" ? <p className="anniv-skip">{copy.skip}</p> : null}
+
+      {showing ? (
         <div className="anniv-after" onClick={(event) => event.stopPropagation()}>
           <p className="anniv-kicker font-display">{copy.kicker}</p>
           <h1 className="anniv-title font-display">{copy.title}</h1>
@@ -256,7 +256,7 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
           <p className="anniv-hint">{copy.hint}</p>
           <p className="anniv-private">{copy.privateNote}</p>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
