@@ -4,7 +4,17 @@ import { ttForsDisplay } from "@/lib/fonts";
 
 const LETTERS = ["X", "I", "N", "E", "R", "G", "Y"] as const;
 
-/** Una letra = un glifo de TT Fors Display. La E naranja sale volando; el 5 entra después. */
+/** E oficial Xinergy: tres barritas naranjas. Sale volando; el 5 entra después. */
+function XinergyEBars() {
+  return (
+    <svg className="anniv-e-bars" viewBox="0 0 72 84" aria-hidden>
+      <rect width="72" height="12" rx="1" />
+      <rect y="36" width="72" height="12" rx="1" />
+      <rect y="72" width="72" height="12" rx="1" />
+    </svg>
+  );
+}
+
 export function AnniversaryWord({ onEncore }: { onEncore?: () => void }) {
   return (
     <button type="button" className="anniv-word-btn" onClick={onEncore} aria-label="Xinergy">
@@ -12,7 +22,9 @@ export function AnniversaryWord({ onEncore }: { onEncore?: () => void }) {
         {LETTERS.map((letter) =>
           letter === "E" ? (
             <span key="slot" className="anniv-slot">
-              <span className="anniv-letter l-e">E</span>
+              <span className="anniv-letter l-e">
+                <XinergyEBars />
+              </span>
               <span className="anniv-letter l-five">5</span>
             </span>
           ) : (

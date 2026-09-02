@@ -277,7 +277,7 @@
   position: relative;
   display: inline-grid;
   place-items: center;
-  min-width: 0.62em;
+  min-width: 0.72em;
 }
 
 .anniv-slot .anniv-letter {
@@ -287,6 +287,22 @@
 .l-e,
 .l-five {
   color: #fca100;
+}
+
+.l-e {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.anniv-e-bars {
+  display: block;
+  width: 0.7em;
+  height: 0.82em;
+  width: calc(1cap * 72 / 84);
+  height: 1cap;
+  fill: currentColor;
+  filter: drop-shadow(0 0 12px rgba(252, 161, 0, 0.45));
 }
 
 .anniv-root.is-boot .anniv-letter {
