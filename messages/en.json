@@ -307,6 +307,32 @@
     "skip": "Wait…",
     "enter": "Tap to enter",
     "enterHint": "Turn up the volume",
-    "hint": "Move the mouse · Click the logo for the encore"
+    "hint": "Move the mouse · Click the logo for the encore",
+    "form": {
+      "eyebrow": "Attendance",
+      "title": "Confirm you’re coming",
+      "lead": "Share your details so we can plan September 9. If you’re traveling from outside Santiago, tell us.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Xinergy email",
+      "travelLabel": "Are you traveling from outside Santiago?",
+      "travel": {
+        "no": "No",
+        "yes": "Yes"
+      },
+      "submit": "Confirm attendance",
+      "sending": "Sending…",
+      "successEyebrow": "Done",
+      "successTitle": "You’re confirmed",
+      "successBody": "See you on the 9th at Bar Savia.",
+      "errors": {
+        "generic": "We couldn’t send the form. Please try again.",
+        "network_error": "Connection error. Please try again.",
+        "invalid_name": "Enter your first name.",
+        "invalid_last_name": "Enter your last name.",
+        "invalid_email": "Enter a valid email.",
+        "invalid_travel": "Tell us if you’re traveling from outside Santiago."
+      }
+    }
   }
 }

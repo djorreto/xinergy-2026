@@ -307,6 +307,32 @@
     "skip": "Espera…",
     "enter": "Toca para entrar",
     "enterHint": "Sube el volumen",
-    "hint": "Mueve el mouse · Click en el logo para el encore"
+    "hint": "Mueve el mouse · Click en el logo para el encore",
+    "form": {
+      "eyebrow": "Asistencia",
+      "title": "Confirma que vas",
+      "lead": "Completa tus datos para coordinar el 9 de septiembre. Si viajas desde fuera de Santiago, indícalo.",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo Xinergy",
+      "travelLabel": "¿Viajas desde fuera de Santiago?",
+      "travel": {
+        "no": "No",
+        "yes": "Sí"
+      },
+      "submit": "Confirmar asistencia",
+      "sending": "Enviando…",
+      "successEyebrow": "Listo",
+      "successTitle": "Asistencia confirmada",
+      "successBody": "Te esperamos el 9 en Bar Savia.",
+      "errors": {
+        "generic": "No pudimos enviar el formulario. Intenta de nuevo.",
+        "network_error": "Error de conexión. Intenta de nuevo.",
+        "invalid_name": "Ingresa tu nombre.",
+        "invalid_last_name": "Ingresa tu apellido.",
+        "invalid_email": "Ingresa un correo válido.",
+        "invalid_travel": "Indica si viajas desde fuera de Santiago."
+      }
+    }
   }
 }

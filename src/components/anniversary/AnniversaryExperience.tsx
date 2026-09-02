@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnniversaryCountdown } from "@/components/anniversary/AnniversaryCountdown";
 import { AnniversaryScene, type AnniversarySceneHandle } from "@/components/anniversary/AnniversaryScene";
+import { AnniversaryRsvpForm } from "@/components/anniversary/AnniversaryRsvpForm";
 import { AnniversaryWord } from "@/components/anniversary/AnniversaryWord";
 import { FiveSculpture } from "@/components/anniversary/FiveSculpture";
 import { primeAnniversaryAudio, startAnniversaryMusic, stopAnniversaryMusic } from "@/lib/anniversary-audio";
@@ -253,6 +254,9 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
               .ics
             </a>
           </div>
+
+          <AnniversaryRsvpForm />
+
           <p className="anniv-hint">{copy.hint}</p>
           <p className="anniv-private">{copy.privateNote}</p>
         </div>
