@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnniversaryCountdown } from "@/components/anniversary/AnniversaryCountdown";
 import { AnniversaryScene, type AnniversarySceneHandle } from "@/components/anniversary/AnniversaryScene";
-import { AnniversaryRsvpForm } from "@/components/anniversary/AnniversaryRsvpForm";
+import { AnniversaryClosedDuck } from "@/components/anniversary/AnniversaryClosedDuck";
 import { AnniversaryWord } from "@/components/anniversary/AnniversaryWord";
 import { FiveSculpture } from "@/components/anniversary/FiveSculpture";
 import { primeAnniversaryAudio, startAnniversaryMusic, stopAnniversaryMusic } from "@/lib/anniversary-audio";
@@ -105,6 +105,11 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
 
   useEffect(() => {
     primeAnniversaryAudio();
+    if (new URLSearchParams(window.location.search).get("preview") === "1") {
+      entered.current = true;
+      dropped.current = true;
+      setAct("show");
+    }
     return () => {
       clearTimers();
       stopAnniversaryMusic();
@@ -251,7 +256,7 @@ export function AnniversaryExperience({ copy }: { copy: Copy }) {
             </a>
           </div>
 
-          <AnniversaryRsvpForm />
+          <AnniversaryClosedDuck />
 
           <p className="anniv-hint">{copy.hint}</p>
           <p className="anniv-private">{copy.privateNote}</p>
