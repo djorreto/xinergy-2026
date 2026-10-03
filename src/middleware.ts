@@ -1,5 +1,6 @@
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
+import { adminHref, adminPathKey } from "./lib/auth/admin-path";
 import { INSIGHTS_SESSION_COOKIE, readSessionToken } from "./lib/auth/insights-session";
 import { localeFromCountry } from "./i18n/geo";
 import { routing, type Locale } from "./i18n/routing";
@@ -41,36 +42,48 @@ function noindex(response: NextResponse) {
   return response;
 }
 
-async function adminMiddleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+function internalAdminPath(pathname: string): string | null {
+  const key = adminPathKey();
+  if (!key) return null;
+  if (pathname === `/${key}`) return "/admin";
+  if (pathname.startsWith(`/${key}/`)) return `/admin${pathname.slice(key.length + 1)}`;
+  return null;
+}
+
+async function adminMiddleware(request: NextRequest, internalPath: string) {
   const email = await readSessionToken(request.cookies.get(INSIGHTS_SESSION_COOKIE)?.value);
-  const response = NextResponse.next();
+  const isLogin = internalPath === "/admin/login" || internalPath.startsWith("/admin/login/");
 
-  if (pathname.startsWith("/admin/login")) {
-    if (email) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/admin/insights";
-      url.search = "";
-      return noindex(NextResponse.redirect(url));
-    }
-    return noindex(response);
-  }
-
-  if (!email) {
+  if (isLogin && email) {
     const url = request.nextUrl.clone();
-    url.pathname = "/admin/login";
-    url.searchParams.set("from", pathname);
+    url.pathname = adminHref("/insights");
+    url.search = "";
     return noindex(NextResponse.redirect(url));
   }
 
-  return noindex(response);
+  if (!isLogin && !email) {
+    const url = request.nextUrl.clone();
+    url.pathname = adminHref("/login");
+    url.search = "";
+    url.searchParams.set("from", request.nextUrl.pathname);
+    return noindex(NextResponse.redirect(url));
+  }
+
+  const url = request.nextUrl.clone();
+  url.pathname = internalPath;
+  const headers = new Headers(request.headers);
+  headers.set("x-xinergy-admin", "1");
+  return noindex(NextResponse.rewrite(url, { request: { headers } }));
 }
 
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  const internalAdmin = internalAdminPath(pathname);
+  if (internalAdmin) return adminMiddleware(request, internalAdmin);
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
-    return adminMiddleware(request);
+    if (request.headers.get("x-xinergy-admin") === "1") return noindex(NextResponse.next());
+    return new NextResponse("Not Found", { status: 404, headers: { "X-Robots-Tag": "noindex, nofollow" } });
   }
 
   if (

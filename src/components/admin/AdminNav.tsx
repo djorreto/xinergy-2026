@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { adminHref } from "@/lib/auth/admin-path";
 
 export function AdminNav({ email }: { email: string }) {
   return (
@@ -8,13 +9,13 @@ export function AdminNav({ email }: { email: string }) {
         <p className="mt-1 text-sm text-xinergy-slate">{email}</p>
       </div>
       <nav className="flex flex-wrap items-center gap-4 text-sm">
-        <Link href="/admin/insights" className="text-xinergy-slate hover:text-xinergy-charcoal">
+        <Link href={adminHref("/insights")} className="text-xinergy-slate hover:text-xinergy-charcoal">
           Insights
         </Link>
-        <Link href="/admin/equipo" className="text-xinergy-slate hover:text-xinergy-charcoal">
+        <Link href={adminHref("/equipo")} className="text-xinergy-slate hover:text-xinergy-charcoal">
           Equipo
         </Link>
-        <Link href="/admin/insights/descargas" className="text-xinergy-slate hover:text-xinergy-charcoal">
+        <Link href={adminHref("/insights/descargas")} className="text-xinergy-slate hover:text-xinergy-charcoal">
           Descargas
         </Link>
         <form action="/api/admin/logout" method="post">

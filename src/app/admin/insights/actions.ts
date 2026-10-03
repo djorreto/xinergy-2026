@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { locales, type Locale } from "@/i18n/routing";
 import { requireAdminUser } from "@/lib/auth/admin";
+import { adminHref } from "@/lib/auth/admin-path";
 import { reservedInsightSlugs, slugify } from "@/lib/insights/slug";
 import type { ImageSize, InsightLocaleFields } from "@/lib/insights/types";
 import { isAllowedEmail } from "@/lib/auth/domain";
@@ -253,8 +254,8 @@ export async function createNewsInsight() {
     })
     .select("id")
     .single();
-  if (error || !data) redirect("/admin/insights/new?error=save");
-  redirect(`/admin/insights/${data.id}`);
+  if (error || !data) redirect(adminHref("/insights/new?error=save"));
+  redirect(adminHref(`/insights/${data.id}`));
 }
 
 export async function duplicateInsight(formData: FormData) {
@@ -266,7 +267,7 @@ export async function duplicateInsight(formData: FormData) {
     .select("slug, kind, cover_path, image_size, languages, media_links, pdf_path, source_url, gallery_paths, web_insight_locales(*)")
     .eq("id", id)
     .maybeSingle();
-  if (!source) redirect("/admin/insights");
+  if (!source) redirect(adminHref("/insights"));
 
   const slug = await uniqueSlug(`${source.slug}-copia`);
   const { data: created } = await admin
@@ -285,7 +286,7 @@ export async function duplicateInsight(formData: FormData) {
     })
     .select("id")
     .single();
-  if (!created) redirect(`/admin/insights/${id}?error=duplicate`);
+  if (!created) redirect(adminHref(`/insights/${id}?error=duplicate`));
 
   const coverPath = await copyFile("insight-covers", source.cover_path, created.id);
   const pdfPath = await copyFile("insight-pdfs", source.pdf_path, created.id);
@@ -316,7 +317,7 @@ export async function duplicateInsight(formData: FormData) {
     source.kind === "noticia" ? "noticia" : "documento",
   );
   await admin.from("web_insights").update({ intake_complete: complete }).eq("id", created.id);
-  redirect(`/admin/insights/${created.id}`);
+  redirect(adminHref(`/insights/${created.id}`));
 }
 
 async function copyFile(bucket: "insight-covers" | "insight-pdfs", path: string | null, insightId: string) {
@@ -359,30 +360,30 @@ export async function addCompetitorDomain(formData: FormData) {
     .trim()
     .toLowerCase()
     .replace(/^@/, "");
-  if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(domain)) redirect("/admin/insights?error=domain");
-  if (isFreemailDomain(domain)) redirect("/admin/insights?error=freemail");
+  if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(domain)) redirect(adminHref("/insights?error=domain"));
+  if (isFreemailDomain(domain)) redirect(adminHref("/insights?error=freemail"));
   const admin = await createAdminClient();
   await admin.from("web_insight_competitor_domains").upsert({ domain });
-  redirect("/admin/insights");
+  redirect(adminHref("/insights"));
 }
 
 export async function addInsightAdmin(formData: FormData) {
   await requireAdminUser();
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  if (!isAllowedEmail(email)) redirect("/admin/insights?error=admin_domain");
+  if (!isAllowedEmail(email)) redirect(adminHref("/insights?error=admin_domain"));
   const admin = await createAdminClient();
   const { error } = await admin.from("web_insight_admins").upsert({ email, enabled: true });
-  if (error) redirect("/admin/insights?error=admin_save");
-  redirect("/admin/insights");
+  if (error) redirect(adminHref("/insights?error=admin_save"));
+  redirect(adminHref("/insights"));
 }
 
 export async function removeInsightAdmin(formData: FormData) {
   const current = await requireAdminUser();
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  if (email === current.email) redirect("/admin/insights?error=admin_self");
+  if (email === current.email) redirect(adminHref("/insights?error=admin_self"));
   const admin = await createAdminClient();
   await admin.from("web_insight_admins").delete().eq("email", email);
-  redirect("/admin/insights");
+  redirect(adminHref("/insights"));
 }
 
 export async function removeCompetitorDomain(formData: FormData) {
@@ -390,5 +391,5 @@ export async function removeCompetitorDomain(formData: FormData) {
   const domain = String(formData.get("domain") ?? "").trim().toLowerCase();
   const admin = await createAdminClient();
   await admin.from("web_insight_competitor_domains").delete().eq("domain", domain);
-  redirect("/admin/insights");
+  redirect(adminHref("/insights"));
 }

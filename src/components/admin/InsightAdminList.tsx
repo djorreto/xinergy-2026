@@ -44,7 +44,7 @@ function publishLine(item: InsightListItem): string {
   return "Sin publicar";
 }
 
-function InsightRow({ item, locale, number }: { item: InsightListItem; locale: Locale; number: number }) {
+function InsightRow({ item, locale, number, base }: { item: InsightListItem; locale: Locale; number: number; base: string }) {
   const router = useRouter();
   const savedChoice = currentVisibility(item);
   const [choice, setChoice] = useState<Visibility>(savedChoice);
@@ -81,7 +81,7 @@ function InsightRow({ item, locale, number }: { item: InsightListItem; locale: L
     <li className="flex flex-col gap-4 px-4 py-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <Link href={`/admin/insights/${item.id}`} className="font-semibold hover:text-xinergy-orange">
+          <Link href={`${base}/insights/${item.id}`} className="font-semibold hover:text-xinergy-orange">
             <span className="mr-2 tabular-nums text-xinergy-slate">{number}.</span>
             {title || `Sin título en ${localeLabels[locale].toLowerCase()}`}
           </Link>
@@ -105,7 +105,7 @@ function InsightRow({ item, locale, number }: { item: InsightListItem; locale: L
           <a href={`/es/insights/${item.slug}?preview=1`} target="_blank" rel="noreferrer" className="text-sm text-xinergy-orange">
             Vista previa
           </a>
-          <Link href={`/admin/insights/${item.id}`} className="text-sm text-xinergy-orange">
+          <Link href={`${base}/insights/${item.id}`} className="text-sm text-xinergy-orange">
             Editar
           </Link>
         </div>
@@ -167,7 +167,7 @@ const kinds = [
   { id: "documento", label: "Newsletter" },
 ] as const;
 
-export function InsightAdminList({ items }: { items: InsightListItem[] }) {
+export function InsightAdminList({ items, base }: { items: InsightListItem[]; base: string }) {
   const [locale, setLocale] = useState<Locale>("es");
   const [kind, setKind] = useState<(typeof kinds)[number]["id"]>("all");
   const visible = kind === "all" ? items : items.filter((item) => item.kind === kind);
@@ -209,6 +209,7 @@ export function InsightAdminList({ items }: { items: InsightListItem[] }) {
             item={item}
             locale={locale}
             number={index + 1}
+            base={base}
           />
         ))}
         {!visible.length ? <li className="px-4 py-6 text-sm text-xinergy-slate">No hay insights de este tipo.</li> : null}

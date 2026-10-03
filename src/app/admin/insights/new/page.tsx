@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { NewInsightForm } from "@/components/admin/NewInsightForm";
+import { adminHref } from "@/lib/auth/admin-path";
 
 const errors: Record<string, string> = {
   file: "Sube un PDF.",
@@ -16,7 +17,7 @@ export default async function NewInsightPage({
   const { error } = await searchParams;
   return (
     <div className="max-w-xl">
-      <Link href="/admin/insights" className="text-sm text-xinergy-slate hover:text-xinergy-charcoal">
+      <Link href={adminHref("/insights")} className="text-sm text-xinergy-slate hover:text-xinergy-charcoal">
         ← Insights
       </Link>
       <h1 className="mt-6 font-display text-3xl text-xinergy-charcoal">Nuevo insight</h1>

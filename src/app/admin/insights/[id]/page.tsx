@@ -5,6 +5,7 @@ import { InsightEditor } from "@/components/admin/InsightEditor";
 import { locales, type Locale } from "@/i18n/routing";
 import { normalizeLanguages, normalizeMediaLinks } from "@/lib/insights/languages";
 import { coverPublicUrl, normalizeImageSize, type InsightLocaleFields, type InsightLocaleRow } from "@/lib/insights/types";
+import { adminHref } from "@/lib/auth/admin-path";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type DownloadRow = {
@@ -58,7 +59,7 @@ export default async function EditInsightPage({
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <Link href="/admin/insights" className="text-sm text-xinergy-slate hover:text-xinergy-charcoal">
+        <Link href={adminHref("/insights")} className="text-sm text-xinergy-slate hover:text-xinergy-charcoal">
           ← Insights
         </Link>
         <form action={duplicateInsight}>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { addCompetitorDomain, addInsightAdmin, removeCompetitorDomain, removeInsightAdmin } from "@/app/admin/insights/actions";
 import { InsightAdminList, type InsightListItem } from "@/components/admin/InsightAdminList";
 import { locales, type Locale } from "@/i18n/routing";
+import { adminHref } from "@/lib/auth/admin-path";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type LocaleRow = { locale: string; title: string };
@@ -65,12 +66,13 @@ export default async function AdminInsightsPage({
             Los textos publicados aquí aparecen en la sección pública. Los insights que ya están en el sitio siguen donde están.
           </p>
         </div>
-        <Link href="/admin/insights/new" className="bg-xinergy-orange px-4 py-2.5 text-sm font-semibold text-xinergy-charcoal">
+        <Link href={adminHref("/insights/new")} className="bg-xinergy-orange px-4 py-2.5 text-sm font-semibold text-xinergy-charcoal">
           Nuevo insight
         </Link>
       </div>
 
       <InsightAdminList
+        base={adminHref()}
         items={[...((insights ?? []) as InsightRow[])]
           .sort((a, b) => {
             const time = (row: InsightRow) => new Date(row.published_at || row.created_at).getTime();

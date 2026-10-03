@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { locales } from "@/i18n/routing";
 import { getAdminUser } from "@/lib/auth/admin";
+import { adminHref } from "@/lib/auth/admin-path";
 import { draftInsightFromPdf } from "@/lib/insights/from-pdf";
 import { normalizeLanguages } from "@/lib/insights/languages";
 import { intakeIsComplete } from "@/lib/insights/intake";
@@ -25,7 +26,7 @@ async function uniqueSlug(base: string, ignoreId?: string): Promise<string> {
 }
 
 function go(path: string) {
-  return new NextResponse(null, { status: 303, headers: { Location: path } });
+  return new NextResponse(null, { status: 303, headers: { Location: adminHref(path) } });
 }
 
 export async function POST(request: Request) {

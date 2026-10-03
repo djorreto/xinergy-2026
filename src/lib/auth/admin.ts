@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { adminHref } from "@/lib/auth/admin-path";
 import { isAllowedEmail } from "@/lib/auth/domain";
 import { INSIGHTS_SESSION_COOKIE, readSessionToken } from "@/lib/auth/insights-session";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -27,7 +28,7 @@ export async function getAdminUser() {
 export async function requireAdminUser() {
   const cookieStore = await cookies();
   const email = await readSessionToken(cookieStore.get(INSIGHTS_SESSION_COOKIE)?.value);
-  if (!email) redirect("/admin/login");
+  if (!email) redirect(adminHref("/login"));
   if (!(await insightAdminEnabled(email))) redirect("/api/admin/logout?disabled=1");
   return { email };
 }
