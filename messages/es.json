@@ -111,7 +111,32 @@
     "writeUs": "Escríbenos",
     "deepenPrompt": "¿Quieres profundizar en eficiencias, ESG o tecnología para tu operación?",
     "pagination": "Paginación de insights",
-    "page": "Página {n}"
+    "page": "Página {n}",
+    "download": {
+      "eyebrow": "Documento completo",
+      "title": "Descarga el PDF",
+      "body": "Deja tu nombre y un correo válido. Al enviar, el documento se descarga en este momento.",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Email",
+      "submit": "Descargar",
+      "sending": "Preparando…",
+      "successEyebrow": "Listo",
+      "successTitle": "Tu descarga comenzó",
+      "successBody": "Si el archivo no se abrió, usa el botón para bajarlo. El enlace dura 10 minutos y quedó registrado a nombre de {email}.",
+      "downloadAgain": "Descargar PDF",
+      "errors": {
+        "invalid_name": "Escribe tu nombre y apellido.",
+        "invalid_email": "Ese correo no es válido.",
+        "disposable_email": "Usa un correo permanente. No aceptamos correos temporales.",
+        "fake_email": "Ese correo no existe o no puede recibir mensajes. Revisa que esté bien escrito.",
+        "rate_limited": "Hubo demasiados intentos. Espera un rato y vuelve a probar.",
+        "captcha": "No pudimos verificar que eres una persona. Recarga la página e inténtalo otra vez.",
+        "email_failed": "No pudimos enviar el correo. Inténtalo de nuevo en unos minutos.",
+        "network_error": "No hay conexión. Inténtalo otra vez.",
+        "generic": "No pudimos procesar la solicitud. Inténtalo de nuevo."
+      }
+    }
   },
   "nosotros": {
     "culture": "Cultura",
@@ -177,142 +202,6 @@
       "Definido": "Definido",
       "Avanzado": "Avanzado",
       "Optimizado": "Optimizado"
-    }
-  },
-  "registro": {
-    "eyebrow": "Invitación privada Xinergy",
-    "privateNote": "Página privada · No indexable · Solo con enlace de invitación.",
-    "form": {
-      "eyebrow": "Tu cupo",
-      "title": "Regístrate ahora",
-      "subtitle": "Completa tus datos. Recibirás la confirmación en las próximas 24 horas.",
-      "name": "Nombre",
-      "email": "Correo",
-      "phone": "Teléfono",
-      "company": "Empresa",
-      "role": "Cargo",
-      "submit": "Registrarme al evento",
-      "sending": "Enviando…",
-      "successEyebrow": "Listo",
-      "successTitle": "Registro recibido",
-      "successBody": "Recibirás la confirmación en las próximas 24 horas.",
-      "contentInterest": {
-        "label": "¿Qué tipo de contenido te interesa más?",
-        "options": {
-          "business": "Visión de Negocios y Estrategia",
-          "workshops": "Workshops Técnicos y Certificaciones",
-          "both": "Ambos"
-        }
-      },
-      "attendance": {
-        "label": "¿Tu participación será presencial?",
-        "options": {
-          "inPerson": "Sí, visitaré el evento.",
-          "virtual": "No, participaré virtual."
-        }
-      },
-      "consent": {
-        "body": "Entiendo y acepto que mis datos personales podrían ser compartidos con entidades encargadas de la producción del evento. Esto podría incluir organizadores, patrocinadores y proveedores de servicios técnicos, con el fin de garantizar el correcto desarrollo y ejecución del evento al que estoy registrándome.",
-        "checkbox": "Estoy de acuerdo en que mis datos puedan ser compartidos por terceros."
-      },
-      "errors": {
-        "generic": "No pudimos enviar el formulario. Intenta de nuevo.",
-        "network_error": "Error de conexión. Revisa tu red e intenta de nuevo.",
-        "invalid_name": "Ingresa tu nombre.",
-        "invalid_email": "Ingresa un correo válido.",
-        "invalid_invite": "Este enlace de invitación no es válido.",
-        "invalid_consent": "Debes aceptar que tus datos puedan ser compartidos para continuar.",
-        "invalid_content_interest": "Selecciona el tipo de contenido que te interesa.",
-        "invalid_attendance": "Indica si tu participación será presencial o virtual."
-      }
-    },
-    "invites": {
-      "evento": {
-        "kicker": "19 de agosto 2026 · Presencial · Hotel W, Las Condes",
-        "heroHighlights": [
-          "Mañana: conferencias y paneles",
-          "Tarde: training labs y workshops (cupos limitados)",
-          "Confirmación en las próximas 24 horas"
-        ],
-        "whatIsLabel": "¿Qué es el LTC?",
-        "whatIs": "El Latin America Technology Conference (LTC) es la cumbre enterprise de Inteligencia Artificial Agéntica más relevante de la región. En su 3ª edición, DIGEVO, NVIDIA y Oracle reúnen a +700 líderes en el Hotel W Santiago para pasar de la teoría a ROI real con IA.",
-        "facts": [
-          { "label": "Edición", "value": "3ª · LTC 2026" },
-          { "label": "Formato", "value": "Presencial" },
-          { "label": "Foco", "value": "IA Agéntica" }
-        ],
-        "venueCaption": "Sede del evento",
-        "intro": "Un día completo en el Centro de Convenciones del Hotel W: estrategia en la mañana y Training Labs en la tarde.",
-        "learningsTitle": "Qué vivirás",
-        "learnings": [
-          "Jornada AM (8:30–12:50): keynotes, paneles y visión de negocio con NVIDIA, Oracle y líderes de la región.",
-          "Jornada PM: workshops técnicos hands-on y certificaciones con stack NVIDIA/Oracle.",
-          "Networking con el ecosistema DIGEVO y casos de ROI real en LATAM."
-        ],
-        "scheduleTitle": "Horarios (Chile)",
-        "schedule": [
-          { "zone": "Acreditación", "time": "08:30" },
-          { "zone": "Conferencia · Negocios y Estrategia", "time": "08:30 – 12:50" },
-          { "zone": "Workshops · Training Labs", "time": "14:00 – 19:30" }
-        ],
-        "dateNote": "Centro de Convenciones · Hotel W Santiago · Isidora Goyenechea 3000, Las Condes.",
-        "accessNote": "Indica si te interesa visión de negocio, workshops técnicos o ambos. Recibirás la confirmación en las próximas 24 horas.",
-        "organizersCaption": "Organizan",
-        "partnerNote": "Invitación Xinergy al LTC 2026, organizado por DIGEVO, NVIDIA y Oracle."
-      },
-      "almuerzo": {
-        "kicker": "Mesa C-Level · 19 de agosto · 13:00",
-        "whatIsLabel": "El contexto",
-        "whatIs": "Mientras el LTC 2026 —la cumbre de IA agéntica de DIGEVO, NVIDIA y Oracle— se vive en el Hotel W, Xinergy abre una mesa reservada para líderes C-Level en Karai by Mitsuharu: conversación de alto nivel, sin escenario ni pitch.",
-        "venueCaption": "El lugar",
-        "facts": [
-          { "label": "Hora", "value": "13:00 hrs" },
-          { "label": "Lugar", "value": "Karai · Hotel W" },
-          { "label": "Perfil", "value": "C-Level" },
-          { "label": "Cupos", "value": "20 asientos" }
-        ],
-        "intro": "Un almuerzo privado para quienes lideran la estrategia: decisión, visión y conversación entre pares, en un formato íntimo y selecto.",
-        "highlightsTitle": "Por qué esta mesa",
-        "highlights": [
-          "Encuentro íntimo entre líderes C-Level: estrategia, tecnología y decisiones que mueven el negocio.",
-          "Karai by Mitsuharu: cocina nikkei de alto nivel en el Hotel W Santiago.",
-          "Solo 20 lugares. Invitación personal y confirmación sujeta a disponibilidad."
-        ],
-        "contextNote": "Una vez registrado, recibirás la invitación formal dentro de las próximas 24 horas.",
-        "organizersCaption": "LTC organizado por",
-        "partnerNote": "Este almuerzo es invitación Xinergy. El LTC es de DIGEVO y NVIDIA; Xinergy actúa como partner de DIGEVO, no como sponsor del congreso."
-      }
-    }
-  },
-  "aniversario": {
-    "eyebrow": "Interno · Solo equipo",
-    "kicker": "5 años",
-    "title": "Nos juntamos a celebrar",
-    "lead": "El 9 de septiembre, todo el equipo Xinergy se encuentra en Bar Savia. Una noche para nosotros.",
-    "surprise": "Van a haber algunas sorpresas para todo el equipo.",
-    "whenLabel": "Cuándo",
-    "when": "Miércoles 9 de septiembre",
-    "whenTime": "A partir de las 18:00",
-    "whereLabel": "Dónde",
-    "dressLabel": "Vestimenta",
-    "dress": "Casual oficina",
-    "days": "Días",
-    "hours": "Horas",
-    "minutes": "Min",
-    "seconds": "Seg",
-    "live": "Es hoy. Nos vemos en Savia.",
-    "maps": "Cómo llegar",
-    "calendar": "Agregar a Outlook",
-    "privateNote": "Página privada · Solo con este enlace.",
-    "skip": "Espera…",
-    "enter": "Toca para entrar",
-    "enterHint": "Sube el volumen",
-    "hint": "Mueve el mouse · Click en el logo para el encore",
-    "closed": {
-      "eyebrow": "Registro cerrado",
-      "cueck": "¡Cueck!",
-      "title": "Ya se acabó el plazo de registro",
-      "lead": "Contacta a RRHH para notificar tu participación."
     }
   }
 }

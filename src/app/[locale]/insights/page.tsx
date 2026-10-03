@@ -5,10 +5,13 @@ import { CTABand } from "@/components/shared/CTABand";
 import { InsightsPaginatedList } from "@/components/shared/InsightsPaginatedList";
 import { Container } from "@/components/ui/Container";
 import { getContent } from "@/lib/content";
+import { getInsightCards } from "@/lib/insights/public";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -23,6 +26,7 @@ export default async function InsightsPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const { insightsPage } = getContent(locale);
+  const items = await getInsightCards(locale);
 
   return (
     <>
@@ -34,7 +38,7 @@ export default async function InsightsPage({ params }: Props) {
       />
       <section className="section-pad bg-xinergy-ivory">
         <Container>
-          <InsightsPaginatedList />
+          <InsightsPaginatedList items={items} />
         </Container>
       </section>
       <CTABand />

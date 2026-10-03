@@ -14,4 +14,8 @@ export type TeamMember = {
   group: TeamGroup;
   /** CSS object-position for head framing inside square crop */
   objectPosition?: string;
+  zoom?: number;
+  grayscale?: boolean;
+  brightness?: number;
+  contrast?: number;
 };

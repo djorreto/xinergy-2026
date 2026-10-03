@@ -2,19 +2,18 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { useSiteContent } from "@/hooks/useSiteContent";
 import { InsightCard } from "@/components/shared/InsightCard";
+import type { InsightCardItem } from "@/lib/insights/types";
 
 const PER_PAGE = 3;
 
-export function InsightsPaginatedList() {
+export function InsightsPaginatedList({ items }: { items: InsightCardItem[] }) {
   const t = useTranslations("ui.insights");
-  const { insights } = useSiteContent();
-  const totalPages = Math.ceil(insights.length / PER_PAGE);
+  const totalPages = Math.ceil(items.length / PER_PAGE);
   const [page, setPage] = useState(1);
 
   const start = (page - 1) * PER_PAGE;
-  const visible = insights.slice(start, start + PER_PAGE);
+  const visible = items.slice(start, start + PER_PAGE);
 
   return (
     <div>

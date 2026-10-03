@@ -1346,11 +1346,12 @@ export const insights = [
     type: "Aliança",
     title:
       "Xinergy e GEP firmam aliança estratégica para software de compras e supply chain na LATAM",
-    date: "Abr 2023",
+    date: "21 abr 2023",
     excerpt:
       "GEP SOFTWARE™ disponível na América Latina: redução de custos, digitalização de processos e menor time to market para empresas da região.",
     tag: "Parceiros",
     icon: "partnership",
+    cover: "/insights/alianza-gep.png",
     body: [
       "Santiago, Chile — Xinergy, subsidiária da Matrix Consulting, anunciou uma aliança estratégica com a GEP®, líder em estratégia, software e serviços administrados de aquisição e cadeia de suprimentos para empresas Fortune 500 e Global 2000.",
       "A aliança combina o conhecimento do mercado latino-americano da Xinergy com a tecnologia e inovação da GEP, unindo necessidades locais com capacidades globais para reduzir custos, digitalizar processos e melhorar o time to market.",
@@ -1365,11 +1366,12 @@ export const insights = [
     type: "Aliança",
     title:
       "Inovação e tecnologia para novas soluções em procurement e gestão do gasto",
-    date: "2023",
+    date: "Maio 2023",
     excerpt:
       "Aliança com a GEP Worldwide® que catalisa redução de custos, digitalização e incorporação de metaverso e IA na proposta de valor.",
     tag: "Tecnologia",
     icon: "technology",
+    cover: "/insights/innovacion-gep.png",
     body: [
       "Recentemente selamos uma nova aliança dentro do nosso ecossistema com a GEP Worldwide®, companhia líder mundial de estratégia, software e serviços administrados de aquisição e cadeia de suprimentos para empresas Fortune 500, com sede em New York, USA.",
       "Esta aliança catalisa a experiência da GEP, sua tecnologia de ponta e constante inovação, com o profundo conhecimento que temos das necessidades da região para gerar as melhores soluções em redução de custos, digitalização de processos e melhorias do time to market.",
@@ -1382,11 +1384,12 @@ export const insights = [
     slug: "carbono-neutral",
     type: "ESG",
     title: "Somos Carbono Neutro",
-    date: "2023",
+    date: "Maio 2023",
     excerpt:
       "Certificação internacional CarbonNeutral Protocol: emissões líquidas zero e liderança na luta contra as mudanças climáticas.",
     tag: "Sustentabilidade",
     icon: "carbon-neutral",
+    cover: "/insights/carbono-neutral.png",
     body: [
       "Depois de reduzir nossas emissões a líquido zero, recebemos a certificação internacional que comprova o compromisso e a liderança que temos na luta contra as mudanças climáticas.",
       "Este ano recebemos a certificação internacional CarbonNeutral Protocol, o que significa que cada emissão de gás de efeito estufa gerada pela Xinergy é compensada por meio de um programa que garante que uma quantidade equivalente é reduzida da atmosfera mediante um projeto de energias limpas.",
@@ -1399,11 +1402,12 @@ export const insights = [
     slug: "partners-proveedores-carbono-neutral",
     type: "ESG",
     title: "Parceiros e fornecedores Carbono Neutro",
-    date: "2023",
+    date: "Maio 2023",
     excerpt:
       "A certificação CarbonNeutral impulsiona nos nossos clientes um enfoque de sustentabilidade e práticas ESG em suprimentos e supply chain.",
     tag: "Sustentabilidade",
     icon: "supply-chain",
+    cover: "/insights/partners-carbono-neutral.png",
     body: [
       "Diante da evidência dos riscos das mudanças climáticas, múltiplas empresas em diversos setores a nível global comprometeram-se voluntariamente a metas de descarbonização nos últimos anos.",
       "Nesse contexto, contamos com a certificação CarbonNeutral, compromisso que nos permite impulsionar com força nos nossos clientes um enfoque de sustentabilidade e práticas de ESG em seus processos de suprimentos e supply chain.",
@@ -1416,11 +1420,12 @@ export const insights = [
     slug: "teletrabajo-energias-renovables",
     type: "ESG",
     title: "Trabalho remoto e energias renováveis",
-    date: "2023",
+    date: "Maio 2023",
     excerpt:
       "Plano estratégico de trabalho remoto, compensação de emissões de colaboradores e projeto eólico no Biobío para energia limpa.",
     tag: "Sustentabilidade",
     icon: "renewables",
+    cover: "/insights/teletrabajo.png",
     body: [
       "Entre as ações que a Xinergy implementou, estabelecemos um plano estratégico para aproveitar os benefícios do trabalho remoto, limitando viagens e deslocamentos apenas ao necessário.",
       "«Ao mesmo tempo, decidimos compensar as emissões diretas dos nossos colaboradores em seus lares», explica Roberto Uauy, CEO da empresa.",

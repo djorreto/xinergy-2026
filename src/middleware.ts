@@ -1,5 +1,6 @@
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
+import { INSIGHTS_SESSION_COOKIE, readSessionToken } from "./lib/auth/insights-session";
 import { localeFromCountry } from "./i18n/geo";
 import { routing, type Locale } from "./i18n/routing";
 
@@ -35,8 +36,42 @@ function detectLocale(request: NextRequest): Locale {
   return routing.defaultLocale;
 }
 
-export default function middleware(request: NextRequest) {
+function noindex(response: NextResponse) {
+  response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  return response;
+}
+
+async function adminMiddleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const email = await readSessionToken(request.cookies.get(INSIGHTS_SESSION_COOKIE)?.value);
+  const response = NextResponse.next();
+
+  if (pathname.startsWith("/admin/login")) {
+    if (email) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/insights";
+      url.search = "";
+      return noindex(NextResponse.redirect(url));
+    }
+    return noindex(response);
+  }
+
+  if (!email) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/admin/login";
+    url.searchParams.set("from", pathname);
+    return noindex(NextResponse.redirect(url));
+  }
+
+  return noindex(response);
+}
+
+export default async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return adminMiddleware(request);
+  }
 
   if (
     pathname.startsWith("/api") ||

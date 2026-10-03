@@ -1,11 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { ttForsDisplay } from "@/lib/fonts";
-import { isImmersivePath } from "@/lib/immersive";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 
 type SiteFooterProps = {
@@ -14,11 +13,8 @@ type SiteFooterProps = {
 
 export function SiteFooter({ locale: _locale }: SiteFooterProps) {
   const t = useTranslations("ui.footer");
-  const pathname = usePathname();
   const { brand, nav, presenceLabel, officesLabel } = useSiteContent();
   const year = new Date().getFullYear();
-
-  if (isImmersivePath(pathname)) return null;
 
   return (
     <footer className="border-t border-xinergy-charcoal/10 bg-xinergy-charcoal text-white">

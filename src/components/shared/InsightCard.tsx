@@ -7,7 +7,9 @@ type InsightItem = {
   title: string;
   excerpt: string;
   tag: string;
-  icon: InsightIconKey;
+  icon?: InsightIconKey;
+  coverUrl?: string | null;
+  availability?: string;
 };
 
 type InsightCardProps = {
@@ -19,22 +21,28 @@ export function InsightCard({ item, compact = false }: InsightCardProps) {
   return (
     <Link
       href={`/insights/${item.slug}`}
-      className="card-hover group flex w-full flex-col gap-4 rounded-2xl border border-xinergy-charcoal/10 bg-white p-5 transition sm:flex-row sm:gap-6 sm:p-6 lg:gap-8 lg:p-8"
+      className="card-hover group flex w-full items-center gap-3 rounded-2xl border border-xinergy-charcoal/10 bg-white p-4 transition sm:gap-5 sm:p-6 lg:gap-6 lg:p-7"
     >
-      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-xinergy-cream sm:h-20 sm:w-20 lg:h-24 lg:w-24">
-        <InsightIcon
-          icon={item.icon}
-          className="h-7 w-7 sm:h-10 sm:w-10 lg:h-12 lg:w-12"
-        />
-      </div>
+      {item.coverUrl ? (
+        <div className="flex aspect-square w-[6.5rem] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-xinergy-cream sm:w-44 sm:rounded-2xl lg:w-52">
+          <img src={item.coverUrl} alt="" className="h-full w-full object-contain object-center" />
+        </div>
+      ) : (
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-xinergy-cream sm:h-20 sm:w-20 lg:h-24 lg:w-24">
+          <InsightIcon icon={item.icon ?? "document"} className="h-7 w-7 sm:h-10 sm:w-10 lg:h-12 lg:w-12" />
+        </div>
+      )}
 
       <div className="min-w-0 flex-1">
         <span className="text-[10px] font-bold uppercase tracking-wider text-xinergy-orange sm:text-xs">
           {item.type}
         </span>
+        {item.availability ? (
+          <p className="mt-2 text-sm font-semibold text-xinergy-charcoal">{item.availability}</p>
+        ) : null}
         <h2
           className={`mt-2 font-semibold leading-snug text-balance text-xinergy-charcoal group-hover:text-xinergy-orange ${
-            compact ? "text-base sm:text-lg" : "text-lg sm:text-xl lg:text-2xl"
+            compact ? "text-base sm:text-lg" : "text-base sm:text-xl"
           }`}
         >
           {item.title}
@@ -43,7 +51,7 @@ export function InsightCard({ item, compact = false }: InsightCardProps) {
           </span>
         </h2>
         {!compact && (
-          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-xinergy-slate lg:mt-3 lg:text-base">
+          <p className="mt-2 line-clamp-2 text-sm leading-snug text-xinergy-slate">
             {item.excerpt}
           </p>
         )}

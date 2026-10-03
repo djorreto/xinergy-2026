@@ -1346,11 +1346,12 @@ export const insights = [
     type: "Alianza",
     title:
       "Xinergy y GEP firman alianza estratégica para software de compras y supply chain en LATAM",
-    date: "Abr 2023",
+    date: "21 abr 2023",
     excerpt:
       "GEP SOFTWARE™ disponible en América Latina: reducción de costos, digitalización de procesos y menor time to market para empresas de la región.",
     tag: "Partners",
     icon: "partnership",
+    cover: "/insights/alianza-gep.png",
     body: [
       "Santiago, Chile — Xinergy, subsidiaria de Matrix Consulting, anunció una alianza estratégica con GEP®, líder en estrategia, software y servicios administrados de adquisición y cadena de suministro para empresas Fortune 500 y Global 2000.",
       "La alianza combina el conocimiento del mercado latinoamericano de Xinergy con la tecnología e innovación de GEP, uniendo necesidades locales con capacidades globales para reducir costos, digitalizar procesos y mejorar el time to market.",
@@ -1365,11 +1366,12 @@ export const insights = [
     type: "Alianza",
     title:
       "Innovación y tecnología para nuevas soluciones en procurement y gestión del gasto",
-    date: "2023",
+    date: "Mayo 2023",
     excerpt:
       "Alianza con GEP Worldwide® que cataliza reducción de costos, digitalización e incorporación de metaverso e IA en la oferta de valor.",
     tag: "Tecnología",
     icon: "technology",
+    cover: "/insights/innovacion-gep.png",
     body: [
       "Recientemente sellamos una nueva alianza dentro de nuestro ecosistema con GEP Worldwide®, compañía líder mundial de estrategia, software y servicios administrados de adquisición y cadena de suministro para empresas Fortune 500, con base en New York, USA.",
       "Esta alianza cataliza la experiencia de GEP, su tecnología de punta y constante innovación, con el profundo conocimiento que tenemos de las necesidades de la región para generar las mejores soluciones en reducción de costos, digitalización de procesos y mejoras del time to market.",
@@ -1382,11 +1384,12 @@ export const insights = [
     slug: "carbono-neutral",
     type: "ESG",
     title: "Somos Carbono Neutral",
-    date: "2023",
+    date: "Mayo 2023",
     excerpt:
       "Certificación internacional CarbonNeutral Protocol: emisiones neto cero y liderazgo en la lucha contra el cambio climático.",
     tag: "Sostenibilidad",
     icon: "carbon-neutral",
+    cover: "/insights/carbono-neutral.png",
     body: [
       "Luego de reducir nuestras emisiones a neto cero, recibimos la certificación internacional que comprueba el compromiso y liderazgo que tenemos en la lucha contra el cambio climático.",
       "Este año recibimos la certificación internacional CarbonNeutral Protocol, lo que significa que cada emisión de gas de efecto invernadero generada por Xinergy es compensada a través de un programa que garantiza que una cantidad equivalente es reducida de la atmósfera mediante un proyecto de energías limpias.",
@@ -1399,11 +1402,12 @@ export const insights = [
     slug: "partners-proveedores-carbono-neutral",
     type: "ESG",
     title: "Partners y proveedores Carbono Neutral",
-    date: "2023",
+    date: "Mayo 2023",
     excerpt:
       "La certificación CarbonNeutral impulsa en nuestros clientes un enfoque de sustentabilidad y prácticas ESG en abastecimiento y supply chain.",
     tag: "Sostenibilidad",
     icon: "supply-chain",
+    cover: "/insights/partners-carbono-neutral.png",
     body: [
       "Ante la evidencia de los riesgos del cambio climático, múltiples empresas en diversas industrias a nivel global han comprometido voluntariamente metas de descarbonización en los últimos años.",
       "En dicho contexto, contamos con la certificación CarbonNeutral, compromiso que nos permite impulsar con fuerza en nuestros clientes un enfoque de sustentabilidad y prácticas de ESG en sus procesos de abastecimiento y supply chain.",
@@ -1416,11 +1420,12 @@ export const insights = [
     slug: "teletrabajo-energias-renovables",
     type: "ESG",
     title: "Teletrabajo y energías renovables",
-    date: "2023",
+    date: "Mayo 2023",
     excerpt:
       "Plan estratégico de teletrabajo, compensación de emisiones de colaboradores y proyecto eólico en el Biobío para energía limpia.",
     tag: "Sostenibilidad",
     icon: "renewables",
+    cover: "/insights/teletrabajo.png",
     body: [
       "Entre las acciones que Xinergy ha implementado, establecimos un plan estratégico para aprovechar los beneficios del teletrabajo, limitando los viajes y traslados solo a lo necesario.",
       "«Al mismo tiempo, hemos decidido compensar las emisiones directas de nuestros colaboradores en sus hogares», explica Roberto Uauy, CEO de la empresa.",

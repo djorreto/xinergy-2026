@@ -8,6 +8,8 @@ import { CTABand } from "@/components/shared/CTABand";
 import { Container } from "@/components/ui/Container";
 import { StrongPhraseBlock } from "@/components/shared/StrongPhraseBlock";
 import { TeamGrid } from "@/components/shared/TeamGrid";
+import { getTeamRows, toTeamMember } from "@/lib/team/public";
+import type { Locale } from "@/i18n/routing";
 import { getContent } from "@/lib/content";
 import { ttForsDisplay } from "@/lib/fonts";
 
@@ -29,6 +31,9 @@ export default async function NosotrosPage({ params }: Props) {
   setRequestLocale(locale);
   const { brand, cultureValues, teamMembers, teamGroupLabels, teamOffsite, nosotrosPage } =
     getContent(locale);
+  const safeLocale: Locale = locale === "en" || locale === "pt" ? locale : "es";
+  const stored = await getTeamRows();
+  const members = stored ? stored.map((row) => toTeamMember(row, safeLocale)) : teamMembers;
   const t = await getTranslations("ui.nosotros");
 
   return (
@@ -154,7 +159,7 @@ export default async function NosotrosPage({ params }: Props) {
         eyebrow={nosotrosPage.teamEyebrow}
         title={nosotrosPage.teamTitle}
         lead={nosotrosPage.teamLead}
-        members={teamMembers}
+        members={members}
         groupLabels={teamGroupLabels}
       />
 

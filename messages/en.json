@@ -111,7 +111,32 @@
     "writeUs": "Write to us",
     "deepenPrompt": "Want to go deeper on efficiencies, ESG, or technology for your operations?",
     "pagination": "Insights pagination",
-    "page": "Page {n}"
+    "page": "Page {n}",
+    "download": {
+      "eyebrow": "Full document",
+      "title": "Download the PDF",
+      "body": "Leave your name and a valid email. When you submit, the document downloads right away.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "submit": "Download",
+      "sending": "Preparing…",
+      "successEyebrow": "Ready",
+      "successTitle": "Your download started",
+      "successBody": "If the file did not open, use the button to download it. The link lasts 10 minutes and is registered to {email}.",
+      "downloadAgain": "Download PDF",
+      "errors": {
+        "invalid_name": "Enter your first and last name.",
+        "invalid_email": "That email is not valid.",
+        "disposable_email": "Use a permanent email. Temporary inboxes are not accepted.",
+        "fake_email": "That email does not exist or cannot receive messages. Check that it is written correctly.",
+        "rate_limited": "Too many attempts. Wait a while and try again.",
+        "captcha": "We could not verify that you are a person. Reload the page and try again.",
+        "email_failed": "We could not send the email. Try again in a few minutes.",
+        "network_error": "No connection. Try again.",
+        "generic": "We could not process the request. Try again."
+      }
+    }
   },
   "nosotros": {
     "culture": "Culture",
@@ -177,142 +202,6 @@
       "Definido": "Defined",
       "Avanzado": "Advanced",
       "Optimizado": "Optimized"
-    }
-  },
-  "registro": {
-    "eyebrow": "Private Xinergy invitation",
-    "privateNote": "Private page · Not indexable · Invitation link only.",
-    "form": {
-      "eyebrow": "Your seat",
-      "title": "Register now",
-      "subtitle": "Share your details. You will receive confirmation within the next 24 hours.",
-      "name": "Name",
-      "email": "Email",
-      "phone": "Phone",
-      "company": "Company",
-      "role": "Role",
-      "submit": "Register for the event",
-      "sending": "Sending…",
-      "successEyebrow": "Done",
-      "successTitle": "Registration received",
-      "successBody": "You will receive confirmation within the next 24 hours.",
-      "contentInterest": {
-        "label": "What type of content interests you most?",
-        "options": {
-          "business": "Business Vision & Strategy",
-          "workshops": "Technical Workshops & Certifications",
-          "both": "Both"
-        }
-      },
-      "attendance": {
-        "label": "Will your participation be in person?",
-        "options": {
-          "inPerson": "Yes, I will attend the event.",
-          "virtual": "No, I will participate virtually."
-        }
-      },
-      "consent": {
-        "body": "I understand and accept that my personal data may be shared with entities involved in producing the event. This may include organizers, sponsors and technical service providers, to ensure the proper development and execution of the event I am registering for.",
-        "checkbox": "I agree that my data may be shared with third parties."
-      },
-      "errors": {
-        "generic": "We couldn't send the form. Please try again.",
-        "network_error": "Connection error. Check your network and try again.",
-        "invalid_name": "Please enter your name.",
-        "invalid_email": "Please enter a valid email.",
-        "invalid_invite": "This invitation link is not valid.",
-        "invalid_consent": "You must accept data sharing to continue.",
-        "invalid_content_interest": "Please select the type of content that interests you.",
-        "invalid_attendance": "Please indicate whether you will attend in person or virtually."
-      }
-    },
-    "invites": {
-      "evento": {
-        "kicker": "August 19, 2026 · In person · Hotel W, Las Condes",
-        "heroHighlights": [
-          "Morning: conferences and panels",
-          "Afternoon: training labs and workshops (limited seats)",
-          "Confirmation within the next 24 hours"
-        ],
-        "whatIsLabel": "What is LTC?",
-        "whatIs": "The Latin America Technology Conference (LTC) is the region’s leading enterprise summit on Agentic AI. In its 3rd edition, DIGEVO, NVIDIA and Oracle bring together 700+ leaders at Hotel W Santiago to move from theory to real AI ROI.",
-        "facts": [
-          { "label": "Edition", "value": "3rd · LTC 2026" },
-          { "label": "Format", "value": "In person" },
-          { "label": "Focus", "value": "Agentic AI" }
-        ],
-        "venueCaption": "Venue",
-        "intro": "A full day at the Hotel W Convention Center: strategy in the morning and Training Labs in the afternoon.",
-        "learningsTitle": "What you’ll experience",
-        "learnings": [
-          "Morning (8:30–12:50): keynotes, panels and business vision with NVIDIA, Oracle and regional leaders.",
-          "Afternoon: hands-on technical workshops and certifications with the NVIDIA/Oracle stack.",
-          "Networking across the DIGEVO ecosystem and real ROI cases in LATAM."
-        ],
-        "scheduleTitle": "Schedule (Chile)",
-        "schedule": [
-          { "zone": "Check-in", "time": "08:30" },
-          { "zone": "Conference · Business & Strategy", "time": "08:30 – 12:50" },
-          { "zone": "Workshops · Training Labs", "time": "14:00 – 19:30" }
-        ],
-        "dateNote": "Convention Center · Hotel W Santiago · Isidora Goyenechea 3000, Las Condes.",
-        "accessNote": "Tell us if you prefer business vision, technical workshops, or both. You will receive confirmation within the next 24 hours.",
-        "organizersCaption": "Organized by",
-        "partnerNote": "A Xinergy invitation to LTC 2026, organized by DIGEVO, NVIDIA, and Oracle."
-      },
-      "almuerzo": {
-        "kicker": "C-Level table · August 19 · 1:00 PM",
-        "whatIsLabel": "The context",
-        "whatIs": "While LTC 2026 — DIGEVO, NVIDIA and Oracle’s agentic AI summit — unfolds at Hotel W, Xinergy opens a reserved table for C-Level leaders at Karai by Mitsuharu: high-caliber conversation, no stage, no pitch.",
-        "venueCaption": "The venue",
-        "facts": [
-          { "label": "Time", "value": "1:00 PM" },
-          { "label": "Venue", "value": "Karai · Hotel W" },
-          { "label": "Profile", "value": "C-Level" },
-          { "label": "Seats", "value": "20 seats" }
-        ],
-        "intro": "A private lunch for those who lead strategy: judgment, vision and peer conversation in an intimate, selective format.",
-        "highlightsTitle": "Why this table",
-        "highlights": [
-          "An intimate gathering of C-Level leaders on strategy, technology and decisions that move the business.",
-          "Karai by Mitsuharu: high-end Nikkei cuisine at Hotel W Santiago.",
-          "Only 20 places. Personal invitation; confirmation subject to availability."
-        ],
-        "contextNote": "Once registered, you will receive the formal invitation within the next 24 hours.",
-        "organizersCaption": "LTC organized by",
-        "partnerNote": "This lunch is a Xinergy invitation. LTC is a DIGEVO and NVIDIA event; Xinergy acts as a DIGEVO partner, not as a conference sponsor."
-      }
-    }
-  },
-  "aniversario": {
-    "eyebrow": "Internal · Team only",
-    "kicker": "5 years",
-    "title": "We gather to celebrate",
-    "lead": "On September 9, the whole Xinergy team meets at Bar Savia. A night for us.",
-    "surprise": "There will be a few surprises for the whole team.",
-    "whenLabel": "When",
-    "when": "Wednesday, September 9",
-    "whenTime": "From 6:00 PM",
-    "whereLabel": "Where",
-    "dressLabel": "Dress code",
-    "dress": "Office casual",
-    "days": "Days",
-    "hours": "Hours",
-    "minutes": "Min",
-    "seconds": "Sec",
-    "live": "It's today. See you at Savia.",
-    "maps": "Get directions",
-    "calendar": "Add to Outlook",
-    "privateNote": "Private page · Invitation link only.",
-    "skip": "Wait…",
-    "enter": "Tap to enter",
-    "enterHint": "Turn up the volume",
-    "hint": "Move the mouse · Click the logo for the encore",
-    "closed": {
-      "eyebrow": "Registration closed",
-      "cueck": "Cueck!",
-      "title": "The registration window is over",
-      "lead": "Contact HR to notify your participation."
     }
   }
 }

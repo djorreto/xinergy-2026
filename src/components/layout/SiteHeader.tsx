@@ -9,7 +9,6 @@ import { XinergyLogo } from "@/components/shared/XinergyLogo";
 import { ExpertiseNavMenu } from "@/components/layout/ExpertiseNavMenu";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { useSiteContent } from "@/hooks/useSiteContent";
-import { isImmersivePath } from "@/lib/immersive";
 
 export function SiteHeader() {
   const t = useTranslations("ui.header");
@@ -46,8 +45,6 @@ export function SiteHeader() {
   }, [pathname]);
 
   const useSolidHeader = scrolled || !isOverlayHero;
-
-  if (isImmersivePath(pathname)) return null;
 
   const mobileMenu =
     open && mounted

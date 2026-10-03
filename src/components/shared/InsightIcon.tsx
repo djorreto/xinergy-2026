@@ -3,7 +3,8 @@ type InsightIconKey =
   | "technology"
   | "carbon-neutral"
   | "supply-chain"
-  | "renewables";
+  | "renewables"
+  | "document";
 
 type InsightIconProps = {
   icon: InsightIconKey;
@@ -87,6 +88,18 @@ export function InsightIcon({ icon, className = "h-10 w-10" }: InsightIconProps)
             d="M24 19v-3l4 2-4 2v-1Z"
             fill="currentColor"
           />
+        </svg>
+      );
+    case "document":
+      return (
+        <svg className={shared} viewBox="0 0 48 48" fill="none" aria-hidden>
+          <path
+            d="M16 8h12l8 8v24H16V8Z"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinejoin="round"
+          />
+          <path d="M28 8v8h8M20 24h12M20 30h12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
         </svg>
       );
   }
