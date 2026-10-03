@@ -14,8 +14,16 @@ type DownloadRow = {
   referrer: string | null;
   country_code: string | null;
   created_at: string;
-  web_insights: { slug: string; web_insight_locales: LocaleCopy[] } | null;
+  web_insights:
+    | { slug: string; web_insight_locales: LocaleCopy[] }
+    | { slug: string; web_insight_locales: LocaleCopy[] }[]
+    | null;
 };
+
+function insightOf(row: DownloadRow) {
+  if (Array.isArray(row.web_insights)) return row.web_insights[0] ?? null;
+  return row.web_insights;
+}
 
 const chileTime = new Intl.DateTimeFormat("es-CL", {
   timeZone: "America/Santiago",
@@ -29,11 +37,12 @@ const chileTime = new Intl.DateTimeFormat("es-CL", {
 const countryNames = new Intl.DisplayNames(["es"], { type: "region" });
 
 function documentTitle(row: DownloadRow): string {
-  const locales = row.web_insights?.web_insight_locales ?? [];
+  const insight = insightOf(row);
+  const locales = insight?.web_insight_locales ?? [];
   return (
     locales.find((item) => item.locale === "es" && item.title.trim())?.title ||
     locales.find((item) => item.title.trim())?.title ||
-    row.web_insights?.slug ||
+    insight?.slug ||
     "Point of View"
   );
 }
@@ -72,7 +81,7 @@ export default async function InsightDownloadsPage() {
     .order("created_at", { ascending: false })
     .limit(500);
 
-  const rows = (data ?? []) as DownloadRow[];
+  const rows = (data ?? []) as unknown as DownloadRow[];
 
   return (
     <div>
