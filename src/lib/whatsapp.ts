@@ -1,5 +1,5 @@
 /** Diego Jorreto — WhatsApp business contact */
-const WHATSAPP_PHONE = "56987419290";
+export const WHATSAPP_PHONE = "56987419290";
 
 /** Prefilled greeting for WhatsApp CTA */
 const WHATSAPP_GREETING =

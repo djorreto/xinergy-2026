@@ -15,6 +15,9 @@ export function AdminNav({ email }: { email: string }) {
         <Link href={adminHref("/equipo")} className="text-xinergy-slate hover:text-xinergy-charcoal">
           Equipo
         </Link>
+        <Link href={adminHref("/encuestas")} className="text-xinergy-slate hover:text-xinergy-charcoal">
+          Encuestas
+        </Link>
         <Link href={adminHref("/insights/descargas")} className="text-xinergy-slate hover:text-xinergy-charcoal">
           Descargas
         </Link>

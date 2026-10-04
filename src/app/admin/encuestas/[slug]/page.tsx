@@ -1,0 +1,73 @@
+import { notFound } from "next/navigation";
+import { AdminNav } from "@/components/admin/AdminNav";
+import { RadarDesk, type RadarAnswer } from "@/components/admin/RadarDesk";
+import { requireAdminUser } from "@/lib/auth/admin";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { SURVEY_SLUG } from "@/lib/surveys/radar-2027";
+
+type Row = {
+  id: string;
+  created_at: string;
+  language: "es" | "pt";
+  nombre: string;
+  apellido: string;
+  email: string;
+  telefono: string | null;
+  linkedin: string | null;
+  cargo: string;
+  empresa: string;
+  pais: string;
+  rol: string;
+  rol_grupo: string;
+  antiguedad: string;
+  rubro: string;
+  rubro_grupo: string | null;
+  consents: Record<string, boolean>;
+  company: Record<string, unknown>;
+  answers: Record<string, unknown>;
+};
+
+export default async function SurveyAdminPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  if (slug !== SURVEY_SLUG) notFound();
+  const user = await requireAdminUser();
+  const admin = await createAdminClient();
+  const { data: survey } = await admin.from("web_surveys").select("id, title").eq("slug", slug).maybeSingle();
+  if (!survey) notFound();
+  const { data } = await admin
+    .from("web_survey_responses")
+    .select("id, created_at, language, nombre, apellido, email, telefono, linkedin, cargo, empresa, pais, rol, rol_grupo, antiguedad, rubro, rubro_grupo, consents, company, answers")
+    .eq("survey_id", survey.id)
+    .order("created_at", { ascending: false });
+
+  const responses: RadarAnswer[] = ((data ?? []) as Row[]).map((row) => ({
+    id: row.id,
+    createdAt: row.created_at,
+    language: row.language,
+    nombre: row.nombre,
+    apellido: row.apellido,
+    email: row.email,
+    telefono: row.telefono,
+    linkedin: row.linkedin,
+    cargo: row.cargo,
+    empresa: row.empresa,
+    pais: row.pais,
+    rol: row.rol,
+    rolGrupo: row.rol_grupo,
+    antiguedad: row.antiguedad,
+    rubro: row.rubro,
+    rubroGrupo: row.rubro_grupo,
+    consents: row.consents ?? {},
+    company: row.company ?? {},
+    answers: row.answers ?? {},
+  }));
+
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://xinergy.lat").replace(/\/$/, "");
+
+  return (
+    <div className="mx-auto max-w-5xl px-6 py-10">
+      <AdminNav email={user.email} />
+      <RadarDesk responses={responses} publicUrl={`${site}/radar-compras-2027`} />
+    </div>
+  );
+}
