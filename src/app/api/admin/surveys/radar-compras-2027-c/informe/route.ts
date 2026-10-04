@@ -3,7 +3,7 @@ import { getAdminUser } from "@/lib/auth/admin";
 import { createAdminClient, supabaseConfigured } from "@/lib/supabase/admin";
 import { evaluationOf } from "@/lib/surveys/evaluacion";
 import { SURVEY_SLUG_C } from "@/lib/surveys/radar-c/instrument";
-import { studyPdfC } from "@/lib/surveys/radar-c/pdf";
+import { paperPdfC } from "@/lib/surveys/radar-c/paper-pdf";
 import { buildPersonC } from "@/lib/surveys/radar-c/report";
 
 export const maxDuration = 60;
@@ -14,8 +14,8 @@ export async function GET() {
   if (!supabaseConfigured()) return NextResponse.json({ ok: false }, { status: 503 });
   const people = await loadPeople();
   if (!people) return NextResponse.json({ ok: false }, { status: 404 });
-  const bytes = await studyPdfC(people, "Informe preliminar");
-  return pdf(bytes, "radar-compras-2027-c-informe-preliminar.pdf");
+  const bytes = await paperPdfC(people, "Working paper · versión C");
+  return pdf(bytes, "radar-compras-2027-c-paper.pdf");
 }
 
 export async function loadPeople() {

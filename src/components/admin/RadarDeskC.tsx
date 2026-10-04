@@ -94,7 +94,9 @@ export function RadarDeskC({ people, benchmark, publicUrl, verified }: { people:
         </div>
       ) : (
         <div className="mt-6 flex flex-col gap-6">
-          <StudyDownload href="/api/admin/surveys/radar-compras-2027-c/informe" />
+          <StudyDownload href="/api/admin/surveys/radar-compras-2027-c/informe" label="Paper aplicado" busyLabel="Generando el paper…" />
+          <a className="btn-secondary" href="/api/admin/surveys/radar-compras-2027-c/paper">Texto editable</a>
+          <StudyDownload href="/api/admin/surveys/radar-compras-2027-c/sintesis" label="Síntesis breve" busyLabel="Generando la síntesis…" />
           <Analysis people={people} benchmark={benchmark} included={included} onZoom={setZoom} />
         </div>
       )}

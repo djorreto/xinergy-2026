@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function StudyDownload({ href }: { href: string }) {
+export function StudyDownload({ href, label = "Informe y estudio preliminar", busyLabel = "Generando el informe…" }: { href: string; label?: string; busyLabel?: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -33,7 +33,7 @@ export function StudyDownload({ href }: { href: string }) {
   return (
     <span className="inline-flex flex-col gap-1">
       <button type="button" className="btn-secondary" onClick={download} disabled={busy}>
-        {busy ? "Generando el informe…" : "Informe y estudio preliminar"}
+        {busy ? busyLabel : label}
       </button>
       {error ? <span className="text-sm font-medium text-red-700">{error}</span> : null}
     </span>

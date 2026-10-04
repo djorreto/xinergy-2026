@@ -46,7 +46,7 @@ export async function studyPdfC(people: PersonC[], stamp: string) {
   writer.heading("Datos e IA");
   writer.write(`${productive.length} declaran IA en producción o extendida. ${productiveBarrier.length} de ellas marcan integración, datos o un ROI poco claro. Esa barrera es una percepción, no un retorno medido. El nivel digital no sustituye la etapa ni la condición de datos.`);
   writer.heading("Qué queda abierto");
-  writer.write("Los pares de Compras con Finanzas o dirección se leen solo cuando la empresa y el alcance coinciden. Un corte chico no es un ranking regional. Reemplazar las respuestas recalcula el perfil, los cruces y este texto.");
+  writer.write("Los pares de Compras con Finanzas o dirección se leen solo cuando la empresa y el alcance coinciden. Un corte chico no es un ranking regional. Esta hoja es una síntesis. El paper aplicado desarrolla el método, los cruces y los portafolios.");
   writer.finish("Versión C");
   return new Uint8Array(await doc.save());
 }
