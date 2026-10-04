@@ -36,7 +36,7 @@ const inputClass =
   "w-full border border-xinergy-charcoal/15 bg-white px-3 py-3 text-base outline-none focus:border-xinergy-orange";
 
 export function RadarSurvey({ locale, linkedin }: { locale: string; linkedin: string }) {
-  const [lang, setLang] = useState<Lang>(locale === "pt" ? "pt" : "es");
+  const [lang, setLang] = useState<Lang>(locale === "pt" ? "pt" : locale === "en" ? "en" : "es");
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<Draft>({});
   const [companyUrl, setCompanyUrl] = useState("");
@@ -53,7 +53,7 @@ export function RadarSurvey({ locale, linkedin }: { locale: string; linkedin: st
     try {
       const saved = JSON.parse(localStorage.getItem(STORE) || "null") as { lang?: string; step?: number; d?: Draft; sent?: boolean } | null;
       if (saved && !saved.sent && saved.d && typeof saved.d === "object") {
-        if (saved.lang === "es" || saved.lang === "pt") setLang(saved.lang);
+        if (saved.lang === "es" || saved.lang === "en" || saved.lang === "pt") setLang(saved.lang);
         if (typeof saved.step === "number") setStep(Math.min(7, Math.max(0, saved.step)));
         setDraft(saved.d);
       }
@@ -168,7 +168,7 @@ export function RadarSurvey({ locale, linkedin }: { locale: string; linkedin: st
 
   function check(question: Question, mark: (id: string, message?: string) => void) {
     if (question.id === "linkedin" && String(draft.linkedin || "").trim() && !/^https?:\/\/\S+\.\S+/i.test(String(draft.linkedin).trim()) && !/linkedin\.com\/\S+/i.test(String(draft.linkedin).trim())) {
-      mark(question.id, lang === "pt" ? "Informe um link válido." : "Ingrese un enlace válido.");
+      mark(question.id, copy.invalidUrl);
       return;
     }
     if (question.optional && isEmpty(question, draft[question.id])) return;
@@ -180,15 +180,17 @@ export function RadarSurvey({ locale, linkedin }: { locale: string; linkedin: st
   const whatsappText =
     lang === "pt"
       ? "Olá, respondo o Radar de Compras da Xinergy. Gostaria de conversar sobre eficiências na minha empresa."
-      : "Hola, respondo el Radar de Compras de Xinergy. Me gustaría conversar sobre eficiencias en mi empresa.";
+      : lang === "en"
+        ? "Hello, I took Xinergy's Procurement Radar. I would like to talk about efficiencies in my company."
+        : "Hola, respondo el Radar de Compras de Xinergy. Me gustaría conversar sobre eficiencias en mi empresa.";
   const whatsapp = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappText)}`;
 
   return (
-    <article className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12" lang={lang === "pt" ? "pt-BR" : "es"}>
+    <article className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12" lang={lang === "pt" ? "pt-BR" : lang}>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <p className="label-editorial">{sent ? copy.doneEyebrow : copy.steps[step]}</p>
         <div className="inline-flex border border-xinergy-charcoal/15" role="group" aria-label={copy.langLabel}>
-          {(["es", "pt"] as const).map((code) => (
+          {(["es", "en", "pt"] as const).map((code) => (
             <button
               key={code}
               type="button"

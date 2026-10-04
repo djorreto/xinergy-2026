@@ -1,16 +1,19 @@
+import { surveyEnglish } from "@/lib/surveys/radar-2027-en";
+
 export const SURVEY_SLUG = "radar-compras-2027";
 export const SURVEY_TITLE = "Radar de Compras LatAm 2027";
 export const SURVEY_CONTACT = "roberto.uauy@xinergy.cl";
 export const SURVEY_VERSION = "radar-2027-v4-ahp";
 
-export type Lang = "es" | "pt";
-export type Copy = { es: string; pt: string };
-export type Choice = { v: string; es: string; pt: string };
+export type Lang = "es" | "en" | "pt";
+export type Copy = { es: string; en: string; pt: string };
+export type Choice = { v: string; es: string; en: string; pt: string };
 
 export const tx = (copy: Copy | string, lang: Lang) => (typeof copy === "string" ? copy : copy[lang] || copy.es);
 
-const L = (es: string, pt: string): Copy => ({ es, pt });
-const o = (v: string, es: string, pt = es): Choice => ({ v, es, pt });
+const english = (es: string) => surveyEnglish[es] ?? es;
+const L = (es: string, pt: string): Copy => ({ es, en: english(es), pt });
+const o = (v: string, es: string, pt = es): Choice => ({ v, es, en: english(es), pt });
 
 export const ui = {
   es: {
@@ -28,6 +31,7 @@ export const ui = {
     optional: "(opcional)",
     otherPh: "Especifique",
     fixErrors: "Revise las preguntas marcadas.",
+    invalidUrl: "Ingrese un enlace válido.",
     sendErr: "No pudimos enviar sus respuestas. Revise su conexión e intente de nuevo.",
     saved: "Su avance se guarda en este navegador.",
     welcomeEyebrow: "Radar de Compras LatAm 2027",
@@ -107,6 +111,7 @@ export const ui = {
     optional: "(opcional)",
     otherPh: "Especifique",
     fixErrors: "Revise as perguntas marcadas.",
+    invalidUrl: "Informe um link válido.",
     sendErr: "Não conseguimos enviar suas respostas. Verifique sua conexão e tente novamente.",
     saved: "Seu progresso fica salvo neste navegador.",
     welcomeEyebrow: "Radar de Compras LatAm 2027",
@@ -171,6 +176,86 @@ export const ui = {
     ahpD: "D. Transformação e capacidades",
     langLabel: "Idioma",
   },
+  en: {
+    steps: ["Welcome", "Registration", "Confidentiality", "Your company", "Context and risk", "Technology, data and AI", "Your role", "Projects and talent"],
+    back: "Back",
+    next: "Continue",
+    start: "Start",
+    submit: "Submit answers",
+    sending: "Sending…",
+    stepOf: (a: number, b: number) => `Step ${a} of ${b}`,
+    required: "This answer is required.",
+    email: "Enter a valid email.",
+    pickMax: (n: number) => `Choose up to ${n}`,
+    chosen: (a: number, b: number) => `${a} of ${b}`,
+    optional: "(optional)",
+    otherPh: "Please specify",
+    fixErrors: "Please review the marked questions.",
+    invalidUrl: "Enter a valid link.",
+    sendErr: "We couldn't send your answers. Check your connection and try again.",
+    saved: "Your progress is saved in this browser.",
+    welcomeEyebrow: "LatAm Procurement Radar 2027",
+    welcomeTitle: "Where is procurement heading in Latin America?",
+    welcomeLead:
+      "A pulse check with CEOs, CFOs and procurement leaders on cost, risk, technology and talent. It takes about 15 minutes, and answers are published only in aggregate.",
+    benefits: [
+      ["Early report", "Receive the results before they are published."],
+      ["Your benchmark", "Compare your company with the average for your industry and country."],
+      ["Results presentation", "Invitation to the meeting with procurement leaders, January 2027."],
+    ],
+    meta: ["15 minutes", "Confidential", "Aggregate results"],
+    regEyebrow: "Registration",
+    regTitle: "Tell us who you are",
+    regNote: "We use this information to send you the report and tailor the questions to your role.",
+    conEyebrow: "Confidentiality",
+    conTitle: "How we look after your data",
+    empEyebrow: "Your company",
+    empTitle: "Company profile",
+    empNote: "Approximate ranges are enough. They let us compare your company with similar ones.",
+    s4Eyebrow: "Context and risk",
+    s4Title: "Priorities, context and supplier risk",
+    s5Eyebrow: "Technology, data and AI",
+    s5Title: "Technology, data and artificial intelligence",
+    s6Eyebrow: "Your role",
+    s6Title: {
+      cpo: "Procurement performance",
+      cfo: "The finance view",
+      ceo: "The leadership view",
+      otro: "Your industry",
+    },
+    s6Note: {
+      cpo: "Questions for procurement, sourcing and supply chain leaders.",
+      cfo: "Questions for CFOs and finance managers.",
+      ceo: "Questions for CEOs and general managers.",
+      otro: "A few questions based on your company's industry.",
+    },
+    s6Empty: "There are no extra questions for your role and industry on this step. You can continue.",
+    s7Eyebrow: "Projects and talent",
+    s7Title: "Projects, team and topics of interest",
+    doneEyebrow: "Done",
+    doneTitle: "Thank you for taking part",
+    doneLead: "We received your answers. Here is what happens next:",
+    doneList: [
+      "We close the survey in November 2026.",
+      "We will send you the report and your benchmark before publication.",
+      "If you agreed, we will invite you to the results presentation in January 2027.",
+    ],
+    talkEyebrow: "Efficiencies",
+    talkTitle: "Shall we talk about improving cost, cash and procurement?",
+    talkLead: "If you want to review opportunities in your company, write to us or follow Xinergy.",
+    contact: "Write to us",
+    whatsapp: "WhatsApp",
+    linkedin: "Follow on LinkedIn",
+    website: "Explore Xinergy",
+    leftMore: "left side more important",
+    rightMore: "right side more important",
+    equal: "equal",
+    ahpA: "A. Overall priorities",
+    ahpB: "B. Efficiency and financial value",
+    ahpC: "C. Risk, sustainability and control",
+    ahpD: "D. Transformation and capabilities",
+    langLabel: "Language",
+  },
 } as const;
 
 export const consentSections: Record<Lang, { title: string; body: string }[]> = {
@@ -190,6 +275,23 @@ export const consentSections: Record<Lang, { title: string; body: string }[]> = 
       body: `Puede pedir acceso, rectificación, eliminación u oposición escribiendo a ${SURVEY_CONTACT}. Aplicamos la Ley 19.628 y la Ley 21.719 de Chile, la LGPD de Brasil y la normativa de protección de datos de su país.`,
     },
     { title: "Participación voluntaria", body: "Puede dejar preguntas sin responder cuando se indica que son opcionales, o abandonar la encuesta en cualquier momento." },
+  ],
+  en: [
+    { title: "Who is responsible", body: "Xinergy SpA is responsible for processing your data for the LatAm Procurement Radar 2027." },
+    {
+      title: "What we use your answers for",
+      body: "To prepare a study on procurement and supply practices in Latin America. We analyze answers only in aggregate: no published result will identify a person or a company. We only publish figures for groups with at least 5 responses.",
+    },
+    {
+      title: "Your contact details",
+      body: "We use them to send you the report and your benchmark and, if you agree below, to invite you to the results presentation. We do not sell or share your data with third parties.",
+    },
+    { title: "How long we keep them", body: "Up to 24 months after the study closes. After that, we delete or anonymize them." },
+    {
+      title: "Your rights",
+      body: `You can request access, correction, deletion or objection by writing to ${SURVEY_CONTACT}. We apply Chile's Laws 19.628 and 21.719, Brazil's LGPD, and the data protection rules of your country.`,
+    },
+    { title: "Voluntary participation", body: "You may skip questions marked as optional, or leave the survey at any time." },
   ],
   pt: [
     { title: "Quem é responsável", body: "A Xinergy SpA é a controladora dos seus dados no âmbito do Radar de Compras LatAm 2027." },
@@ -287,15 +389,15 @@ export const AHP = {
 };
 
 export const AHP_SCALE = [
-  { token: "9", n: "9", es: "Extrema izquierda", pt: "Extrema esquerda" },
-  { token: "7", n: "7", es: "Muy fuerte izquierda", pt: "Muito forte esquerda" },
-  { token: "5", n: "5", es: "Fuerte izquierda", pt: "Forte esquerda" },
-  { token: "3", n: "3", es: "Moderada izquierda", pt: "Moderada esquerda" },
-  { token: "1", n: "1", es: "Igual importancia", pt: "Igual importância" },
-  { token: "1/3", n: "3", es: "Moderada derecha", pt: "Moderada direita" },
-  { token: "1/5", n: "5", es: "Fuerte derecha", pt: "Forte direita" },
-  { token: "1/7", n: "7", es: "Muy fuerte derecha", pt: "Muito forte direita" },
-  { token: "1/9", n: "9", es: "Extrema derecha", pt: "Extrema direita" },
+  { token: "9", n: "9", es: "Extrema izquierda", en: "Extreme left", pt: "Extrema esquerda" },
+  { token: "7", n: "7", es: "Muy fuerte izquierda", en: "Very strong left", pt: "Muito forte esquerda" },
+  { token: "5", n: "5", es: "Fuerte izquierda", en: "Strong left", pt: "Forte esquerda" },
+  { token: "3", n: "3", es: "Moderada izquierda", en: "Moderate left", pt: "Moderada esquerda" },
+  { token: "1", n: "1", es: "Igual importancia", en: "Equal importance", pt: "Igual importância" },
+  { token: "1/3", n: "3", es: "Moderada derecha", en: "Moderate right", pt: "Moderada direita" },
+  { token: "1/5", n: "5", es: "Fuerte derecha", en: "Strong right", pt: "Forte direita" },
+  { token: "1/7", n: "7", es: "Muy fuerte derecha", en: "Very strong right", pt: "Muito forte direita" },
+  { token: "1/9", n: "9", es: "Extrema derecha", en: "Extreme right", pt: "Extrema direita" },
 ];
 
 export const REG: Question[] = [

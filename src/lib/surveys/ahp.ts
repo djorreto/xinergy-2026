@@ -127,7 +127,7 @@ function analyzeValues(values: Record<string, number>): AhpAnalysis | null {
   };
 }
 
-export function ahpLabel(id: string, lang: "es" | "pt" = "es") {
+export function ahpLabel(id: string, lang: "es" | "en" | "pt" = "es") {
   const macro = AHP.macros.find((item) => item.id === id);
   if (macro) return macro.label[lang];
   return AHP.criteria[id]?.[lang] ?? id;

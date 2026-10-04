@@ -8,7 +8,7 @@ import { SURVEY_SLUG } from "@/lib/surveys/radar-2027";
 type Row = {
   id: string;
   created_at: string;
-  language: "es" | "pt";
+  language: "es" | "en" | "pt";
   nombre: string;
   apellido: string;
   email: string;

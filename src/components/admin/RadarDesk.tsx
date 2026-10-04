@@ -21,7 +21,7 @@ import {
 export type RadarAnswer = {
   id: string;
   createdAt: string;
-  language: "es" | "pt";
+  language: "es" | "en" | "pt";
   nombre: string;
   apellido: string;
   email: string;
@@ -156,7 +156,7 @@ function AnswerDetail({ person, onBack }: { person: RadarAnswer; onBack: () => v
         {person.nombre} {person.apellido}
       </h2>
       <p className="mt-1 text-sm text-xinergy-slate">
-        {person.empresa} · {dateFormat.format(new Date(person.createdAt))} · {person.language === "pt" ? "Portugués" : "Español"}
+        {person.empresa} · {dateFormat.format(new Date(person.createdAt))} · {person.language === "pt" ? "Portugués" : person.language === "en" ? "Inglés" : "Español"}
       </p>
       <Block title="Registro">
         {REG.map((question) => (

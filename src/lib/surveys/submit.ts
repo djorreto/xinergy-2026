@@ -21,7 +21,7 @@ const AHP_TOKENS = new Set(["9", "7", "5", "3", "1", "1/3", "1/5", "1/7", "1/9"]
 type Draft = Record<string, unknown>;
 
 export type SurveyRow = {
-  language: "es" | "pt";
+  language: "es" | "en" | "pt";
   nombre: string;
   apellido: string;
   email: string;
@@ -48,7 +48,7 @@ export function parseSubmission(body: unknown): { ok: true; row: SurveyRow } | {
   const draft = input.d;
   if (!draft || typeof draft !== "object") return { ok: false };
   const data = draft as Draft;
-  const language = data.lang === "pt" ? "pt" : data.lang === "es" ? "es" : null;
+  const language = data.lang === "pt" || data.lang === "en" || data.lang === "es" ? data.lang : null;
   if (!language) return { ok: false };
   if (data.version !== SURVEY_VERSION) return { ok: false };
 
