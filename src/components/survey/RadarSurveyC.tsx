@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { analyzeAhp } from "@/lib/surveys/ahp";
-import { AHP, AHP_SCALE } from "@/lib/surveys/radar-2027";
-import { ahpClass } from "@/lib/surveys/radar-b/engine";
+import { AhpBlocks } from "@/components/survey/AhpBlocks";
+import { AHP } from "@/lib/surveys/radar-2027";
+import { AHP_BLOCKS, blockComplete, reviewBlockIds } from "@/lib/surveys/radar-c/ahp-blocks";
 import {
   AI_STAGE,
   BARRIERS,
@@ -50,7 +50,9 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   const [companyUrl, setCompanyUrl] = useState("");
   const [invalid, setInvalid] = useState<Record<string, string>>({});
   const [banner, setBanner] = useState("");
-  const [crAccepted, setCrAccepted] = useState(false);
+  const [ahpBlock, setAhpBlock] = useState(0);
+  const [ahpReview, setAhpReview] = useState(false);
+  const [reviewIndex, setReviewIndex] = useState(0);
   const [sending, setSending] = useState(false);
   const [downloadId, setDownloadId] = useState("");
   const [ready, setReady] = useState(false);
@@ -66,10 +68,13 @@ export function RadarSurveyC({ locale }: { locale: string }) {
 
   useEffect(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem(STORE) || "null") as { lang?: Lang; index?: number; d?: Draft } | null;
+      const saved = JSON.parse(localStorage.getItem(STORE) || "null") as { lang?: Lang; index?: number; ahpBlock?: number; ahpReview?: boolean; reviewIndex?: number; d?: Draft } | null;
       if (saved?.d && typeof saved.d === "object") {
         if (saved.lang) setLang(saved.lang);
         if (typeof saved.index === "number") setIndex(saved.index);
+        if (typeof saved.ahpBlock === "number") setAhpBlock(Math.min(AHP_BLOCKS.length - 1, Math.max(0, saved.ahpBlock)));
+        if (saved.ahpReview) setAhpReview(true);
+        if (typeof saved.reviewIndex === "number") setReviewIndex(Math.max(0, saved.reviewIndex));
         setDraft(saved.d);
       }
     } catch {
@@ -81,20 +86,17 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   useEffect(() => {
     if (!ready || downloadId) return;
     try {
-      localStorage.setItem(STORE, JSON.stringify({ lang, index, d: draft }));
+      localStorage.setItem(STORE, JSON.stringify({ lang, index, ahpBlock, ahpReview, reviewIndex, d: draft }));
     } catch {
       /* la encuesta igual se puede enviar */
     }
-  }, [ready, downloadId, lang, index, draft]);
+  }, [ready, downloadId, lang, index, ahpBlock, ahpReview, reviewIndex, draft]);
 
   useEffect(() => {
     if (ready) window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [step, downloadId, ready]);
+  }, [step, ahpBlock, ahpReview, reviewIndex, downloadId, ready]);
 
   const pairs = record(draft.prioridades_ahp);
-  const ahp = useMemo(() => (AHP.pairs.every((pair) => pairs[pair.id]) ? analyzeAhp(pairs) : null), [pairs]);
-  const inconsistent = Boolean(ahp && ahpClass(ahp.maxCr) !== "principal");
-  const suggestions = useMemo(() => (inconsistent ? suggestPairs(pairs) : []), [inconsistent, pairs]);
 
   function patch(id: string, value: unknown) {
     setDraft((current) => ({ ...current, [id]: value }));
@@ -105,7 +107,6 @@ export function RadarSurveyC({ locale }: { locale: string }) {
       return next;
     });
     setBanner("");
-    if (id === "prioridades_ahp") setCrAccepted(false);
   }
 
   function validate() {
@@ -159,12 +160,73 @@ export function RadarSurveyC({ locale }: { locale: string }) {
       document.getElementById(`q-${Object.keys(problems)[0]}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
       return false;
     }
-    if (step === "ahp" && inconsistent && !crAccepted) {
-      setBanner(copy.crWarn);
+    setBanner("");
+    return true;
+  }
+
+  function markBlock(ids: readonly string[]) {
+    const problems: Record<string, string> = {};
+    ids.forEach((id) => {
+      if (!pairs[id]) problems[id] = copy.required;
+    });
+    setInvalid(problems);
+    if (Object.keys(problems).length) {
+      setBanner(copy.fix);
+      document.getElementById(`q-${Object.keys(problems)[0]}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
       return false;
     }
     setBanner("");
     return true;
+  }
+
+  function goBack() {
+    if (step === "ahp" && ahpReview) {
+      if (reviewIndex > 0) setReviewIndex((current) => current - 1);
+      else setAhpReview(false);
+      return;
+    }
+    if (step === "ahp" && ahpBlock > 0) {
+      setAhpBlock((current) => current - 1);
+      return;
+    }
+    setIndex((current) => Math.max(0, current - 1));
+  }
+
+  function primaryLabel() {
+    if (sending && step === "close") return copy.sending;
+    if (step === "close") return copy.submit;
+    if (step === "ahp" && ahpReview) return reviewIndex >= reviewBlockIds(pairs).length - 1 ? copy.reviewKeep : copy.nextBlock;
+    if (step === "ahp" && ahpBlock < AHP_BLOCKS.length - 1) return copy.nextBlock;
+    return copy.next;
+  }
+
+  function goForward() {
+    if (step !== "ahp") {
+      next();
+      return;
+    }
+    if (ahpReview) {
+      const flagged = reviewBlockIds(pairs);
+      if (reviewIndex < flagged.length - 1) {
+        setReviewIndex((current) => current + 1);
+        return;
+      }
+      next();
+      return;
+    }
+    const current = AHP_BLOCKS[ahpBlock];
+    if (!current || !markBlock(current.pairIds) || !blockComplete(current.id, pairs)) return;
+    if (ahpBlock < AHP_BLOCKS.length - 1) {
+      setAhpBlock((value) => value + 1);
+      return;
+    }
+    const flagged = reviewBlockIds(pairs);
+    if (flagged.length) {
+      setAhpReview(true);
+      setReviewIndex(0);
+      return;
+    }
+    next();
   }
 
   async function submit() {
@@ -250,7 +312,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
             <form
               onSubmit={(event) => {
                 event.preventDefault();
-                next();
+                goForward();
               }}
               className="flex flex-col gap-8"
             >
@@ -264,7 +326,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
               </div>
               {step === "contact" ? <Contact lang={lang} draft={draft} invalid={invalid} onChange={patch} /> : null}
               {step === "profile" ? <Profile lang={lang} copy={copy} draft={draft} invalid={invalid} onChange={patch} /> : null}
-              {step === "ahp" ? <Pairs lang={lang} copy={copy} selected={pairs} invalid={invalid} suggestions={suggestions} onChange={(value) => patch("prioridades_ahp", value)} /> : null}
+              {step === "ahp" ? <AhpBlocks lang={lang} selected={pairs} invalid={invalid} block={ahpBlock} review={ahpReview} reviewIndex={reviewIndex} onChange={(value) => patch("prioridades_ahp", value)} /> : null}
               {step === "role" ? <RoleQuestions lang={lang} rol={rol} draft={draft} invalid={invalid} onChange={patch} /> : null}
               {step === "capacity" ? <Capabilities lang={lang} selected={record(draft.capacidades)} invalid={invalid} onChange={(id, value) => patch("capacidades", { ...record(draft.capacidades), [id]: value })} /> : null}
               {step === "context" ? <Context lang={lang} draft={draft} invalid={invalid} onChange={patch} /> : null}
@@ -282,12 +344,9 @@ export function RadarSurveyC({ locale }: { locale: string }) {
                 </>
               ) : null}
               {banner ? <p className="text-sm font-medium text-red-700">{banner}</p> : <p className="text-sm text-xinergy-slate">{copy.saved}</p>}
-              {step === "ahp" && inconsistent ? (
-                <button type="button" className="text-left text-sm font-semibold text-xinergy-charcoal underline" onClick={() => setCrAccepted(true)}>{copy.crWarn}</button>
-              ) : null}
               <div className="sticky bottom-0 z-20 -mx-4 flex items-center gap-3 border-t border-xinergy-charcoal/10 bg-xinergy-ivory/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
-                <button type="button" className="btn-secondary min-h-12 flex-1 sm:flex-none" onClick={() => setIndex((current) => Math.max(0, current - 1))} disabled={sending}>{copy.back}</button>
-                <button type="submit" className="btn-primary min-h-12 flex-[1.6] sm:flex-none" disabled={sending}>{step === "close" ? (sending ? copy.sending : copy.submit) : copy.next}</button>
+                <button type="button" className="btn-secondary min-h-12 flex-1 sm:flex-none" onClick={goBack} disabled={sending}>{copy.back}</button>
+                <button type="submit" className="btn-primary min-h-12 flex-[1.6] sm:flex-none" disabled={sending}>{primaryLabel()}</button>
               </div>
             </form>
           )}
@@ -321,7 +380,7 @@ function heading(copy: (typeof ui)[Lang], step: Step, procurement: boolean) {
   const optional = procurement ? [] : [copy.optionalStep];
   if (step === "contact") return { title: copy.contactTitle, notes: [copy.contactNote] };
   if (step === "profile") return { title: copy.profileTitle, notes: [copy.profileNote] };
-  if (step === "ahp") return { title: copy.ahpTitle, notes: [copy.ahpExample, copy.ahpNote] };
+  if (step === "ahp") return { title: copy.ahpTitle, notes: [] as string[] };
   if (step === "role") return { title: copy.roleTitle, notes: [] as string[] };
   if (step === "capacity") return { title: copy.capTitle, notes: [copy.capNote, ...optional] };
   if (step === "context") return { title: copy.contextTitle, notes: [copy.contextNote, ...optional] };
@@ -356,20 +415,6 @@ function stepsOf(rol: string): Step[] {
   const tail: Step[] = ["capacity", "context", "agenda", "close"];
   if (rol === "ceo" || rol === "cfo") return [...head, "role", ...tail];
   return [...head, ...tail];
-}
-
-function suggestPairs(tokens: Record<string, string>) {
-  const base = analyzeAhp(tokens);
-  if (!base) return [];
-  return AHP.pairs
-    .map((pair) => {
-      const again = analyzeAhp({ ...tokens, [pair.id]: "1" });
-      return { id: pair.id, drop: again ? base.maxCr - again.maxCr : 0 };
-    })
-    .sort((left, right) => right.drop - left.drop)
-    .filter((item) => item.drop > 0.01)
-    .slice(0, 2)
-    .map((item) => item.id);
 }
 
 function Contact({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
@@ -441,40 +486,6 @@ function Profile({ lang, copy, draft, invalid, onChange }: { lang: Lang; copy: (
       {countries.includes("otro") ? <Field id="pais_detalle" label={copy.countryDetail} value={String(draft.pais_detalle || "")} invalid={invalid.pais_detalle} onChange={(value) => onChange("pais_detalle", value)} /> : null}
       <SelectField id="rubro" label={lang === "en" ? "Industry" : lang === "pt" ? "Indústria" : "Industria"} options={INDUSTRIES} lang={lang} value={String(draft.rubro || "")} invalid={invalid.rubro} onChange={(value) => onChange("rubro", value)} />
       {draft.rubro === "otra" ? <Field id="rubro_detalle" label={copy.industryDetail} value={String(draft.rubro_detalle || "")} invalid={invalid.rubro_detalle} onChange={(value) => onChange("rubro_detalle", value)} /> : null}
-    </div>
-  );
-}
-
-function Pairs({ lang, copy, selected, invalid, suggestions, onChange }: { lang: Lang; copy: (typeof ui)[Lang]; selected: Record<string, string>; invalid: Record<string, string>; suggestions: string[]; onChange: (value: Record<string, string>) => void }) {
-  return (
-    <div>
-      <div className="flex flex-col gap-4">
-        {AHP.pairs.map((pair) => {
-          const left = pair.group === "macro" ? AHP.macros.find((item) => item.id === pair.a)?.label : AHP.criteria[pair.a];
-          const right = pair.group === "macro" ? AHP.macros.find((item) => item.id === pair.b)?.label : AHP.criteria[pair.b];
-          return (
-            <div key={pair.id} id={`q-${pair.id}`} className={`border p-4 ${invalid[pair.id] ? "border-red-700" : suggestions.includes(pair.id) ? "border-xinergy-orange" : "border-xinergy-charcoal/15"}`}>
-              {suggestions.includes(pair.id) ? <p className="mb-2 text-sm font-semibold text-xinergy-orange">{copy.crReview}</p> : null}
-              <div className="mb-3 grid grid-cols-2 gap-3 text-sm font-semibold">
-                <span>{left ? text(left, lang) : pair.a}</span>
-                <span className="text-right">{right ? text(right, lang) : pair.b}</span>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {AHP_SCALE.map((point) => {
-                  const on = selected[pair.id] === point.token;
-                  const towardRight = point.token.startsWith("1/");
-                  return (
-                    <button key={point.token} type="button" className={`min-w-16 flex-1 border px-2 py-2 text-xs ${on ? "border-xinergy-orange bg-[#FFF1D6] font-semibold" : "border-xinergy-charcoal/15"}`} onClick={() => onChange({ ...selected, [pair.id]: point.token })}>
-                      {point.token === "1" ? copy.equal : towardRight ? copy.right : copy.left}
-                      <span className="mt-1 block">{point.n}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
     </div>
   );
 }
