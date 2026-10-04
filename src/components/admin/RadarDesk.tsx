@@ -116,6 +116,15 @@ export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAns
             </a>
           </div>
           <ExecutiveBriefPanel initial={brief} responses={responses} />
+          {responses.length ? (
+            <div>
+              <p className="label-editorial">Detalle del cálculo</p>
+              <h2 className="mt-2 font-display text-2xl text-xinergy-charcoal">Pregunta por pregunta</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-xinergy-slate">
+                Aquí queda el modelo completo: matrices, consistencia y cada pregunta. Los filtros solo mueven este detalle. La vista ejecutiva de arriba usa todas las respuestas.
+              </p>
+            </div>
+          ) : null}
           <Analysis responses={filtered} all={responses} pais={pais} rol={rol} rubro={rubro} onPais={setPais} onRol={setRol} onRubro={setRubro} />
         </div>
       )}

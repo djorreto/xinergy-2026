@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ExecutiveCharts } from "@/components/admin/ExecutiveCharts";
 import { EXECUTIVE_THEMES, briefIsStale, type StoredBrief } from "@/lib/surveys/executive";
 
 const dateFormat = new Intl.DateTimeFormat("es-CL", {
@@ -9,7 +10,22 @@ const dateFormat = new Intl.DateTimeFormat("es-CL", {
   timeZone: "America/Santiago",
 });
 
-export function ExecutiveBriefPanel({ initial, responses }: { initial: StoredBrief | null; responses: { createdAt: string }[] }) {
+export function ExecutiveBriefPanel({
+  initial,
+  responses,
+}: {
+  initial: StoredBrief | null;
+  responses: {
+    createdAt: string;
+    pais: string;
+    rol: string;
+    rolGrupo: string;
+    rubro: string;
+    rubroGrupo: string | null;
+    company: Record<string, unknown>;
+    answers: Record<string, unknown>;
+  }[];
+}) {
   const [brief, setBrief] = useState<StoredBrief | null>(initial);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -39,7 +55,7 @@ export function ExecutiveBriefPanel({ initial, responses }: { initial: StoredBri
       <p className="label-editorial">Vista ejecutiva · preliminar</p>
       <h2 className="mt-2 font-display text-2xl text-xinergy-charcoal">Lo que diríamos hoy</h2>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-xinergy-slate">
-        Esta es la lectura para el CEO de Xinergy y el esqueleto de lo que después se les cuenta a quienes respondieron. Las cifras de más abajo son el cálculo. Este texto se escribe una vez y se mantiene hasta que llegue una respuesta nueva.
+        Esta es la lectura para el CEO de Xinergy y el esqueleto de lo que después se les cuenta a quienes respondieron. Los gráficos usan todas las respuestas. El texto se escribe una vez y se mantiene hasta que llegue una respuesta nueva.
       </p>
 
       {canWrite ? (
@@ -58,7 +74,9 @@ export function ExecutiveBriefPanel({ initial, responses }: { initial: StoredBri
       ) : null}
       {error ? <p className="mt-3 text-sm font-medium text-red-700">{error}</p> : null}
 
-      <div className="mt-6 border-t-2 border-xinergy-orange pt-4">
+      <ExecutiveCharts people={responses} />
+
+      <div className="mt-8 border-t-2 border-xinergy-orange pt-4">
         <h3 className="font-display text-lg text-xinergy-charcoal">La muestra, hasta ahora</h3>
         <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-xinergy-slate">
           {brief?.context || "Aquí va el contexto de la muestra: cuántas respuestas hay, qué países faltan y si ya se puede hablar con confianza."}
