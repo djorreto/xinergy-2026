@@ -7,7 +7,7 @@ import { routing } from "@/i18n/routing";
 type Props = { params: Promise<{ locale: string }> };
 
 export const metadata: Metadata = {
-  title: "Radar Compras 2027 · versión C",
+  title: "Radar Compras 2027 · C (versión oficial)",
   description: "Encuesta breve de prioridades, capacidades y agenda de Compras.",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false, noimageindex: true } },
 };

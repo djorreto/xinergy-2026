@@ -14,7 +14,7 @@ export async function GET() {
   if (!supabaseConfigured()) return NextResponse.json({ ok: false }, { status: 503 });
   const people = await loadPeople();
   if (!people) return NextResponse.json({ ok: false }, { status: 404 });
-  const bytes = await paperPdfC(people, "Working paper · versión C");
+  const bytes = await paperPdfC(people, "Working paper · C (versión oficial)");
   return pdf(bytes, "radar-compras-2027-c-paper.pdf");
 }
 

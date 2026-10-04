@@ -68,8 +68,8 @@ export function RadarDeskC({ people, benchmark, publicUrl, verified }: { people:
 
   return (
     <div>
-      <p className="label-editorial">Versión C</p>
-      <h1 className="mt-2 font-display text-3xl text-xinergy-charcoal">Radar Compras 2027</h1>
+      <p className="label-editorial">Versión oficial</p>
+      <h1 className="mt-2 font-display text-3xl text-xinergy-charcoal">Radar Compras 2027 · C (versión oficial)</h1>
       <p className="mt-3 max-w-3xl text-sm text-xinergy-slate">
         Prioridades, capacidades y agenda. El benchmark toma una respuesta de Compras por empresa. Finanzas y dirección quedan aparte.
         {verified ? " El motor de la versión C está verificado." : ""}

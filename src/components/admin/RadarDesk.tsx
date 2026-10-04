@@ -117,8 +117,8 @@ export function RadarDesk({ responses, publicUrl }: { responses: RadarAnswer[]; 
 
   return (
     <div>
-      <p className="label-editorial">Encuestas y formularios</p>
-      <h1 className="mt-2 font-display text-3xl text-xinergy-charcoal">Radar de Compras LatAm 2027</h1>
+      <p className="label-editorial">No oficial</p>
+      <h1 className="mt-2 font-display text-3xl text-xinergy-charcoal">Radar Compras 2027 · A (No oficial)</h1>
       <div className="mt-4 flex flex-wrap items-center gap-3 border border-xinergy-charcoal/10 bg-white p-4">
         <div className="min-w-0 flex-1">
           <p className="text-xs uppercase tracking-wide text-xinergy-slate">Enlace para compartir</p>

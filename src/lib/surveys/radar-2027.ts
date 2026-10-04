@@ -1,7 +1,7 @@
 import { surveyEnglish } from "@/lib/surveys/radar-2027-en";
 
 export const SURVEY_SLUG = "radar-compras-2027";
-export const SURVEY_TITLE = "Radar de Compras LatAm 2027";
+export const SURVEY_TITLE = "Radar Compras 2027 · A (No oficial)";
 export const SURVEY_CONTACT = "roberto.uauy@xinergy.cl";
 export const SURVEY_VERSION = "radar-2027-v4-ahp";
 
@@ -34,7 +34,7 @@ export const ui = {
     invalidUrl: "Ingrese un enlace válido.",
     sendErr: "No pudimos enviar sus respuestas. Revise su conexión e intente de nuevo.",
     saved: "Su avance se guarda en este navegador.",
-    welcomeEyebrow: "Radar de Compras LatAm 2027",
+    welcomeEyebrow: "Radar Compras 2027 · A (No oficial)",
     welcomeTitle: "¿Hacia dónde van las compras en América Latina?",
     welcomeLead:
       "Un pulso a CEOs, CFOs y líderes de compras sobre costos, riesgo, tecnología y talento. Toma cerca de 15 minutos y sus respuestas se publican solo de forma agregada.",
@@ -114,7 +114,7 @@ export const ui = {
     invalidUrl: "Informe um link válido.",
     sendErr: "Não conseguimos enviar suas respostas. Verifique sua conexão e tente novamente.",
     saved: "Seu progresso fica salvo neste navegador.",
-    welcomeEyebrow: "Radar de Compras LatAm 2027",
+    welcomeEyebrow: "Radar Compras 2027 · A (Não oficial)",
     welcomeTitle: "Para onde vão as compras na América Latina?",
     welcomeLead:
       "Uma pesquisa com CEOs, CFOs e líderes de compras sobre custos, risco, tecnologia e talentos. Leva cerca de 15 minutos e as respostas são publicadas apenas de forma agregada.",
@@ -194,7 +194,7 @@ export const ui = {
     invalidUrl: "Enter a valid link.",
     sendErr: "We couldn't send your answers. Check your connection and try again.",
     saved: "Your progress is saved in this browser.",
-    welcomeEyebrow: "LatAm Procurement Radar 2027",
+    welcomeEyebrow: "Procurement Radar 2027 · A (Not official)",
     welcomeTitle: "Where is procurement heading in Latin America?",
     welcomeLead:
       "A pulse check with CEOs, CFOs and procurement leaders on cost, risk, technology and talent. It takes about 15 minutes, and answers are published only in aggregate.",

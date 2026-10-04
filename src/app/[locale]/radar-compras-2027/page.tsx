@@ -8,7 +8,7 @@ import { brand } from "@/lib/content/es";
 type Props = { params: Promise<{ locale: string }> };
 
 export const metadata: Metadata = {
-  title: "Radar de Compras LatAm 2027",
+  title: "Radar Compras 2027 · A (No oficial)",
   description: "Encuesta de Xinergy a CEOs, CFOs y líderes de compras en América Latina.",
   robots: {
     index: false,

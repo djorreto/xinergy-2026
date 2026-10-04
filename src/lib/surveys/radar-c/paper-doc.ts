@@ -205,7 +205,7 @@ export function paperDocument(cut: PaperCut, stamp: string): PaperDocument {
 
   return {
     title: "Prioridades, capacidades y decisiones de Compras hacia 2027: un estudio exploratorio con análisis multicriterio y escenarios de portafolio",
-    kicker: "Radar de Compras LatAm 2027 · versión C · working paper",
+    kicker: "Radar Compras 2027 · C (versión oficial) · working paper",
     stamp,
     keywords: ["compras", "proceso analítico jerárquico", "capacidades", "portafolio de iniciativas", "realización del ahorro", "preparación de datos"],
     abstract: abstractOf(cut),

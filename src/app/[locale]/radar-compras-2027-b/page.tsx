@@ -8,7 +8,7 @@ import { brand } from "@/lib/content/es";
 type Props = { params: Promise<{ locale: string }> };
 
 export const metadata: Metadata = {
-  title: "Radar Compras 2027 · opción B",
+  title: "Radar Compras 2027 · B (No oficial)",
   description: "Encuesta de prioridades, capacidades y agenda de Compras.",
   robots: {
     index: false,

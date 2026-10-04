@@ -16,10 +16,10 @@ export async function studyPdfC(people: PersonC[], stamp: string) {
   const operational = included.filter((person) => person.operational && (person.rol === "cpo" || person.rol === "scm"));
   const benchmark = buildBenchmarkC(included);
   const priority = operational.filter((person) => benchmark.priorityIds.includes(person.id));
-  const doc = await documentOf("Radar de Compras LatAm 2027 - Versión C - Informe preliminar");
+  const doc = await documentOf("Radar Compras 2027 · C (versión oficial) - Síntesis");
   const writer = pen(doc);
   const companies = benchmark.companies === 1 ? "1 empresa" : `${benchmark.companies} empresas`;
-  await writer.cover("Versión C · Informe preliminar", stamp, `${included.length} respuestas · ${companies} en el benchmark operacional`);
+  await writer.cover("C (versión oficial) · Síntesis", stamp, `${included.length} respuestas · ${companies} en el benchmark operacional`);
   writer.heading("Qué busca este corte");
   writer.write("El estudio conecta la prioridad declarada para 2027, la capacidad actual, los resultados que cada empresa dice poder medir y la agenda que ya tiene decidida. El escenario es una alternativa bajo recursos de demostración. No es un ahorro ni un pronóstico.");
   writer.heading("Cómo se lee");
@@ -47,12 +47,12 @@ export async function studyPdfC(people: PersonC[], stamp: string) {
   writer.write(`${productive.length} declaran IA en producción o extendida. ${productiveBarrier.length} de ellas marcan integración, datos o un ROI poco claro. Esa barrera es una percepción, no un retorno medido. El nivel digital no sustituye la etapa ni la condición de datos.`);
   writer.heading("Qué queda abierto");
   writer.write("Los pares de Compras con Finanzas o dirección se leen solo cuando la empresa y el alcance coinciden. Un corte chico no es un ranking regional. Esta hoja es una síntesis. El paper aplicado desarrolla el método, los cruces y los portafolios.");
-  writer.finish("Versión C");
+  writer.finish("C (versión oficial)");
   return new Uint8Array(await doc.save());
 }
 
 export async function personPdfC(person: PersonC, stamp: string) {
-  const doc = await documentOf("Radar de Compras LatAm 2027 - Versión C - Devolución");
+  const doc = await documentOf("Radar Compras 2027 · C (versión oficial) - Devolución");
   const writer = pen(doc);
   await writer.cover("Devolución de su alcance", stamp, `${scopeLabel(person.alcance)}${person.unidad ? ` · ${person.unidad}` : ""}`);
   writer.write("Este documento describe lo que usted declaró y, cuando el cálculo aplica, un escenario de demostración. No lo compara con un percentil de mercado si la base agregada no alcanza.");
@@ -136,7 +136,7 @@ function pen(doc: PDFDocument) {
       page.drawRectangle({ x: 0, y: PAGE_HEIGHT - 16, width: PAGE_WIDTH, height: 16, color: ORANGE });
       y = PAGE_HEIGHT - 56;
       write("XINERGY", 9, bold, ORANGE, 4);
-      write("Radar de Compras LatAm 2027", 22, bold, CHARCOAL, 4);
+      write("Radar Compras 2027 · C (versión oficial)", 18, bold, CHARCOAL, 4);
       write(subtitle, 14, font, SLATE, 8);
       write(stamp, 10, font, SLATE, 4);
       write(line, 11, font, CHARCOAL, 8);

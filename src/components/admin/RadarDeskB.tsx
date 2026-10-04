@@ -51,8 +51,8 @@ export function RadarDeskB({ people, benchmark, publicUrl, verified }: { people:
 
   return (
     <div>
-      <p className="label-editorial">Opción B</p>
-      <h1 className="mt-2 font-display text-3xl text-xinergy-charcoal">Radar Compras 2027</h1>
+      <p className="label-editorial">No oficial</p>
+      <h1 className="mt-2 font-display text-3xl text-xinergy-charcoal">Radar Compras 2027 · B (No oficial)</h1>
       <p className="mt-3 max-w-3xl text-sm text-xinergy-slate">
         Prioridades por comparaciones, capacidad con anclajes, brecha hacia nivel 4 y portafolios enumerados. La matriz de impacto es de demostración: no es una calibración ni un ahorro estimado.
         {verified ? " El ejemplo numérico de la especificación cuadra con este motor." : ""}

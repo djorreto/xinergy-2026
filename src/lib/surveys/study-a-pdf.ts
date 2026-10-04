@@ -12,7 +12,7 @@ const CREAM = rgb(0.93, 0.91, 0.88);
 
 export async function studyPdfA(input: { cut: StudyCutA; thesis: string; summary: string; cutLabel: string; generatedLabel: string }) {
   const doc = await PDFDocument.create();
-  doc.setTitle("Radar de Compras LatAm 2027 - Versión A - Informe preliminar");
+  doc.setTitle("Radar Compras 2027 · A (No oficial) - Informe preliminar");
   doc.setAuthor("Xinergy");
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -155,8 +155,8 @@ export async function studyPdfA(input: { cut: StudyCutA; thesis: string; summary
   page.drawRectangle({ x: 0, y: PAGE_HEIGHT - 16, width: PAGE_WIDTH, height: 16, color: ORANGE });
   y = PAGE_HEIGHT - 48;
   write("XINERGY", 9, bold, ORANGE, 2);
-  write("Radar de Compras LatAm 2027", 22, bold, CHARCOAL, 2);
-  write("Versión A · Informe preliminar", 14, font, SLATE, 6);
+  write("Radar Compras 2027 · A (No oficial)", 18, bold, CHARCOAL, 2);
+  write("Informe preliminar", 14, font, SLATE, 6);
   write(input.thesis, 13, bold, CHARCOAL, 6);
   write(`${input.cutLabel}  ·  ${input.generatedLabel}`, 9, font, SLATE, 2);
   write(`${cut.counts.responses} respuestas incluidas · ${cut.counts.companies} empresas · ${cut.counts.complete} perfiles de prioridad · ${cut.counts.consistent} dentro del umbral individual de 0,10`, 10, font, CHARCOAL, 6);
@@ -275,7 +275,7 @@ export async function studyPdfA(input: { cut: StudyCutA; thesis: string; summary
   write("Reemplazar las respuestas recalcula el perfil, los cruces y el texto. No hace falta un filtro por el origen de los datos.", 10);
 
   pages.forEach((item, index) => {
-    item.drawText(clean(`Preliminar  ·  Versión A  ·  ${index + 1} de ${pages.length}`), { x: MARGIN, y: 26, size: 8, font, color: SLATE });
+    item.drawText(clean(`Preliminar  ·  A (No oficial)  ·  ${index + 1} de ${pages.length}`), { x: MARGIN, y: 26, size: 8, font, color: SLATE });
   });
   return new Uint8Array(await doc.save());
 }

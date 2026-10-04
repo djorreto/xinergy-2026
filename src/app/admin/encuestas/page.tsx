@@ -4,6 +4,13 @@ import { adminHref } from "@/lib/auth/admin-path";
 import { requireAdminUser } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+function rank(slug: string) {
+  if (slug === "radar-compras-2027-c") return 0;
+  if (slug === "radar-compras-2027") return 1;
+  if (slug === "radar-compras-2027-b") return 2;
+  return 9;
+}
+
 function surveyCount(count: { total: number; isolated: number } | undefined) {
   const total = count?.total ?? 0;
   const isolated = count?.isolated ?? 0;
@@ -35,7 +42,10 @@ export default async function SurveysPage() {
       <p className="label-editorial">Admin</p>
       <h1 className="mt-2 font-display text-3xl text-xinergy-charcoal">Encuestas y formularios</h1>
       <div className="mt-6 flex flex-col gap-3">
-        {(surveys ?? []).map((survey) => (
+        {(surveys ?? [])
+          .slice()
+          .sort((left, right) => rank(String(left.slug)) - rank(String(right.slug)))
+          .map((survey) => (
           <Link key={survey.id} href={adminHref(`/encuestas/${survey.slug}`)} className="border border-xinergy-charcoal/10 bg-white p-5 hover:border-xinergy-orange">
             <p className="font-display text-xl text-xinergy-charcoal">{survey.title}</p>
             <p className="mt-1 text-sm text-xinergy-slate">{surveyCount(counts.get(survey.id))}</p>

@@ -13,7 +13,7 @@ export async function GET() {
   if (!supabaseConfigured()) return NextResponse.json({ ok: false }, { status: 503 });
   const people = await loadPeople();
   if (!people) return NextResponse.json({ ok: false }, { status: 404 });
-  const markdown = paperMarkdown(paperDocument(buildPaperCut(people), "Working paper · versión C"));
+  const markdown = paperMarkdown(paperDocument(buildPaperCut(people), "Working paper · C (versión oficial)"));
   return new NextResponse(markdown, {
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",

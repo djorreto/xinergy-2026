@@ -24,7 +24,7 @@ export async function renderPaper(doc: PaperDocument) {
   const pdf = await PDFDocument.create();
   pdf.setTitle(doc.title);
   pdf.setAuthor("Xinergy");
-  pdf.setSubject("Working paper de la versión C del Radar de Compras LatAm 2027");
+  pdf.setSubject("Working paper de Radar Compras 2027 · C (versión oficial)");
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
   const italic = await pdf.embedFont(StandardFonts.HelveticaOblique);

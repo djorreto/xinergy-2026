@@ -29,7 +29,7 @@ const SCENARIO_LABEL = { lean: "Ajustado (Lean)", balanced: "Intermedio (Balance
 
 export async function studyPdfB(input: { cut: StudyCut; thesis: string; summary: string; generatedLabel: string; cutLabel: string }) {
   const doc = await PDFDocument.create();
-  doc.setTitle("Radar de Compras LatAm 2027 - Informe preliminar");
+  doc.setTitle("Radar Compras 2027 · B (No oficial) - Informe preliminar");
   doc.setAuthor("Xinergy");
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -217,7 +217,7 @@ export async function studyPdfB(input: { cut: StudyCut; thesis: string; summary:
   page.drawRectangle({ x: 0, y: PAGE_HEIGHT - 16, width: PAGE_WIDTH, height: 16, color: ORANGE });
   y = PAGE_HEIGHT - 52;
   write("XINERGY", 9, bold, ORANGE, 2);
-  write("Radar de Compras LatAm 2027", 22, bold, CHARCOAL, 2);
+  write("Radar Compras 2027 · B (No oficial)", 18, bold, CHARCOAL, 2);
   write("Informe preliminar", 14, font, SLATE, 8);
   write(input.thesis, 13, bold, CHARCOAL, 8);
   write(`${input.cutLabel}  ·  ${input.generatedLabel}`, 9, font, SLATE, 2);
@@ -406,7 +406,7 @@ export async function studyPdfB(input: { cut: StudyCut; thesis: string; summary:
   write("Los límites de este preliminar son los de una participación voluntaria y un corte chico. El escenario no mide retorno. Las hipótesis de roles, de esfuerzo de validación y de datos para IA siguen con el contraste previsto y no se dan por confirmadas. Reemplazar las respuestas recalcula el corte, los cuadros y el texto. No hace falta un filtro por el origen de los datos.", 10);
 
   pages.forEach((item, index) => {
-    item.drawText(clean(`Preliminar  ·  Radar Compras 2027  ·  ${index + 1} de ${pages.length}`), {
+    item.drawText(clean(`Preliminar  ·  B (No oficial)  ·  ${index + 1} de ${pages.length}`), {
       x: MARGIN,
       y: 26,
       size: 8,
