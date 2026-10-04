@@ -72,13 +72,20 @@ export function RadarDesk({ responses, publicUrl }: { responses: RadarAnswer[]; 
       <div className="mt-4 flex flex-wrap items-center gap-3 border border-xinergy-charcoal/10 bg-white p-4">
         <div className="min-w-0 flex-1">
           <p className="text-xs uppercase tracking-wide text-xinergy-slate">Enlace para compartir</p>
-          <p className="mt-1 break-all text-sm">{publicUrl}</p>
+          <a href={publicUrl} target="_blank" rel="noreferrer" className="mt-1 block break-all text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4">
+            {publicUrl}
+          </a>
         </div>
+        <a href={publicUrl} target="_blank" rel="noreferrer" className="btn-primary">
+          Abrir encuesta
+        </a>
         <button type="button" className="btn-secondary" onClick={copyLink}>
           {copied ? "Copiado" : "Copiar"}
         </button>
       </div>
-      <p className="mt-3 text-sm text-xinergy-slate">Este enlace no está en el menú del sitio. {responses.length === 1 ? "Hay 1 respuesta." : `Hay ${responses.length} respuestas.`}</p>
+      <p className="mt-3 text-sm text-xinergy-slate">
+        Este enlace no está en el menú del sitio ni en los buscadores. {responses.length === 1 ? "Hay 1 respuesta." : `Hay ${responses.length} respuestas.`}
+      </p>
 
       <div className="mt-6 flex gap-2">
         <Tab on={view === "respuestas"} onClick={() => { setView("respuestas"); setSelected(null); }}>
@@ -111,7 +118,9 @@ function Tab({ on, onClick, children }: { on: boolean; onClick: () => void; chil
 }
 
 function ResponseTable({ responses, onOpen }: { responses: RadarAnswer[]; onOpen: (id: string) => void }) {
-  if (!responses.length) return <p className="mt-8 text-xinergy-slate">Todavía no hay respuestas.</p>;
+  if (!responses.length) {
+    return <p className="mt-8 text-xinergy-slate">Todavía no hay respuestas. Cuando alguien termine la encuesta, su nombre queda en esta lista y se abre el detalle de lo que contestó.</p>;
+  }
   return (
     <div className="mt-6 overflow-x-auto border border-xinergy-charcoal/10 bg-white">
       <table className="w-full min-w-[40rem] text-sm">
@@ -215,6 +224,16 @@ function Analysis({
   onRubro: (value: string) => void;
 }) {
   const ahp = useMemo(() => aggregateAhp(responses.map((item) => recordOf(item.answers.prioridades_ahp)).filter((item): item is Record<string, string> => item != null)), [responses]);
+  if (!all.length) {
+    return (
+      <div className="mt-6 max-w-2xl text-sm leading-relaxed text-xinergy-slate">
+        <p className="font-semibold text-xinergy-charcoal">El análisis está vacío porque todavía no hay respuestas.</p>
+        <p className="mt-2">
+          Con la primera respuesta aparecen la priorización AHP (pesos que suman 100%, ranking con barras y consistencia), los porcentajes de cada pregunta y los cortes por país, rol y rubro.
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="mt-6 flex flex-col gap-8">
       <div className="grid gap-3 sm:grid-cols-3">
