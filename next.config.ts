@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" }],
   },
-  serverExternalPackages: ["unpdf"],
+  serverExternalPackages: ["unpdf", "exceljs"],
   experimental: {
     serverActions: {
       bodySizeLimit: "20mb",

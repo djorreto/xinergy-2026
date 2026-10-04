@@ -99,13 +99,22 @@ export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAns
       </div>
 
       {view === "respuestas" ? (
-        person ? (
-          <AnswerDetail person={person} onBack={() => setSelected(null)} />
-        ) : (
-          <ResponseTable responses={responses} onOpen={setSelected} />
-        )
+        <div className="mt-6">
+          <a className="btn-secondary" href="/api/admin/surveys/radar-compras-2027/export?tipo=respuestas">
+            Exportar Excel
+          </a>
+          {person ? <AnswerDetail person={person} onBack={() => setSelected(null)} /> : <ResponseTable responses={responses} onOpen={setSelected} />}
+        </div>
       ) : (
         <div className="mt-6 flex flex-col gap-10">
+          <div className="flex flex-wrap gap-3">
+            <a className="btn-secondary" href="/api/admin/surveys/radar-compras-2027/export?tipo=analisis">
+              Exportar Excel del análisis
+            </a>
+            <a className="btn-secondary" href="/api/admin/surveys/radar-compras-2027/export?tipo=pdf">
+              Exportar PDF preliminar
+            </a>
+          </div>
           <ExecutiveBriefPanel initial={brief} responses={responses} />
           <Analysis responses={filtered} all={responses} pais={pais} rol={rol} rubro={rubro} onPais={setPais} onRol={setRol} onRubro={setRubro} />
         </div>
