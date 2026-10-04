@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { analyzeAhp } from "@/lib/surveys/ahp";
 import { AHP, AHP_SCALE } from "@/lib/surveys/radar-2027";
@@ -204,64 +204,154 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   }
 
   if (!ready) return null;
-  if (downloadId) {
-    return (
-      <Shell lang={lang} onLang={setLang} stepLabel={copy.stepsOperational[0]} progress={1}>
-        <h1 className="font-display text-4xl text-xinergy-charcoal">{copy.doneTitle}</h1>
-        <p className="mt-4 text-lg text-xinergy-slate">{copy.doneLead}</p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <a className="btn-primary" href={`/api/surveys/radar-compras-2027-c/devolucion?id=${downloadId}`}>{copy.doneDownload}</a>
-          <Link href="/" className="btn-secondary">{copy.doneHome}</Link>
-        </div>
-      </Shell>
-    );
-  }
 
-  const labels = expand ? copy.stepsOperational : copy.stepsExecutive;
+  const tracker = trackerOf(rol, expand);
+  const labels = tracker.map((item) => labelOf(copy, item));
+  const position = Math.min(index, tracker.length - 1);
+
   return (
-    <Shell lang={lang} onLang={setLang} stepLabel={labels[Math.min(index, labels.length - 1)] ?? ""} progress={(Math.min(index, steps.length - 1) + 1) / steps.length}>
-      <div className="absolute -left-[9999px] h-0 overflow-hidden" aria-hidden="true">
-        <input name="xinergy_hp" value={companyUrl} onChange={(event) => setCompanyUrl(event.target.value)} tabIndex={-1} autoComplete="off" />
+    <article className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-8 sm:py-10 lg:px-10 [&_input]:scroll-mb-28 [&_label]:scroll-mb-28 [&_select]:scroll-mb-28 [&_textarea]:scroll-mb-28" lang={lang === "pt" ? "pt-BR" : lang}>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <p className="label-editorial">{downloadId ? copy.doneEyebrow : labels[position]}</p>
+        <div className="inline-flex border border-xinergy-charcoal/15" role="group" aria-label={lang === "en" ? "Language" : lang === "pt" ? "Idioma" : "Idioma"}>
+          {(["es", "en", "pt"] as const).map((code) => (
+            <button key={code} type="button" aria-pressed={lang === code} onClick={() => setLang(code)} className={`px-3 py-1.5 text-xs font-semibold tracking-wide ${lang === code ? "bg-xinergy-charcoal text-white" : "text-xinergy-slate"}`}>
+              {code.toUpperCase()}
+            </button>
+          ))}
+        </div>
       </div>
-      {step === "welcome" ? (
+
+      {downloadId ? (
+        <div>
+          <h1 className="font-display text-4xl leading-tight text-xinergy-charcoal sm:text-5xl">{copy.doneTitle}</h1>
+          <p className="mt-4 max-w-2xl text-lg text-xinergy-slate">{copy.doneLead}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a className="btn-primary" href={`/api/surveys/radar-compras-2027-c/devolucion?id=${downloadId}`}>{copy.doneDownload}</a>
+            <Link href="/" className="btn-secondary">{copy.doneHome}</Link>
+          </div>
+        </div>
+      ) : (
         <>
-          <p className="text-sm font-semibold uppercase tracking-wide text-xinergy-orange">{copy.eyebrow}</p>
-          <h1 className="mt-3 font-display text-4xl text-xinergy-charcoal">{copy.welcomeTitle}</h1>
-          <p className="mt-4 text-lg text-xinergy-slate">{copy.welcomeLead}</p>
-          <p className="mt-3 text-xinergy-slate">{copy.welcomeNote}</p>
+          <div className="mb-6 h-1 bg-xinergy-charcoal/10" aria-hidden>
+            <div className="h-full bg-xinergy-orange transition-[width]" style={{ width: `${(position / Math.max(tracker.length - 1, 1)) * 100}%` }} />
+          </div>
+          <ol className="mb-8 grid gap-1.5 text-xs text-xinergy-slate sm:gap-3" style={{ gridTemplateColumns: `repeat(${labels.length}, minmax(0, 1fr))` }}>
+            {labels.map((name, item) => (
+              <li key={name} className={`min-w-0 ${item === position ? "text-xinergy-charcoal" : ""}`} aria-current={item === position ? "step" : undefined}>
+                <span className={`grid h-8 w-8 place-items-center border text-xs font-semibold ${item === position ? "border-xinergy-orange bg-xinergy-orange text-xinergy-charcoal" : item < position ? "border-xinergy-charcoal bg-xinergy-charcoal text-white" : "border-xinergy-charcoal/20"}`}>
+                  {item < position ? "✓" : item + 1}
+                </span>
+                <span className="mt-1.5 hidden text-[11px] leading-snug lg:block">{name}</span>
+              </li>
+            ))}
+          </ol>
+          {step === "welcome" ? <Welcome copy={copy} /> : (
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                next();
+              }}
+              className="flex flex-col gap-8"
+            >
+              <header>
+                <p className="text-sm text-xinergy-beige">{copy.stepOf(position + 1, tracker.length)}</p>
+                <h1 className="mt-2 font-display text-3xl leading-tight text-xinergy-charcoal sm:text-4xl">{heading(copy, step).title}</h1>
+                {heading(copy, step).notes.map((note) => <p key={note} className="mt-3 max-w-2xl text-xinergy-slate">{note}</p>)}
+              </header>
+              <div className="absolute -left-[9999px] h-0 overflow-hidden" aria-hidden="true">
+                <input name="xinergy_hp" value={companyUrl} onChange={(event) => setCompanyUrl(event.target.value)} tabIndex={-1} autoComplete="off" />
+              </div>
+              {step === "contact" ? <Contact lang={lang} draft={draft} invalid={invalid} onChange={patch} /> : null}
+              {step === "profile" ? <Profile lang={lang} copy={copy} draft={draft} invalid={invalid} onChange={patch} /> : null}
+              {step === "ahp" ? <Pairs lang={lang} copy={copy} selected={pairs} invalid={invalid} suggestions={suggestions} onChange={(value) => patch("prioridades_ahp", value)} /> : null}
+              {step === "role" ? <RoleQuestions lang={lang} rol={rol} draft={draft} invalid={invalid} onChange={patch} /> : null}
+              {step === "capacity" ? <Capabilities lang={lang} selected={record(draft.capacidades)} invalid={invalid} onChange={(id, value) => patch("capacidades", { ...record(draft.capacidades), [id]: value })} /> : null}
+              {step === "context" ? <Context lang={lang} draft={draft} invalid={invalid} onChange={patch} /> : null}
+              {step === "agenda" ? <Agenda lang={lang} selected={record(draft.agenda)} invalid={invalid} onChange={(id, value) => patch("agenda", { ...record(draft.agenda), [id]: value })} /> : null}
+              {step === "close" ? (
+                <>
+                  <label className="block" id="q-desafio">
+                    <span className="mb-2 block font-semibold">{copy.challenge}</span>
+                    <textarea className={`${inputClass} min-h-32`} value={String(draft.desafio || "")} onChange={(event) => patch("desafio", event.target.value)} />
+                  </label>
+                  <label className="block" id="q-spend">
+                    <span className="mb-2 block font-semibold">{copy.spend}</span>
+                    <SelectOptions lang={lang} options={SPEND_C} value={String(draft.spend || "")} onChange={(value) => patch("spend", value)} />
+                  </label>
+                </>
+              ) : null}
+              {banner ? <p className="text-sm font-medium text-red-700">{banner}</p> : <p className="text-sm text-xinergy-slate">{copy.saved}</p>}
+              {step === "ahp" && inconsistent ? (
+                <button type="button" className="text-left text-sm font-semibold text-xinergy-charcoal underline" onClick={() => setCrAccepted(true)}>{copy.crWarn}</button>
+              ) : null}
+              <div className="sticky bottom-0 z-20 -mx-4 flex items-center gap-3 border-t border-xinergy-charcoal/10 bg-xinergy-ivory/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
+                <button type="button" className="btn-secondary min-h-12 flex-1 sm:flex-none" onClick={() => setIndex((current) => Math.max(0, current - 1))} disabled={sending}>{copy.back}</button>
+                <button type="submit" className="btn-primary min-h-12 flex-[1.6] sm:flex-none" disabled={sending}>{step === "close" ? (sending ? copy.sending : copy.submit) : copy.next}</button>
+              </div>
+            </form>
+          )}
+          {step === "welcome" ? (
+            <div className="mt-8">
+              <button type="button" className="btn-primary w-full sm:w-auto" onClick={next}>{copy.start}</button>
+            </div>
+          ) : null}
         </>
-      ) : null}
-      {step === "contact" ? <Contact lang={lang} copy={copy} draft={draft} invalid={invalid} onChange={patch} /> : null}
-      {step === "profile" ? <Profile lang={lang} copy={copy} draft={draft} invalid={invalid} onChange={patch} /> : null}
-      {step === "ahp" ? <Pairs lang={lang} copy={copy} selected={pairs} invalid={invalid} suggestions={suggestions} onChange={(value) => patch("prioridades_ahp", value)} /> : null}
-      {step === "role" ? <RoleQuestions lang={lang} copy={copy} rol={rol} draft={draft} invalid={invalid} onChange={patch} /> : null}
-      {step === "capacity" ? <Capabilities lang={lang} copy={copy} selected={record(draft.capacidades)} invalid={invalid} onChange={(id, value) => patch("capacidades", { ...record(draft.capacidades), [id]: value })} /> : null}
-      {step === "context" ? <Context lang={lang} copy={copy} draft={draft} invalid={invalid} onChange={patch} /> : null}
-      {step === "agenda" ? <Agenda lang={lang} copy={copy} selected={record(draft.agenda)} invalid={invalid} onChange={(id, value) => patch("agenda", { ...record(draft.agenda), [id]: value })} /> : null}
-      {step === "close" ? (
-        <>
-          <h1 className="font-display text-4xl text-xinergy-charcoal">{copy.closeTitle}</h1>
-          <p className="mt-3 text-xinergy-slate">{copy.closeNote}</p>
-          <label className="mt-6 block" id="q-desafio">
-            <span className="mb-2 block font-semibold">{copy.challenge}</span>
-            <textarea className={`${inputClass} min-h-32`} value={String(draft.desafio || "")} onChange={(event) => patch("desafio", event.target.value)} />
-          </label>
-          <label className="mt-5 block" id="q-spend">
-            <span className="mb-2 block font-semibold">{copy.spend}</span>
-            <SelectOptions lang={lang} options={SPEND_C} value={String(draft.spend || "")} onChange={(value) => patch("spend", value)} />
-          </label>
-        </>
-      ) : null}
-      {banner ? <p className="mt-6 text-sm font-semibold text-red-700">{banner}</p> : null}
-      {step === "ahp" && inconsistent ? (
-        <button type="button" className="mt-4 text-sm font-semibold text-xinergy-charcoal underline" onClick={() => setCrAccepted(true)}>{copy.crWarn}</button>
-      ) : null}
-      <div className="mt-8 flex items-center justify-between gap-3">
-        <button type="button" className="btn-secondary" onClick={() => setIndex((current) => Math.max(0, current - 1))} disabled={index === 0 || sending}>{copy.back}</button>
-        <button type="button" className="btn-primary" onClick={next} disabled={sending}>{step === "welcome" ? copy.start : step === "close" ? (sending ? copy.sending : copy.submit) : copy.next}</button>
+      )}
+    </article>
+  );
+}
+
+function trackerOf(rol: string, expand: boolean): Step[] {
+  const head: Step[] = ["welcome", "contact", "profile", "ahp"];
+  if (rol && !expand) return [...head, "role", "close"];
+  return [...head, "capacity", "context", "agenda", "close"];
+}
+
+function labelOf(copy: (typeof ui)[Lang], step: Step) {
+  const operational: Record<Step, string> = {
+    welcome: copy.stepsOperational[0],
+    contact: copy.stepsOperational[1],
+    profile: copy.stepsOperational[2],
+    ahp: copy.stepsOperational[3],
+    capacity: copy.stepsOperational[4],
+    context: copy.stepsOperational[5],
+    agenda: copy.stepsOperational[6],
+    close: copy.stepsOperational[7],
+    role: copy.stepsExecutive[4],
+  };
+  return operational[step];
+}
+
+function heading(copy: (typeof ui)[Lang], step: Step) {
+  if (step === "contact") return { title: copy.contactTitle, notes: [copy.contactNote] };
+  if (step === "profile") return { title: copy.profileTitle, notes: [copy.profileNote] };
+  if (step === "ahp") return { title: copy.ahpTitle, notes: [copy.ahpExample, copy.ahpNote] };
+  if (step === "role") return { title: copy.roleTitle, notes: [] as string[] };
+  if (step === "capacity") return { title: copy.capTitle, notes: [copy.capNote] };
+  if (step === "context") return { title: copy.contextTitle, notes: [copy.contextNote] };
+  if (step === "agenda") return { title: copy.agendaTitle, notes: [copy.agendaNote] };
+  return { title: copy.closeTitle, notes: [copy.closeNote] };
+}
+
+function Welcome({ copy }: { copy: (typeof ui)[Lang] }) {
+  return (
+    <div>
+      <h1 className="font-display text-4xl leading-tight text-xinergy-charcoal sm:text-5xl">{copy.welcomeTitle}</h1>
+      <p className="mt-4 max-w-2xl text-lg text-xinergy-slate">{copy.welcomeLead}</p>
+      <p className="mt-3 max-w-2xl text-xinergy-slate">{copy.welcomeNote}</p>
+      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        {copy.benefits.map(([title, text]) => (
+          <div key={title} className="border-t-2 border-xinergy-orange pt-3">
+            <p className="font-display text-base text-xinergy-charcoal">{title}</p>
+            <p className="mt-1 text-sm text-xinergy-slate">{text}</p>
+          </div>
+        ))}
       </div>
-      <p className="mt-4 text-sm text-xinergy-slate">{copy.saved}</p>
-    </Shell>
+      <p className="mt-6 flex flex-wrap gap-x-5 gap-y-1 text-sm text-xinergy-slate">
+        {copy.meta.map((item) => <span key={item}>{item}</span>)}
+      </p>
+    </div>
   );
 }
 
@@ -286,32 +376,13 @@ function suggestPairs(tokens: Record<string, string>) {
     .map((item) => item.id);
 }
 
-function Shell({ lang, onLang, stepLabel, progress, children }: { lang: Lang; onLang: (lang: Lang) => void; stepLabel: string; progress: number; children: ReactNode }) {
+function Contact({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
   return (
-    <main className="mx-auto min-h-screen max-w-3xl px-5 py-8">
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <p className="text-sm font-semibold uppercase tracking-wide text-xinergy-slate">{stepLabel}</p>
-        <div className="flex border border-xinergy-charcoal/15">
-          {(["es", "en", "pt"] as const).map((item) => (
-            <button key={item} type="button" className={`px-3 py-1 text-sm font-semibold ${lang === item ? "bg-xinergy-charcoal text-white" : ""}`} onClick={() => onLang(item)}>{item.toUpperCase()}</button>
-          ))}
-        </div>
-      </div>
-      <div className="mb-8 h-1 bg-xinergy-charcoal/10"><div className="h-1 bg-xinergy-orange" style={{ width: `${Math.round(progress * 100)}%` }} /></div>
-      {children}
-    </main>
-  );
-}
-
-function Contact({ lang, copy, draft, invalid, onChange }: { lang: Lang; copy: (typeof ui)[Lang]; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
-  return (
-    <div className="grid gap-5">
-      <h1 className="font-display text-4xl text-xinergy-charcoal">{copy.contactTitle}</h1>
-      <p className="text-xinergy-slate">{copy.contactNote}</p>
+    <div className="grid gap-5 sm:grid-cols-2">
       <Field id="empresa" label={lang === "en" ? "Company" : "Empresa"} value={String(draft.empresa || "")} invalid={invalid.empresa} onChange={(value) => onChange("empresa", value)} />
       <Field id="email" label="Email" type="email" value={String(draft.email || "")} invalid={invalid.email} onChange={(value) => onChange("email", value)} />
       {CONSENTS.map((item) => (
-        <label key={item.id} id={`q-${item.id}`} className={`flex gap-3 border px-4 py-3 ${invalid[item.id] ? "border-red-700" : "border-xinergy-charcoal/15"}`}>
+        <label key={item.id} id={`q-${item.id}`} className={`flex gap-3 border px-4 py-3 sm:col-span-2 ${invalid[item.id] ? "border-red-700" : "border-xinergy-charcoal/15"}`}>
           <input type="checkbox" className="mt-1" checked={draft[item.id] === true} onChange={(event) => onChange(item.id, event.target.checked)} />
           <span>{text(item.label, lang)}</span>
         </label>
@@ -325,8 +396,6 @@ function Profile({ lang, copy, draft, invalid, onChange }: { lang: Lang; copy: (
   const rol = String(draft.rol || "");
   return (
     <div className="grid gap-5">
-      <h1 className="font-display text-4xl text-xinergy-charcoal">{copy.profileTitle}</h1>
-      <p className="text-xinergy-slate">{copy.profileNote}</p>
       <SelectField id="rol" label={lang === "en" ? "Role" : lang === "pt" ? "Papel" : "Rol"} options={ROLES} lang={lang} value={rol} invalid={invalid.rol} onChange={(value) => onChange("rol", value)} />
       <fieldset id="q-alcance">
         <legend className="mb-2 font-semibold">{lang === "en" ? "Scope" : lang === "pt" ? "Escopo" : "Alcance"}</legend>
@@ -373,10 +442,7 @@ function Profile({ lang, copy, draft, invalid, onChange }: { lang: Lang; copy: (
 function Pairs({ lang, copy, selected, invalid, suggestions, onChange }: { lang: Lang; copy: (typeof ui)[Lang]; selected: Record<string, string>; invalid: Record<string, string>; suggestions: string[]; onChange: (value: Record<string, string>) => void }) {
   return (
     <div>
-      <h1 className="font-display text-4xl text-xinergy-charcoal">{copy.ahpTitle}</h1>
-      <p className="mt-3 text-xinergy-slate">{copy.ahpExample}</p>
-      <p className="mt-2 text-xinergy-slate">{copy.ahpNote}</p>
-      <div className="mt-6 flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         {AHP.pairs.map((pair) => {
           const left = pair.group === "macro" ? AHP.macros.find((item) => item.id === pair.a)?.label : AHP.criteria[pair.a];
           const right = pair.group === "macro" ? AHP.macros.find((item) => item.id === pair.b)?.label : AHP.criteria[pair.b];
@@ -407,13 +473,9 @@ function Pairs({ lang, copy, selected, invalid, suggestions, onChange }: { lang:
   );
 }
 
-function Capabilities({ lang, copy, selected, invalid, onChange }: { lang: Lang; copy: (typeof ui)[Lang]; selected: Record<string, string>; invalid: Record<string, string>; onChange: (id: string, value: string) => void }) {
+function Capabilities({ lang, selected, invalid, onChange }: { lang: Lang; selected: Record<string, string>; invalid: Record<string, string>; onChange: (id: string, value: string) => void }) {
   return (
     <div className="grid gap-6">
-      <div>
-        <h1 className="font-display text-4xl text-xinergy-charcoal">{copy.capTitle}</h1>
-        <p className="mt-3 text-xinergy-slate">{copy.capNote}</p>
-      </div>
       {CAPABILITIES.map((item) => (
         <fieldset key={item.id} id={`q-${item.id}`} className={invalid[item.id] ? "border border-red-700 p-3" : ""}>
           <legend className="mb-2 font-semibold">{text(item.short, lang)}</legend>
@@ -435,15 +497,11 @@ function Capabilities({ lang, copy, selected, invalid, onChange }: { lang: Lang;
   );
 }
 
-function Context({ lang, copy, draft, invalid, onChange }: { lang: Lang; copy: (typeof ui)[Lang]; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
+function Context({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
   const barriers = list(draft.e6);
   const exclusive = barriers.some((code) => BARRIER_EXCLUSIVE.some((item) => item.v === code));
   return (
     <div className="grid gap-5">
-      <div>
-        <h1 className="font-display text-4xl text-xinergy-charcoal">{copy.contextTitle}</h1>
-        <p className="mt-3 text-xinergy-slate">{copy.contextNote}</p>
-      </div>
       <ChoiceField id="e1" lang={lang} label={lang === "en" ? "Savings validated by Finance, last closed year" : lang === "pt" ? "Economia validada por Finanças, último exercício" : "Ahorro validado por Finanzas, último ejercicio cerrado"} options={SAVINGS} value={String(draft.e1 || "")} invalid={invalid.e1} onChange={(value) => onChange("e1", value)} />
       <ChoiceField id="e2" lang={lang} label={lang === "en" ? "Share of negotiated savings recognized by Finance" : lang === "pt" ? "Parte da economia negociada reconhecida por Finanças" : "Parte del ahorro negociado reconocida por Finanzas"} options={REALIZATION} value={String(draft.e2 || "")} invalid={invalid.e2} onChange={(value) => onChange("e2", value)} />
       <ChoiceField id="e3" lang={lang} label={lang === "en" ? "Spend without a viable alternative in the time the operation needs" : lang === "pt" ? "Gasto sem alternativa viável no prazo da operação" : "Gasto sin alternativa viable en el plazo que la operación necesita"} options={EXPOSURE} value={String(draft.e3 || "")} invalid={invalid.e3} onChange={(value) => onChange("e3", value)} />
@@ -469,13 +527,9 @@ function Context({ lang, copy, draft, invalid, onChange }: { lang: Lang; copy: (
   );
 }
 
-function Agenda({ lang, copy, selected, invalid, onChange }: { lang: Lang; copy: (typeof ui)[Lang]; selected: Record<string, string>; invalid: Record<string, string>; onChange: (id: string, value: string) => void }) {
+function Agenda({ lang, selected, invalid, onChange }: { lang: Lang; selected: Record<string, string>; invalid: Record<string, string>; onChange: (id: string, value: string) => void }) {
   return (
     <div className="grid gap-4">
-      <div>
-        <h1 className="font-display text-4xl text-xinergy-charcoal">{copy.agendaTitle}</h1>
-        <p className="mt-3 text-xinergy-slate">{copy.agendaNote}</p>
-      </div>
       {INITIATIVE_COPY.map((item) => (
         <label key={item.id} id={`q-${item.id}`} className="block border border-xinergy-charcoal/10 p-3">
           <span className="mb-1 block font-semibold">{text(item.name, lang)}</span>
@@ -487,10 +541,9 @@ function Agenda({ lang, copy, selected, invalid, onChange }: { lang: Lang; copy:
   );
 }
 
-function RoleQuestions({ lang, copy, rol, draft, invalid, onChange }: { lang: Lang; copy: (typeof ui)[Lang]; rol: string; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
+function RoleQuestions({ lang, rol, draft, invalid, onChange }: { lang: Lang; rol: string; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
   return (
     <div className="grid gap-5">
-      <h1 className="font-display text-4xl text-xinergy-charcoal">{copy.roleTitle}</h1>
       {rol === "cfo" ? (
         <>
           <ChoiceField id="f1" lang={lang} label={lang === "en" ? "What validated savings do you expect from Procurement in 2027?" : lang === "pt" ? "Que economia validada você espera de Compras em 2027?" : "¿Qué ahorro validado espera de Compras para 2027?"} options={SAVINGS_EXPECTATION} value={String(draft.f1 || "")} invalid={invalid.f1} onChange={(value) => onChange("f1", value)} />
