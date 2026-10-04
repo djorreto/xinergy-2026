@@ -45,6 +45,9 @@ export function SiteHeader() {
   }, [pathname]);
 
   const useSolidHeader = scrolled || !isOverlayHero;
+  const bareSurvey = pathname === "/radar-compras-2027" || pathname.startsWith("/radar-compras-2027/");
+
+  if (bareSurvey) return null;
 
   const mobileMenu =
     open && mounted
