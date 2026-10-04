@@ -46,21 +46,31 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
   if (!ahp) return { ok: false, honeypot };
 
   const rol = textOf("rol");
-  const expand = data.ruta_operativa === true;
-  const operational = rol === "cpo" || rol === "scm" || expand;
-  if (operational) {
-    const capacidades = record(data.capacidades);
+  const procurement = rol === "cpo" || rol === "scm";
+  const capacidades = record(data.capacidades);
+  const agenda = record(data.agenda);
+  if (procurement) {
     if (!CAPABILITIES.every((item) => LEVELS.has(capacidades[item.id] ?? ""))) return { ok: false, honeypot };
     if (!oneOf(SAVINGS, textOf("e1")) || !oneOf(REALIZATION, textOf("e2")) || !oneOf(EXPOSURE, textOf("e3"))) return { ok: false, honeypot };
     if (!oneOf(EFFORT_HOURS, textOf("e4")) || !oneOf(AI_STAGE, textOf("e5")) || !oneOf(DATA_READY, textOf("r1"))) return { ok: false, honeypot };
     if (!barriersOk(data.e6)) return { ok: false, honeypot };
-    const agenda = record(data.agenda);
     if (!INITIATIVE_COPY.every((item) => oneOf(STATUSES, agenda[item.id] ?? ""))) return { ok: false, honeypot };
-  } else if (rol === "cfo") {
-    if (!oneOf(SAVINGS_EXPECTATION, textOf("f1")) || !oneOf(VALIDATE_FREQ, textOf("f2"))) return { ok: false, honeypot };
-  } else if (rol === "ceo") {
-    if (!oneOf(BUDGET_DIRECTION, textOf("g1")) || !oneOf(PARTICIPATION, textOf("g2"))) return { ok: false, honeypot };
-  } else return { ok: false, honeypot };
+  } else {
+    if (Object.values(capacidades).some((value) => !LEVELS.has(value))) return { ok: false, honeypot };
+    if (!optionalOne(SAVINGS, textOf("e1")) || !optionalOne(REALIZATION, textOf("e2")) || !optionalOne(EXPOSURE, textOf("e3"))) return { ok: false, honeypot };
+    if (!optionalOne(EFFORT_HOURS, textOf("e4")) || !optionalOne(AI_STAGE, textOf("e5")) || !optionalOne(DATA_READY, textOf("r1"))) return { ok: false, honeypot };
+    if (codes(data.e6).length && !barriersOk(data.e6)) return { ok: false, honeypot };
+    if (Object.values(agenda).some((value) => !oneOf(STATUSES, value))) return { ok: false, honeypot };
+    if (rol === "cfo" && (!oneOf(SAVINGS_EXPECTATION, textOf("f1")) || !oneOf(VALIDATE_FREQ, textOf("f2")))) return { ok: false, honeypot };
+    if (rol === "ceo" && (!oneOf(BUDGET_DIRECTION, textOf("g1")) || !oneOf(PARTICIPATION, textOf("g2")))) return { ok: false, honeypot };
+    if (rol !== "cfo" && rol !== "ceo" && rol !== "otro") return { ok: false, honeypot };
+  }
+  const completeOperation = CAPABILITIES.every((item) => LEVELS.has(capacidades[item.id] ?? ""))
+    && oneOf(SAVINGS, textOf("e1")) && oneOf(REALIZATION, textOf("e2")) && oneOf(EXPOSURE, textOf("e3"))
+    && oneOf(EFFORT_HOURS, textOf("e4")) && oneOf(AI_STAGE, textOf("e5")) && oneOf(DATA_READY, textOf("r1"))
+    && barriersOk(data.e6)
+    && INITIATIVE_COPY.every((item) => oneOf(STATUSES, agenda[item.id] ?? ""));
+  const operational = procurement || completeOperation;
 
   const role = ROLES.find((item) => item.v === rol);
   return {
@@ -93,7 +103,7 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
         version: SURVEY_VERSION_C,
         ruta: operational ? "operativa" : "ejecutiva",
         prioridades_ahp: pairs,
-        capacidades: operational ? record(data.capacidades) : {},
+        capacidades,
         e1: textOf("e1"),
         e2: textOf("e2"),
         e3: textOf("e3"),
@@ -101,7 +111,7 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
         e5: textOf("e5"),
         r1: textOf("r1"),
         e6: barriersOk(data.e6) ? codes(data.e6) : [],
-        agenda: operational ? record(data.agenda) : {},
+        agenda,
         f1: textOf("f1"),
         f2: textOf("f2"),
         g1: textOf("g1"),
@@ -128,6 +138,10 @@ function codes(value: unknown) {
 
 function oneOf(list: { v: string }[], value: string) {
   return list.some((item) => item.v === value);
+}
+
+function optionalOne(list: { v: string }[], value: string) {
+  return !value || oneOf(list, value);
 }
 
 function record(value: unknown) {

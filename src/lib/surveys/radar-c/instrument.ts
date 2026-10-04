@@ -1,4 +1,4 @@
-import { AHP, AHP_SCALE } from "@/lib/surveys/radar-2027";
+import { AHP, AHP_SCALE, SURVEY_CONTACT } from "@/lib/surveys/radar-2027";
 import { CAPABILITIES, COUNTRIES, INDUSTRIES, INITIATIVE_COPY, ROLES, type Choice, type Copy, type Lang } from "@/lib/surveys/radar-b/instrument";
 
 export type { Choice, Copy, Lang };
@@ -154,6 +154,33 @@ export const CONSENTS: { id: string; req: boolean; label: Copy }[] = [
   { id: "c_informe", req: false, label: L("Quiero recibir el informe del corte.", "I want to receive the cut's report.", "Quero receber o relatório do corte.") },
 ];
 
+export const CONSENT_DETAILS: Record<Lang, { title: string; body: string }[]> = {
+  es: [
+    { title: "Quién es responsable", body: "Xinergy SpA es responsable del tratamiento. El contacto es " + SURVEY_CONTACT + "." },
+    { title: "Qué datos se piden", body: "Empresa, correo, rol, alcance y las respuestas del cuestionario. El correo no entra al análisis agregado. No pedimos teléfono ni redes." },
+    { title: "Para qué", body: "Elaborar el estudio Radar Compras 2027, versión oficial, y publicarlo solo en forma agregada, sin identificar a una persona o a una empresa. El informe del corte se envía solo si marca esa opción." },
+    { title: "Base y plazo", body: "La base es su consentimiento. Lo guardamos hasta 24 meses desde el cierre del estudio y después lo eliminamos o lo anonimizamos. Puede retirar el consentimiento cuando quiera, sin efecto retroactivo sobre un corte ya publicado en forma agregada." },
+    { title: "Dónde se guarda", body: "En los sistemas de Xinergy y de su proveedor tecnológico, que puede estar fuera de Chile. Puede pedir ese detalle al contacto de arriba." },
+    { title: "Sus derechos", body: "Puede pedir acceso, rectificación, eliminación, oposición y, cuando corresponda bajo la Ley 21.719, portabilidad o bloqueo, escribiendo al mismo correo. Hoy rige la Ley 19.628. La Ley 21.719 entra en vigor en diciembre de 2026." },
+  ],
+  en: [
+    { title: "Who is responsible", body: "Xinergy SpA is the controller. Contact: " + SURVEY_CONTACT + "." },
+    { title: "What we ask", body: "Company, email, role, scope and the survey answers. Email stays out of the aggregate analysis. We do not ask for a phone number or social profiles." },
+    { title: "Purpose", body: "To prepare the official Procurement Radar 2027 study and publish it only in aggregate, without identifying a person or a company. The cut report is sent only if you tick that option." },
+    { title: "Basis and retention", body: "The basis is your consent. We keep it for up to 24 months after the study closes, then delete or anonymize it. You can withdraw consent at any time. Withdrawal does not undo a cut already published in aggregate." },
+    { title: "Where it is stored", body: "On Xinergy's systems and those of its technology provider, which may be outside Chile. You can ask for that detail at the contact above." },
+    { title: "Your rights", body: "You can request access, correction, deletion, objection and, where Law 21.719 applies, portability or blocking, by writing to the same address. Law 19.628 applies today. Law 21.719 takes effect in December 2026." },
+  ],
+  pt: [
+    { title: "Quem é responsável", body: "A Xinergy SpA é a controladora. O contato é " + SURVEY_CONTACT + "." },
+    { title: "Quais dados", body: "Empresa, e-mail, papel, escopo e as respostas. O e-mail fica fora da análise agregada. Não pedimos telefone nem redes." },
+    { title: "Para quê", body: "Elaborar o estudo oficial Radar de Compras 2027 e publicá-lo só de forma agregada, sem identificar pessoa ou empresa. O relatório do corte é enviado só se você marcar essa opção." },
+    { title: "Base e prazo", body: "A base é o seu consentimento. Guardamos por até 24 meses após o encerramento e depois excluímos ou anonimizamos. Você pode retirar o consentimento quando quiser, sem desfazer um corte já publicado de forma agregada." },
+    { title: "Onde fica", body: "Nos sistemas da Xinergy e do provedor de tecnologia, que pode estar fora do Chile. Pode pedir esse detalhe no contato acima." },
+    { title: "Seus direitos", body: "Pode pedir acesso, correção, exclusão, oposição e, quando couber pela Lei 21.719, portabilidade ou bloqueio, no mesmo e-mail. Hoje vale a Lei 19.628. A Lei 21.719 entra em vigor em dezembro de 2026." },
+  ],
+};
+
 export const OPERATIONAL_FIELDS = [
   "empresa", "email",
   "rol", "paises", "rubro", "alcance",
@@ -185,7 +212,7 @@ export const ui = {
     benefits: [
       ["Su devolución", "Al terminar puede descargar el resultado de este alcance."],
       ["Informe del corte", "Se publica cuando hay una base agregada, sin nombres ni empresas."],
-      ["Ruta según el rol", "Compras recorre capacidad y agenda. Dirección y Finanzas tienen una ruta más corta."],
+      ["Ruta según el rol", "Dirección y Finanzas ven las mismas preguntas de operación. Pueden dejarlas en blanco."],
     ] as [string, string][],
     meta: ["Ruta breve", "Confidencial", "Resultados agregados"],
     doneEyebrow: "Listo",
@@ -198,14 +225,15 @@ export const ui = {
     saved: "Su avance se guarda en este navegador.",
     eyebrow: "Radar Compras 2027 · C (versión oficial)",
     welcomeTitle: "Agenda de Compras para 2027",
-    welcomeLead: "La encuesta conecta lo que importa, la capacidad actual y las decisiones previstas. Al terminar puede descargar una devolución de su alcance. La ruta de Compras está pensada para cerca de 10 a 12 minutos. La de dirección general y Finanzas es más corta.",
+    welcomeLead: "La encuesta conecta lo que importa, la capacidad actual y las decisiones previstas. Al terminar puede descargar una devolución de su alcance. Si no está en Compras, capacidad, contexto y agenda se pueden dejar en blanco.",
     welcomeNote: "Los escenarios usan una matriz de demostración. No son un ahorro prometido ni un pronóstico.",
     contactTitle: "Empresa y correo",
     contactNote: "El correo queda aparte del análisis agregado. Sirve para enviarle el informe si lo pide.",
     profileTitle: "Alcance que va a evaluar",
     profileNote: "Marque los países de ese alcance. Si son varios, elija corporativo multipaís: no cuenta como una respuesta por país.",
-    expand: "Conozco la operación de Compras de este alcance y quiero completar capacidades y agenda.",
-    expandNote: "Si no la marca, solo responde prioridades y dos preguntas de su rol.",
+    optionalStep: "Si no conoce la operación de este alcance, puede continuar sin responder. No es obligatorio.",
+    detailsShow: "Leer detalles del tratamiento de datos",
+    detailsHide: "Ocultar detalles",
     ahpTitle: "Qué debería priorizar Compras en 2027",
     ahpExample: "Ejemplo: si reducir costos es moderadamente más importante que liberar caja, marque “moderada” del lado de costos. Igual significa que ambas pesan lo mismo. Nada viene marcado.",
     ahpNote: "Compare cada par. ¿Cuál debería pesar más en este alcance, y cuánto más?",
@@ -246,7 +274,7 @@ export const ui = {
     benefits: [
       ["Your return", "At the end you can download the result for this scope."],
       ["Cut report", "It is published when there is an aggregate base, without names or companies."],
-      ["Route by role", "Procurement covers capability and the agenda. Executives and Finance take a shorter route."],
+      ["Route by role", "Executives and Finance see the same operating questions. They can leave them blank."],
     ] as [string, string][],
     meta: ["Short route", "Confidential", "Aggregate results"],
     doneEyebrow: "Done",
@@ -259,14 +287,15 @@ export const ui = {
     saved: "Your progress is saved in this browser.",
     eyebrow: "Procurement Radar 2027 · C (official version)",
     welcomeTitle: "Procurement agenda for 2027",
-    welcomeLead: "The survey connects what matters, current capability and planned decisions. At the end you can download a return for your scope. The Procurement route is designed for about 10 to 12 minutes. The executive route is shorter.",
+    welcomeLead: "The survey connects what matters, current capability and planned decisions. At the end you can download a return for your scope. If you are not in Procurement, capability, context and the agenda can be left blank.",
     welcomeNote: "Scenarios use a demonstration matrix. They are not a promised saving or a forecast.",
     contactTitle: "Company and email",
     contactNote: "Email is stored apart from the aggregate analysis. It is used to send the report if you ask for it.",
     profileTitle: "Scope you will assess",
     profileNote: "Mark the countries of that scope. If there are several, choose multi-country corporate: it does not count as one answer per country.",
-    expand: "I know Procurement in this scope and want to complete capabilities and the agenda.",
-    expandNote: "If you leave this unmarked, you only answer priorities and two role questions.",
+    optionalStep: "If you do not know the operation of this scope, you can continue without answering. It is not required.",
+    detailsShow: "Read the data processing details",
+    detailsHide: "Hide details",
     ahpTitle: "What Procurement should prioritize in 2027",
     ahpExample: "Example: if reducing cost is moderately more important than releasing cash, mark “moderate” on the cost side. Equal means both weigh the same. Nothing is preselected.",
     ahpNote: "Compare each pair. Which should weigh more in this scope, and by how much?",
@@ -307,7 +336,7 @@ export const ui = {
     benefits: [
       ["Sua devolutiva", "No final você pode baixar o resultado deste escopo."],
       ["Relatório do corte", "Sai quando houver uma base agregada, sem nomes nem empresas."],
-      ["Rota segundo o papel", "Compras percorre capacidade e agenda. Direção e Finanças têm uma rota mais curta."],
+      ["Rota segundo o papel", "Direção e Finanças veem as mesmas perguntas de operação. Podem deixá-las em branco."],
     ] as [string, string][],
     meta: ["Rota breve", "Confidencial", "Resultados agregados"],
     doneEyebrow: "Pronto",
@@ -320,14 +349,15 @@ export const ui = {
     saved: "Seu avanço fica salvo neste navegador.",
     eyebrow: "Radar de Compras 2027 · C (versão oficial)",
     welcomeTitle: "Agenda de Compras para 2027",
-    welcomeLead: "A pesquisa conecta o que importa, a capacidade atual e as decisões previstas. No final você pode baixar uma devolutiva do seu escopo. A rota de Compras foi pensada para cerca de 10 a 12 minutos. A de direção e Finanças é mais curta.",
+    welcomeLead: "A pesquisa conecta o que importa, a capacidade atual e as decisões previstas. No final você pode baixar uma devolutiva do seu escopo. Se não está em Compras, capacidade, contexto e agenda podem ficar em branco.",
     welcomeNote: "Os cenários usam uma matriz de demonstração. Não são uma economia prometida nem uma previsão.",
     contactTitle: "Empresa e e-mail",
     contactNote: "O e-mail fica separado da análise agregada. Serve para enviar o relatório se você pedir.",
     profileTitle: "Escopo que vai avaliar",
     profileNote: "Marque os países desse escopo. Se forem vários, escolha corporativo multipaís: não conta como uma resposta por país.",
-    expand: "Conheço a operação de Compras deste escopo e quero completar capacidades e agenda.",
-    expandNote: "Se não marcar, responde só prioridades e duas perguntas do seu papel.",
+    optionalStep: "Se não conhece a operação deste escopo, pode continuar sem responder. Não é obrigatório.",
+    detailsShow: "Ler os detalhes do tratamento de dados",
+    detailsHide: "Ocultar detalhes",
     ahpTitle: "O que Compras deveria priorizar em 2027",
     ahpExample: "Exemplo: se reduzir custos é moderadamente mais importante do que liberar caixa, marque “moderada” do lado de custos. Igual significa que as duas pesam o mesmo. Nada vem marcado.",
     ahpNote: "Compare cada par. Qual deveria pesar mais neste escopo, e quanto mais?",

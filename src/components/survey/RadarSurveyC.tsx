@@ -11,6 +11,7 @@ import {
   BARRIER_EXCLUSIVE,
   BUDGET_DIRECTION,
   CAPABILITIES,
+  CONSENT_DETAILS,
   CONSENTS,
   COUNTRIES,
   DATA_READY,
@@ -55,8 +56,8 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   const [ready, setReady] = useState(false);
   const copy = ui[lang];
   const rol = typeof draft.rol === "string" ? draft.rol : "";
-  const expand = draft.ruta_operativa === true || rol === "cpo" || rol === "scm";
-  const steps = stepsOf(rol, expand);
+  const procurement = rol === "cpo" || rol === "scm";
+  const steps = stepsOf(rol);
   const step = steps[Math.min(index, steps.length - 1)];
 
   useEffect(() => {
@@ -128,7 +129,6 @@ export function RadarSurveyC({ locale }: { locale: string }) {
       if (draft.alcance === "unidad" && !String(draft.unidad || "").trim()) mark("unidad");
       if (countries.some((code) => code === "otro" || code === "regional") && !String(draft.pais_detalle || "").trim()) mark("pais_detalle");
       if (draft.rubro === "otra" && !String(draft.rubro_detalle || "").trim()) mark("rubro_detalle");
-      if (rol === "otro" && draft.ruta_operativa !== true) mark("ruta_operativa");
     }
     if (step === "ahp") AHP.pairs.forEach((pair) => {
       if (!pairs[pair.id]) mark(pair.id);
@@ -143,14 +143,14 @@ export function RadarSurveyC({ locale }: { locale: string }) {
         if (!draft.g2) mark("g2");
       }
     }
-    if (step === "capacity") CAPABILITIES.forEach((item) => {
+    if (step === "capacity" && procurement) CAPABILITIES.forEach((item) => {
       if (!record(draft.capacidades)[item.id]) mark(item.id);
     });
-    if (step === "context") {
+    if (step === "context" && procurement) {
       for (const id of ["e1", "e2", "e3", "e4", "e5", "r1"]) if (!draft[id]) mark(id);
       if (!list(draft.e6).length) mark("e6");
     }
-    if (step === "agenda") INITIATIVE_COPY.forEach((item) => {
+    if (step === "agenda" && procurement) INITIATIVE_COPY.forEach((item) => {
       if (!record(draft.agenda)[item.id]) mark(item.id);
     });
     setInvalid(problems);
@@ -174,7 +174,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
       const response = await fetch("/api/surveys/radar-compras-2027-c", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ company_url: companyUrl, d: { ...draft, lang, version: SURVEY_VERSION_C, ruta_operativa: expand } }),
+        body: JSON.stringify({ company_url: companyUrl, d: { ...draft, lang, version: SURVEY_VERSION_C, ruta_operativa: procurement } }),
       });
       const payload = (await response.json()) as { ok?: boolean; id?: string };
       if (!response.ok || !payload.ok || !payload.id) {
@@ -205,7 +205,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
 
   if (!ready) return null;
 
-  const tracker = trackerOf(rol, expand);
+  const tracker = stepsOf(rol);
   const labels = tracker.map((item) => labelOf(copy, item));
   const position = Math.min(index, tracker.length - 1);
 
@@ -256,8 +256,8 @@ export function RadarSurveyC({ locale }: { locale: string }) {
             >
               <header>
                 <p className="text-sm text-xinergy-beige">{copy.stepOf(position + 1, tracker.length)}</p>
-                <h1 className="mt-2 font-display text-3xl leading-tight text-xinergy-charcoal sm:text-4xl">{heading(copy, step).title}</h1>
-                {heading(copy, step).notes.map((note) => <p key={note} className="mt-3 max-w-2xl text-xinergy-slate">{note}</p>)}
+                <h1 className="mt-2 font-display text-3xl leading-tight text-xinergy-charcoal sm:text-4xl">{heading(copy, step, procurement).title}</h1>
+                {heading(copy, step, procurement).notes.map((note) => <p key={note} className="mt-3 max-w-2xl text-xinergy-slate">{note}</p>)}
               </header>
               <div className="absolute -left-[9999px] h-0 overflow-hidden" aria-hidden="true">
                 <input name="xinergy_hp" value={companyUrl} onChange={(event) => setCompanyUrl(event.target.value)} tabIndex={-1} autoComplete="off" />
@@ -302,12 +302,6 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   );
 }
 
-function trackerOf(rol: string, expand: boolean): Step[] {
-  const head: Step[] = ["welcome", "contact", "profile", "ahp"];
-  if (rol && !expand) return [...head, "role", "close"];
-  return [...head, "capacity", "context", "agenda", "close"];
-}
-
 function labelOf(copy: (typeof ui)[Lang], step: Step) {
   const operational: Record<Step, string> = {
     welcome: copy.stepsOperational[0],
@@ -323,14 +317,15 @@ function labelOf(copy: (typeof ui)[Lang], step: Step) {
   return operational[step];
 }
 
-function heading(copy: (typeof ui)[Lang], step: Step) {
+function heading(copy: (typeof ui)[Lang], step: Step, procurement: boolean) {
+  const optional = procurement ? [] : [copy.optionalStep];
   if (step === "contact") return { title: copy.contactTitle, notes: [copy.contactNote] };
   if (step === "profile") return { title: copy.profileTitle, notes: [copy.profileNote] };
   if (step === "ahp") return { title: copy.ahpTitle, notes: [copy.ahpExample, copy.ahpNote] };
   if (step === "role") return { title: copy.roleTitle, notes: [] as string[] };
-  if (step === "capacity") return { title: copy.capTitle, notes: [copy.capNote] };
-  if (step === "context") return { title: copy.contextTitle, notes: [copy.contextNote] };
-  if (step === "agenda") return { title: copy.agendaTitle, notes: [copy.agendaNote] };
+  if (step === "capacity") return { title: copy.capTitle, notes: [copy.capNote, ...optional] };
+  if (step === "context") return { title: copy.contextTitle, notes: [copy.contextNote, ...optional] };
+  if (step === "agenda") return { title: copy.agendaTitle, notes: [copy.agendaNote, ...optional] };
   return { title: copy.closeTitle, notes: [copy.closeNote] };
 }
 
@@ -356,11 +351,11 @@ function Welcome({ copy }: { copy: (typeof ui)[Lang] }) {
   );
 }
 
-function stepsOf(rol: string, expand: boolean): Step[] {
+function stepsOf(rol: string): Step[] {
   const head: Step[] = ["welcome", "contact", "profile", "ahp"];
-  if (!rol) return head;
-  if (expand) return [...head, "capacity", "context", "agenda", "close"];
-  return [...head, "role", "close"];
+  const tail: Step[] = ["capacity", "context", "agenda", "close"];
+  if (rol === "ceo" || rol === "cfo") return [...head, "role", ...tail];
+  return [...head, ...tail];
 }
 
 function suggestPairs(tokens: Record<string, string>) {
@@ -378,10 +373,27 @@ function suggestPairs(tokens: Record<string, string>) {
 }
 
 function Contact({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
+  const [details, setDetails] = useState(false);
+  const copy = ui[lang];
   return (
     <div className="grid gap-5 sm:grid-cols-2">
       <Field id="empresa" label={lang === "en" ? "Company" : "Empresa"} value={String(draft.empresa || "")} invalid={invalid.empresa} onChange={(value) => onChange("empresa", value)} />
       <Field id="email" label="Email" type="email" value={String(draft.email || "")} invalid={invalid.email} onChange={(value) => onChange("email", value)} />
+      <div className="sm:col-span-2">
+        <button type="button" className="text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4" aria-expanded={details} onClick={() => setDetails((open) => !open)}>
+          {details ? copy.detailsHide : copy.detailsShow}
+        </button>
+        {details ? (
+          <div className="mt-3 border border-xinergy-charcoal/10 bg-white p-4 text-sm leading-relaxed text-xinergy-slate">
+            {CONSENT_DETAILS[lang].map((section) => (
+              <section key={section.title} className="mb-4 last:mb-0">
+                <h2 className="font-display text-base text-xinergy-charcoal">{section.title}</h2>
+                <p className="mt-1">{section.body}</p>
+              </section>
+            ))}
+          </div>
+        ) : null}
+      </div>
       {CONSENTS.map((item) => (
         <label key={item.id} id={`q-${item.id}`} className={`flex gap-3 border px-4 py-3 sm:col-span-2 ${invalid[item.id] ? "border-red-700" : "border-xinergy-charcoal/15"}`}>
           <input type="checkbox" className="mt-1" checked={draft[item.id] === true} onChange={(event) => onChange(item.id, event.target.checked)} />
@@ -394,10 +406,9 @@ function Contact({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft;
 
 function Profile({ lang, copy, draft, invalid, onChange }: { lang: Lang; copy: (typeof ui)[Lang]; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
   const countries = list(draft.paises);
-  const rol = String(draft.rol || "");
   return (
     <div className="grid gap-5">
-      <SelectField id="rol" label={lang === "en" ? "Role" : lang === "pt" ? "Papel" : "Rol"} options={ROLES} lang={lang} value={rol} invalid={invalid.rol} onChange={(value) => onChange("rol", value)} />
+      <SelectField id="rol" label={lang === "en" ? "Role" : lang === "pt" ? "Papel" : "Rol"} options={ROLES} lang={lang} value={String(draft.rol || "")} invalid={invalid.rol} onChange={(value) => onChange("rol", value)} />
       <fieldset id="q-alcance">
         <legend className="mb-2 font-semibold">{lang === "en" ? "Scope" : lang === "pt" ? "Escopo" : "Alcance"}</legend>
         <div className="grid gap-2">
@@ -430,12 +441,6 @@ function Profile({ lang, copy, draft, invalid, onChange }: { lang: Lang; copy: (
       {countries.includes("otro") ? <Field id="pais_detalle" label={copy.countryDetail} value={String(draft.pais_detalle || "")} invalid={invalid.pais_detalle} onChange={(value) => onChange("pais_detalle", value)} /> : null}
       <SelectField id="rubro" label={lang === "en" ? "Industry" : lang === "pt" ? "Indústria" : "Industria"} options={INDUSTRIES} lang={lang} value={String(draft.rubro || "")} invalid={invalid.rubro} onChange={(value) => onChange("rubro", value)} />
       {draft.rubro === "otra" ? <Field id="rubro_detalle" label={copy.industryDetail} value={String(draft.rubro_detalle || "")} invalid={invalid.rubro_detalle} onChange={(value) => onChange("rubro_detalle", value)} /> : null}
-      {rol === "ceo" || rol === "cfo" || rol === "otro" ? (
-        <label id="q-ruta_operativa" className={`flex gap-3 border px-4 py-3 ${invalid.ruta_operativa ? "border-red-700" : "border-xinergy-charcoal/15"}`}>
-          <input type="checkbox" className="mt-1" checked={draft.ruta_operativa === true} onChange={(event) => onChange("ruta_operativa", event.target.checked)} />
-          <span><span className="block font-semibold">{copy.expand}</span><span className="mt-1 block text-sm text-xinergy-slate">{copy.expandNote}</span></span>
-        </label>
-      ) : null}
     </div>
   );
 }
