@@ -8,24 +8,31 @@ import { ExecutiveBriefPanel } from "@/components/admin/ExecutiveBrief";
 import type { ZoomSheet } from "@/lib/surveys/chart-zoom";
 import { EVAL_INCLUDED, EVAL_ISOLATED, type Evaluacion } from "@/lib/surveys/evaluacion";
 import type { StoredBrief } from "@/lib/surveys/executive";
-import { CAPABILITIES, INITIATIVE_COPY } from "@/lib/surveys/radar-b/instrument";
+import { CAPABILITIES, COUNTRIES, INITIATIVE_COPY } from "@/lib/surveys/radar-b/instrument";
 import { SCENARIOS } from "@/lib/surveys/radar-b/engine";
 import { dimensionName, industryName, initiativeName, percent, roleName, type Benchmark, type PersonReport } from "@/lib/surveys/radar-b/report";
 import { capabilityZoom, peopleZoom, portfolioZoom, priorityZoom } from "@/lib/surveys/radar-b/zoom";
 
 const MACROS = ["Eficiencia y valor financiero", "Riesgo, sostenibilidad y control", "Transformación y capacidades"];
 
+const dateFormat = new Intl.DateTimeFormat("es-CL", {
+  dateStyle: "medium",
+  timeStyle: "short",
+  timeZone: "America/Santiago",
+});
+
 export function RadarDeskB({ people, benchmark, publicUrl, verified, brief }: { people: PersonReport[]; benchmark: Benchmark; publicUrl: string; verified: boolean; brief: StoredBrief | null }) {
   const router = useRouter();
-  const [view, setView] = useState<"respuestas" | "analisis">("analisis");
-  const [open, setOpen] = useState<string | null>(people[0]?.id ?? null);
+  const [view, setView] = useState<"respuestas" | "analisis">("respuestas");
+  const [selected, setSelected] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [zoom, setZoom] = useState<ZoomSheet | null>(null);
   const closeZoom = useCallback(() => setZoom(null), []);
-  const isolated = people.filter((person) => !person.included).length;
   const included = people.filter((person) => person.included);
+  const listed = [...people].sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+  const person = listed.find((item) => item.id === selected) ?? null;
 
   async function setEvaluacion(id: string, evaluacion: Evaluacion) {
     setBusy(id);
@@ -51,43 +58,149 @@ export function RadarDeskB({ people, benchmark, publicUrl, verified, brief }: { 
         Prioridades por comparaciones, capacidad con anclajes, brecha hacia nivel 4 y portafolios enumerados. La matriz de impacto es de demostración: no es una calibración ni un ahorro estimado.
         {verified ? " El ejemplo numérico de la especificación cuadra con este motor." : ""}
       </p>
+      <p className="mt-3 text-sm text-xinergy-slate">{sampleLine(people.length, included.length)} {benchmark.companies} empresas en el benchmark operacional.</p>
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <button type="button" className="btn-secondary" onClick={() => { navigator.clipboard.writeText(publicUrl).then(() => setCopied(true)); }}>{copied ? "Enlace copiado" : "Copiar enlace de la encuesta"}</button>
-        <a className="btn-secondary" href="/api/admin/surveys/radar-compras-2027-b/export">Exportar Excel</a>
-        <StudyDownload href="/api/admin/surveys/radar-compras-2027-b/informe" />
-        <span className="text-sm text-xinergy-slate">{people.length} respuestas · {isolated} aisladas · {benchmark.companies} empresas en el benchmark operacional</span>
       </div>
       {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
       <div className="mt-6 flex gap-2">
-        {(["analisis", "respuestas"] as const).map((item) => (
-          <button key={item} type="button" onClick={() => setView(item)} className={`border px-4 py-2 text-sm ${view === item ? "border-xinergy-charcoal bg-xinergy-charcoal text-white" : "border-xinergy-charcoal/15"}`}>
-            {item === "analisis" ? "Análisis" : "Quién respondió"}
-          </button>
-        ))}
+        <Tab on={view === "respuestas"} onClick={() => { setView("respuestas"); setSelected(null); }}>Quién respondió</Tab>
+        <Tab on={view === "analisis"} onClick={() => { setView("analisis"); setSelected(null); }}>Análisis al momento</Tab>
       </div>
-      {view === "analisis" ? <Analysis people={people} benchmark={benchmark} brief={brief} included={included} onZoom={setZoom} /> : (
-        <div className="mt-6 flex flex-col gap-4">
-          {people.length === 0 ? <p className="text-xinergy-slate">Todavía no hay respuestas en esta opción.</p> : null}
-          {people.map((person) => (
-            <article key={person.id} className="border border-xinergy-charcoal/10 bg-white p-5">
-              <button type="button" className="w-full text-left" onClick={() => setOpen(open === person.id ? null : person.id)}>
-                <p className="font-display text-xl">{person.empresa}</p>
-                <p className="mt-1 text-sm text-xinergy-slate">{person.nombre} {person.apellido} · {roleName(person.rol)} · {person.pais} · {industryName(person.rubro)}</p>
-                <p className="mt-1 text-sm">{person.included ? "Incluido en análisis" : "Aislado de la evaluación"} · {person.ahpClass ?? "AHP incompleto"} · {person.motor === "no-disponible" ? "Sin portafolio" : person.motor === "exploratorio" ? "Portafolio exploratorio" : "Portafolio de demostración"}</p>
-              </button>
-              <div className="mt-3">
-                {person.included ? (
-                  <button type="button" className="text-sm underline" disabled={busy === person.id} onClick={() => setEvaluacion(person.id, EVAL_ISOLATED)}>Aislar de la evaluación</button>
-                ) : (
-                  <button type="button" className="text-sm underline" disabled={busy === person.id} onClick={() => setEvaluacion(person.id, EVAL_INCLUDED)}>Incluir en análisis</button>
-                )}
-              </div>
-              {open === person.id ? <PersonDetail person={person} /> : null}
-            </article>
-          ))}
+      {view === "respuestas" ? (
+        <div className="mt-6">
+          <a className="btn-secondary" href="/api/admin/surveys/radar-compras-2027-b/export">Exportar Excel</a>
+          {person ? (
+            <PersonAnswer person={person} busy={busy === person.id} onBack={() => setSelected(null)} onEvaluate={setEvaluacion} />
+          ) : (
+            <ResponseTable responses={listed} busyId={busy} onOpen={setSelected} onEvaluate={setEvaluacion} />
+          )}
+        </div>
+      ) : (
+        <div className="mt-6 flex flex-col gap-6">
+          <StudyDownload href="/api/admin/surveys/radar-compras-2027-b/informe" />
+          <Analysis people={people} benchmark={benchmark} brief={brief} included={included} onZoom={setZoom} />
         </div>
       )}
       <ChartZoom sheet={zoom} onClose={closeZoom} />
+    </div>
+  );
+}
+
+function Tab({ on, onClick, children }: { on: boolean; onClick: () => void; children: string }) {
+  return (
+    <button type="button" onClick={onClick} className={`border px-4 py-2 text-sm font-semibold ${on ? "border-xinergy-charcoal bg-xinergy-charcoal text-white" : "border-xinergy-charcoal/15 text-xinergy-slate"}`}>
+      {children}
+    </button>
+  );
+}
+
+function sampleLine(total: number, includedCount: number) {
+  if (!total) return "Todavía no hay respuestas.";
+  const received = total === 1 ? "Hay 1 respuesta." : `Hay ${total} respuestas.`;
+  const aside = total - includedCount;
+  if (!aside) return `${received} Todas entran al análisis.`;
+  return `${received} ${aside === 1 ? "1 está aislada de la evaluación." : `${aside} están aisladas de la evaluación.`}`;
+}
+
+function countryName(code: string) {
+  return COUNTRIES.find((item) => item.v === code)?.es ?? code;
+}
+
+function ResponseTable({
+  responses,
+  busyId,
+  onOpen,
+  onEvaluate,
+}: {
+  responses: PersonReport[];
+  busyId: string | null;
+  onOpen: (id: string) => void;
+  onEvaluate: (id: string, evaluacion: Evaluacion) => void;
+}) {
+  if (!responses.length) {
+    return <p className="mt-8 text-xinergy-slate">Todavía no hay respuestas. Cuando alguien termine la encuesta, su nombre queda en esta lista y se abre el detalle de lo que contestó.</p>;
+  }
+  return (
+    <div className="mt-6 overflow-x-auto border border-xinergy-charcoal/10 bg-white">
+      <table className="w-full min-w-[40rem] text-sm">
+        <thead className="text-left text-xs uppercase tracking-wide text-xinergy-slate">
+          <tr>
+            <th className="p-3 font-medium">Fecha</th>
+            <th className="p-3 font-medium">Persona</th>
+            <th className="p-3 font-medium">Empresa</th>
+            <th className="p-3 font-medium">País</th>
+            <th className="p-3 font-medium">Rol</th>
+            <th className="p-3 font-medium">Evaluación</th>
+          </tr>
+        </thead>
+        <tbody>
+          {responses.map((item) => (
+            <tr key={item.id} className="border-t border-xinergy-charcoal/10">
+              <td className="p-3 whitespace-nowrap">{dateFormat.format(new Date(item.createdAt))}</td>
+              <td className="p-3">
+                <button type="button" className="text-left font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4" onClick={() => onOpen(item.id)}>
+                  {item.nombre} {item.apellido}
+                </button>
+                <span className="mt-0.5 block text-xinergy-slate">{item.email}</span>
+              </td>
+              <td className="p-3">{item.empresa}</td>
+              <td className="p-3">{countryName(item.pais)}</td>
+              <td className="p-3">{roleName(item.rol)}</td>
+              <td className="p-3">
+                <button
+                  type="button"
+                  className="text-left text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4 disabled:opacity-60"
+                  disabled={busyId === item.id}
+                  onClick={() => onEvaluate(item.id, item.included ? EVAL_ISOLATED : EVAL_INCLUDED)}
+                >
+                  {busyId === item.id ? "Guardando…" : item.included ? "Aislar de la evaluación" : "Incluir en análisis"}
+                </button>
+                <span className="mt-1 block text-xs text-xinergy-slate">{item.included ? "Incluido en análisis" : "Aislado de la evaluación"}</span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function PersonAnswer({
+  person,
+  busy,
+  onBack,
+  onEvaluate,
+}: {
+  person: PersonReport;
+  busy: boolean;
+  onBack: () => void;
+  onEvaluate: (id: string, evaluacion: Evaluacion) => void;
+}) {
+  return (
+    <div className="mt-6">
+      <button type="button" className="text-sm text-xinergy-slate underline" onClick={onBack}>
+        Volver al listado
+      </button>
+      <h2 className="mt-3 font-display text-2xl text-xinergy-charcoal">
+        {person.nombre} {person.apellido}
+      </h2>
+      <p className="mt-1 text-sm text-xinergy-slate">
+        {person.empresa} · {dateFormat.format(new Date(person.createdAt))} · {countryName(person.pais)} · {roleName(person.rol)} · {industryName(person.rubro)}
+      </p>
+      <p className="mt-1 text-sm text-xinergy-slate">{person.email}</p>
+      <div className="mt-4">
+        <button
+          type="button"
+          className="text-left text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4 disabled:opacity-60"
+          disabled={busy}
+          onClick={() => onEvaluate(person.id, person.included ? EVAL_ISOLATED : EVAL_INCLUDED)}
+        >
+          {busy ? "Guardando…" : person.included ? "Aislar de la evaluación" : "Incluir en análisis"}
+        </button>
+        <span className="mt-1 block text-xs text-xinergy-slate">{person.included ? "Incluido en análisis" : "Aislado de la evaluación"}</span>
+      </div>
+      <PersonDetail person={person} />
     </div>
   );
 }
@@ -183,13 +296,13 @@ function Analysis({ people, benchmark, brief, included, onZoom }: { people: Pers
 }
 
 function PersonDetail({ person }: { person: PersonReport }) {
+  const consistency = person.ahp ? person.ahp.maxCr.toFixed(3).replace(".", ",") : "—";
   return (
-    <div className="mt-4 border-t border-xinergy-charcoal/10 pt-4 text-sm">
-      <p>{person.email}</p>
-      <p className="mt-2 text-xinergy-slate">{person.motorReason}</p>
+    <div className="mt-6 border-t border-xinergy-charcoal/10 pt-4 text-sm">
+      <p className="text-xinergy-slate">{person.motorReason}</p>
       {person.weights ? (
         <div className="mt-4">
-          <Bars title={`Prioridades · consistencia máxima ${person.ahp ? (person.ahp.maxCr * 100).toFixed(1).replace(".", ",") : "—"}`} rows={CAPABILITIES.map((item, index) => ({ name: dimensionName(item.id), value: person.weights?.[index] ?? 0 }))} />
+          <Bars title={`Prioridades · consistencia ${consistency}`} rows={CAPABILITIES.map((item, index) => ({ name: dimensionName(item.id), value: person.weights?.[index] ?? 0 }))} />
         </div>
       ) : null}
       <div className="mt-4 grid gap-2 sm:grid-cols-2">
