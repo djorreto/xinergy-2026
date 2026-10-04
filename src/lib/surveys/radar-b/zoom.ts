@@ -1,4 +1,5 @@
 import { zoomWho, type ZoomSheet } from "@/lib/surveys/chart-zoom";
+import type { InitiativeId } from "@/lib/surveys/radar-b/engine";
 import { CAPABILITIES, INITIATIVE_COPY } from "@/lib/surveys/radar-b/instrument";
 import { percent, type PersonReport } from "@/lib/surveys/radar-b/report";
 
@@ -38,15 +39,15 @@ export function capabilityZoom(index: number, people: PersonReport[]): ZoomSheet
 
 export function portfolioZoom(initiativeIndex: number, people: PersonReport[], scenarioId: "lean" | "balanced" | "transformational" = "balanced"): ZoomSheet {
   const name = INITIATIVE_COPY[initiativeIndex]?.name.es ?? "Iniciativa";
-  const id = INITIATIVE_COPY[initiativeIndex]?.id ?? "";
+  const id = INITIATIVE_COPY[initiativeIndex]?.id as InitiativeId | undefined;
   return peopleZoom(
     name,
     `Escenario ${scenarioId}, con la matriz de demostración. Aquí está quién la tiene en el portafolio calculado y quién ya la tiene aprobada.`,
     people,
     (person) => {
       const scenario = person.scenarios.find((item) => item.id === scenarioId);
-      const selected = scenario?.portfolio?.ids.includes(id) ? "entra en el portafolio" : "no entra";
-      const approved = person.agenda[id] === "2" ? "aprobada" : "sin aprobación nueva";
+      const selected = id && scenario?.portfolio?.ids.includes(id) ? "entra en el portafolio" : "no entra";
+      const approved = id && person.agenda[id] === "2" ? "aprobada" : "sin aprobación nueva";
       return `${selected} · ${approved}`;
     },
   );

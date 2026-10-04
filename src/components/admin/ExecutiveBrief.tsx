@@ -74,7 +74,7 @@ export function ExecutiveBriefPanel({
       ) : null}
       {error ? <p className="mt-3 text-sm font-medium text-red-700">{error}</p> : null}
 
-      {charts ?? <ExecutiveCharts people={responses as ZoomPerson[]} onZoom={onZoom} />}
+      {charts ?? <ExecutiveCharts people={responses as unknown as ZoomPerson[]} onZoom={onZoom} />}
 
       <div className="mt-8 border-t-2 border-xinergy-orange pt-4">
         <h3 className="font-display text-lg text-xinergy-charcoal">La muestra, hasta ahora</h3>
