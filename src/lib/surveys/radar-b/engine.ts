@@ -75,7 +75,14 @@ export type Portfolio = {
   disjointClosure: number | null;
 };
 
-export function optimizePortfolio(weights: readonly number[], gaps: readonly number[], available: readonly boolean[], dataReady: 0 | 1, limits: Limits): Portfolio {
+export function optimizePortfolio(
+  weights: readonly number[],
+  gaps: readonly number[],
+  available: readonly boolean[],
+  dataReady: 0 | 1,
+  limits: Limits,
+  impact: readonly (readonly number[])[] = IMPACT,
+): Portfolio {
   const base = dot(weights, gaps);
   let bestGap = Number.POSITIVE_INFINITY;
   const feasible: { mask: number; gap: number; cost: number; effort: number; count: number }[] = [];
@@ -99,7 +106,7 @@ export function optimizePortfolio(weights: readonly number[], gaps: readonly num
     if (!allowed || cost > limits.budget || effort > limits.effort || count > limits.maxCount) continue;
     if (dataReady === 0 && selected[I6] && !selected[I5]) continue;
 
-    const remaining = gaps.map((gap, dimension) => gap * selected.reduce((product, on, index) => product * (on ? 1 - IMPACT[index][dimension] : 1), 1));
+    const remaining = gaps.map((gap, dimension) => gap * selected.reduce((product, on, index) => product * (on ? 1 - impact[index][dimension] : 1), 1));
     const gap = dot(weights, remaining);
     feasible.push({ mask, gap, cost, effort, count });
     if (gap < bestGap) bestGap = gap;

@@ -218,6 +218,10 @@ function fits(ids: InitiativeId[], availability: ReturnType<typeof availableOf>,
   return { ok: true, reason: "" };
 }
 
+export function availabilityOf(agenda: Record<string, string>, datos: string) {
+  return availableOf(agenda, datos);
+}
+
 function availableOf(agenda: Record<string, string>, datos: string) {
   const statuses = INITIATIVES.map((id) => agenda[id] ?? "");
   const statusUnknown = statuses.some((status) => !STATUS_OK.has(status) || status === "ns" || status === "");
