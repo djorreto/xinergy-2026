@@ -4,6 +4,7 @@ import { createAdminClient, supabaseConfigured } from "@/lib/supabase/admin";
 import { writeExecutiveBrief } from "@/lib/surveys/executive-ai";
 import { buildExecutiveFacts, type FactAnswer } from "@/lib/surveys/executive-facts";
 import { briefIsStale, type StoredBrief } from "@/lib/surveys/executive";
+import { isIncluded } from "@/lib/surveys/evaluacion";
 import { SURVEY_SLUG } from "@/lib/surveys/radar-2027";
 
 type BriefRow = {
@@ -35,11 +36,11 @@ export async function POST() {
 
   const { data: rows } = await admin
     .from("web_survey_responses")
-    .select("created_at, language, pais, rol, rol_grupo, antiguedad, rubro, rubro_grupo, company, answers")
+    .select("created_at, language, pais, rol, rol_grupo, antiguedad, rubro, rubro_grupo, company, answers, evaluacion")
     .eq("survey_id", survey.id)
     .order("created_at", { ascending: false });
 
-  const responses: FactAnswer[] = (rows ?? []).map((row) => ({
+  const responses: FactAnswer[] = (rows ?? []).filter((row) => isIncluded(row.evaluacion)).map((row) => ({
     createdAt: row.created_at,
     language: row.language,
     pais: row.pais,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { ExecutiveBriefPanel } from "@/components/admin/ExecutiveBrief";
 import { AhpPanel } from "@/components/survey/AhpPanel";
 import { aggregateAhp, analyzeAhp } from "@/lib/surveys/ahp";
@@ -19,6 +20,7 @@ import {
   type Question,
 } from "@/lib/surveys/radar-2027";
 import type { StoredBrief } from "@/lib/surveys/executive";
+import { EVAL_INCLUDED, EVAL_ISOLATED, isIncluded, type Evaluacion } from "@/lib/surveys/evaluacion";
 
 export type RadarAnswer = {
   id: string;
@@ -40,6 +42,9 @@ export type RadarAnswer = {
   consents: Record<string, boolean>;
   company: Record<string, unknown>;
   answers: Record<string, unknown>;
+  evaluacion: Evaluacion;
+  evaluacionAt: string | null;
+  evaluacionPor: string | null;
 };
 
 const dateFormat = new Intl.DateTimeFormat("es-CL", {
@@ -49,14 +54,53 @@ const dateFormat = new Intl.DateTimeFormat("es-CL", {
 });
 
 export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAnswer[]; publicUrl: string; brief: StoredBrief | null }) {
+  const router = useRouter();
+  const [rows, setRows] = useState(responses);
+  const [known, setKnown] = useState(responses);
   const [view, setView] = useState<"respuestas" | "analisis">("respuestas");
   const [selected, setSelected] = useState<string | null>(null);
   const [pais, setPais] = useState("todos");
   const [rol, setRol] = useState("todos");
   const [rubro, setRubro] = useState("todos");
   const [copied, setCopied] = useState(false);
-  const person = responses.find((item) => item.id === selected) ?? null;
-  const filtered = responses.filter((item) => (pais === "todos" || item.pais === pais) && (rol === "todos" || item.rol === rol) && (rubro === "todos" || item.rubro === rubro));
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [evalError, setEvalError] = useState("");
+  if (responses !== known) {
+    setKnown(responses);
+    setRows(responses);
+  }
+  const person = rows.find((item) => item.id === selected) ?? null;
+  const included = rows.filter((item) => isIncluded(item.evaluacion));
+  const filtered = included.filter((item) => (pais === "todos" || item.pais === pais) && (rol === "todos" || item.rol === rol) && (rubro === "todos" || item.rubro === rubro));
+
+  async function setEvaluacion(id: string, evaluacion: Evaluacion) {
+    setBusyId(id);
+    setEvalError("");
+    try {
+      const response = await fetch("/api/admin/surveys/radar-compras-2027/evaluacion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, evaluacion }),
+      });
+      const payload = (await response.json()) as { ok?: boolean; evaluacion?: Evaluacion; evaluacionAt?: string | null; evaluacionPor?: string | null };
+      if (!response.ok || !payload.ok || !payload.evaluacion) {
+        setEvalError("No se pudo actualizar la evaluación. Intenta otra vez.");
+        setBusyId(null);
+        return;
+      }
+      setRows((current) =>
+        current.map((item) =>
+          item.id === id
+            ? { ...item, evaluacion: payload.evaluacion ?? evaluacion, evaluacionAt: payload.evaluacionAt ?? item.evaluacionAt, evaluacionPor: payload.evaluacionPor ?? item.evaluacionPor }
+            : item,
+        ),
+      );
+      router.refresh();
+    } catch {
+      setEvalError("No se pudo actualizar la evaluación. Intenta otra vez.");
+    }
+    setBusyId(null);
+  }
 
   async function copyLink() {
     try {
@@ -86,7 +130,7 @@ export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAns
         </button>
       </div>
       <p className="mt-3 text-sm text-xinergy-slate">
-        Este enlace no está en el menú del sitio ni en los buscadores. {responses.length === 1 ? "Hay 1 respuesta." : `Hay ${responses.length} respuestas.`}
+        Este enlace no está en el menú del sitio ni en los buscadores. {sampleLine(rows.length, included.length)}
       </p>
 
       <div className="mt-6 flex gap-2">
@@ -103,7 +147,12 @@ export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAns
           <a className="btn-secondary" href="/api/admin/surveys/radar-compras-2027/export?tipo=respuestas">
             Exportar Excel
           </a>
-          {person ? <AnswerDetail person={person} onBack={() => setSelected(null)} /> : <ResponseTable responses={responses} onOpen={setSelected} />}
+          {evalError ? <p className="mt-3 text-sm font-medium text-red-700">{evalError}</p> : null}
+          {person ? (
+            <AnswerDetail person={person} busy={busyId === person.id} onBack={() => setSelected(null)} onEvaluate={setEvaluacion} />
+          ) : (
+            <ResponseTable responses={rows} busyId={busyId} onOpen={setSelected} onEvaluate={setEvaluacion} />
+          )}
         </div>
       ) : (
         <div className="mt-6 flex flex-col gap-10">
@@ -115,17 +164,17 @@ export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAns
               Exportar PDF preliminar
             </a>
           </div>
-          <ExecutiveBriefPanel initial={brief} responses={responses} />
-          {responses.length ? (
+          <ExecutiveBriefPanel initial={brief} responses={included} />
+          {included.length ? (
             <div>
               <p className="label-editorial">Detalle del cálculo</p>
               <h2 className="mt-2 font-display text-2xl text-xinergy-charcoal">Pregunta por pregunta</h2>
               <p className="mt-2 max-w-3xl text-sm leading-relaxed text-xinergy-slate">
-                Aquí queda el modelo completo: matrices, consistencia y cada pregunta. Los filtros solo mueven este detalle. La vista ejecutiva de arriba usa todas las respuestas.
+                Aquí queda el modelo completo: matrices, consistencia y cada pregunta. Los filtros solo mueven este detalle. La vista ejecutiva y este detalle usan las respuestas incluidas en el análisis.
               </p>
             </div>
           ) : null}
-          <Analysis responses={filtered} all={responses} pais={pais} rol={rol} rubro={rubro} onPais={setPais} onRol={setRol} onRubro={setRubro} />
+          <Analysis responses={filtered} all={included} received={rows.length} pais={pais} rol={rol} rubro={rubro} onPais={setPais} onRol={setRol} onRubro={setRubro} />
         </div>
       )}
     </div>
@@ -140,7 +189,56 @@ function Tab({ on, onClick, children }: { on: boolean; onClick: () => void; chil
   );
 }
 
-function ResponseTable({ responses, onOpen }: { responses: RadarAnswer[]; onOpen: (id: string) => void }) {
+function EvaluationControl({
+  person,
+  busy,
+  onEvaluate,
+}: {
+  person: RadarAnswer;
+  busy: boolean;
+  onEvaluate: (id: string, evaluacion: Evaluacion) => void;
+}) {
+  const isolated = !isIncluded(person.evaluacion);
+  return (
+    <div className="flex max-w-xs flex-col items-start gap-2">
+      <span className={isolated ? "border border-xinergy-charcoal bg-xinergy-ivory px-2 py-1 text-xs font-semibold text-xinergy-charcoal" : "text-xs text-xinergy-slate"}>{person.evaluacion}</span>
+      {person.evaluacionAt ? (
+        <span className="text-xs text-xinergy-slate">
+          {dateFormat.format(new Date(person.evaluacionAt))}
+          {person.evaluacionPor ? ` · ${person.evaluacionPor}` : ""}
+        </span>
+      ) : null}
+      <button
+        type="button"
+        className="text-left text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4 disabled:opacity-60"
+        disabled={busy}
+        onClick={() => onEvaluate(person.id, isolated ? EVAL_INCLUDED : EVAL_ISOLATED)}
+      >
+        {busy ? "Guardando…" : isolated ? "Incluir en análisis" : "Aislar de la evaluación"}
+      </button>
+    </div>
+  );
+}
+
+function sampleLine(total: number, includedCount: number) {
+  if (!total) return "Todavía no hay respuestas.";
+  const received = total === 1 ? "Hay 1 respuesta." : `Hay ${total} respuestas.`;
+  const isolated = total - includedCount;
+  if (!isolated) return `${received} Todas entran al análisis.`;
+  return `${received} ${isolated === 1 ? "1 está aislada de la evaluación." : `${isolated} están aisladas de la evaluación.`}`;
+}
+
+function ResponseTable({
+  responses,
+  busyId,
+  onOpen,
+  onEvaluate,
+}: {
+  responses: RadarAnswer[];
+  busyId: string | null;
+  onOpen: (id: string) => void;
+  onEvaluate: (id: string, evaluacion: Evaluacion) => void;
+}) {
   if (!responses.length) {
     return <p className="mt-8 text-xinergy-slate">Todavía no hay respuestas. Cuando alguien termine la encuesta, su nombre queda en esta lista y se abre el detalle de lo que contestó.</p>;
   }
@@ -154,6 +252,7 @@ function ResponseTable({ responses, onOpen }: { responses: RadarAnswer[]; onOpen
             <th className="p-3 font-medium">Empresa</th>
             <th className="p-3 font-medium">País</th>
             <th className="p-3 font-medium">Rol</th>
+            <th className="p-3 font-medium">Evaluación</th>
           </tr>
         </thead>
         <tbody>
@@ -169,6 +268,9 @@ function ResponseTable({ responses, onOpen }: { responses: RadarAnswer[]; onOpen
               <td className="p-3">{item.empresa}</td>
               <td className="p-3">{labelOf("pais", item.pais)}</td>
               <td className="p-3">{labelOf("rol", item.rol)}</td>
+              <td className="p-3">
+                <EvaluationControl person={item} busy={busyId === item.id} onEvaluate={onEvaluate} />
+              </td>
             </tr>
           ))}
         </tbody>
@@ -177,7 +279,17 @@ function ResponseTable({ responses, onOpen }: { responses: RadarAnswer[]; onOpen
   );
 }
 
-function AnswerDetail({ person, onBack }: { person: RadarAnswer; onBack: () => void }) {
+function AnswerDetail({
+  person,
+  busy,
+  onBack,
+  onEvaluate,
+}: {
+  person: RadarAnswer;
+  busy: boolean;
+  onBack: () => void;
+  onEvaluate: (id: string, evaluacion: Evaluacion) => void;
+}) {
   const ahp = analyzeAhp(recordOf(person.answers.prioridades_ahp));
   return (
     <div className="mt-6">
@@ -190,6 +302,9 @@ function AnswerDetail({ person, onBack }: { person: RadarAnswer; onBack: () => v
       <p className="mt-1 text-sm text-xinergy-slate">
         {person.empresa} · {dateFormat.format(new Date(person.createdAt))} · {person.language === "pt" ? "Portugués" : person.language === "en" ? "Inglés" : "Español"}
       </p>
+      <div className="mt-4">
+        <EvaluationControl person={person} busy={busy} onEvaluate={onEvaluate} />
+      </div>
       <Block title="Registro">
         {REG.map((question) => (
           <Line key={question.id} label={tx(question.label, "es")} value={registrationValue(person, question.id)} />
@@ -230,6 +345,7 @@ function AnswerDetail({ person, onBack }: { person: RadarAnswer; onBack: () => v
 function Analysis({
   responses,
   all,
+  received,
   pais,
   rol,
   rubro,
@@ -239,6 +355,7 @@ function Analysis({
 }: {
   responses: RadarAnswer[];
   all: RadarAnswer[];
+  received: number;
   pais: string;
   rol: string;
   rubro: string;
@@ -247,13 +364,21 @@ function Analysis({
   onRubro: (value: string) => void;
 }) {
   const ahp = useMemo(() => aggregateAhp(responses.map((item) => recordOf(item.answers.prioridades_ahp)).filter((item): item is Record<string, string> => item != null)), [responses]);
-  if (!all.length) {
+  if (!received) {
     return (
       <div className="mt-6 max-w-2xl text-sm leading-relaxed text-xinergy-slate">
         <p className="font-semibold text-xinergy-charcoal">El análisis está vacío porque todavía no hay respuestas.</p>
         <p className="mt-2">
           Con la primera respuesta aparecen la priorización AHP (pesos que suman 100%, ranking con barras y consistencia), los porcentajes de cada pregunta y los cortes por país, rol y rubro.
         </p>
+      </div>
+    );
+  }
+  if (!all.length) {
+    return (
+      <div className="mt-6 max-w-2xl text-sm leading-relaxed text-xinergy-slate">
+        <p className="font-semibold text-xinergy-charcoal">El análisis no tiene respuestas incluidas.</p>
+        <p className="mt-2">Las que llegaron están aisladas de la evaluación. Siguen en Quién respondió y se pueden volver a incluir.</p>
       </div>
     );
   }

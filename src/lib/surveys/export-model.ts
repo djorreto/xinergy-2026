@@ -38,6 +38,9 @@ export type ExportPerson = {
   consents: Record<string, boolean>;
   company: Record<string, unknown>;
   answers: Record<string, unknown>;
+  evaluacion: string;
+  evaluacionAt: string | null;
+  evaluacionPor: string | null;
 };
 
 const when = new Intl.DateTimeFormat("es-CL", {
@@ -94,6 +97,9 @@ function sectionName(id: string) {
 export function responseTable(people: ExportPerson[]) {
   const columns = [
     "Fecha",
+    "Evaluación",
+    "Evaluación actualizada",
+    "Evaluación por",
     "Idioma",
     "Nombre",
     "Apellido",
@@ -182,6 +188,9 @@ export function responseTable(people: ExportPerson[]) {
   columns.push(...extras.map((column) => column.header));
   const rows = people.map((person) => [
     when.format(new Date(person.createdAt)),
+    person.evaluacion,
+    person.evaluacionAt ? when.format(new Date(person.evaluacionAt)) : "",
+    person.evaluacionPor ?? "",
     languageName(person.language),
     person.nombre,
     person.apellido,
@@ -289,13 +298,14 @@ function questionBlocks(people: ExportPerson[]): AnalysisBlock[] {
   return blocks;
 }
 
-export function buildAnalysis(people: ExportPerson[], brief: StoredBrief | null) {
+export function buildAnalysis(people: ExportPerson[], brief: StoredBrief | null, isolated = 0) {
   const ahp = aggregateAhp(people.map((person) => recordOf(person.answers.prioridades_ahp)).filter((item): item is Record<string, string> => Boolean(item)));
   const generated = when.format(new Date());
   const parameters: [string, string][] = [
     ["Instrumento", SURVEY_TITLE],
     ["Versión", SURVEY_VERSION],
-    ["Respuestas", String(people.length)],
+    ["Respuestas incluidas", String(people.length)],
+    ["Aisladas de la evaluación", String(isolated)],
     ["Archivo generado", generated],
     ["Etiquetas", "Español, idioma fuente del estudio"],
     ["Método", "AHP jerárquico. Escala de Saaty 1, 3, 5, 7 y 9. Si la preferencia apunta a la derecha, se guarda el recíproco 1/3, 1/5, 1/7 o 1/9."],
@@ -303,7 +313,7 @@ export function buildAnalysis(people: ExportPerson[], brief: StoredBrief | null)
     ["Peso global", "Peso de la macroprioridad × peso local dentro de esa macroprioridad."],
     ["Consistencia", "CR = CI/RI. Referencia 0,10 en matrices de 3×3. Las matrices de 2×2 son consistentes por construcción."],
     ["Publicación", "Un corte se publica con al menos 5 respuestas. Este archivo muestra el corte actual, aunque haya menos."],
-    ["Alcance", "Todas las respuestas recibidas. No aplica el filtro de país, rol o rubro de la pantalla."],
+    ["Alcance", "Solo las respuestas incluidas en el análisis. Las aisladas se conservan en el Excel de respuestas y no entran a este cálculo. No aplica el filtro de país, rol o rubro de la pantalla."],
     ["Relato preliminar", brief ? `Generado el ${when.format(new Date(brief.generatedAt))} con ${brief.responseCount} respuestas.` : "Todavía no se ha generado."],
   ];
   const sample = [

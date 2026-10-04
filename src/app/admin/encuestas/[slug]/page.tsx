@@ -4,6 +4,7 @@ import { RadarDesk, type RadarAnswer } from "@/components/admin/RadarDesk";
 import { requireAdminUser } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { StoredBrief } from "@/lib/surveys/executive";
+import { evaluationOf } from "@/lib/surveys/evaluacion";
 import { SURVEY_SLUG } from "@/lib/surveys/radar-2027";
 
 type Row = {
@@ -26,6 +27,9 @@ type Row = {
   consents: Record<string, boolean>;
   company: Record<string, unknown>;
   answers: Record<string, unknown>;
+  evaluacion: string;
+  evaluacion_at: string | null;
+  evaluacion_por: string | null;
 };
 
 export default async function SurveyAdminPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -38,7 +42,7 @@ export default async function SurveyAdminPage({ params }: { params: Promise<{ sl
   const [{ data }, { data: briefRow }] = await Promise.all([
     admin
       .from("web_survey_responses")
-      .select("id, created_at, language, nombre, apellido, email, telefono, linkedin, cargo, empresa, pais, rol, rol_grupo, antiguedad, rubro, rubro_grupo, consents, company, answers")
+      .select("id, created_at, language, nombre, apellido, email, telefono, linkedin, cargo, empresa, pais, rol, rol_grupo, antiguedad, rubro, rubro_grupo, consents, company, answers, evaluacion, evaluacion_at, evaluacion_por")
       .eq("survey_id", survey.id)
       .order("created_at", { ascending: false }),
     admin
@@ -68,6 +72,9 @@ export default async function SurveyAdminPage({ params }: { params: Promise<{ sl
     consents: row.consents ?? {},
     company: row.company ?? {},
     answers: row.answers ?? {},
+    evaluacion: evaluationOf(row.evaluacion),
+    evaluacionAt: row.evaluacion_at,
+    evaluacionPor: row.evaluacion_por,
   }));
 
   const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://xinergy.lat").replace(/\/$/, "");

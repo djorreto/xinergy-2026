@@ -5,6 +5,7 @@ import { analysisPdf } from "@/lib/surveys/export-pdf";
 import { analysisSheets, buildAnalysis, responseTable, type ExportPerson } from "@/lib/surveys/export-model";
 import { workbookBytes } from "@/lib/surveys/export-xlsx";
 import type { StoredBrief } from "@/lib/surveys/executive";
+import { isIncluded } from "@/lib/surveys/evaluacion";
 import { SURVEY_SLUG } from "@/lib/surveys/radar-2027";
 
 function file(bytes: Uint8Array, type: string, filename: string) {
@@ -31,7 +32,7 @@ export async function GET(request: Request) {
   const [{ data: rows }, { data: briefRow }] = await Promise.all([
     admin
       .from("web_survey_responses")
-      .select("created_at, language, nombre, apellido, email, telefono, linkedin, cargo, empresa, pais, rol, rol_grupo, antiguedad, rubro, rubro_grupo, consents, company, answers")
+      .select("created_at, language, nombre, apellido, email, telefono, linkedin, cargo, empresa, pais, rol, rol_grupo, antiguedad, rubro, rubro_grupo, consents, company, answers, evaluacion, evaluacion_at, evaluacion_por")
       .eq("survey_id", survey.id)
       .order("created_at", { ascending: true }),
     admin.from("web_survey_briefs").select("generated_at, response_count, latest_response_at, context, themes").eq("survey_id", survey.id).maybeSingle(),
@@ -56,7 +57,11 @@ export async function GET(request: Request) {
     consents: row.consents ?? {},
     company: row.company ?? {},
     answers: row.answers ?? {},
+    evaluacion: row.evaluacion,
+    evaluacionAt: row.evaluacion_at,
+    evaluacionPor: row.evaluacion_por,
   }));
+  const included = people.filter((person) => isIncluded(person.evaluacion));
   const brief: StoredBrief | null = briefRow
     ? {
         generatedAt: briefRow.generated_at,
@@ -73,7 +78,7 @@ export async function GET(request: Request) {
     return file(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "radar-compras-2027-respuestas.xlsx");
   }
 
-  const model = buildAnalysis(people, brief);
+  const model = buildAnalysis(included, brief, people.length - included.length);
   if (tipo === "analisis") {
     const bytes = await workbookBytes(analysisSheets(model));
     return file(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "radar-compras-2027-analisis.xlsx");

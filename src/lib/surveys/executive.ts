@@ -37,7 +37,7 @@ export function newestResponseAt(responses: { createdAt: string }[]) {
 }
 
 export function briefIsStale(brief: Pick<StoredBrief, "responseCount" | "latestResponseAt"> | null, responses: { createdAt: string }[]) {
-  if (!responses.length) return false;
-  if (!brief) return true;
+  if (!brief) return responses.length > 0;
+  if (!responses.length) return brief.responseCount > 0;
   return brief.responseCount !== responses.length || stamp(brief.latestResponseAt) !== stamp(newestResponseAt(responses));
 }

@@ -55,22 +55,24 @@ export function ExecutiveBriefPanel({
       <p className="label-editorial">Vista ejecutiva · preliminar</p>
       <h2 className="mt-2 font-display text-2xl text-xinergy-charcoal">Lo que diríamos hoy</h2>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-xinergy-slate">
-        Esta es la lectura para el CEO de Xinergy y el esqueleto de lo que después se les cuenta a quienes respondieron. Los gráficos usan todas las respuestas. El texto se escribe una vez y se mantiene hasta que llegue una respuesta nueva.
+        Esta es la lectura para el CEO de Xinergy y el esqueleto de lo que después se les cuenta a quienes respondieron. Los gráficos usan las respuestas incluidas en el análisis. El texto se mantiene hasta que cambie esa muestra.
       </p>
 
       {canWrite ? (
         <button type="button" className="btn-primary mt-5" onClick={generate} disabled={busy}>
           {busy ? "Generando el análisis…" : brief ? "Regenerar análisis preliminar con AI" : "Generar análisis preliminar con AI"}
         </button>
-      ) : brief ? (
+      ) : brief && responses.length ? (
         <p className="mt-4 text-sm text-xinergy-slate">
-          Generado el {dateFormat.format(new Date(brief.generatedAt))}. No hay respuestas nuevas, así que este análisis se mantiene.
+          Generado el {dateFormat.format(new Date(brief.generatedAt))}. La muestra incluida no cambió, así que este análisis se mantiene.
         </p>
+      ) : brief ? (
+        <p className="mt-4 text-sm text-xinergy-charcoal">Ninguna respuesta está incluida en el análisis. Este texto es de la muestra anterior y el cálculo de arriba no lo usa.</p>
       ) : (
-        <p className="mt-4 text-sm text-xinergy-slate">Cuando llegue la primera respuesta se puede generar el análisis preliminar.</p>
+        <p className="mt-4 text-sm text-xinergy-slate">Cuando haya una respuesta incluida se puede generar el análisis preliminar.</p>
       )}
       {brief && stale && responses.length > 0 ? (
-        <p className="mt-3 text-sm text-xinergy-charcoal">Llegó una respuesta nueva desde este análisis. Regenerarlo usa la muestra de ahora.</p>
+        <p className="mt-3 text-sm text-xinergy-charcoal">La muestra incluida cambió desde este análisis. Regenerarlo usa solo las respuestas incluidas.</p>
       ) : null}
       {error ? <p className="mt-3 text-sm font-medium text-red-700">{error}</p> : null}
 
