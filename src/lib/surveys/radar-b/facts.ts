@@ -20,7 +20,7 @@ export const OPTION_B_ASKS: { id: ExecutiveThemeId; ask: string }[] = [
 export function buildOptionBFacts(people: PersonReport[], benchmark: Benchmark) {
   const included = people.filter((person) => person.included);
   const radarCountries = COUNTRIES.filter((item) => item.v !== "otro" && item.v !== "regional");
-  const present = [...new Set(included.map((person) => person.pais))];
+  const present = [...new Set(included.flatMap((person) => person.paises))];
   return {
     respuestasIncluidas: included.length,
     empresasEnElBenchmark: benchmark.companies,

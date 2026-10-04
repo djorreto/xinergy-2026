@@ -402,7 +402,7 @@ export async function studyPdfB(input: { cut: StudyCut; thesis: string; summary:
       [250, 90, 140],
     );
   }
-  write(`Cobertura operacional por país: ${input.cut.coverage.countries.map((row) => `${row.label} ${row.n}`).join(", ") || "sin dato"}. Por industria: ${input.cut.coverage.industries.map((row) => `${row.label} ${row.n}`).join(", ") || "sin dato"}. ${input.cut.publicSegments ? "Hay alguna celda de al menos 20 empresas." : "Ninguna celda llega a 20 empresas, así que no hay ranking de país ni de industria."} Roles de todas las respuestas: ${input.cut.coverage.roles.map((row) => `${row.label} ${row.n}`).join(", ")}.`, 10);
+  write(`Cobertura operacional por país: ${input.cut.coverage.countries.map((row) => `${row.label} ${row.n}`).join(", ") || "sin dato"}. Una respuesta puede contar en más de un país. Por industria: ${input.cut.coverage.industries.map((row) => `${row.label} ${row.n}`).join(", ") || "sin dato"}. ${input.cut.publicSegments ? "Hay alguna celda de al menos 20 empresas." : "Ninguna celda llega a 20 empresas, así que no hay ranking de país ni de industria."} Roles de todas las respuestas: ${input.cut.coverage.roles.map((row) => `${row.label} ${row.n}`).join(", ")}.`, 10);
   write("Los límites de este preliminar son los de una participación voluntaria y un corte chico. El escenario no mide retorno. Las hipótesis de roles, de esfuerzo de validación y de datos para IA siguen con el contraste previsto y no se dan por confirmadas. Reemplazar las respuestas recalcula el corte, los cuadros y el texto. No hace falta un filtro por el origen de los datos.", 10);
 
   pages.forEach((item, index) => {

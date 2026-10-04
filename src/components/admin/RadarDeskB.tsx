@@ -8,9 +8,9 @@ import { ExecutiveBriefPanel } from "@/components/admin/ExecutiveBrief";
 import type { ZoomSheet } from "@/lib/surveys/chart-zoom";
 import { EVAL_INCLUDED, EVAL_ISOLATED, type Evaluacion } from "@/lib/surveys/evaluacion";
 import type { StoredBrief } from "@/lib/surveys/executive";
-import { CAPABILITIES, COUNTRIES, INITIATIVE_COPY } from "@/lib/surveys/radar-b/instrument";
+import { CAPABILITIES, INITIATIVE_COPY } from "@/lib/surveys/radar-b/instrument";
 import { SCENARIOS } from "@/lib/surveys/radar-b/engine";
-import { dimensionName, industryName, initiativeName, percent, roleName, type Benchmark, type PersonReport } from "@/lib/surveys/radar-b/report";
+import { countryNames, dimensionName, industryName, initiativeName, percent, roleName, type Benchmark, type PersonReport } from "@/lib/surveys/radar-b/report";
 import { capabilityZoom, peopleZoom, portfolioZoom, priorityZoom } from "@/lib/surveys/radar-b/zoom";
 
 const MACROS = ["Eficiencia y valor financiero", "Riesgo, sostenibilidad y control", "Transformación y capacidades"];
@@ -103,10 +103,6 @@ function sampleLine(total: number, includedCount: number) {
   return `${received} ${aside === 1 ? "1 está aislada de la evaluación." : `${aside} están aisladas de la evaluación.`}`;
 }
 
-function countryName(code: string) {
-  return COUNTRIES.find((item) => item.v === code)?.es ?? code;
-}
-
 function ResponseTable({
   responses,
   busyId,
@@ -145,7 +141,7 @@ function ResponseTable({
                 <span className="mt-0.5 block text-xinergy-slate">{item.email}</span>
               </td>
               <td className="p-3">{item.empresa}</td>
-              <td className="p-3">{countryName(item.pais)}</td>
+              <td className="p-3">{countryNames(item.paises)}</td>
               <td className="p-3">{roleName(item.rol)}</td>
               <td className="p-3">
                 <button
@@ -186,7 +182,7 @@ function PersonAnswer({
         {person.nombre} {person.apellido}
       </h2>
       <p className="mt-1 text-sm text-xinergy-slate">
-        {person.empresa} · {dateFormat.format(new Date(person.createdAt))} · {countryName(person.pais)} · {roleName(person.rol)} · {industryName(person.rubro)}
+        {person.empresa} · {scopeLine(person)} · {dateFormat.format(new Date(person.createdAt))} · {countryNames(person.paises)} · {roleName(person.rol)} · {industryName(person.rubro)}
       </p>
       <p className="mt-1 text-sm text-xinergy-slate">{person.email}</p>
       <div className="mt-4">
@@ -295,6 +291,12 @@ function Analysis({ people, benchmark, brief, included, onZoom }: { people: Pers
   );
 }
 
+function scopeLine(person: PersonReport) {
+  if (person.alcance === "unidad") return person.unidad ? `Unidad: ${person.unidad}` : "Unidad de negocio";
+  if (person.alcance === "empresa") return "Empresa completa";
+  return "Alcance sin indicar";
+}
+
 function PersonDetail({ person }: { person: PersonReport }) {
   const consistency = person.ahp ? person.ahp.maxCr.toFixed(3).replace(".", ",") : "—";
   return (
@@ -328,12 +330,12 @@ function PersonDetail({ person }: { person: PersonReport }) {
 
 function ExecutiveView({ benchmark, priority, principals, motor, included, onZoom }: { benchmark: Benchmark; priority: PersonReport[]; principals: PersonReport[]; motor: PersonReport[]; included: PersonReport[]; onZoom: (sheet: ZoomSheet) => void }) {
   const topIndex = benchmark.ahpMean ? benchmark.ahpMean.indexOf(Math.max(...benchmark.ahpMean)) : -1;
-  const countries = new Set(included.map((person) => person.pais)).size;
+  const countries = new Set(included.flatMap((person) => person.paises)).size;
   return (
     <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <Kpi label="respuestas incluidas" value={String(included.length)} onClick={() => onZoom(peopleZoom("Respuestas incluidas", "Estas respuestas entran al análisis. Las aisladas quedan guardadas y no se usan aquí.", included, (person) => roleName(person.rol)))} />
       <Kpi label="empresas en el benchmark" value={String(benchmark.companies)} onClick={() => onZoom(peopleZoom("Benchmark operacional", "Una respuesta de Compras por empresa. Si hay dos del mismo rol, la empresa no entra.", principals, (person) => roleName(person.rol)))} />
-      <Kpi label="países en la muestra" value={String(countries)} onClick={() => onZoom(peopleZoom("Países", "País de operación del alcance evaluado.", included, (person) => person.pais))} />
+      <Kpi label="países en la muestra" value={String(countries)} onClick={() => onZoom(peopleZoom("Países", "Países donde opera el alcance. Una respuesta puede marcar más de uno.", included, (person) => countryNames(person.paises)))} />
       <Kpi label={topIndex >= 0 ? CAPABILITIES[topIndex].short.es : "prioridad principal"} value={topIndex >= 0 ? percent(benchmark.ahpMean?.[topIndex]) : "—"} onClick={() => { if (topIndex >= 0) onZoom(priorityZoom(CAPABILITIES[topIndex].short.es, topIndex, priority, benchmark.ahpMean?.[topIndex] ?? null)); }} />
       <div className="sm:col-span-2 lg:col-span-4">
         {benchmark.macroMean ? <MacroBar weights={benchmark.macroMean} onOpen={(index) => onZoom(peopleZoom(MACROS[index], "Peso del grupo en cada empresa y el promedio de la barra.", priority, (person) => percent(person.ahp?.macro.weights[index])))} /> : <p className="text-sm text-xinergy-slate">Los gráficos de prioridad aparecen cuando hay una respuesta de Compras consistente.</p>}

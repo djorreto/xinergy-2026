@@ -21,16 +21,17 @@ export function parseOptionB(body: unknown): { ok: true; row: Record<string, unk
   if (!language || data.version !== SURVEY_VERSION_B) return { ok: false, honeypot };
 
   const textOf = (id: string) => (typeof data[id] === "string" ? data[id].trim() : "");
-  for (const field of ["nombre", "apellido", "email", "empresa", "rol", "pais", "rubro", "alcance", "spend", "managed", "organizacion", "equipo"]) {
+  for (const field of ["nombre", "apellido", "email", "empresa", "rol", "rubro", "alcance", "spend", "managed", "organizacion", "equipo"]) {
     if (!textOf(field)) return { ok: false, honeypot };
   }
   const email = textOf("email").toLowerCase();
   if (!EMAIL.test(email) || isBlockedEmail(email)) return { ok: false, honeypot };
-  if (!oneOf(ROLES, textOf("rol")) || !oneOf(COUNTRIES, textOf("pais")) || !oneOf(INDUSTRIES, textOf("rubro"))) return { ok: false, honeypot };
+  const paises = countryCodes(data.paises, textOf("pais"));
+  if (!paises.length || !oneOf(ROLES, textOf("rol")) || !oneOf(INDUSTRIES, textOf("rubro"))) return { ok: false, honeypot };
   if (!oneOf(SPEND, textOf("spend")) || !oneOf(MANAGED, textOf("managed")) || !oneOf(ORG, textOf("organizacion")) || !oneOf(TEAM, textOf("equipo"))) return { ok: false, honeypot };
   if (textOf("alcance") !== "empresa" && textOf("alcance") !== "unidad") return { ok: false, honeypot };
   if (textOf("alcance") === "unidad" && !textOf("unidad")) return { ok: false, honeypot };
-  if ((textOf("pais") === "otro" || textOf("pais") === "regional") && !textOf("pais_detalle")) return { ok: false, honeypot };
+  if (paises.some((code) => code === "otro" || code === "regional") && !textOf("pais_detalle")) return { ok: false, honeypot };
   if (textOf("rubro") === "otra" && !textOf("rubro_detalle")) return { ok: false, honeypot };
 
   const consents: Record<string, boolean> = {};
@@ -70,7 +71,7 @@ export function parseOptionB(body: unknown): { ok: true; row: Record<string, unk
       linkedin: null,
       cargo: rol?.es ?? textOf("rol"),
       empresa: textOf("empresa").slice(0, 180),
-      pais: textOf("pais"),
+      pais: paises.join(","),
       rol: textOf("rol"),
       rol_grupo: textOf("rol"),
       antiguedad: "no-preguntada",
@@ -80,6 +81,7 @@ export function parseOptionB(body: unknown): { ok: true; row: Record<string, unk
       company: {
         alcance: textOf("alcance"),
         unidad: textOf("unidad").slice(0, 180),
+        paises,
         pais_detalle: textOf("pais_detalle").slice(0, 120),
         rubro_detalle: textOf("rubro_detalle").slice(0, 120),
         spend: textOf("spend"),
@@ -100,6 +102,13 @@ export function parseOptionB(body: unknown): { ok: true; row: Record<string, unk
       ahp,
     },
   };
+}
+
+function countryCodes(value: unknown, legacy: string) {
+  const listed = Array.isArray(value) ? value.filter((item): item is string => typeof item === "string").map((item) => item.trim()) : [];
+  const codes = [...new Set(listed.filter((item) => oneOf(COUNTRIES, item)))];
+  if (codes.length) return codes;
+  return oneOf(COUNTRIES, legacy) ? [legacy] : [];
 }
 
 function oneOf(list: { v: string }[], value: string) {

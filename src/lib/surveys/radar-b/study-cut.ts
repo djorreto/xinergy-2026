@@ -326,7 +326,7 @@ export function buildStudyCut(people: PersonReport[], options?: { sensitivity?: 
       : sensitivityOf(motor);
 
   const coverage = {
-    countries: countLabels(operational.map((person) => person.pais), COUNTRIES).sort((left, right) => right.n - left.n),
+    countries: countLabels(operational.flatMap((person) => person.paises), COUNTRIES).sort((left, right) => right.n - left.n),
     industries: countLabels(operational.map((person) => person.rubro), INDUSTRIES).sort((left, right) => right.n - left.n),
     roles: countLabels(included.map((person) => person.rol), ROLES).sort((left, right) => right.n - left.n),
   };

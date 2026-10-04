@@ -5,7 +5,7 @@ import { workbookBytes } from "@/lib/surveys/export-xlsx";
 import { evaluationOf } from "@/lib/surveys/evaluacion";
 import { CAPABILITIES, INITIATIVE_COPY } from "@/lib/surveys/radar-b/instrument";
 import { SCENARIOS, SURVEY_SLUG_B } from "@/lib/surveys/radar-b/engine";
-import { buildBenchmark, buildPerson, industryName, percent, roleName, type RadarBInput } from "@/lib/surveys/radar-b/report";
+import { buildBenchmark, buildPerson, countryNames, industryName, percent, roleName, type RadarBInput } from "@/lib/surveys/radar-b/report";
 
 export async function GET() {
   const user = await getAdminUser();
@@ -46,7 +46,7 @@ export async function GET() {
     person.apellido,
     person.email,
     roleName(person.rol),
-    person.pais,
+    countryNames(person.paises),
     industryName(person.rubro),
     person.included ? "Incluido en análisis" : "Aislado de la evaluación",
     person.conocimiento,

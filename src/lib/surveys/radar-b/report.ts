@@ -2,6 +2,7 @@ import { analyzeAhp, type AhpAnalysis } from "@/lib/surveys/ahp";
 import { isIncluded, type Evaluacion } from "@/lib/surveys/evaluacion";
 import {
   CAPABILITIES,
+  COUNTRIES,
   DATA_READY,
   EVIDENCE,
   INDUSTRIES,
@@ -67,6 +68,7 @@ export type PersonReport = {
   email: string;
   empresa: string;
   pais: string;
+  paises: string[];
   rol: string;
   rubro: string;
   alcance: string;
@@ -133,6 +135,7 @@ export function buildPerson(row: RadarBInput): PersonReport {
     email: row.email,
     empresa: row.empresa,
     pais: row.pais,
+    paises: countriesOf(row),
     rol: row.rol,
     rubro: row.rubro,
     alcance: typeof company.alcance === "string" ? company.alcance : "",
@@ -391,6 +394,19 @@ export function dimensionName(id: string, lang: Lang = "es") {
 
 export function initiativeName(id: string) {
   return INITIATIVE_COPY.find((item) => item.id === id)?.name.es ?? id;
+}
+
+export function countriesOf(row: { pais: string; company?: Record<string, unknown> }) {
+  const stored = row.company?.paises;
+  if (Array.isArray(stored)) {
+    const codes = stored.filter((item): item is string => typeof item === "string" && item.trim().length > 0);
+    if (codes.length) return codes;
+  }
+  return row.pais.split(",").map((item) => item.trim()).filter(Boolean);
+}
+
+export function countryNames(codes: string[]) {
+  return codes.map((code) => labelOf(COUNTRIES, code)).join(", ");
 }
 
 export function roleName(id: string) {

@@ -69,7 +69,9 @@ export function RadarSurveyB({ locale, linkedin }: { locale: string; linkedin: s
       if (saved?.d && typeof saved.d === "object") {
         if (saved.lang === "es" || saved.lang === "en" || saved.lang === "pt") setLang(saved.lang);
         if (typeof saved.index === "number") setIndex(saved.index);
-        setDraft(saved.d);
+        const restored = { ...saved.d };
+        if (!Array.isArray(restored.paises) && typeof restored.pais === "string" && restored.pais) restored.paises = restored.pais.split(",").map((item) => item.trim()).filter(Boolean);
+        setDraft(restored);
       }
     } catch {
       /* el navegador puede bloquear el almacenamiento */
@@ -118,11 +120,13 @@ export function RadarSurveyB({ locale, linkedin }: { locale: string; linkedin: s
       CONSENTS.filter((item) => item.req && draft[item.id] !== true).forEach((item) => mark(item.id));
     }
     if (step === "profile") {
-      for (const id of ["empresa", "rol", "alcance", "pais", "rubro", "spend", "managed", "organizacion", "equipo"]) {
+      for (const id of ["empresa", "rol", "alcance", "rubro", "spend", "managed", "organizacion", "equipo"]) {
         if (!String(draft[id] || "").trim()) mark(id);
       }
+      const countries = countryDraft(draft);
+      if (!countries.length) mark("paises");
       if (draft.alcance === "unidad" && !String(draft.unidad || "").trim()) mark("unidad");
-      if ((draft.pais === "otro" || draft.pais === "regional") && !String(draft.pais_detalle || "").trim()) mark("pais_detalle");
+      if (countries.some((code) => code === "otro" || code === "regional") && !String(draft.pais_detalle || "").trim()) mark("pais_detalle");
       if (draft.rubro === "otra" && !String(draft.rubro_detalle || "").trim()) mark("rubro_detalle");
     }
     if (step === "ahp") AHP.pairs.forEach((pair) => {
@@ -328,17 +332,29 @@ function Text({ id, label, draft, invalid, onChange, type = "text" }: { id: stri
   );
 }
 
+function countryDraft(draft: Draft) {
+  if (Array.isArray(draft.paises)) return draft.paises.filter((item): item is string => typeof item === "string" && item.length > 0);
+  if (typeof draft.pais === "string" && draft.pais) return draft.pais.split(",").map((item) => item.trim()).filter(Boolean);
+  return [];
+}
+
 function Profile({ lang, copy, draft, invalid, onChange }: { lang: Lang; copy: (typeof ui)[Lang]; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
+  const countries = countryDraft(draft);
+  const scopes = [
+    ["empresa", copy.scopeCompany, copy.scopeCompanyHelp],
+    ["unidad", copy.scopeUnit, copy.scopeUnitHelp],
+  ] as const;
   return (
     <div className="grid gap-5">
       <Text id="empresa" label={text(langLabel("Empresa", "Company", "Empresa"), lang)} draft={draft} invalid={invalid} onChange={onChange} />
       <fieldset id="q-alcance">
         <legend className="mb-2 font-semibold">{lang === "en" ? "Scope" : lang === "pt" ? "Escopo" : "Alcance"}</legend>
         <div className="grid gap-2 sm:grid-cols-2">
-          {([["empresa", copy.scopeCompany], ["unidad", copy.scopeUnit]] as const).map(([value, label]) => (
+          {scopes.map(([value, label, help]) => (
             <label key={value} className={`border px-4 py-3 ${draft.alcance === value ? "border-xinergy-orange bg-[#FFF1D6]" : "border-xinergy-charcoal/15"}`}>
               <input type="radio" className="sr-only" name="alcance" checked={draft.alcance === value} onChange={() => onChange("alcance", value)} />
-              {label}
+              <span className="block font-semibold">{label}</span>
+              <span className="mt-1 block text-sm leading-5 text-xinergy-slate">{help}</span>
             </label>
           ))}
         </div>
@@ -346,8 +362,27 @@ function Profile({ lang, copy, draft, invalid, onChange }: { lang: Lang; copy: (
       </fieldset>
       {draft.alcance === "unidad" ? <Text id="unidad" label={copy.unit} draft={draft} invalid={invalid} onChange={onChange} /> : null}
       <Select id="rol" label={lang === "en" ? "Main role" : lang === "pt" ? "Papel principal" : "Rol principal"} options={ROLES} lang={lang} value={String(draft.rol || "")} invalid={invalid.rol} onChange={(value) => onChange("rol", value)} />
-      <Select id="pais" label={lang === "en" ? "Country of operation" : lang === "pt" ? "País de operação" : "País de operación"} options={COUNTRIES} lang={lang} value={String(draft.pais || "")} invalid={invalid.pais} onChange={(value) => onChange("pais", value)} />
-      {draft.pais === "otro" || draft.pais === "regional" ? <Text id="pais_detalle" label={copy.countryDetail} draft={draft} invalid={invalid} onChange={onChange} /> : null}
+      <fieldset id="q-paises">
+        <legend className="mb-2 font-semibold">{lang === "en" ? "Countries of operation" : lang === "pt" ? "Países de operação" : "Países de operación"}</legend>
+        <div className={`grid gap-2 sm:grid-cols-2 ${invalid.paises ? "rounded-sm border border-red-700 p-2" : ""}`}>
+          {COUNTRIES.map((option) => {
+            const on = countries.includes(option.v);
+            return (
+              <label key={option.v} className={`flex gap-3 border px-3 py-2 ${on ? "border-xinergy-orange bg-[#FFF1D6]" : "border-xinergy-charcoal/15"}`}>
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={on}
+                  onChange={() => onChange("paises", on ? countries.filter((code) => code !== option.v) : [...countries, option.v])}
+                />
+                <span>{option[lang]}</span>
+              </label>
+            );
+          })}
+        </div>
+        {invalid.paises ? <span className="mt-1 block text-sm text-red-700">{invalid.paises}</span> : null}
+      </fieldset>
+      {countries.some((code) => code === "otro" || code === "regional") ? <Text id="pais_detalle" label={copy.countryDetail} draft={draft} invalid={invalid} onChange={onChange} /> : null}
       <Select id="rubro" label={lang === "en" ? "Main industry" : lang === "pt" ? "Indústria principal" : "Industria principal"} options={INDUSTRIES} lang={lang} value={String(draft.rubro || "")} invalid={invalid.rubro} onChange={(value) => onChange("rubro", value)} />
       {draft.rubro === "otra" ? <Text id="rubro_detalle" label={copy.industryDetail} draft={draft} invalid={invalid} onChange={onChange} /> : null}
       <Select id="spend" label={lang === "en" ? "Annual third-party spend, about, in USD" : lang === "pt" ? "Gasto anual com terceiros, aproximado, em USD" : "Gasto anual de terceros, aproximado, en USD"} options={SPEND} lang={lang} value={String(draft.spend || "")} invalid={invalid.spend} onChange={(value) => onChange("spend", value)} />
