@@ -1,5 +1,5 @@
 import { aggregateAhp, ahpLabel, analyzeAhp, formatPercent, formatRatio } from "@/lib/surveys/ahp";
-import { formatStored } from "@/lib/surveys/present";
+import { formatStored, openAnswerAuthor } from "@/lib/surveys/present";
 import {
   AHP,
   AHP_SCALE,
@@ -288,7 +288,7 @@ function questionBlocks(people: ExportPerson[]): AnalysisBlock[] {
           .map((person) => {
             const value = stored(question, person);
             const text = typeof value === "string" ? value.trim() : "";
-            return text ? { who: person.empresa, text } : null;
+            return text ? { who: openAnswerAuthor(people, person), text } : null;
           })
           .filter((row): row is { who: string; text: string } => Boolean(row));
         if (rows.length) blocks.push({ kind: "notes", section, title: tx(question.label, "es"), rows });

@@ -37,6 +37,13 @@ export function formatQuestion(question: Question, value: unknown, lang: Lang = 
   return textOf(value);
 }
 
+export function openAnswerAuthor(people: { empresa: string; nombre: string; apellido: string }[], person: { empresa: string; nombre: string; apellido: string }) {
+  const key = person.empresa.trim().toLocaleLowerCase("es");
+  const peers = people.filter((item) => item.empresa.trim().toLocaleLowerCase("es") === key).length;
+  if (peers > 1) return `${person.empresa.trim()} - ${person.nombre.trim()} ${person.apellido.trim()}`.replace(/\s+/g, " ").trim();
+  return person.empresa.trim();
+}
+
 function textOf(value: unknown) {
   if (typeof value === "string") return value || "—";
   if (Array.isArray(value)) return value.join(", ");

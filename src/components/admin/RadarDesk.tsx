@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ExecutiveBriefPanel } from "@/components/admin/ExecutiveBrief";
 import { AhpPanel } from "@/components/survey/AhpPanel";
 import { aggregateAhp, analyzeAhp } from "@/lib/surveys/ahp";
-import { formatQuestion, formatStored } from "@/lib/surveys/present";
+import { formatQuestion, formatStored, openAnswerAuthor } from "@/lib/surveys/present";
 import {
   CONSENTS,
   EMP,
@@ -477,7 +477,7 @@ function QuestionBreakdown({ question, responses }: { question: Question; respon
             if (!note) return null;
             return (
               <li key={item.id} className="border border-xinergy-charcoal/10 bg-white p-3">
-                <span className="font-semibold text-xinergy-charcoal">{item.empresa}</span>
+                <span className="font-semibold text-xinergy-charcoal">{openAnswerAuthor(responses, item)}</span>
                 <p className="mt-1 whitespace-pre-wrap">{note}</p>
               </li>
             );
