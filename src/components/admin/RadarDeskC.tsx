@@ -75,8 +75,13 @@ export function RadarDeskC({ people, benchmark, publicUrl, verified }: { people:
         {verified ? " El motor de la versión C está verificado." : ""}
       </p>
       <p className="mt-3 text-sm text-xinergy-slate">{sampleLine(people.length, included.length)} {benchmark.companies} empresas en el benchmark.</p>
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <button type="button" className="btn-secondary" onClick={() => { void navigator.clipboard.writeText(publicUrl).then(() => setCopied(true)); }}>{copied ? "Enlace copiado" : "Copiar enlace de la encuesta"}</button>
+      <div className="mt-4 flex flex-wrap items-center gap-3 border border-xinergy-charcoal/10 bg-white p-4">
+        <div className="min-w-0 flex-1">
+          <p className="text-xs uppercase tracking-wide text-xinergy-slate">Enlace para compartir</p>
+          <a href={publicUrl} target="_blank" rel="noreferrer" className="mt-1 block break-all text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4">{publicUrl}</a>
+        </div>
+        <a href={publicUrl} target="_blank" rel="noreferrer" className="btn-primary">Abrir encuesta</a>
+        <button type="button" className="btn-secondary" onClick={() => { void navigator.clipboard.writeText(publicUrl).then(() => setCopied(true)); }}>{copied ? "Copiado" : "Copiar"}</button>
       </div>
       {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
       <div className="mt-6 flex gap-2">

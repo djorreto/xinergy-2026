@@ -324,8 +324,15 @@ export const CONSENTS: { id: string; req: boolean; label: Copy }[] = [
 
 export const ui = {
   es: {
-    steps: ["Inicio", "Contacto", "Alcance", "Prioridades", "Conocimiento", "Capacidad", "Evidencia", "Agenda", "Cierre"],
+    steps: ["Bienvenida", "Contacto", "Alcance", "Prioridades", "Conocimiento", "Capacidad", "Evidencia", "Agenda", "Cierre"],
     back: "Atrás",
+    stepOf: (current: number, total: number) => `Paso ${current} de ${total}`,
+    benefits: [
+      ["Benchmark agregado", "Sus respuestas entran al corte de esta opción, sin nombres."],
+      ["Escenarios", "El portafolio usa una matriz de demostración, no un ahorro prometido."],
+      ["Ruta según conocimiento", "Si no conoce la operación, no responde capacidades ni agenda."],
+    ] as [string, string][],
+    meta: ["Ruta central", "Confidencial", "Resultados agregados"],
     next: "Continuar",
     start: "Comenzar",
     submit: "Enviar respuestas",
@@ -378,8 +385,15 @@ export const ui = {
     whatsapp: "Hablar por WhatsApp",
   },
   en: {
-    steps: ["Start", "Contact", "Scope", "Priorities", "Knowledge", "Capability", "Evidence", "Agenda", "Close"],
+    steps: ["Welcome", "Contact", "Scope", "Priorities", "Knowledge", "Capability", "Evidence", "Agenda", "Close"],
     back: "Back",
+    stepOf: (current: number, total: number) => `Step ${current} of ${total}`,
+    benefits: [
+      ["Aggregate benchmark", "Your answers join this option's cut, without names."],
+      ["Scenarios", "The portfolio uses a demonstration matrix, not a promised saving."],
+      ["Route by knowledge", "If you do not know the operation, you skip capabilities and the agenda."],
+    ] as [string, string][],
+    meta: ["Core route", "Confidential", "Aggregate results"],
     next: "Continue",
     start: "Start",
     submit: "Submit answers",
@@ -432,8 +446,15 @@ export const ui = {
     whatsapp: "Talk on WhatsApp",
   },
   pt: {
-    steps: ["Início", "Contato", "Escopo", "Prioridades", "Conhecimento", "Capacidade", "Evidência", "Agenda", "Fecho"],
+    steps: ["Boas-vindas", "Contato", "Escopo", "Prioridades", "Conhecimento", "Capacidade", "Evidência", "Agenda", "Fecho"],
     back: "Voltar",
+    stepOf: (current: number, total: number) => `Passo ${current} de ${total}`,
+    benefits: [
+      ["Benchmark agregado", "Suas respostas entram no corte desta opção, sem nomes."],
+      ["Cenários", "O portfólio usa uma matriz de demonstração, não uma economia prometida."],
+      ["Rota segundo o conhecimento", "Se não conhece a operação, não responde capacidades nem agenda."],
+    ] as [string, string][],
+    meta: ["Rota central", "Confidencial", "Resultados agregados"],
     next: "Continuar",
     start: "Começar",
     submit: "Enviar respostas",

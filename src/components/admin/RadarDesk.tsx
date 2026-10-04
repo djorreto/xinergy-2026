@@ -22,7 +22,6 @@ import {
   tx,
   type Question,
 } from "@/lib/surveys/radar-2027";
-import type { StoredBrief } from "@/lib/surveys/executive";
 import { EVAL_INCLUDED, EVAL_ISOLATED, isIncluded, type Evaluacion } from "@/lib/surveys/evaluacion";
 
 export type RadarAnswer = {
@@ -56,7 +55,7 @@ const dateFormat = new Intl.DateTimeFormat("es-CL", {
   timeZone: "America/Santiago",
 });
 
-export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAnswer[]; publicUrl: string; brief: StoredBrief | null }) {
+export function RadarDesk({ responses, publicUrl }: { responses: RadarAnswer[]; publicUrl: string }) {
   const router = useRouter();
   const [rows, setRows] = useState(responses);
   const [known, setKnown] = useState(responses);
@@ -170,7 +169,7 @@ export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAns
             </a>
             <StudyDownload href="/api/admin/surveys/radar-compras-2027/informe" />
           </div>
-          <ExecutiveBriefPanel initial={brief} responses={included} onZoom={setZoom} />
+          <ExecutiveBriefPanel responses={included} onZoom={setZoom} />
           {included.length ? (
             <div>
               <p className="label-editorial">Detalle del cálculo</p>

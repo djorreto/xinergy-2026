@@ -7,7 +7,6 @@ import { RadarDeskC } from "@/components/admin/RadarDeskC";
 import { requireAdminUser } from "@/lib/auth/admin";
 import { adminHref } from "@/lib/auth/admin-path";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { StoredBrief } from "@/lib/surveys/executive";
 import { evaluationOf } from "@/lib/surveys/evaluacion";
 import { SURVEY_SLUG_B } from "@/lib/surveys/radar-b/engine";
 import { SURVEY_SLUG_C } from "@/lib/surveys/radar-c/instrument";
@@ -51,18 +50,11 @@ export default async function SurveyAdminPage({ params }: { params: Promise<{ sl
   const admin = await createAdminClient();
   const { data: survey } = await admin.from("web_surveys").select("id, title").eq("slug", slug).maybeSingle();
   if (!survey) notFound();
-  const [{ data }, { data: briefRow }] = await Promise.all([
-    admin
-      .from("web_survey_responses")
-      .select("id, created_at, language, nombre, apellido, email, telefono, linkedin, cargo, empresa, pais, rol, rol_grupo, antiguedad, rubro, rubro_grupo, consents, company, answers, evaluacion, evaluacion_at, evaluacion_por")
-      .eq("survey_id", survey.id)
-      .order("created_at", { ascending: false }),
-    admin
-      .from("web_survey_briefs")
-      .select("generated_at, response_count, latest_response_at, context, themes")
-      .eq("survey_id", survey.id)
-      .maybeSingle(),
-  ]);
+  const { data } = await admin
+    .from("web_survey_responses")
+    .select("id, created_at, language, nombre, apellido, email, telefono, linkedin, cargo, empresa, pais, rol, rol_grupo, antiguedad, rubro, rubro_grupo, consents, company, answers, evaluacion, evaluacion_at, evaluacion_por")
+    .eq("survey_id", survey.id)
+    .order("created_at", { ascending: false });
 
   const responses: RadarAnswer[] = ((data ?? []) as Row[]).map((row) => ({
     id: row.id,
@@ -90,21 +82,12 @@ export default async function SurveyAdminPage({ params }: { params: Promise<{ sl
   }));
 
   const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://xinergy.lat").replace(/\/$/, "");
-  const brief: StoredBrief | null = briefRow
-    ? {
-        generatedAt: briefRow.generated_at,
-        responseCount: briefRow.response_count,
-        latestResponseAt: briefRow.latest_response_at,
-        context: briefRow.context,
-        themes: briefRow.themes ?? [],
-      }
-    : null;
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
       <AdminNav email={user.email} />
       <SurveyBack />
-      <RadarDesk responses={responses} publicUrl={`${site}/radar-compras-2027`} brief={brief} />
+      <RadarDesk responses={responses} publicUrl={`${site}/radar-compras-2027`} />
     </div>
   );
 }
@@ -113,14 +96,11 @@ async function optionB(email: string) {
   const admin = await createAdminClient();
   const { data: survey } = await admin.from("web_surveys").select("id").eq("slug", SURVEY_SLUG_B).maybeSingle();
   if (!survey) notFound();
-  const [{ data }, { data: briefRow }] = await Promise.all([
-    admin
-      .from("web_survey_responses")
-      .select("id, created_at, nombre, apellido, email, empresa, pais, rol, rubro, evaluacion, company, answers")
-      .eq("survey_id", survey.id)
-      .order("created_at", { ascending: false }),
-    admin.from("web_survey_briefs").select("generated_at, response_count, latest_response_at, context, themes").eq("survey_id", survey.id).maybeSingle(),
-  ]);
+  const { data } = await admin
+    .from("web_survey_responses")
+    .select("id, created_at, nombre, apellido, email, empresa, pais, rol, rubro, evaluacion, company, answers")
+    .eq("survey_id", survey.id)
+    .order("created_at", { ascending: false });
   const people = ((data ?? []) as Array<RadarBInput & { created_at?: string; evaluacion?: string }>).map((row) =>
     buildPerson({
       id: row.id,
@@ -142,23 +122,7 @@ async function optionB(email: string) {
     <div className="mx-auto max-w-6xl px-6 py-10">
       <AdminNav email={email} />
       <SurveyBack />
-      <RadarDeskB
-        people={people}
-        benchmark={buildBenchmark(people)}
-        publicUrl={`${site}/radar-compras-2027-b`}
-        verified={demoChecks().ok}
-        brief={
-          briefRow
-            ? {
-                generatedAt: briefRow.generated_at,
-                responseCount: briefRow.response_count,
-                latestResponseAt: briefRow.latest_response_at,
-                context: briefRow.context,
-                themes: briefRow.themes ?? [],
-              }
-            : null
-        }
-      />
+      <RadarDeskB people={people} benchmark={buildBenchmark(people)} publicUrl={`${site}/radar-compras-2027-b`} verified={demoChecks().ok} />
     </div>
   );
 }

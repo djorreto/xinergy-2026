@@ -7,7 +7,6 @@ import { StudyDownload } from "@/components/admin/StudyDownload";
 import { ExecutiveBriefPanel } from "@/components/admin/ExecutiveBrief";
 import type { ZoomSheet } from "@/lib/surveys/chart-zoom";
 import { EVAL_INCLUDED, EVAL_ISOLATED, type Evaluacion } from "@/lib/surveys/evaluacion";
-import type { StoredBrief } from "@/lib/surveys/executive";
 import { CAPABILITIES, INITIATIVE_COPY } from "@/lib/surveys/radar-b/instrument";
 import { SCENARIOS } from "@/lib/surveys/radar-b/engine";
 import { countryNames, dimensionName, industryName, initiativeName, percent, roleName, type Benchmark, type PersonReport } from "@/lib/surveys/radar-b/report";
@@ -21,7 +20,7 @@ const dateFormat = new Intl.DateTimeFormat("es-CL", {
   timeZone: "America/Santiago",
 });
 
-export function RadarDeskB({ people, benchmark, publicUrl, verified, brief }: { people: PersonReport[]; benchmark: Benchmark; publicUrl: string; verified: boolean; brief: StoredBrief | null }) {
+export function RadarDeskB({ people, benchmark, publicUrl, verified }: { people: PersonReport[]; benchmark: Benchmark; publicUrl: string; verified: boolean }) {
   const router = useRouter();
   const [view, setView] = useState<"respuestas" | "analisis">("respuestas");
   const [selected, setSelected] = useState<string | null>(null);
@@ -59,9 +58,7 @@ export function RadarDeskB({ people, benchmark, publicUrl, verified, brief }: { 
         {verified ? " El ejemplo numérico de la especificación cuadra con este motor." : ""}
       </p>
       <p className="mt-3 text-sm text-xinergy-slate">{sampleLine(people.length, included.length)} {benchmark.companies} empresas en el benchmark operacional.</p>
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <button type="button" className="btn-secondary" onClick={() => { navigator.clipboard.writeText(publicUrl).then(() => setCopied(true)); }}>{copied ? "Enlace copiado" : "Copiar enlace de la encuesta"}</button>
-      </div>
+      <ShareLink publicUrl={publicUrl} copied={copied} onCopy={() => { void navigator.clipboard.writeText(publicUrl).then(() => setCopied(true)); }} />
       {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
       <div className="mt-6 flex gap-2">
         <Tab on={view === "respuestas"} onClick={() => { setView("respuestas"); setSelected(null); }}>Quién respondió</Tab>
@@ -79,10 +76,23 @@ export function RadarDeskB({ people, benchmark, publicUrl, verified, brief }: { 
       ) : (
         <div className="mt-6 flex flex-col gap-6">
           <StudyDownload href="/api/admin/surveys/radar-compras-2027-b/informe" />
-          <Analysis people={people} benchmark={benchmark} brief={brief} included={included} onZoom={setZoom} />
+          <Analysis people={people} benchmark={benchmark} included={included} onZoom={setZoom} />
         </div>
       )}
       <ChartZoom sheet={zoom} onClose={closeZoom} />
+    </div>
+  );
+}
+
+function ShareLink({ publicUrl, copied, onCopy }: { publicUrl: string; copied: boolean; onCopy: () => void }) {
+  return (
+    <div className="mt-4 flex flex-wrap items-center gap-3 border border-xinergy-charcoal/10 bg-white p-4">
+      <div className="min-w-0 flex-1">
+        <p className="text-xs uppercase tracking-wide text-xinergy-slate">Enlace para compartir</p>
+        <a href={publicUrl} target="_blank" rel="noreferrer" className="mt-1 block break-all text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4">{publicUrl}</a>
+      </div>
+      <a href={publicUrl} target="_blank" rel="noreferrer" className="btn-primary">Abrir encuesta</a>
+      <button type="button" className="btn-secondary" onClick={onCopy}>{copied ? "Copiado" : "Copiar"}</button>
     </div>
   );
 }
@@ -201,17 +211,15 @@ function PersonAnswer({
   );
 }
 
-function Analysis({ people, benchmark, brief, included, onZoom }: { people: PersonReport[]; benchmark: Benchmark; brief: StoredBrief | null; included: PersonReport[]; onZoom: (sheet: ZoomSheet) => void }) {
+function Analysis({ people, benchmark, included, onZoom }: { people: PersonReport[]; benchmark: Benchmark; included: PersonReport[]; onZoom: (sheet: ZoomSheet) => void }) {
   const priority = people.filter((person) => benchmark.priorityIds.includes(person.id));
   const motor = people.filter((person) => benchmark.motorIds.includes(person.id));
   const principals = people.filter((person) => benchmark.principalIds.includes(person.id));
   return (
     <div className="mt-6 flex flex-col gap-8">
       <ExecutiveBriefPanel
-        initial={brief}
         responses={included}
         onZoom={onZoom}
-        endpoint="/api/admin/surveys/radar-compras-2027-b/brief"
         charts={<ExecutiveView benchmark={benchmark} priority={priority} principals={principals} motor={motor} included={included} onZoom={onZoom} />}
       />
       <h2 className="font-display text-2xl">Detalle del cálculo</h2>

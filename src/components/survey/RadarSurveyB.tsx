@@ -198,78 +198,107 @@ export function RadarSurveyB({ locale, linkedin }: { locale: string; linkedin: s
   const whatsappText = lang === "pt" ? "Olá, respondi a opção B do Radar de Compras da Xinergy." : lang === "en" ? "Hello, I completed option B of Xinergy's Procurement Radar." : "Hola, respondí la opción B del Radar de Compras de Xinergy.";
   const whatsapp = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappText)}`;
 
+  const tracker: Step[] = knowledge === "no"
+    ? ["welcome", "contact", "profile", "ahp", "knowledge", "challenge"]
+    : ["welcome", "contact", "profile", "ahp", "knowledge", "capacity", "evidence", "agenda", "challenge"];
+  const labels = tracker.map((item) => copy.steps[stepIndex(item)] ?? "");
+
   return (
-    <article className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-8 sm:py-10" lang={lang === "pt" ? "pt-BR" : lang}>
+    <article className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-8 sm:py-10 lg:px-10 [&_input]:scroll-mb-28 [&_label]:scroll-mb-28 [&_select]:scroll-mb-28 [&_textarea]:scroll-mb-28" lang={lang === "pt" ? "pt-BR" : lang}>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <p className="label-editorial">{sent ? copy.eyebrow : copy.steps[stepIndex(step)]}</p>
+        <p className="label-editorial">{sent ? copy.eyebrow : labels[Math.min(position, labels.length - 1)]}</p>
         <div className="inline-flex border border-xinergy-charcoal/15" role="group" aria-label={copy.lang}>
           {(["es", "en", "pt"] as const).map((code) => (
-            <button key={code} type="button" aria-pressed={lang === code} onClick={() => setLang(code)} className={`px-3 py-1.5 text-xs font-semibold ${lang === code ? "bg-xinergy-charcoal text-white" : "text-xinergy-slate"}`}>
+            <button key={code} type="button" aria-pressed={lang === code} onClick={() => setLang(code)} className={`px-3 py-1.5 text-xs font-semibold tracking-wide ${lang === code ? "bg-xinergy-charcoal text-white" : "text-xinergy-slate"}`}>
               {code.toUpperCase()}
             </button>
           ))}
         </div>
       </div>
-      {!sent ? (
-        <div className="mb-8 h-1 bg-xinergy-charcoal/10" aria-hidden>
-          <div className="h-full bg-xinergy-orange" style={{ width: `${(position / Math.max(steps.length - 1, 1)) * 100}%` }} />
-        </div>
-      ) : null}
-
       {sent ? (
         <section>
-          <h1 className="font-display text-4xl text-xinergy-charcoal">{copy.doneTitle}</h1>
-          <p className="mt-4 max-w-xl text-xinergy-slate">{copy.doneLead}</p>
+          <h1 className="font-display text-4xl leading-tight text-xinergy-charcoal sm:text-5xl">{copy.doneTitle}</h1>
+          <p className="mt-4 max-w-xl text-lg text-xinergy-slate">{copy.doneLead}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a className="btn-primary" href={whatsapp}>{copy.whatsapp}</a>
             <Link href="/" className="btn-secondary">{copy.doneHome}</Link>
           </div>
           <p className="mt-6 text-sm text-xinergy-slate">{linkedin}</p>
         </section>
-      ) : step === "welcome" ? (
-        <section>
-          <h1 className="font-display text-4xl leading-tight text-xinergy-charcoal">{copy.welcomeTitle}</h1>
-          <p className="mt-4 text-lg text-xinergy-slate">{copy.welcomeLead}</p>
-          <p className="mt-4 border-l-2 border-xinergy-orange pl-4 text-sm text-xinergy-slate">{copy.welcomeNote}</p>
-          <button type="button" className="btn-primary mt-8" onClick={() => setIndex(1)}>{copy.start}</button>
-        </section>
       ) : (
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            forward();
-          }}
-          className="flex flex-col gap-6"
-        >
-          <header>
-            <h1 className="font-display text-3xl leading-tight text-xinergy-charcoal">{titleOf(copy, step)}</h1>
-            <p className="mt-3 text-xinergy-slate">{noteOf(copy, step)}</p>
-          </header>
-          {step === "contact" ? <Contact lang={lang} copy={copy} draft={draft} invalid={invalid} onChange={patch} honeypot={companyUrl} onHoneypot={setCompanyUrl} /> : null}
-          {step === "profile" ? <Profile lang={lang} copy={copy} draft={draft} invalid={invalid} onChange={patch} /> : null}
-          {step === "ahp" ? <Pairs lang={lang} copy={copy} selected={pairs} invalid={invalid} onChange={(value) => patch("prioridades_ahp", value)} /> : null}
-          {step === "knowledge" ? <Choices name="conocimiento" options={KNOWLEDGE} lang={lang} value={knowledge} invalid={invalid.conocimiento} onChange={(value) => patch("conocimiento", value)} /> : null}
-          {step === "capacity" ? <Capability lang={lang} copy={copy} selected={record(draft.capacidades)} invalid={invalid} onChange={(id, value) => patch("capacidades", { ...record(draft.capacidades), [id]: value })} /> : null}
-          {step === "evidence" ? <Evidence lang={lang} copy={copy} draft={draft} invalid={invalid} onChange={patch} /> : null}
-          {step === "agenda" ? <Agenda lang={lang} selected={record(draft.agenda)} invalid={invalid} onChange={(id, value) => patch("agenda", { ...record(draft.agenda), [id]: value })} /> : null}
-          {step === "challenge" ? (
-            <label id="q-desafio" className="block">
-              <span className="mb-2 block font-semibold text-xinergy-charcoal">{copy.challenge}</span>
-              <textarea className={`${inputClass} min-h-32`} maxLength={4000} value={String(draft.desafio || "")} onChange={(event) => patch("desafio", event.target.value)} />
-            </label>
-          ) : null}
-          {banner ? <p className="border border-xinergy-orange/40 bg-[#FFF1D6] px-4 py-3 text-sm text-xinergy-charcoal">{banner}</p> : null}
-          {step === "ahp" && inconsistent && !crAccepted ? (
-            <button type="button" className="btn-secondary w-fit" onClick={() => { setCrAccepted(true); setBanner(""); }}>{copy.crContinue}</button>
-          ) : null}
-          <div className="flex flex-wrap gap-3">
-            <button type="button" className="btn-secondary" onClick={() => setIndex(Math.max(0, position - 1))}>{copy.back}</button>
-            <button type="submit" className="btn-primary" disabled={sending}>{sending ? copy.sending : position >= steps.length - 1 ? copy.submit : copy.next}</button>
+        <>
+          <div className="mb-6 h-1 bg-xinergy-charcoal/10" aria-hidden>
+            <div className="h-full bg-xinergy-orange transition-[width]" style={{ width: `${(position / Math.max(tracker.length - 1, 1)) * 100}%` }} />
           </div>
-          <p className="text-xs text-xinergy-slate">{copy.saved}</p>
-        </form>
+          <ol className="mb-8 grid gap-1.5 text-xs text-xinergy-slate sm:gap-3" style={{ gridTemplateColumns: `repeat(${labels.length}, minmax(0, 1fr))` }}>
+            {labels.map((name, item) => (
+              <li key={name} className={`min-w-0 ${item === position ? "text-xinergy-charcoal" : ""}`} aria-current={item === position ? "step" : undefined}>
+                <span className={`grid h-8 w-8 place-items-center border text-xs font-semibold ${item === position ? "border-xinergy-orange bg-xinergy-orange text-xinergy-charcoal" : item < position ? "border-xinergy-charcoal bg-xinergy-charcoal text-white" : "border-xinergy-charcoal/20"}`}>
+                  {item < position ? "✓" : item + 1}
+                </span>
+                <span className="mt-1.5 hidden text-[11px] leading-snug lg:block">{name}</span>
+              </li>
+            ))}
+          </ol>
+          {step === "welcome" ? <WelcomeB copy={copy} /> : (
+            <form onSubmit={(event) => { event.preventDefault(); forward(); }} className="flex flex-col gap-8">
+              <header>
+                <p className="text-sm text-xinergy-beige">{copy.stepOf(position + 1, tracker.length)}</p>
+                <h1 className="mt-2 font-display text-3xl leading-tight text-xinergy-charcoal sm:text-4xl">{titleOf(copy, step)}</h1>
+                <p className="mt-3 max-w-2xl text-xinergy-slate">{noteOf(copy, step)}</p>
+              </header>
+              {step === "contact" ? <Contact lang={lang} copy={copy} draft={draft} invalid={invalid} onChange={patch} honeypot={companyUrl} onHoneypot={setCompanyUrl} /> : null}
+              {step === "profile" ? <Profile lang={lang} copy={copy} draft={draft} invalid={invalid} onChange={patch} /> : null}
+              {step === "ahp" ? <Pairs lang={lang} copy={copy} selected={pairs} invalid={invalid} onChange={(value) => patch("prioridades_ahp", value)} /> : null}
+              {step === "knowledge" ? <Choices name="conocimiento" options={KNOWLEDGE} lang={lang} value={knowledge} invalid={invalid.conocimiento} onChange={(value) => patch("conocimiento", value)} /> : null}
+              {step === "capacity" ? <Capability lang={lang} copy={copy} selected={record(draft.capacidades)} invalid={invalid} onChange={(id, value) => patch("capacidades", { ...record(draft.capacidades), [id]: value })} /> : null}
+              {step === "evidence" ? <Evidence lang={lang} copy={copy} draft={draft} invalid={invalid} onChange={patch} /> : null}
+              {step === "agenda" ? <Agenda lang={lang} selected={record(draft.agenda)} invalid={invalid} onChange={(id, value) => patch("agenda", { ...record(draft.agenda), [id]: value })} /> : null}
+              {step === "challenge" ? (
+                <label id="q-desafio" className="block">
+                  <span className="mb-2 block font-semibold text-xinergy-charcoal">{copy.challenge}</span>
+                  <textarea className={`${inputClass} min-h-32`} maxLength={4000} value={String(draft.desafio || "")} onChange={(event) => patch("desafio", event.target.value)} />
+                </label>
+              ) : null}
+              {banner ? <p className="text-sm font-medium text-red-700">{banner}</p> : <p className="text-sm text-xinergy-slate">{copy.saved}</p>}
+              {step === "ahp" && inconsistent && !crAccepted ? (
+                <button type="button" className="w-fit text-left text-sm font-semibold text-xinergy-charcoal underline" onClick={() => { setCrAccepted(true); setBanner(""); }}>{copy.crContinue}</button>
+              ) : null}
+              <div className="sticky bottom-0 z-20 -mx-4 flex items-center gap-3 border-t border-xinergy-charcoal/10 bg-xinergy-ivory/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
+                <button type="button" className="btn-secondary min-h-12 flex-1 sm:flex-none" onClick={() => setIndex(Math.max(0, position - 1))} disabled={sending}>{copy.back}</button>
+                <button type="submit" className="btn-primary min-h-12 flex-[1.6] sm:flex-none" disabled={sending}>{sending ? copy.sending : position >= steps.length - 1 ? copy.submit : copy.next}</button>
+              </div>
+            </form>
+          )}
+          {step === "welcome" ? (
+            <div className="mt-8">
+              <button type="button" className="btn-primary w-full sm:w-auto" onClick={() => setIndex(1)}>{copy.start}</button>
+            </div>
+          ) : null}
+        </>
       )}
     </article>
+  );
+}
+
+function WelcomeB({ copy }: { copy: (typeof ui)[Lang] }) {
+  return (
+    <div>
+      <h1 className="font-display text-4xl leading-tight text-xinergy-charcoal sm:text-5xl">{copy.welcomeTitle}</h1>
+      <p className="mt-4 max-w-2xl text-lg text-xinergy-slate">{copy.welcomeLead}</p>
+      <p className="mt-3 max-w-2xl text-xinergy-slate">{copy.welcomeNote}</p>
+      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        {copy.benefits.map(([title, text]) => (
+          <div key={title} className="border-t-2 border-xinergy-orange pt-3">
+            <p className="font-display text-base text-xinergy-charcoal">{title}</p>
+            <p className="mt-1 text-sm text-xinergy-slate">{text}</p>
+          </div>
+        ))}
+      </div>
+      <p className="mt-6 flex flex-wrap gap-x-5 gap-y-1 text-sm text-xinergy-slate">
+        {copy.meta.map((item) => <span key={item}>{item}</span>)}
+      </p>
+    </div>
   );
 }
 
