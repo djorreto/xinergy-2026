@@ -1,8 +1,10 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { RadarDesk, type RadarAnswer } from "@/components/admin/RadarDesk";
 import { RadarDeskB } from "@/components/admin/RadarDeskB";
 import { requireAdminUser } from "@/lib/auth/admin";
+import { adminHref } from "@/lib/auth/admin-path";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { StoredBrief } from "@/lib/surveys/executive";
 import { evaluationOf } from "@/lib/surveys/evaluacion";
@@ -96,6 +98,7 @@ export default async function SurveyAdminPage({ params }: { params: Promise<{ sl
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
       <AdminNav email={user.email} />
+      <SurveyBack />
       <RadarDesk responses={responses} publicUrl={`${site}/radar-compras-2027`} brief={brief} />
     </div>
   );
@@ -133,6 +136,7 @@ async function optionB(email: string) {
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
       <AdminNav email={email} />
+      <SurveyBack />
       <RadarDeskB
         people={people}
         benchmark={buildBenchmark(people)}
@@ -151,5 +155,14 @@ async function optionB(email: string) {
         }
       />
     </div>
+  );
+}
+
+function SurveyBack() {
+  return (
+    <Link href={adminHref("/encuestas")} className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-xinergy-slate hover:text-xinergy-charcoal">
+      <span aria-hidden="true">←</span>
+      Encuestas
+    </Link>
   );
 }
