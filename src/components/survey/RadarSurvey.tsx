@@ -386,10 +386,7 @@ function Done({ copy, whatsapp, linkedin }: { copy: SurveyCopy; whatsapp: string
 function Honeypot({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   return (
     <div className="absolute -left-[9999px] h-0 overflow-hidden" aria-hidden="true">
-      <label>
-        Company website
-        <input value={value} onChange={(event) => onChange(event.target.value)} tabIndex={-1} autoComplete="off" />
-      </label>
+      <input name="xinergy_hp" value={value} onChange={(event) => onChange(event.target.value)} tabIndex={-1} autoComplete="off" />
     </div>
   );
 }

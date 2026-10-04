@@ -44,33 +44,33 @@ export type SurveyRow = {
 export function parseSubmission(body: unknown): { ok: true; row: SurveyRow } | { ok: false; honeypot?: boolean } {
   if (!body || typeof body !== "object") return { ok: false };
   const input = body as Draft;
-  if (typeof input.company_url === "string" && input.company_url.trim()) return { ok: false, honeypot: true };
+  const honeypot = typeof input.company_url === "string" && input.company_url.trim().length > 0;
   const draft = input.d;
-  if (!draft || typeof draft !== "object") return { ok: false };
+  if (!draft || typeof draft !== "object") return { ok: false, honeypot };
   const data = draft as Draft;
   const language = data.lang === "pt" || data.lang === "en" || data.lang === "es" ? data.lang : null;
-  if (!language) return { ok: false };
-  if (data.version !== SURVEY_VERSION) return { ok: false };
+  if (!language) return { ok: false, honeypot };
+  if (data.version !== SURVEY_VERSION) return { ok: false, honeypot };
 
   const text = (id: string) => (typeof data[id] === "string" ? data[id].trim() : "");
   for (const field of ["nombre", "apellido", "rol", "cargo", "empresa", "pais", "antiguedad", "email"]) {
-    if (!text(field)) return { ok: false };
+    if (!text(field)) return { ok: false, honeypot };
   }
-  if (!EMAIL.test(text("email"))) return { ok: false };
+  if (!EMAIL.test(text("email"))) return { ok: false, honeypot };
   const linkedin = text("linkedin");
-  if (linkedin && !/^https?:\/\/\S+\.\S+/.test(linkedin) && !/^[a-z0-9.-]*linkedin\.com\/\S+/i.test(linkedin)) return { ok: false };
+  if (linkedin && !/^https?:\/\/\S+\.\S+/.test(linkedin) && !/^[a-z0-9.-]*linkedin\.com\/\S+/i.test(linkedin)) return { ok: false, honeypot };
 
   const consents: Record<string, boolean> = {};
   for (const item of CONSENTS) {
     consents[item.id] = data[item.id] === true;
-    if (item.req && !consents[item.id]) return { ok: false };
+    if (item.req && !consents[item.id]) return { ok: false, honeypot };
   }
 
   const rol = roleGroup(text("rol"));
   const rubro = text("rubro");
   const group = industryGroup(rubro);
-  if (!validQuestions(EMP, data, rol, group)) return { ok: false };
-  if (!validQuestions([...S4, ...S5, ...S6, ...S7], data, rol, group)) return { ok: false };
+  if (!validQuestions(EMP, data, rol, group)) return { ok: false, honeypot };
+  if (!validQuestions([...S4, ...S5, ...S6, ...S7], data, rol, group)) return { ok: false, honeypot };
 
   const company: Record<string, string | string[]> = {};
   for (const question of EMP) {
@@ -89,7 +89,7 @@ export function parseSubmission(body: unknown): { ok: true; row: SurveyRow } | {
   }
 
   const ahp = analyzeAhp(isRecord(data.prioridades_ahp) ? (data.prioridades_ahp as Record<string, string>) : null);
-  if (!ahp) return { ok: false };
+  if (!ahp) return { ok: false, honeypot };
 
   return {
     ok: true,
