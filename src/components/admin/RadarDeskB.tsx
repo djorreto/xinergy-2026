@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChartZoom } from "@/components/admin/ChartZoom";
+import { StudyDownload } from "@/components/admin/StudyDownload";
 import { ExecutiveBriefPanel } from "@/components/admin/ExecutiveBrief";
 import type { ZoomSheet } from "@/lib/surveys/chart-zoom";
 import { EVAL_INCLUDED, EVAL_ISOLATED, type Evaluacion } from "@/lib/surveys/evaluacion";
@@ -53,6 +54,7 @@ export function RadarDeskB({ people, benchmark, publicUrl, verified, brief }: { 
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <button type="button" className="btn-secondary" onClick={() => { navigator.clipboard.writeText(publicUrl).then(() => setCopied(true)); }}>{copied ? "Enlace copiado" : "Copiar enlace de la encuesta"}</button>
         <a className="btn-secondary" href="/api/admin/surveys/radar-compras-2027-b/export">Exportar Excel</a>
+        <StudyDownload href="/api/admin/surveys/radar-compras-2027-b/informe" />
         <span className="text-sm text-xinergy-slate">{people.length} respuestas · {isolated} aisladas · {benchmark.companies} empresas en el benchmark operacional</span>
       </div>
       {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}

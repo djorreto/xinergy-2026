@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { ChartZoom } from "@/components/admin/ChartZoom";
+import { StudyDownload } from "@/components/admin/StudyDownload";
 import { ExecutiveBriefPanel } from "@/components/admin/ExecutiveBrief";
 import { AhpPanel } from "@/components/survey/AhpPanel";
 import { aggregateAhp, analyzeAhp } from "@/lib/surveys/ahp";
@@ -167,6 +168,7 @@ export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAns
             <a className="btn-secondary" href="/api/admin/surveys/radar-compras-2027/export?tipo=pdf">
               Exportar PDF preliminar
             </a>
+            <StudyDownload href="/api/admin/surveys/radar-compras-2027/informe" />
           </div>
           <ExecutiveBriefPanel initial={brief} responses={included} onZoom={setZoom} />
           {included.length ? (
