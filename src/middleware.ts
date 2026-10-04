@@ -4,6 +4,7 @@ import { adminHref, adminPathKey } from "./lib/auth/admin-path";
 import { INSIGHTS_SESSION_COOKIE, readSessionToken } from "./lib/auth/insights-session";
 import { localeFromCountry } from "./i18n/geo";
 import { routing, type Locale } from "./i18n/routing";
+import { isSurveyPath } from "./lib/surveys/path";
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
 
@@ -39,6 +40,12 @@ function detectLocale(request: NextRequest): Locale {
 
 function noindex(response: NextResponse) {
   response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  return response;
+}
+
+function hideFromSearch(pathname: string, response: NextResponse) {
+  if (!isSurveyPath(pathname)) return response;
+  response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
   return response;
 }
 
@@ -103,10 +110,10 @@ export default async function middleware(request: NextRequest) {
     const locale = detectLocale(request);
     const url = request.nextUrl.clone();
     url.pathname = pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
-    return NextResponse.redirect(url);
+    return hideFromSearch(pathname, NextResponse.redirect(url));
   }
 
-  return intlMiddleware(request);
+  return hideFromSearch(pathname, intlMiddleware(request));
 }
 
 export const config = {
