@@ -39,6 +39,7 @@ export type PersonC = {
   rubro: string;
   alcance: string;
   unidad: string;
+  spend: string;
   included: boolean;
   operational: boolean;
   ahp: AhpAnalysis | null;
@@ -123,6 +124,7 @@ export function buildPersonC(row: RadarCInput): PersonC {
     rubro: row.rubro,
     alcance: typeof company.alcance === "string" ? company.alcance : "",
     unidad: typeof company.unidad === "string" ? company.unidad : "",
+    spend: typeof company.spend === "string" ? company.spend : "",
     included: isIncluded(row.evaluacion),
     operational,
     ahp,
