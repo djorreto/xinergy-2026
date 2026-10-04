@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
+import { ExecutiveBriefPanel } from "@/components/admin/ExecutiveBrief";
 import { AhpPanel } from "@/components/survey/AhpPanel";
 import { aggregateAhp, analyzeAhp } from "@/lib/surveys/ahp";
 import { formatQuestion, formatStored } from "@/lib/surveys/present";
@@ -17,6 +18,7 @@ import {
   tx,
   type Question,
 } from "@/lib/surveys/radar-2027";
+import type { StoredBrief } from "@/lib/surveys/executive";
 
 export type RadarAnswer = {
   id: string;
@@ -46,7 +48,7 @@ const dateFormat = new Intl.DateTimeFormat("es-CL", {
   timeZone: "America/Santiago",
 });
 
-export function RadarDesk({ responses, publicUrl }: { responses: RadarAnswer[]; publicUrl: string }) {
+export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAnswer[]; publicUrl: string; brief: StoredBrief | null }) {
   const [view, setView] = useState<"respuestas" | "analisis">("respuestas");
   const [selected, setSelected] = useState<string | null>(null);
   const [pais, setPais] = useState("todos");
@@ -103,7 +105,10 @@ export function RadarDesk({ responses, publicUrl }: { responses: RadarAnswer[]; 
           <ResponseTable responses={responses} onOpen={setSelected} />
         )
       ) : (
-        <Analysis responses={filtered} all={responses} pais={pais} rol={rol} rubro={rubro} onPais={setPais} onRol={setRol} onRubro={setRubro} />
+        <div className="mt-6 flex flex-col gap-10">
+          <ExecutiveBriefPanel initial={brief} responses={responses} />
+          <Analysis responses={filtered} all={responses} pais={pais} rol={rol} rubro={rubro} onPais={setPais} onRol={setRol} onRubro={setRubro} />
+        </div>
       )}
     </div>
   );
@@ -235,7 +240,7 @@ function Analysis({
     );
   }
   return (
-    <div className="mt-6 flex flex-col gap-8">
+    <div className="flex flex-col gap-8">
       <div className="grid gap-3 sm:grid-cols-3">
         <Filter label="País" value={pais} onChange={onPais} options={unique(all, "pais")} />
         <Filter label="Rol" value={rol} onChange={onRol} options={unique(all, "rol")} />

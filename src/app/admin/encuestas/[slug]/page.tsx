@@ -3,6 +3,7 @@ import { AdminNav } from "@/components/admin/AdminNav";
 import { RadarDesk, type RadarAnswer } from "@/components/admin/RadarDesk";
 import { requireAdminUser } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { StoredBrief } from "@/lib/surveys/executive";
 import { SURVEY_SLUG } from "@/lib/surveys/radar-2027";
 
 type Row = {
@@ -34,11 +35,18 @@ export default async function SurveyAdminPage({ params }: { params: Promise<{ sl
   const admin = await createAdminClient();
   const { data: survey } = await admin.from("web_surveys").select("id, title").eq("slug", slug).maybeSingle();
   if (!survey) notFound();
-  const { data } = await admin
-    .from("web_survey_responses")
-    .select("id, created_at, language, nombre, apellido, email, telefono, linkedin, cargo, empresa, pais, rol, rol_grupo, antiguedad, rubro, rubro_grupo, consents, company, answers")
-    .eq("survey_id", survey.id)
-    .order("created_at", { ascending: false });
+  const [{ data }, { data: briefRow }] = await Promise.all([
+    admin
+      .from("web_survey_responses")
+      .select("id, created_at, language, nombre, apellido, email, telefono, linkedin, cargo, empresa, pais, rol, rol_grupo, antiguedad, rubro, rubro_grupo, consents, company, answers")
+      .eq("survey_id", survey.id)
+      .order("created_at", { ascending: false }),
+    admin
+      .from("web_survey_briefs")
+      .select("generated_at, response_count, latest_response_at, context, themes")
+      .eq("survey_id", survey.id)
+      .maybeSingle(),
+  ]);
 
   const responses: RadarAnswer[] = ((data ?? []) as Row[]).map((row) => ({
     id: row.id,
@@ -63,11 +71,20 @@ export default async function SurveyAdminPage({ params }: { params: Promise<{ sl
   }));
 
   const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://xinergy.lat").replace(/\/$/, "");
+  const brief: StoredBrief | null = briefRow
+    ? {
+        generatedAt: briefRow.generated_at,
+        responseCount: briefRow.response_count,
+        latestResponseAt: briefRow.latest_response_at,
+        context: briefRow.context,
+        themes: briefRow.themes ?? [],
+      }
+    : null;
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
+    <div className="mx-auto max-w-6xl px-6 py-10">
       <AdminNav email={user.email} />
-      <RadarDesk responses={responses} publicUrl={`${site}/radar-compras-2027`} />
+      <RadarDesk responses={responses} publicUrl={`${site}/radar-compras-2027`} brief={brief} />
     </div>
   );
 }
