@@ -1,0 +1,484 @@
+import { AHP, AHP_SCALE } from "@/lib/surveys/radar-2027";
+
+export type Lang = "es" | "en" | "pt";
+export type Copy = { es: string; en: string; pt: string };
+export type Choice = { v: string; es: string; en: string; pt: string };
+
+export const text = (copy: Copy, lang: Lang) => copy[lang];
+const L = (es: string, en: string, pt: string): Copy => ({ es, en, pt });
+const o = (v: string, es: string, en: string, pt: string): Choice => ({ v, es, en, pt });
+
+export { AHP, AHP_SCALE };
+
+export const ROLES: Choice[] = [
+  o("ceo", "CEO / Gerente general", "CEO / General manager", "CEO / Diretor geral"),
+  o("cfo", "CFO / Finanzas", "CFO / Finance", "CFO / Finanças"),
+  o("cpo", "CPO / Compras", "CPO / Procurement", "CPO / Compras"),
+  o("scm", "Supply chain / Operaciones", "Supply chain / Operations", "Supply chain / Operações"),
+  o("otro", "Otro", "Other", "Outro"),
+];
+
+export const COUNTRIES: Choice[] = [
+  o("CL", "Chile", "Chile", "Chile"),
+  o("AR", "Argentina", "Argentina", "Argentina"),
+  o("BO", "Bolivia", "Bolivia", "Bolívia"),
+  o("BR", "Brasil", "Brazil", "Brasil"),
+  o("CO", "Colombia", "Colombia", "Colômbia"),
+  o("CR", "Costa Rica", "Costa Rica", "Costa Rica"),
+  o("EC", "Ecuador", "Ecuador", "Equador"),
+  o("SV", "El Salvador", "El Salvador", "El Salvador"),
+  o("GT", "Guatemala", "Guatemala", "Guatemala"),
+  o("HN", "Honduras", "Honduras", "Honduras"),
+  o("MX", "México", "Mexico", "México"),
+  o("NI", "Nicaragua", "Nicaragua", "Nicarágua"),
+  o("PA", "Panamá", "Panama", "Panamá"),
+  o("PY", "Paraguay", "Paraguay", "Paraguai"),
+  o("PE", "Perú", "Peru", "Peru"),
+  o("DO", "República Dominicana", "Dominican Republic", "República Dominicana"),
+  o("UY", "Uruguay", "Uruguay", "Uruguai"),
+  o("VE", "Venezuela", "Venezuela", "Venezuela"),
+  o("regional", "Alcance regional", "Regional scope", "Escopo regional"),
+  o("otro", "Otro", "Other", "Outro"),
+];
+
+export const INDUSTRIES: Choice[] = [
+  o("mineria", "Minería", "Mining", "Mineração"),
+  o("energia", "Energía / utilities", "Energy / utilities", "Energia / utilities"),
+  o("oil", "Oil & Gas", "Oil & Gas", "Oil & Gas"),
+  o("manufactura", "Manufactura", "Manufacturing", "Manufatura"),
+  o("construccion", "Construcción", "Construction", "Construção"),
+  o("retail", "Retail / consumo", "Retail / consumer", "Varejo / consumo"),
+  o("finanzas", "Servicios financieros", "Financial services", "Serviços financeiros"),
+  o("salud", "Salud / farma", "Health / pharma", "Saúde / farma"),
+  o("transporte", "Transporte / logística", "Transport / logistics", "Transporte / logística"),
+  o("turismo", "Turismo / hotelería", "Tourism / hospitality", "Turismo / hotelaria"),
+  o("servicios", "Servicios profesionales / tecnología", "Professional services / technology", "Serviços profissionais / tecnologia"),
+  o("publico", "Sector público", "Public sector", "Setor público"),
+  o("otra", "Otra", "Other", "Outra"),
+];
+
+export const SPEND: Choice[] = [
+  o("<1", "Menos de 1M", "Under 1M", "Menos de 1M"),
+  o("1-10", "1 a menos de 10M", "1 to under 10M", "1 a menos de 10M"),
+  o("10-50", "10 a menos de 50M", "10 to under 50M", "10 a menos de 50M"),
+  o("50-100", "50 a menos de 100M", "50 to under 100M", "50 a menos de 100M"),
+  o("100-500", "100 a menos de 500M", "100 to under 500M", "100 a menos de 500M"),
+  o("500+", "500M o más", "500M or more", "500M ou mais"),
+  o("ns", "No sé", "I don't know", "Não sei"),
+  o("nr", "Prefiero no informar", "Prefer not to say", "Prefiro não informar"),
+];
+
+export const MANAGED: Choice[] = [
+  o("<10", "Menos de 10%", "Under 10%", "Menos de 10%"),
+  o("10-30", "10 a menos de 30%", "10 to under 30%", "10 a menos de 30%"),
+  o("30-50", "30 a menos de 50%", "30 to under 50%", "30 a menos de 50%"),
+  o("50-70", "50 a 70%", "50 to 70%", "50 a 70%"),
+  o(">70", "Más de 70%", "Over 70%", "Mais de 70%"),
+  o("ns", "No sé", "I don't know", "Não sei"),
+];
+
+export const ORG: Choice[] = [
+  o("centralizada", "Centralizada", "Centralized", "Centralizada"),
+  o("hibrida", "Híbrida", "Hybrid", "Híbrida"),
+  o("descentralizada", "Descentralizada", "Decentralized", "Descentralizada"),
+  o("ns", "No sé", "I don't know", "Não sei"),
+];
+
+export const TEAM: Choice[] = [
+  o("0", "0", "0", "0"),
+  o("1", "1", "1", "1"),
+  o("2-5", "2–5", "2–5", "2–5"),
+  o("6-10", "6–10", "6–10", "6–10"),
+  o("11-25", "11–25", "11–25", "11–25"),
+  o("26-50", "26–50", "26–50", "26–50"),
+  o("50+", "Más de 50", "Over 50", "Mais de 50"),
+  o("ns", "No sé", "I don't know", "Não sei"),
+];
+
+export const KNOWLEDGE: Choice[] = [
+  o("si", "Sí", "Yes", "Sim"),
+  o("parcial", "Conozco sólo una parte", "I know only part of it", "Conheço só uma parte"),
+  o("no", "No", "No", "Não"),
+];
+
+export const DATA_READY: Choice[] = [
+  o("READY", "Los datos del alcance están identificados, disponibles, con responsables, acceso autorizado y controles de calidad verificados", "The data for this scope is identified, available, owned, authorized and quality-checked", "Os dados do escopo estão identificados, disponíveis, com responsáveis, acesso autorizado e controles de qualidade verificados"),
+  o("PARTIAL", "Una parte cumple esas condiciones, pero faltan datos, calidad, integración o gobierno", "Part of it meets those conditions, but data, quality, integration or governance is missing", "Uma parte cumpre essas condições, mas faltam dados, qualidade, integração ou governança"),
+  o("NOT_READY", "No contamos todavía con esa base de datos y gobierno", "We do not yet have that data base and governance", "Ainda não contamos com essa base de dados e governança"),
+  o("UNKNOWN", "No lo sé / el alcance de IA no está definido", "I don't know / the AI scope is not defined", "Não sei / o escopo de IA não está definido"),
+];
+
+export const AGENDA_STATUS: Choice[] = [
+  o("0", "No considerada", "Not considered", "Não considerada"),
+  o("1", "En evaluación, sin aprobación de ejecución", "Under evaluation, not yet approved", "Em avaliação, sem aprovação de execução"),
+  o("2", "Aprobada para los próximos 12–18 meses", "Approved for the next 12–18 months", "Aprovada para os próximos 12–18 meses"),
+  o("3", "En implementación", "Being implemented", "Em implementação"),
+  o("4", "Implementada / operación estable", "Implemented / stable operation", "Implementada / operação estável"),
+  o("5", "No aplicable al alcance", "Not applicable to this scope", "Não aplicável ao escopo"),
+  o("ns", "No sé", "I don't know", "Não sei"),
+];
+
+const NS = o("ns", "No sé", "I don't know", "Não sei");
+const NM = o("nm", "No medimos", "We do not measure it", "Não medimos");
+
+export const EVIDENCE: { id: string; label: Copy; options: Choice[] }[] = [
+  {
+    id: "e1",
+    label: L(
+      "En el último ejercicio cerrado, ¿qué porcentaje de ahorro validado por Finanzas logró sobre el gasto gestionado comparable?",
+      "In the last closed year, what savings validated by Finance did you achieve on comparable managed spend?",
+      "No último exercício fechado, que percentual de economia validada por Finanças foi obtido sobre o gasto gerido comparável?",
+    ),
+    options: [o("<2", "Menos de 2%", "Under 2%", "Menos de 2%"), o("2-5", "2 a menos de 5%", "2 to under 5%", "2 a menos de 5%"), o("5-8", "5 a menos de 8%", "5 to under 8%", "5 a menos de 8%"), o("8-12", "8 a 12%", "8 to 12%", "8 a 12%"), o(">12", "Más de 12%", "Over 12%", "Mais de 12%"), NM, NS],
+  },
+  {
+    id: "e2",
+    label: L(
+      "Del ahorro negociado del último ejercicio que debía materializarse en ese periodo, ¿qué porcentaje fue reconocido por Finanzas?",
+      "Of the negotiated savings from the last year that should have landed in that period, what share did Finance recognize?",
+      "Da economia negociada do último exercício que deveria se materializar nesse período, que percentual foi reconhecido por Finanças?",
+    ),
+    options: [o("<25", "Menos de 25%", "Under 25%", "Menos de 25%"), o("25-50", "25 a menos de 50%", "25 to under 50%", "25 a menos de 50%"), o("50-75", "50 a 75%", "50 to 75%", "50 a 75%"), o(">75", "Más de 75%", "Over 75%", "Mais de 75%"), NM, NS],
+  },
+  {
+    id: "e3",
+    label: L(
+      "Aproximadamente, ¿qué porcentaje del gasto depende de proveedores para los que no tiene una alternativa viable en el plazo que requiere la operación?",
+      "Roughly what share of spend depends on suppliers for which you have no viable alternative in the time the operation needs?",
+      "Aproximadamente, que percentual do gasto depende de fornecedores para os quais não há alternativa viável no prazo que a operação exige?",
+    ),
+    options: [o("<10", "Menos de 10%", "Under 10%", "Menos de 10%"), o("10-25", "10 a menos de 25%", "10 to under 25%", "10 a menos de 25%"), o("25-50", "25 a 50%", "25 to 50%", "25 a 50%"), o(">50", "Más de 50%", "Over 50%", "Mais de 50%"), NM, NS],
+  },
+  {
+    id: "e4",
+    label: L(
+      "Con los datos disponibles hoy, ¿cuánto trabajo requiere obtener y validar el gasto del último ejercicio con sus 20 principales proveedores?",
+      "With the data you have today, how much work does it take to obtain and validate last year's spend with your top 20 suppliers?",
+      "Com os dados disponíveis hoje, quanto trabalho exige obter e validar o gasto do último exercício com os 20 principais fornecedores?",
+    ),
+    options: [
+      o("<1h", "Menos de 1 hora", "Under 1 hour", "Menos de 1 hora"),
+      o("1-8h", "1 a menos de 8 horas", "1 to under 8 hours", "1 a menos de 8 horas"),
+      o("8-40h", "8 a menos de 40 horas", "8 to under 40 hours", "8 a menos de 40 horas"),
+      o("40h+", "40 horas o más", "40 hours or more", "40 horas ou mais"),
+      o("imposible", "No podemos obtenerlo con fiabilidad", "We cannot obtain it reliably", "Não conseguimos obter com confiabilidade"),
+      NS,
+    ],
+  },
+  {
+    id: "e5",
+    label: L("¿En qué etapa está el uso de IA en Compras?", "What stage is AI use in Procurement?", "Em que etapa está o uso de IA em Compras?"),
+    options: [
+      o("no", "No se usa", "Not used", "Não se usa"),
+      o("individual", "Uso individual no gobernado", "Individual, ungoverned use", "Uso individual não governado"),
+      o("piloto", "Pilotos con responsable", "Pilots with an owner", "Pilotos com responsável"),
+      o("produccion", "Producción en parte de los procesos, con controles", "Live in part of the process, with controls", "Produção em parte dos processos, com controles"),
+      o("extendido", "Uso extendido con gobierno y monitoreo", "Broad use with governance and monitoring", "Uso amplo com governança e monitoramento"),
+      NS,
+    ],
+  },
+  {
+    id: "e6",
+    label: L(
+      "Del gasto que debía seguir el proceso de Compras, ¿qué porcentaje se ejecutó fuera de ese proceso sin una excepción autorizada?",
+      "Of the spend that should have followed the Procurement process, what share went outside it without an authorized exception?",
+      "Do gasto que deveria seguir o processo de Compras, que percentual foi executado fora desse processo sem uma exceção autorizada?",
+    ),
+    options: [o("<5", "Menos de 5%", "Under 5%", "Menos de 5%"), o("5-15", "5 a menos de 15%", "5 to under 15%", "5 a menos de 15%"), o("15-30", "15 a 30%", "15 to 30%", "15 a 30%"), o(">30", "Más de 30%", "Over 30%", "Mais de 30%"), NM, NS],
+  },
+  {
+    id: "e7",
+    label: L("¿Qué descripción refleja mejor el rol actual de Compras?", "Which description best reflects Procurement's current role?", "Qual descrição reflete melhor o papel atual de Compras?"),
+    options: [
+      o("oc", "Emisión de pedidos / OC", "Purchase-order processing", "Emissão de pedidos / OC"),
+      o("precio", "Negociación principalmente de precio", "Mostly price negotiation", "Negociação principalmente de preço"),
+      o("tco", "Gestión de costo total", "Total-cost management", "Gestão de custo total"),
+      o("socio", "Socio en costo, caja y riesgo", "Partner on cost, cash and risk", "Parceiro em custo, caixa e risco"),
+      o("estrategico", "Participación estratégica en decisiones del negocio", "Strategic role in business decisions", "Participação estratégica em decisões do negócio"),
+      NS,
+    ],
+  },
+];
+
+const level = (n: number, es: string, en: string, pt: string) => ({ n, ...L(es, en, pt) });
+
+export const CAPABILITIES: { id: string; short: Copy; question: Copy; levels: { n: number; es: string; en: string; pt: string }[] }[] = [
+  {
+    id: "costos",
+    short: L("Costos y captura de valor", "Cost and value capture", "Custos e captura de valor"),
+    question: L("Reducir costo total y capturar valor económico mediante Compras", "Reduce total cost and capture economic value through Procurement", "Reduzir o custo total e capturar valor econômico por meio de Compras"),
+    levels: [
+      level(1, "Compra reactiva; negociación puntual de precio; sin línea base ni medición sistemática.", "Reactive buying; one-off price negotiation; no baseline or systematic measurement.", "Compra reativa; negociação pontual de preço; sem linha de base nem medição sistemática."),
+      level(2, "Cotizaciones y ahorros registrados en algunas categorías; metodologías y cobertura fragmentadas.", "Quotes and savings recorded in some categories; fragmented methods and coverage.", "Cotações e economias registradas em algumas categorias; métodos e cobertura fragmentados."),
+      level(3, "Proceso de sourcing y categorías priorizadas; línea base y responsables definidos; costo total en categorías relevantes.", "Sourcing process and priority categories; baseline and owners defined; total cost on relevant categories.", "Processo de sourcing e categorias priorizadas; linha de base e responsáveis definidos; custo total em categorias relevantes."),
+      level(4, "Pipeline de iniciativas, KPIs y seguimiento; Finanzas valida ahorros y su realización; gobierno recurrente por categoría.", "Initiative pipeline, KPIs and follow-up; Finance validates savings and their realization; recurring category governance.", "Pipeline de iniciativas, KPIs e acompanhamento; Finanças valida economias e sua realização; governança recorrente por categoria."),
+      level(5, "Gestión de valor integrada a la planificación; analítica y seguimiento continuo de TCO, cumplimiento y beneficios.", "Value management built into planning; analytics and continuous tracking of TCO, compliance and benefits.", "Gestão de valor integrada ao planejamento; analítica e acompanhamento contínuo de TCO, cumprimento e benefícios."),
+    ],
+  },
+  {
+    id: "caja",
+    short: L("Caja y capital de trabajo", "Cash and working capital", "Caixa e capital de giro"),
+    question: L("Liberar caja y capital de trabajo en coordinación con Finanzas y Operaciones", "Release cash and working capital with Finance and Operations", "Liberar caixa e capital de giro em coordenação com Finanças e Operações"),
+    levels: [
+      level(1, "Condiciones de pago e inventario se gestionan caso a caso, sin objetivo coordinado.", "Payment terms and inventory are handled case by case, with no shared objective.", "Condições de pagamento e estoque são tratados caso a caso, sem objetivo coordenado."),
+      level(2, "Se conocen términos o inventario de parte del gasto, pero con datos o acciones fragmentadas.", "Terms or inventory are known for part of spend, with fragmented data or actions.", "Termos ou estoque são conhecidos para parte do gasto, com dados ou ações fragmentados."),
+      level(3, "Política y responsables de términos, inventario aplicable y coordinación con Finanzas y Operaciones definidos.", "Policy and owners for terms, applicable inventory and coordination with Finance and Operations are defined.", "Política e responsáveis por prazos, estoque aplicável e coordenação com Finanças e Operações definidos."),
+      level(4, "KPIs y seguimiento de cumplimiento, caja e inventario aplicable; oportunidades y excepciones gestionadas con regularidad.", "KPIs and tracking of compliance, cash and applicable inventory; opportunities and exceptions managed regularly.", "KPIs e acompanhamento de cumprimento, caixa e estoque aplicável; oportunidades e exceções geridas com regularidade."),
+      level(5, "Decisiones integradas con Finanzas y Operaciones; escenarios de caja y riesgo del proveedor; financiación cuando aporta valor.", "Decisions integrated with Finance and Operations; cash and supplier-risk scenarios; financing when it adds value.", "Decisões integradas com Finanças e Operações; cenários de caixa e risco do fornecedor; financiamento quando agrega valor."),
+    ],
+  },
+  {
+    id: "riesgo",
+    short: L("Riesgo y continuidad", "Risk and continuity", "Risco e continuidade"),
+    question: L("Gestionar riesgo de proveedores y continuidad del abastecimiento", "Manage supplier risk and supply continuity", "Gerir risco de fornecedores e continuidade do abastecimento"),
+    levels: [
+      level(1, "Se reacciona a fallas; los proveedores críticos no están identificados de forma sistemática.", "Failures are handled as they happen; critical suppliers are not identified systematically.", "Reage-se a falhas; fornecedores críticos não estão identificados de forma sistemática."),
+      level(2, "Listados y evaluaciones puntuales de criticidad, sin monitoreo ni contingencias consistentes.", "Ad-hoc criticality lists and reviews, without consistent monitoring or contingencies.", "Listas e avaliações pontuais de criticidade, sem monitoramento nem contingências consistentes."),
+      level(3, "Segmentación, evaluación de proveedores críticos, responsables y planes de contingencia definidos.", "Segmentation, critical-supplier assessment, owners and contingency plans are defined.", "Segmentação, avaliação de fornecedores críticos, responsáveis e planos de contingência definidos."),
+      level(4, "Monitoreo periódico, alertas, indicadores y seguimiento de acciones; contingencias revisadas o probadas.", "Periodic monitoring, alerts, indicators and action tracking; contingencies reviewed or tested.", "Monitoramento periódico, alertas, indicadores e acompanhamento de ações; contingências revisadas ou testadas."),
+      level(5, "Riesgo integrado a decisiones de sourcing y operación; escenarios, trazabilidad de exposición y revisión continua de resiliencia.", "Risk built into sourcing and operating decisions; scenarios, exposure traceability and continuous resilience review.", "Risco integrado a decisões de sourcing e operação; cenários, rastreabilidade da exposição e revisão contínua de resiliência."),
+    ],
+  },
+  {
+    id: "control",
+    short: L("Cumplimiento y control", "Compliance and control", "Cumprimento e controle"),
+    question: L("Asegurar cumplimiento de procesos, trazabilidad y control", "Secure process compliance, traceability and control", "Assegurar cumprimento de processos, rastreabilidade e controle"),
+    levels: [
+      level(1, "Procesos informales; baja trazabilidad de aprobaciones, compromisos y proveedores.", "Informal processes; weak traceability of approvals, commitments and suppliers.", "Processos informais; baixa rastreabilidade de aprovações, compromissos e fornecedores."),
+      level(2, "Políticas o contratos existen, pero la cobertura y el seguimiento son fragmentados.", "Policies or contracts exist, but coverage and follow-up are fragmented.", "Políticas ou contratos existem, mas a cobertura e o acompanhamento são fragmentados."),
+      level(3, "Procesos, autorizaciones, segregación de funciones y repositorio contractual definidos y utilizados.", "Processes, authorizations, segregation of duties and a contract repository are defined and used.", "Processos, autorizações, segregação de funções e repositório contratual definidos e utilizados."),
+      level(4, "KPIs, revisión de excepciones, controles y auditoría; responsables gestionan incumplimientos.", "KPIs, exception review, controls and audit; owners manage non-compliance.", "KPIs, revisão de exceções, controles e auditoria; responsáveis gerem descumprimentos."),
+      level(5, "Trazabilidad integrada y monitoreo continuo; controles automatizados cuando corresponde y corrección sistemática de desvíos.", "Integrated traceability and continuous monitoring; automated controls where relevant and systematic correction of deviations.", "Rastreabilidade integrada e monitoramento contínuo; controles automatizados quando cabe e correção sistemática de desvios."),
+    ],
+  },
+  {
+    id: "esg",
+    short: L("Sostenibilidad y ESG", "Sustainability and ESG", "Sustentabilidade e ESG"),
+    question: L("Gestionar sostenibilidad y exigencias ESG en la cadena de proveedores", "Manage sustainability and ESG requirements in the supplier base", "Gerir sustentabilidade e exigências ESG na cadeia de fornecedores"),
+    levels: [
+      level(1, "No hay prácticas sistemáticas de evaluación ESG de proveedores.", "There is no systematic ESG assessment of suppliers.", "Não há práticas sistemáticas de avaliação ESG de fornecedores."),
+      level(2, "Se solicitan antecedentes o compromisos a algunos proveedores, sin seguimiento consistente.", "Evidence or commitments are requested from some suppliers, without consistent follow-up.", "Solicitam-se antecedentes ou compromissos a alguns fornecedores, sem acompanhamento consistente."),
+      level(3, "Criterios ESG, due diligence proporcional al riesgo y responsabilidades definidos.", "ESG criteria, risk-based due diligence and responsibilities are defined.", "Critérios ESG, due diligence proporcional ao risco e responsabilidades definidos."),
+      level(4, "Seguimiento de KPIs, acciones correctivas y cumplimiento de criterios en proveedores relevantes.", "KPI tracking, corrective actions and criteria compliance for relevant suppliers.", "Acompanhamento de KPIs, ações corretivas e cumprimento de critérios em fornecedores relevantes."),
+      level(5, "ESG integrado a decisiones de categoría y colaboración; resultados verificables y mejora continua de proveedores.", "ESG built into category decisions and collaboration; verifiable results and continuous supplier improvement.", "ESG integrado a decisões de categoria e colaboração; resultados verificáveis e melhoria contínua de fornecedores."),
+    ],
+  },
+  {
+    id: "digital",
+    short: L("Digitalización, datos e IA", "Digital, data and AI", "Digitalização, dados e IA"),
+    question: L("Mejorar tecnología, datos, automatización e IA aplicable a Compras", "Improve technology, data, automation and AI applied to Procurement", "Melhorar tecnologia, dados, automação e IA aplicável a Compras"),
+    levels: [
+      level(1, "Gestión predominantemente manual y datos dispersos, sin controles comunes.", "Mostly manual work and scattered data, without shared controls.", "Gestão predominantemente manual e dados dispersos, sem controles comuns."),
+      level(2, "Herramientas aisladas, planillas o usos individuales de automatización o IA; información fragmentada.", "Isolated tools, spreadsheets or individual automation/AI use; fragmented information.", "Ferramentas isoladas, planilhas ou usos individuais de automação ou IA; informação fragmentada."),
+      level(3, "Procesos digitales y datos maestros definidos; herramientas integradas en parte relevante del alcance.", "Digital processes and master data defined; tools integrated across a relevant part of the scope.", "Processos digitais e dados mestres definidos; ferramentas integradas em parte relevante do escopo."),
+      level(4, "Calidad de datos y KPIs gestionados; automatización o analítica en producción, con responsables y controles de uso.", "Data quality and KPIs managed; automation or analytics in production, with owners and use controls.", "Qualidade de dados e KPIs geridos; automação ou analítica em produção, com responsáveis e controles de uso."),
+      level(5, "Datos y sistemas integrados; automatización o IA gobernada y monitoreada donde aporta valor; mejora continua basada en desempeño.", "Integrated data and systems; governed and monitored automation or AI where it adds value; continuous improvement from performance.", "Dados e sistemas integrados; automação ou IA governada e monitorada onde agrega valor; melhoria contínua baseada em desempenho."),
+    ],
+  },
+  {
+    id: "innovacion",
+    short: L("Innovación con proveedores", "Supplier innovation", "Inovação com fornecedores"),
+    question: L("Desarrollar innovación y colaboración de valor con proveedores", "Develop innovation and value collaboration with suppliers", "Desenvolver inovação e colaboração de valor com fornecedores"),
+    levels: [
+      level(1, "Relación principalmente transaccional, sin actividades regulares de innovación.", "Mostly transactional relationship, with no regular innovation activity.", "Relação principalmente transacional, sem atividades regulares de inovação."),
+      level(2, "Ideas o pilotos puntuales, dependientes de personas o de iniciativas del proveedor.", "One-off ideas or pilots, dependent on individuals or on the supplier.", "Ideias ou pilotos pontuais, dependentes de pessoas ou de iniciativas do fornecedor."),
+      level(3, "Proveedores para colaboración identificados; proceso, responsables y criterios de evaluación definidos.", "Collaboration suppliers identified; process, owners and evaluation criteria defined.", "Fornecedores para colaboração identificados; processo, responsáveis e critérios de avaliação definidos."),
+      level(4, "Portafolio y KPIs de pilotos; decisiones y seguimiento de beneficios coordinados con áreas usuarias.", "Pilot portfolio and KPIs; decisions and benefit tracking coordinated with user areas.", "Portfólio e KPIs de pilotos; decisões e acompanhamento de benefícios coordenados com áreas usuárias."),
+      level(5, "Innovación integrada al negocio; aprendizajes y soluciones escaladas con valor verificado y gestión de riesgos.", "Innovation built into the business; learning and solutions scaled with verified value and risk management.", "Inovação integrada ao negócio; aprendizados e soluções escalados com valor verificado e gestão de riscos."),
+    ],
+  },
+  {
+    id: "talento",
+    short: L("Talento y capacidad de cambio", "Talent and change capability", "Talento e capacidade de mudança"),
+    question: L("Fortalecer talento, roles, liderazgo y capacidad de cambio", "Strengthen talent, roles, leadership and the ability to change", "Fortalecer talento, papéis, liderança e capacidade de mudança"),
+    levels: [
+      level(1, "Roles poco definidos; dependencia de personas clave; formación y cambio reactivos.", "Loosely defined roles; dependence on key people; reactive training and change.", "Papéis pouco definidos; dependência de pessoas-chave; formação e mudança reativas."),
+      level(2, "Roles o formación parcial, sin diagnóstico sistemático de capacidades.", "Partial roles or training, without a systematic capability diagnosis.", "Papéis ou formação parcial, sem diagnóstico sistemático de capacidades."),
+      level(3, "Roles, responsabilidades y capacidades requeridas definidos; plan de desarrollo y cambio.", "Roles, responsibilities and required capabilities defined; a development and change plan.", "Papéis, responsabilidades e capacidades requeridas definidos; plano de desenvolvimento e mudança."),
+      level(4, "Seguimiento de competencias, desempeño y adopción; formación y capacidad de ejecución gestionadas.", "Tracking of skills, performance and adoption; training and execution capacity managed.", "Acompanhamento de competências, desempenho e adoção; formação e capacidade de execução geridas."),
+      level(5, "Planificación de capacidades integrada a la estrategia; liderazgo, sucesión, aprendizaje y cambio sostenidos, con evidencia de resultados.", "Capability planning built into strategy; sustained leadership, succession, learning and change, with evidence of results.", "Planejamento de capacidades integrado à estratégia; liderança, sucessão, aprendizagem e mudança sustentados, com evidência de resultados."),
+    ],
+  },
+];
+
+export const INITIATIVE_COPY: { id: string; name: Copy; scope: Copy }[] = [
+  { id: "i1", name: L("Strategic sourcing / category management", "Strategic sourcing / category management", "Strategic sourcing / category management"), scope: L("Categorías priorizadas, metodología, sourcing y seguimiento de valor.", "Priority categories, method, sourcing and value tracking.", "Categorias priorizadas, método, sourcing e acompanhamento de valor.") },
+  { id: "i2", name: L("Working capital / supply chain finance", "Working capital / supply chain finance", "Working capital / supply chain finance"), scope: L("Términos y caja; financiación cuando existe caso de uso, con Finanzas.", "Terms and cash; financing when there is a use case, with Finance.", "Prazos e caixa; financiamento quando há caso de uso, com Finanças.") },
+  { id: "i3", name: L("Riesgo y resiliencia de proveedores", "Supplier risk and resilience", "Risco e resiliência de fornecedores"), scope: L("Criticidad, evaluación, monitoreo y contingencias.", "Criticality, assessment, monitoring and contingencies.", "Criticidade, avaliação, monitoramento e contingências.") },
+  { id: "i4", name: L("S2P / digitalización transaccional", "S2P / transactional digitalization", "S2P / digitalização transacional"), scope: L("Proceso, plataforma, adopción y control transaccional del alcance.", "Process, platform, adoption and transactional control of the scope.", "Processo, plataforma, adoção e controle transacional do escopo.") },
+  { id: "i5", name: L("Gobierno de datos y analítica de gasto", "Data governance and spend analytics", "Governança de dados e analítica de gasto"), scope: L("Maestros, clasificación, integración, calidad, responsables y visibilidad.", "Masters, classification, integration, quality, owners and visibility.", "Mestres, classificação, integração, qualidade, responsáveis e visibilidade.") },
+  { id: "i6", name: L("IA y automatización", "AI and automation", "IA e automação"), scope: L("Casos empresariales que usan datos del alcance, con gobierno, integración, producción y monitoreo.", "Business cases that use scope data, with governance, integration, production and monitoring.", "Casos empresariais que usam dados do escopo, com governança, integração, produção e monitoramento.") },
+  { id: "i7", name: L("BPO / tail spend", "BPO / tail spend", "BPO / tail spend"), scope: L("Modelo de servicio y gestión del gasto transaccional o disperso del alcance.", "Service model and management of transactional or fragmented spend in the scope.", "Modelo de serviço e gestão do gasto transacional ou disperso do escopo.") },
+  { id: "i8", name: L("Modelo operativo y talento", "Operating model and talent", "Modelo operacional e talento"), scope: L("Roles, gobierno, capacidades y adopción del cambio.", "Roles, governance, capabilities and change adoption.", "Papéis, governança, capacidades e adoção da mudança.") },
+  { id: "i9", name: L("Innovación con proveedores", "Supplier innovation", "Inovação com fornecedores"), scope: L("Selección de socios, pilotos, evaluación y escalamiento.", "Partner selection, pilots, evaluation and scale-up.", "Seleção de parceiros, pilotos, avaliação e escala.") },
+  { id: "i10", name: L("ESG / cumplimiento de proveedores", "ESG / supplier compliance", "ESG / cumprimento de fornecedores"), scope: L("Due diligence y gestión de criterios ESG de proveedores.", "Due diligence and management of supplier ESG criteria.", "Due diligence e gestão de critérios ESG de fornecedores.") },
+  { id: "i11", name: L("Optimización de inventario", "Inventory optimization", "Otimização de estoque"), scope: L("Políticas y decisiones de inventario en coordinación con Operaciones.", "Inventory policies and decisions with Operations.", "Políticas e decisões de estoque em coordenação com Operações.") },
+];
+
+export const CONSENTS: { id: string; req: boolean; label: Copy }[] = [
+  { id: "c_datos", req: true, label: L("Acepto el tratamiento de mis datos según lo descrito.", "I accept the processing of my data as described.", "Aceito o tratamento dos meus dados conforme descrito.") },
+  { id: "c_agregado", req: true, label: L("Autorizo el uso de mis respuestas en forma agregada y anónima.", "I authorize the use of my answers in aggregate and anonymous form.", "Autorizo o uso das minhas respostas de forma agregada e anônima.") },
+  { id: "c_informe", req: false, label: L("Quiero recibir el informe y mi benchmark.", "I want to receive the report and my benchmark.", "Quero receber o relatório e meu benchmark.") },
+  { id: "c_contacto", req: false, label: L("Acepto que Xinergy me contacte sobre la presentación de resultados. Esto no autoriza otras comunicaciones comerciales.", "I accept that Xinergy may contact me about the results presentation. This does not authorize other commercial messages.", "Aceito que a Xinergy me contate sobre a apresentação dos resultados. Isso não autoriza outras mensagens comerciais.") },
+];
+
+export const ui = {
+  es: {
+    steps: ["Inicio", "Contacto", "Alcance", "Prioridades", "Conocimiento", "Capacidad", "Evidencia", "Agenda", "Cierre"],
+    back: "Atrás",
+    next: "Continuar",
+    start: "Comenzar",
+    submit: "Enviar respuestas",
+    sending: "Enviando…",
+    required: "Esta respuesta es obligatoria.",
+    email: "Ingrese un correo válido.",
+    fix: "Revise las preguntas marcadas.",
+    sendErr: "No pudimos enviar sus respuestas. Revise su conexión e intente de nuevo.",
+    saved: "Su avance se guarda en este navegador.",
+    lang: "Idioma",
+    eyebrow: "Radar Compras 2027 · opción B",
+    welcomeTitle: "Prioridades, capacidades y agenda de Compras",
+    welcomeLead: "Responda pensando en el alcance de empresa o unidad que indicará a continuación. Sus respuestas alimentan un benchmark agregado y escenarios de mejora. Puede elegir “no sé” cuando corresponda. El cuestionario central está pensado para 8 a 10 minutos.",
+    welcomeNote: "Las recomendaciones usan una matriz de demostración. No son una promesa de ahorro ni un resultado medido.",
+    contactTitle: "Sus datos de contacto",
+    contactNote: "El nombre y el correo se guardan aparte del análisis, para el envío del benchmark si usted lo pide.",
+    profileTitle: "Alcance que va a evaluar",
+    profileNote: "País es el país de operación de ese alcance, no su nacionalidad.",
+    ahpTitle: "¿Qué debería priorizar Compras durante 2027?",
+    ahpNote: "Compare cada par. ¿Cuál debería tener mayor importancia, y cuánto mayor? Ningún par viene marcado.",
+    left: "Más importante a la izquierda",
+    right: "Más importante a la derecha",
+    equal: "igual",
+    crWarn: "Algunas comparaciones parecen contradictorias. Puede revisar este bloque o continuar. Si continúa, sus prioridades se tratarán como exploratorias.",
+    crContinue: "Continuar de todos modos",
+    knowTitle: "¿Conoce la operación de Compras de ese alcance?",
+    knowNote: "¿Conoce directamente la capacidad actual y la agenda de iniciativas de Compras del alcance que está evaluando?",
+    capTitle: "Capacidad actual",
+    capNote: "Seleccione el nivel más alto que describa prácticas habituales. Si solo cumple una parte del nivel, elija el anterior. Si no tiene información suficiente, marque “no sé”.",
+    seeLevel: "Ver qué significa cada nivel",
+    evTitle: "Evidencia de la operación",
+    evNote: "Estas respuestas contrastan el autodiagnóstico. No corrigen la capacidad ni las prioridades. Ahorro negociado, ahorro realizado y evitación de costo son cosas distintas.",
+    dataTitle: "Datos para un uso empresarial de IA",
+    dataNote: "Piense en usos de IA en Compras que requieran datos de su empresa. Si ya tiene un uso aprobado, evalúe los datos de ese uso.",
+    agendaTitle: "Estado de cada iniciativa",
+    agendaNote: "“Aprobada” significa una decisión de ejecución para los próximos 12 a 18 meses. “Implementada” significa que ese alcance ya opera de forma estable.",
+    closeTitle: "Un cambio para 2027",
+    closeNote: "Opcional. No entra al cálculo.",
+    challenge: "¿Cuál es el principal cambio que Compras debería lograr en su empresa durante 2027?",
+    unit: "Nombre de la unidad",
+    countryDetail: "País base u otro país",
+    industryDetail: "¿Cuál industria?",
+    scopeCompany: "Empresa completa",
+    scopeUnit: "Unidad de negocio",
+    doneTitle: "Recibimos sus respuestas",
+    doneLead: "Quedaron guardadas para el benchmark de esta opción. Si pidió el informe, se lo enviaremos cuando el corte esté listo.",
+    doneHome: "Volver a Xinergy",
+    whatsapp: "Hablar por WhatsApp",
+  },
+  en: {
+    steps: ["Start", "Contact", "Scope", "Priorities", "Knowledge", "Capability", "Evidence", "Agenda", "Close"],
+    back: "Back",
+    next: "Continue",
+    start: "Start",
+    submit: "Submit answers",
+    sending: "Sending…",
+    required: "This answer is required.",
+    email: "Enter a valid email.",
+    fix: "Check the marked questions.",
+    sendErr: "We could not send your answers. Check your connection and try again.",
+    saved: "Your progress is saved in this browser.",
+    lang: "Language",
+    eyebrow: "Procurement Radar 2027 · option B",
+    welcomeTitle: "Procurement priorities, capabilities and agenda",
+    welcomeLead: "Answer for the company or business-unit scope you will name next. Your answers feed an aggregate benchmark and improvement scenarios. Choose “I don't know” when that is the honest answer. The core questionnaire is designed for 8 to 10 minutes.",
+    welcomeNote: "Recommendations use a demonstration matrix. They are not a savings promise or a measured result.",
+    contactTitle: "Your contact details",
+    contactNote: "Name and email are stored apart from the analysis, so we can send the benchmark if you ask for it.",
+    profileTitle: "Scope you will assess",
+    profileNote: "Country means the country where that scope operates, not your nationality.",
+    ahpTitle: "What should Procurement prioritize during 2027?",
+    ahpNote: "Compare each pair. Which should matter more, and by how much? No pair is preselected.",
+    left: "More important on the left",
+    right: "More important on the right",
+    equal: "equal",
+    crWarn: "Some comparisons look contradictory. You can review this block or continue. If you continue, your priorities will be treated as exploratory.",
+    crContinue: "Continue anyway",
+    knowTitle: "Do you know Procurement in that scope?",
+    knowNote: "Do you directly know the current capability and the initiative agenda of Procurement for the scope you are assessing?",
+    capTitle: "Current capability",
+    capNote: "Select the highest level that describes practices used as a habit. If you only meet part of a level, choose the one below. If you do not have enough information, mark “I don't know”.",
+    seeLevel: "See what each level means",
+    evTitle: "Operating evidence",
+    evNote: "These answers contrast the self-assessment. They do not overwrite capability or priorities. Negotiated savings, realized savings and cost avoidance are different things.",
+    dataTitle: "Data for enterprise AI use",
+    dataNote: "Think of Procurement AI uses that need your company's data. If a use is already approved, assess the data that use needs.",
+    agendaTitle: "Status of each initiative",
+    agendaNote: "“Approved” means a decision to execute in the next 12 to 18 months. “Implemented” means that scope already runs in a stable way.",
+    closeTitle: "One change for 2027",
+    closeNote: "Optional. It is not part of the calculation.",
+    challenge: "What is the main change Procurement should achieve in your company during 2027?",
+    unit: "Business unit name",
+    countryDetail: "Base country or other country",
+    industryDetail: "Which industry?",
+    scopeCompany: "Whole company",
+    scopeUnit: "Business unit",
+    doneTitle: "We received your answers",
+    doneLead: "They are stored for this option's benchmark. If you asked for the report, we will send it when the cut is ready.",
+    doneHome: "Back to Xinergy",
+    whatsapp: "Talk on WhatsApp",
+  },
+  pt: {
+    steps: ["Início", "Contato", "Escopo", "Prioridades", "Conhecimento", "Capacidade", "Evidência", "Agenda", "Fecho"],
+    back: "Voltar",
+    next: "Continuar",
+    start: "Começar",
+    submit: "Enviar respostas",
+    sending: "Enviando…",
+    required: "Esta resposta é obrigatória.",
+    email: "Informe um e-mail válido.",
+    fix: "Revise as perguntas marcadas.",
+    sendErr: "Não conseguimos enviar suas respostas. Verifique a conexão e tente de novo.",
+    saved: "Seu avanço fica salvo neste navegador.",
+    lang: "Idioma",
+    eyebrow: "Radar de Compras 2027 · opção B",
+    welcomeTitle: "Prioridades, capacidades e agenda de Compras",
+    welcomeLead: "Responda pensando no escopo de empresa ou unidade que indicará a seguir. Suas respostas alimentam um benchmark agregado e cenários de melhoria. Pode escolher “não sei” quando couber. O questionário central foi pensado para 8 a 10 minutos.",
+    welcomeNote: "As recomendações usam uma matriz de demonstração. Não são uma promessa de economia nem um resultado medido.",
+    contactTitle: "Seus dados de contato",
+    contactNote: "Nome e e-mail ficam separados da análise, para o envio do benchmark se você pedir.",
+    profileTitle: "Escopo que vai avaliar",
+    profileNote: "País é o país de operação desse escopo, não a sua nacionalidade.",
+    ahpTitle: "O que Compras deveria priorizar durante 2027?",
+    ahpNote: "Compare cada par. Qual deveria ter maior importância, e quanto maior? Nenhum par vem marcado.",
+    left: "Mais importante à esquerda",
+    right: "Mais importante à direita",
+    equal: "igual",
+    crWarn: "Algumas comparações parecem contraditórias. Você pode revisar este bloco ou continuar. Se continuar, suas prioridades serão tratadas como exploratórias.",
+    crContinue: "Continuar mesmo assim",
+    knowTitle: "Você conhece a operação de Compras desse escopo?",
+    knowNote: "Você conhece diretamente a capacidade atual e a agenda de iniciativas de Compras do escopo que está avaliando?",
+    capTitle: "Capacidade atual",
+    capNote: "Selecione o nível mais alto que descreva práticas habituais. Se só cumpre uma parte do nível, escolha o anterior. Se não tiver informação suficiente, marque “não sei”.",
+    seeLevel: "Ver o que cada nível significa",
+    evTitle: "Evidência da operação",
+    evNote: "Estas respostas contrastam o autodiagnóstico. Não corrigem a capacidade nem as prioridades. Economia negociada, economia realizada e custo evitado são coisas distintas.",
+    dataTitle: "Dados para um uso empresarial de IA",
+    dataNote: "Pense em usos de IA em Compras que exijam dados da sua empresa. Se já houver um uso aprovado, avalie os dados desse uso.",
+    agendaTitle: "Estado de cada iniciativa",
+    agendaNote: "“Aprovada” significa uma decisão de execução para os próximos 12 a 18 meses. “Implementada” significa que esse escopo já opera de forma estável.",
+    closeTitle: "Uma mudança para 2027",
+    closeNote: "Opcional. Não entra no cálculo.",
+    challenge: "Qual é a principal mudança que Compras deveria conseguir na sua empresa durante 2027?",
+    unit: "Nome da unidade",
+    countryDetail: "País-base ou outro país",
+    industryDetail: "Qual indústria?",
+    scopeCompany: "Empresa inteira",
+    scopeUnit: "Unidade de negócio",
+    doneTitle: "Recebemos suas respostas",
+    doneLead: "Ficaram guardadas para o benchmark desta opção. Se pediu o relatório, enviaremos quando o corte estiver pronto.",
+    doneHome: "Voltar à Xinergy",
+    whatsapp: "Falar pelo WhatsApp",
+  },
+} as const;
+
+export type Ui = (typeof ui)["es"];
