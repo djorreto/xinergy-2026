@@ -1,22 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChartZoom } from "@/components/admin/ChartZoom";
+import { ExecutiveBriefPanel } from "@/components/admin/ExecutiveBrief";
+import type { ZoomSheet } from "@/lib/surveys/chart-zoom";
 import { EVAL_INCLUDED, EVAL_ISOLATED, type Evaluacion } from "@/lib/surveys/evaluacion";
+import type { StoredBrief } from "@/lib/surveys/executive";
 import { CAPABILITIES, INITIATIVE_COPY } from "@/lib/surveys/radar-b/instrument";
 import { SCENARIOS } from "@/lib/surveys/radar-b/engine";
 import { dimensionName, industryName, initiativeName, percent, roleName, type Benchmark, type PersonReport } from "@/lib/surveys/radar-b/report";
+import { capabilityZoom, peopleZoom, portfolioZoom, priorityZoom } from "@/lib/surveys/radar-b/zoom";
 
 const MACROS = ["Eficiencia y valor financiero", "Riesgo, sostenibilidad y control", "Transformación y capacidades"];
 
-export function RadarDeskB({ people, benchmark, publicUrl, verified }: { people: PersonReport[]; benchmark: Benchmark; publicUrl: string; verified: boolean }) {
+export function RadarDeskB({ people, benchmark, publicUrl, verified, brief }: { people: PersonReport[]; benchmark: Benchmark; publicUrl: string; verified: boolean; brief: StoredBrief | null }) {
   const router = useRouter();
   const [view, setView] = useState<"respuestas" | "analisis">("analisis");
   const [open, setOpen] = useState<string | null>(people[0]?.id ?? null);
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [zoom, setZoom] = useState<ZoomSheet | null>(null);
+  const closeZoom = useCallback(() => setZoom(null), []);
   const isolated = people.filter((person) => !person.included).length;
+  const included = people.filter((person) => person.included);
 
   async function setEvaluacion(id: string, evaluacion: Evaluacion) {
     setBusy(id);
@@ -55,7 +63,7 @@ export function RadarDeskB({ people, benchmark, publicUrl, verified }: { people:
           </button>
         ))}
       </div>
-      {view === "analisis" ? <Analysis benchmark={benchmark} /> : (
+      {view === "analisis" ? <Analysis people={people} benchmark={benchmark} brief={brief} included={included} onZoom={setZoom} /> : (
         <div className="mt-6 flex flex-col gap-4">
           {people.length === 0 ? <p className="text-xinergy-slate">Todavía no hay respuestas en esta opción.</p> : null}
           {people.map((person) => (
@@ -77,21 +85,33 @@ export function RadarDeskB({ people, benchmark, publicUrl, verified }: { people:
           ))}
         </div>
       )}
+      <ChartZoom sheet={zoom} onClose={closeZoom} />
     </div>
   );
 }
 
-function Analysis({ benchmark }: { benchmark: Benchmark }) {
+function Analysis({ people, benchmark, brief, included, onZoom }: { people: PersonReport[]; benchmark: Benchmark; brief: StoredBrief | null; included: PersonReport[]; onZoom: (sheet: ZoomSheet) => void }) {
+  const priority = people.filter((person) => benchmark.priorityIds.includes(person.id));
+  const motor = people.filter((person) => benchmark.motorIds.includes(person.id));
+  const principals = people.filter((person) => benchmark.principalIds.includes(person.id));
   return (
     <div className="mt-6 flex flex-col gap-8">
+      <ExecutiveBriefPanel
+        initial={brief}
+        responses={included}
+        onZoom={onZoom}
+        endpoint="/api/admin/surveys/radar-compras-2027-b/brief"
+        charts={<ExecutiveView benchmark={benchmark} priority={priority} principals={principals} motor={motor} included={included} onZoom={onZoom} />}
+      />
+      <h2 className="font-display text-2xl">Detalle del cálculo</h2>
       {benchmark.duplicates.length ? <p className="border border-xinergy-orange/40 bg-[#FFF1D6] px-4 py-3 text-sm">Hay más de un responsable de Compras en {benchmark.duplicates.join(", ")}. Esas empresas quedan fuera del benchmark hasta consolidarlas. No se elige la respuesta más conveniente.</p> : null}
       <section>
         <h2 className="font-display text-2xl">Prioridades del benchmark</h2>
-        <p className="mt-1 text-sm text-xinergy-slate">Promedio de prioridades individuales de la respuesta principal de cada empresa, solo con consistencia hasta 0,10. Una empresa pesa una vez.</p>
+        <p className="mt-1 text-sm text-xinergy-slate">Promedio de prioridades individuales de la respuesta principal de cada empresa, solo con consistencia hasta 0,10. Una empresa pesa una vez. Clic en una barra para ver quién la compone.</p>
         {benchmark.ahpMean ? (
           <div className="mt-4 grid gap-6 lg:grid-cols-2">
-            <Bars title="Grupos" rows={MACROS.map((name, index) => ({ name, value: benchmark.macroMean?.[index] ?? 0 }))} />
-            <Bars title="Ocho prioridades" rows={CAPABILITIES.map((item, index) => ({ name: item.short.es, value: benchmark.ahpMean?.[index] ?? 0 }))} />
+            <MacroBar weights={benchmark.macroMean ?? []} onOpen={(index) => onZoom(peopleZoom(MACROS[index], "Peso del grupo en cada empresa del benchmark y el promedio que muestra la barra.", priority, (person) => percent(person.ahp?.macro.weights[index])))} />
+            <Bars title="Ocho prioridades" rows={CAPABILITIES.map((item, index) => ({ name: item.short.es, value: benchmark.ahpMean?.[index] ?? 0 }))} onOpen={(name) => { const index = CAPABILITIES.findIndex((item) => item.short.es === name); onZoom(priorityZoom(name, index, priority, benchmark.ahpMean?.[index] ?? null)); }} />
           </div>
         ) : <p className="mt-3 text-sm text-xinergy-slate">Aún no hay una respuesta principal de Compras con prioridades consistentes.</p>}
       </section>
@@ -106,7 +126,9 @@ function Analysis({ benchmark }: { benchmark: Benchmark }) {
                 const stat = benchmark.capability[index];
                 return (
                   <tr key={item.id} className="border-b border-xinergy-charcoal/10">
-                    <td className="py-2 pr-3">{item.short.es}</td>
+                    <td className="py-2 pr-3">
+                      <button type="button" className="text-left underline decoration-xinergy-charcoal/20" onClick={() => onZoom(capabilityZoom(index, principals))}>{item.short.es}</button>
+                    </td>
                     <td className="py-2 pr-3">{stat.median ?? "—"} <span className="text-xinergy-slate">n={stat.n}</span></td>
                     <td className="py-2 pr-3">{stat.q1 ?? "—"} – {stat.q3 ?? "—"}</td>
                     <td className="py-2">{percent(benchmark.gapMean?.[index])}</td>
@@ -129,6 +151,7 @@ function Analysis({ benchmark }: { benchmark: Benchmark }) {
                 const cell = benchmark.action[scenario.id][index];
                 return { name: `${item.name.es} · aprobado ${percent(cell.approved)}`, value: cell.selected };
               })}
+              onOpen={(_, index) => onZoom(portfolioZoom(index, motor, scenario.id))}
             />
           </div>
         ))}
@@ -144,7 +167,7 @@ function Analysis({ benchmark }: { benchmark: Benchmark }) {
         )}
       </section>
       <section>
-        <h2 className="font-display text-2xl">Cambio que piden para 2027</h2>
+        <button type="button" className="font-display text-2xl" onClick={() => onZoom(peopleZoom("Cambio para 2027", "Textos de las respuestas incluidas. Si hay más de una persona de la misma empresa, el nombre va junto a la empresa.", included.filter((person) => person.desafio.trim()), (person) => person.desafio))}>Cambio que piden para 2027</button>
         {benchmark.open.length === 0 ? <p className="mt-2 text-sm text-xinergy-slate">Sin respuestas abiertas en el corte incluido.</p> : (
           <ul className="mt-3 flex flex-col gap-3">
             {benchmark.open.map((item) => (
@@ -188,17 +211,72 @@ function PersonDetail({ person }: { person: PersonReport }) {
   );
 }
 
-function Bars({ title, rows }: { title: string; rows: { name: string; value: number }[] }) {
+function ExecutiveView({ benchmark, priority, principals, motor, included, onZoom }: { benchmark: Benchmark; priority: PersonReport[]; principals: PersonReport[]; motor: PersonReport[]; included: PersonReport[]; onZoom: (sheet: ZoomSheet) => void }) {
+  const topIndex = benchmark.ahpMean ? benchmark.ahpMean.indexOf(Math.max(...benchmark.ahpMean)) : -1;
+  const countries = new Set(included.map((person) => person.pais)).size;
+  return (
+    <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <Kpi label="respuestas incluidas" value={String(included.length)} onClick={() => onZoom(peopleZoom("Respuestas incluidas", "Estas respuestas entran al análisis. Las aisladas quedan guardadas y no se usan aquí.", included, (person) => roleName(person.rol)))} />
+      <Kpi label="empresas en el benchmark" value={String(benchmark.companies)} onClick={() => onZoom(peopleZoom("Benchmark operacional", "Una respuesta de Compras por empresa. Si hay dos del mismo rol, la empresa no entra.", principals, (person) => roleName(person.rol)))} />
+      <Kpi label="países en la muestra" value={String(countries)} onClick={() => onZoom(peopleZoom("Países", "País de operación del alcance evaluado.", included, (person) => person.pais))} />
+      <Kpi label={topIndex >= 0 ? CAPABILITIES[topIndex].short.es : "prioridad principal"} value={topIndex >= 0 ? percent(benchmark.ahpMean?.[topIndex]) : "—"} onClick={() => { if (topIndex >= 0) onZoom(priorityZoom(CAPABILITIES[topIndex].short.es, topIndex, priority, benchmark.ahpMean?.[topIndex] ?? null)); }} />
+      <div className="sm:col-span-2 lg:col-span-4">
+        {benchmark.macroMean ? <MacroBar weights={benchmark.macroMean} onOpen={(index) => onZoom(peopleZoom(MACROS[index], "Peso del grupo en cada empresa y el promedio de la barra.", priority, (person) => percent(person.ahp?.macro.weights[index])))} /> : <p className="text-sm text-xinergy-slate">Los gráficos de prioridad aparecen cuando hay una respuesta de Compras consistente.</p>}
+      </div>
+      <div className="sm:col-span-2">
+        <Bars title="Capacidad, mediana de 1 a 5" rows={CAPABILITIES.map((item, index) => ({ name: item.short.es, value: ((benchmark.capability[index]?.median ?? 0) as number) / 5 }))} format={(value) => (value ? String(Math.round(value * 50) / 10).replace(".", ",") : "—")} onOpen={(_, index) => onZoom(capabilityZoom(index, principals))} />
+      </div>
+      <div className="sm:col-span-2">
+        <Bars title="Balanced · selección modelada" rows={INITIATIVE_COPY.map((item, index) => ({ name: item.name.es, value: benchmark.action.balanced[index]?.selected ?? 0 }))} onOpen={(_, index) => onZoom(portfolioZoom(index, motor, "balanced"))} />
+      </div>
+    </div>
+  );
+}
+
+function Kpi({ label, value, onClick }: { label: string; value: string; onClick: () => void }) {
+  return (
+    <button type="button" className="border border-xinergy-charcoal/10 bg-xinergy-ivory p-4 text-left" onClick={onClick}>
+      <p className="font-display text-3xl text-xinergy-charcoal">{value}</p>
+      <p className="mt-1 text-sm text-xinergy-slate">{label}</p>
+    </button>
+  );
+}
+
+function MacroBar({ weights, onOpen }: { weights: number[]; onOpen: (index: number) => void }) {
+  const colors = ["bg-xinergy-orange", "bg-xinergy-charcoal", "bg-xinergy-beige"];
+  const text = ["text-xinergy-charcoal", "text-white", "text-xinergy-charcoal"];
+  return (
+    <div>
+      <h3 className="mb-2 font-semibold">Grupos de prioridad</h3>
+      <div className="flex h-10 overflow-hidden">
+        {MACROS.map((name, index) => (
+          <button key={name} type="button" aria-label={`${name} ${percent(weights[index])}`} className={`min-w-0 px-1 text-xs font-semibold ${colors[index]} ${text[index]}`} style={{ flex: `0 0 ${(weights[index] ?? 0) * 100}%` }} onClick={() => onOpen(index)}>
+            {(weights[index] ?? 0) >= 0.16 ? percent(weights[index]) : ""}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Bars({ title, rows, onOpen, format = percent }: { title: string; rows: { name: string; value: number }[]; onOpen?: (name: string, index: number) => void; format?: (value: number) => string }) {
   return (
     <div>
       {title ? <h3 className="mb-2 font-semibold">{title}</h3> : null}
       <div className="flex flex-col gap-2">
-        {rows.map((row) => (
-          <div key={row.name}>
-            <div className="mb-1 flex justify-between gap-3 text-xs"><span>{row.name}</span><span>{percent(row.value)}</span></div>
-            <div className="h-2 bg-xinergy-charcoal/10"><div className="h-full bg-xinergy-orange" style={{ width: `${Math.max(0, Math.min(100, row.value * 100))}%` }} /></div>
-          </div>
-        ))}
+        {rows.map((row, index) => {
+          const body = (
+            <>
+              <div className="mb-1 flex justify-between gap-3 text-xs"><span>{row.name}</span><span>{format(row.value)}</span></div>
+              <div className="h-2 bg-xinergy-charcoal/10"><div className="h-full bg-xinergy-orange" style={{ width: `${Math.max(0, Math.min(100, row.value * 100))}%` }} /></div>
+            </>
+          );
+          return onOpen ? (
+            <button key={row.name} type="button" className="text-left" onClick={() => onOpen(row.name, index)}>{body}</button>
+          ) : (
+            <div key={row.name}>{body}</div>
+          );
+        })}
       </div>
     </div>
   );

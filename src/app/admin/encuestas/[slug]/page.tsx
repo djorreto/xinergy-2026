@@ -105,11 +105,14 @@ async function optionB(email: string) {
   const admin = await createAdminClient();
   const { data: survey } = await admin.from("web_surveys").select("id").eq("slug", SURVEY_SLUG_B).maybeSingle();
   if (!survey) notFound();
-  const { data } = await admin
-    .from("web_survey_responses")
-    .select("id, created_at, nombre, apellido, email, empresa, pais, rol, rubro, evaluacion, company, answers")
-    .eq("survey_id", survey.id)
-    .order("created_at", { ascending: false });
+  const [{ data }, { data: briefRow }] = await Promise.all([
+    admin
+      .from("web_survey_responses")
+      .select("id, created_at, nombre, apellido, email, empresa, pais, rol, rubro, evaluacion, company, answers")
+      .eq("survey_id", survey.id)
+      .order("created_at", { ascending: false }),
+    admin.from("web_survey_briefs").select("generated_at, response_count, latest_response_at, context, themes").eq("survey_id", survey.id).maybeSingle(),
+  ]);
   const people = ((data ?? []) as Array<RadarBInput & { created_at?: string; evaluacion?: string }>).map((row) =>
     buildPerson({
       id: row.id,
@@ -130,7 +133,23 @@ async function optionB(email: string) {
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
       <AdminNav email={email} />
-      <RadarDeskB people={people} benchmark={buildBenchmark(people)} publicUrl={`${site}/radar-compras-2027-b`} verified={demoChecks().ok} />
+      <RadarDeskB
+        people={people}
+        benchmark={buildBenchmark(people)}
+        publicUrl={`${site}/radar-compras-2027-b`}
+        verified={demoChecks().ok}
+        brief={
+          briefRow
+            ? {
+                generatedAt: briefRow.generated_at,
+                responseCount: briefRow.response_count,
+                latestResponseAt: briefRow.latest_response_at,
+                context: briefRow.context,
+                themes: briefRow.themes ?? [],
+              }
+            : null
+        }
+      />
     </div>
   );
 }

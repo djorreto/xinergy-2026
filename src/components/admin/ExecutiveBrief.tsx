@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ExecutiveCharts } from "@/components/admin/ExecutiveCharts";
-import type { ZoomSheet } from "@/lib/surveys/chart-zoom";
+import type { ZoomPerson, ZoomSheet } from "@/lib/surveys/chart-zoom";
 import { EXECUTIVE_THEMES, briefIsStale, type StoredBrief } from "@/lib/surveys/executive";
 
 const dateFormat = new Intl.DateTimeFormat("es-CL", {
@@ -15,23 +15,14 @@ export function ExecutiveBriefPanel({
   initial,
   responses,
   onZoom,
+  endpoint = "/api/admin/surveys/radar-compras-2027/brief",
+  charts,
 }: {
   initial: StoredBrief | null;
-  responses: {
-    id: string;
-    nombre: string;
-    apellido: string;
-    empresa: string;
-    createdAt: string;
-    pais: string;
-    rol: string;
-    rolGrupo: string;
-    rubro: string;
-    rubroGrupo: string | null;
-    company: Record<string, unknown>;
-    answers: Record<string, unknown>;
-  }[];
+  responses: { createdAt: string }[];
   onZoom: (sheet: ZoomSheet) => void;
+  endpoint?: string;
+  charts?: ReactNode;
 }) {
   const [brief, setBrief] = useState<StoredBrief | null>(initial);
   const [busy, setBusy] = useState(false);
@@ -43,7 +34,7 @@ export function ExecutiveBriefPanel({
     setBusy(true);
     setError("");
     try {
-      const response = await fetch("/api/admin/surveys/radar-compras-2027/brief", { method: "POST" });
+      const response = await fetch(endpoint, { method: "POST" });
       const payload = (await response.json()) as { ok?: boolean; brief?: StoredBrief };
       if (!response.ok || !payload.brief) {
         setError("No se pudo generar el análisis. Intenta otra vez.");
@@ -83,7 +74,7 @@ export function ExecutiveBriefPanel({
       ) : null}
       {error ? <p className="mt-3 text-sm font-medium text-red-700">{error}</p> : null}
 
-      <ExecutiveCharts people={responses} onZoom={onZoom} />
+      {charts ?? <ExecutiveCharts people={responses as ZoomPerson[]} onZoom={onZoom} />}
 
       <div className="mt-8 border-t-2 border-xinergy-orange pt-4">
         <h3 className="font-display text-lg text-xinergy-charcoal">La muestra, hasta ahora</h3>

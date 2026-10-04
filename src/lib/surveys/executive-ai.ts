@@ -13,7 +13,10 @@ function extractJson(text: string): unknown {
   return JSON.parse(text.slice(start, end + 1));
 }
 
-export async function writeExecutiveBrief(facts: unknown): Promise<Pick<StoredBrief, "context" | "themes">> {
+export async function writeExecutiveBrief(
+  facts: unknown,
+  options?: { asks?: { id: ExecutiveThemeId; ask: string }[]; extra?: string[] },
+): Promise<Pick<StoredBrief, "context" | "themes">> {
   const key = process.env.GROQ_API_KEY?.trim();
   if (!key) throw new Error("missing_key");
 
@@ -56,7 +59,8 @@ export async function writeExecutiveBrief(facts: unknown): Promise<Pick<StoredBr
           content: [
             "Si respuestas es 1, el sujeto de todo el texto es 'quien respondió'. Prohibido: 'los líderes', 'los ejecutivos', 'el mercado', 'la función de compras en América Latina'.",
             "context debe decir cuántas respuestas hay, de qué países y roles, qué países del radar todavía no aparecen, y si hoy alcanza para un análisis confiable. El umbral para publicar un corte es 5.",
-            ...EXECUTIVE_THEMES.map((theme) => `${theme.id}: ${theme.ask}`),
+            ...(options?.extra ?? []),
+            ...(options?.asks ?? EXECUTIVE_THEMES).map((theme) => `${theme.id}: ${theme.ask}`),
             "Cifras:",
             JSON.stringify(facts),
           ].join("\n\n"),

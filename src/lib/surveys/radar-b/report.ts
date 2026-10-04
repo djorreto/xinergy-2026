@@ -252,6 +252,9 @@ export type Benchmark = {
   action: Record<ScenarioId, { selected: number; approved: number; n: number }[]>;
   pairs: { empresa: string; distance: number; fin: number }[];
   open: { who: string; text: string }[];
+  priorityIds: string[];
+  motorIds: string[];
+  principalIds: string[];
 };
 
 export function buildBenchmark(people: PersonReport[]): Benchmark {
@@ -283,7 +286,21 @@ export function buildBenchmark(people: PersonReport[]): Benchmark {
   ) as unknown as Benchmark["action"];
   const pairs = rolePairs(included);
   const open = openAnswers(included);
-  return { companies: principals.length, duplicates, ahpMean, macroMean, capability, gapMean, g0Mean, action, pairs, open };
+  return {
+    companies: principals.length,
+    duplicates,
+    ahpMean,
+    macroMean,
+    capability,
+    gapMean,
+    g0Mean,
+    action,
+    pairs,
+    open,
+    priorityIds: priority.map((person) => person.id),
+    motorIds: motorPeople.map((person) => person.id),
+    principalIds: principals.map((person) => person.id),
+  };
 }
 
 function principalsOf(people: PersonReport[]) {
