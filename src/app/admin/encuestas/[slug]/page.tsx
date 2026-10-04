@@ -3,12 +3,16 @@ import { notFound } from "next/navigation";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { RadarDesk, type RadarAnswer } from "@/components/admin/RadarDesk";
 import { RadarDeskB } from "@/components/admin/RadarDeskB";
+import { RadarDeskC } from "@/components/admin/RadarDeskC";
 import { requireAdminUser } from "@/lib/auth/admin";
 import { adminHref } from "@/lib/auth/admin-path";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { StoredBrief } from "@/lib/surveys/executive";
 import { evaluationOf } from "@/lib/surveys/evaluacion";
 import { SURVEY_SLUG_B } from "@/lib/surveys/radar-b/engine";
+import { SURVEY_SLUG_C } from "@/lib/surveys/radar-c/instrument";
+import { buildBenchmarkC, buildPersonC, type RadarCInput } from "@/lib/surveys/radar-c/report";
+import { versionCChecks } from "@/lib/surveys/radar-c/verify";
 import { buildBenchmark, buildPerson, type RadarBInput } from "@/lib/surveys/radar-b/report";
 import { demoChecks } from "@/lib/surveys/radar-b/verify";
 import { SURVEY_SLUG } from "@/lib/surveys/radar-2027";
@@ -40,9 +44,10 @@ type Row = {
 
 export default async function SurveyAdminPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  if (slug !== SURVEY_SLUG && slug !== SURVEY_SLUG_B) notFound();
+  if (slug !== SURVEY_SLUG && slug !== SURVEY_SLUG_B && slug !== SURVEY_SLUG_C) notFound();
   const user = await requireAdminUser();
   if (slug === SURVEY_SLUG_B) return optionB(user.email);
+  if (slug === SURVEY_SLUG_C) return optionC(user.email);
   const admin = await createAdminClient();
   const { data: survey } = await admin.from("web_surveys").select("id, title").eq("slug", slug).maybeSingle();
   if (!survey) notFound();
@@ -154,6 +159,35 @@ async function optionB(email: string) {
             : null
         }
       />
+    </div>
+  );
+}
+
+async function optionC(email: string) {
+  const admin = await createAdminClient();
+  const { data: survey } = await admin.from("web_surveys").select("id").eq("slug", SURVEY_SLUG_C).maybeSingle();
+  if (!survey) notFound();
+  const { data } = await admin.from("web_survey_responses").select("id, created_at, email, empresa, pais, rol, rubro, evaluacion, company, answers").eq("survey_id", survey.id).order("created_at", { ascending: false });
+  const people = ((data ?? []) as Array<RadarCInput & { created_at?: string; evaluacion?: string }>).map((row) =>
+    buildPersonC({
+      id: row.id,
+      createdAt: String(row.created_at ?? ""),
+      email: row.email,
+      empresa: row.empresa,
+      pais: row.pais,
+      rol: row.rol,
+      rubro: row.rubro,
+      evaluacion: evaluationOf(row.evaluacion),
+      company: row.company ?? {},
+      answers: row.answers ?? {},
+    }),
+  );
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://xinergy.lat").replace(/\/$/, "");
+  return (
+    <div className="mx-auto max-w-6xl px-6 py-10">
+      <AdminNav email={email} />
+      <SurveyBack />
+      <RadarDeskC people={people} benchmark={buildBenchmarkC(people)} publicUrl={`${site}/radar-compras-2027-c`} verified={versionCChecks().ok} />
     </div>
   );
 }

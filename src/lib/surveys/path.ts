@@ -1,4 +1,4 @@
-const SURVEY_SLUGS = ["radar-compras-2027", "radar-compras-2027-b"];
+const SURVEY_SLUGS = ["radar-compras-2027", "radar-compras-2027-b", "radar-compras-2027-c"];
 
 export function isSurveyPath(pathname: string) {
   return SURVEY_SLUGS.some(
