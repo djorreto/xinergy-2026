@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { ChartZoom } from "@/components/admin/ChartZoom";
 import { ExecutiveBriefPanel } from "@/components/admin/ExecutiveBrief";
 import { AhpPanel } from "@/components/survey/AhpPanel";
 import { aggregateAhp, analyzeAhp } from "@/lib/surveys/ahp";
+import { distributionZoom, questionZoom, type ZoomSheet } from "@/lib/surveys/chart-zoom";
 import { formatQuestion, formatStored, openAnswerAuthor } from "@/lib/surveys/present";
 import {
   CONSENTS,
@@ -65,6 +67,8 @@ export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAns
   const [copied, setCopied] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [evalError, setEvalError] = useState("");
+  const [zoom, setZoom] = useState<ZoomSheet | null>(null);
+  const closeZoom = useCallback(() => setZoom(null), []);
   if (responses !== known) {
     setKnown(responses);
     setRows(responses);
@@ -149,7 +153,7 @@ export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAns
           </a>
           {evalError ? <p className="mt-3 text-sm font-medium text-red-700">{evalError}</p> : null}
           {person ? (
-            <AnswerDetail person={person} busy={busyId === person.id} onBack={() => setSelected(null)} onEvaluate={setEvaluacion} />
+            <AnswerDetail person={person} busy={busyId === person.id} onBack={() => setSelected(null)} onEvaluate={setEvaluacion} onZoom={setZoom} />
           ) : (
             <ResponseTable responses={rows} busyId={busyId} onOpen={setSelected} onEvaluate={setEvaluacion} />
           )}
@@ -164,19 +168,20 @@ export function RadarDesk({ responses, publicUrl, brief }: { responses: RadarAns
               Exportar PDF preliminar
             </a>
           </div>
-          <ExecutiveBriefPanel initial={brief} responses={included} />
+          <ExecutiveBriefPanel initial={brief} responses={included} onZoom={setZoom} />
           {included.length ? (
             <div>
               <p className="label-editorial">Detalle del cálculo</p>
               <h2 className="mt-2 font-display text-2xl text-xinergy-charcoal">Pregunta por pregunta</h2>
               <p className="mt-2 max-w-3xl text-sm leading-relaxed text-xinergy-slate">
-                Aquí queda el modelo completo: matrices, consistencia y cada pregunta. Los filtros solo mueven este detalle. La vista ejecutiva y este detalle usan las respuestas incluidas en el análisis.
+                Aquí queda el modelo completo: matrices, consistencia y cada pregunta. Un clic en un gráfico abre las respuestas que lo arman o el cálculo. Los filtros solo mueven este detalle.
               </p>
             </div>
           ) : null}
-          <Analysis responses={filtered} all={included} received={rows.length} pais={pais} rol={rol} rubro={rubro} onPais={setPais} onRol={setRol} onRubro={setRubro} />
+          <Analysis responses={filtered} all={included} received={rows.length} pais={pais} rol={rol} rubro={rubro} onPais={setPais} onRol={setRol} onRubro={setRubro} onZoom={setZoom} />
         </div>
       )}
+      <ChartZoom sheet={zoom} onClose={closeZoom} />
     </div>
   );
 }
@@ -284,11 +289,13 @@ function AnswerDetail({
   busy,
   onBack,
   onEvaluate,
+  onZoom,
 }: {
   person: RadarAnswer;
   busy: boolean;
   onBack: () => void;
   onEvaluate: (id: string, evaluacion: Evaluacion) => void;
+  onZoom: (sheet: ZoomSheet) => void;
 }) {
   const ahp = analyzeAhp(recordOf(person.answers.prioridades_ahp));
   return (
@@ -325,7 +332,7 @@ function AnswerDetail({
         if (!questions.length && section.id !== "s4") return null;
         return (
           <Block key={section.id} title={sectionTitle(section.id)}>
-            {section.id === "s4" && ahp ? <AhpPanel analysis={ahp} title="Priorización de esta persona" /> : null}
+            {section.id === "s4" && ahp ? <AhpPanel analysis={ahp} title="Priorización de esta persona" sources={[person]} onZoom={onZoom} /> : null}
             {questions.map((question) => (
               <Line
                 key={question.id}
@@ -352,6 +359,7 @@ function Analysis({
   onPais,
   onRol,
   onRubro,
+  onZoom,
 }: {
   responses: RadarAnswer[];
   all: RadarAnswer[];
@@ -362,6 +370,7 @@ function Analysis({
   onPais: (value: string) => void;
   onRol: (value: string) => void;
   onRubro: (value: string) => void;
+  onZoom: (sheet: ZoomSheet) => void;
 }) {
   const ahp = useMemo(() => aggregateAhp(responses.map((item) => recordOf(item.answers.prioridades_ahp)).filter((item): item is Record<string, string> => item != null)), [responses]);
   if (!received) {
@@ -398,30 +407,32 @@ function Analysis({
           analysis={ahp}
           title="Priorización consolidada"
           note="Los pesos suman 100%. Cada comparación entre personas se agrega con la media geométrica y después se recalcula el ranking."
+          sources={responses}
+          onZoom={onZoom}
         />
       ) : null}
-      <Breakdown title="País" rows={tally(responses, (item) => labelOf("pais", item.pais))} />
-      <Breakdown title="Rol" rows={tally(responses, (item) => labelOf("rol", item.rol))} />
-      <Breakdown title="Rubro" rows={tally(responses, (item) => labelOf("rubro", item.rubro))} />
+      <Breakdown title="País" rows={tally(responses, (item) => labelOf("pais", item.pais))} onOpen={(label) => onZoom(distributionZoom("País", "Cada barra junta a quienes trabajan en ese país.", responses, (person) => labelOf("pais", person.pais), label))} />
+      <Breakdown title="Rol" rows={tally(responses, (item) => labelOf("rol", item.rol))} onOpen={(label) => onZoom(distributionZoom("Rol", "Cada barra junta a quienes tienen ese rol.", responses, (person) => labelOf("rol", person.rol), label))} />
+      <Breakdown title="Rubro" rows={tally(responses, (item) => labelOf("rubro", item.rubro))} onOpen={(label) => onZoom(distributionZoom("Rubro", "Cada barra junta a quienes están en ese rubro.", responses, (person) => labelOf("rubro", person.rubro), label))} />
       {[...S4, ...S5, ...S6, ...S7].filter((question) => question.type !== "ahp").map((question) => (
-        <QuestionBreakdown key={question.id} question={question} responses={responses} />
+        <QuestionBreakdown key={question.id} question={question} responses={responses} onZoom={onZoom} />
       ))}
     </div>
   );
 }
 
-function QuestionBreakdown({ question, responses }: { question: Question; responses: RadarAnswer[] }) {
+function QuestionBreakdown({ question, responses, onZoom }: { question: Question; responses: RadarAnswer[]; onZoom: (sheet: ZoomSheet) => void }) {
   const audience = responses.filter((item) => isVisible(question, item.rolGrupo, item.rubroGrupo));
   if (!audience.length) return null;
   if (question.type === "single" || question.type === "select") {
-    return <Breakdown title={tx(question.label, "es")} rows={tally(audience, (item) => formatQuestion(question, item.answers[question.id]))} />;
+    return <Breakdown title={tx(question.label, "es")} rows={tally(audience, (item) => formatQuestion(question, item.answers[question.id]))} onOpen={(label) => onZoom(questionZoom(question, audience, label))} />;
   }
   if (question.type === "multi") {
     const rows = question.options.map((option) => {
       const count = audience.filter((item) => Array.isArray(item.answers[question.id]) && (item.answers[question.id] as string[]).includes(option.v)).length;
       return { label: tx(option, "es"), count };
     });
-    return <Breakdown title={tx(question.label, "es")} rows={rows} total={audience.length} />;
+    return <Breakdown title={tx(question.label, "es")} rows={rows} total={audience.length} onOpen={(label) => onZoom(questionZoom(question, audience, label))} />;
   }
   if (question.type === "scale") {
     const scores = audience.map((item) => Number(item.answers[question.id])).filter((value) => value >= 1 && value <= 5);
@@ -429,22 +440,26 @@ function QuestionBreakdown({ question, responses }: { question: Question; respon
     const mean = scores.reduce((sum, value) => sum + value, 0) / scores.length;
     return (
       <section>
-        <h3 className="font-display text-lg text-xinergy-charcoal">{tx(question.label, "es")}</h3>
+        <button type="button" className="text-left" onClick={() => onZoom(questionZoom(question, audience))}>
+          <h3 className="font-display text-lg text-xinergy-charcoal">{tx(question.label, "es")}</h3>
+        </button>
         <p className="mt-1 text-sm text-xinergy-slate">Promedio {mean.toFixed(2).replace(".", ",")} de 5 · {scores.length} respuestas</p>
-        <Breakdown title="" rows={[1, 2, 3, 4, 5].map((score) => ({ label: String(score), count: scores.filter((value) => value === score).length }))} />
+        <Breakdown title="" rows={[1, 2, 3, 4, 5].map((score) => ({ label: String(score), count: scores.filter((value) => value === score).length }))} onOpen={(label) => onZoom(questionZoom(question, audience, label))} />
       </section>
     );
   }
   if (question.type === "matrix") {
     return (
       <section>
-        <h3 className="font-display text-lg text-xinergy-charcoal">{tx(question.label, "es")}</h3>
+        <button type="button" className="text-left" onClick={() => onZoom(questionZoom(question, audience))}>
+          <h3 className="font-display text-lg text-xinergy-charcoal">{tx(question.label, "es")}</h3>
+        </button>
         <div className="mt-3 flex flex-col gap-3">
           {question.rows.map((row) => {
             const scores = audience.map((item) => Number(recordOf(item.answers[question.id])?.[row.v])).filter((value) => value >= 1 && value <= 5);
             const mean = scores.length ? scores.reduce((sum, value) => sum + value, 0) / scores.length : 0;
             return (
-              <div key={row.v}>
+              <button key={row.v} type="button" className="w-full text-left" onClick={() => onZoom(questionZoom(question, audience, tx(row, "es")))}>
                 <div className="flex items-baseline justify-between gap-3 text-sm">
                   <span>{tx(row, "es")}</span>
                   <span className="font-semibold">{scores.length ? mean.toFixed(2).replace(".", ",") : "—"}</span>
@@ -452,7 +467,7 @@ function QuestionBreakdown({ question, responses }: { question: Question; respon
                 <span className="mt-1 block h-1.5 bg-xinergy-charcoal/10">
                   <span className="block h-full bg-xinergy-orange" style={{ width: `${(mean / 5) * 100}%` }} />
                 </span>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -469,7 +484,9 @@ function QuestionBreakdown({ question, responses }: { question: Question; respon
     if (!notes.length) return null;
     return (
       <section>
-        <h3 className="font-display text-lg text-xinergy-charcoal">{tx(question.label, "es")}</h3>
+        <button type="button" className="text-left" onClick={() => onZoom(questionZoom(question, audience))}>
+          <h3 className="font-display text-lg text-xinergy-charcoal">{tx(question.label, "es")}</h3>
+        </button>
         <ul className="mt-3 space-y-2 text-sm text-xinergy-slate">
           {audience.map((item) => {
             const value = item.answers[question.id];
@@ -489,17 +506,21 @@ function QuestionBreakdown({ question, responses }: { question: Question; respon
   return null;
 }
 
-function Breakdown({ title, rows, total }: { title: string; rows: { label: string; count: number }[]; total?: number }) {
+function Breakdown({ title, rows, total, onOpen }: { title: string; rows: { label: string; count: number }[]; total?: number; onOpen?: (label: string | null) => void }) {
   const visible = rows.filter((row) => row.label && row.label !== "—");
   if (!visible.length) return null;
   const base = total ?? visible.reduce((sum, row) => sum + row.count, 0);
   const top = Math.max(...visible.map((row) => row.count), 1);
   return (
     <section>
-      {title ? <h3 className="font-display text-lg text-xinergy-charcoal">{title}</h3> : null}
+      {title ? (
+        <button type="button" className="text-left" onClick={() => onOpen?.(null)}>
+          <h3 className="font-display text-lg text-xinergy-charcoal">{title}</h3>
+        </button>
+      ) : null}
       <div className="mt-3 flex flex-col gap-2">
         {visible.map((row) => (
-          <div key={row.label}>
+          <button key={row.label} type="button" className="w-full text-left" onClick={() => onOpen?.(row.label)}>
             <div className="flex items-baseline justify-between gap-3 text-sm">
               <span>{row.label}</span>
               <span className="text-xinergy-slate">
@@ -509,7 +530,7 @@ function Breakdown({ title, rows, total }: { title: string; rows: { label: strin
             <span className="mt-1 block h-1.5 bg-xinergy-charcoal/10">
               <span className="block h-full bg-xinergy-orange" style={{ width: `${(row.count / top) * 100}%` }} />
             </span>
-          </div>
+          </button>
         ))}
       </div>
     </section>

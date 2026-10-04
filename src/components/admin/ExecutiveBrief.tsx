@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ExecutiveCharts } from "@/components/admin/ExecutiveCharts";
+import type { ZoomSheet } from "@/lib/surveys/chart-zoom";
 import { EXECUTIVE_THEMES, briefIsStale, type StoredBrief } from "@/lib/surveys/executive";
 
 const dateFormat = new Intl.DateTimeFormat("es-CL", {
@@ -13,9 +14,14 @@ const dateFormat = new Intl.DateTimeFormat("es-CL", {
 export function ExecutiveBriefPanel({
   initial,
   responses,
+  onZoom,
 }: {
   initial: StoredBrief | null;
   responses: {
+    id: string;
+    nombre: string;
+    apellido: string;
+    empresa: string;
     createdAt: string;
     pais: string;
     rol: string;
@@ -25,6 +31,7 @@ export function ExecutiveBriefPanel({
     company: Record<string, unknown>;
     answers: Record<string, unknown>;
   }[];
+  onZoom: (sheet: ZoomSheet) => void;
 }) {
   const [brief, setBrief] = useState<StoredBrief | null>(initial);
   const [busy, setBusy] = useState(false);
@@ -76,7 +83,7 @@ export function ExecutiveBriefPanel({
       ) : null}
       {error ? <p className="mt-3 text-sm font-medium text-red-700">{error}</p> : null}
 
-      <ExecutiveCharts people={responses} />
+      <ExecutiveCharts people={responses} onZoom={onZoom} />
 
       <div className="mt-8 border-t-2 border-xinergy-orange pt-4">
         <h3 className="font-display text-lg text-xinergy-charcoal">La muestra, hasta ahora</h3>

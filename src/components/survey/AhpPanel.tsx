@@ -1,21 +1,40 @@
 import { AHP, tx } from "@/lib/surveys/radar-2027";
 import { ahpLabel, formatPercent, formatRatio, type AhpAnalysis, type AhpGroup } from "@/lib/surveys/ahp";
+import { ahpZoom, type ZoomPerson, type ZoomSheet } from "@/lib/surveys/chart-zoom";
 
-export function AhpPanel({ analysis, title, note }: { analysis: AhpAnalysis; title: string; note?: string }) {
+export function AhpPanel({
+  analysis,
+  title,
+  note,
+  sources,
+  onZoom,
+}: {
+  analysis: AhpAnalysis;
+  title: string;
+  note?: string;
+  sources?: ZoomPerson[];
+  onZoom?: (sheet: ZoomSheet) => void;
+}) {
+  function open(focus?: string) {
+    if (!onZoom || !sources) return;
+    onZoom(ahpZoom(sources, focus));
+  }
   const ranking = Object.entries(analysis.global).sort((left, right) => right[1] - left[1]);
   const top = ranking[0]?.[1] ?? 1;
   const consistent = analysis.maxCr <= 0.1;
 
   return (
     <section className="border-t-2 border-xinergy-orange pt-5">
-      <h3 className="font-display text-2xl text-xinergy-charcoal">{title}</h3>
-      {note ? <p className="mt-2 max-w-2xl text-sm text-xinergy-slate">{note}</p> : null}
+      <button type="button" className="text-left" onClick={() => open()} disabled={!onZoom}>
+        <h3 className="font-display text-2xl text-xinergy-charcoal">{title}</h3>
+      </button>
+      {note ? <p className="mt-2 max-w-2xl text-sm text-xinergy-slate">{note}{onZoom ? " Clic en una barra para ver cómo se calculó." : ""}</p> : null}
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
         {AHP.macros.map((macro, index) => (
-          <div key={macro.id} className="border border-xinergy-charcoal/10 bg-white p-4">
+          <button key={macro.id} type="button" className="border border-xinergy-charcoal/10 bg-white p-4 text-left hover:border-xinergy-orange" onClick={() => open(macro.id)}>
             <p className="font-display text-2xl text-xinergy-charcoal">{formatPercent(analysis.macro.weights[index] ?? 0)}</p>
             <p className="mt-1 text-sm text-xinergy-slate">{tx(macro.label, "es")}</p>
-          </div>
+          </button>
         ))}
       </div>
       <div className="mt-6 overflow-x-auto">
@@ -30,14 +49,18 @@ export function AhpPanel({ analysis, title, note }: { analysis: AhpAnalysis; tit
           <tbody>
             {ranking.map(([id, weight], index) => (
               <tr key={id} className="border-t border-xinergy-charcoal/10">
-                <td className="py-2 pr-3">{index + 1}</td>
-                <td className="py-2 pr-3">
-                  {ahpLabel(id)}
-                  <span className="mt-1 block h-1.5 bg-xinergy-charcoal/10">
-                    <span className="block h-full bg-xinergy-orange" style={{ width: `${Math.max(4, (weight / top) * 100)}%` }} />
-                  </span>
+                <td colSpan={3} className="p-0">
+                  <button type="button" className="grid w-full grid-cols-[2rem_minmax(0,1fr)_4.5rem] items-center gap-3 py-2 text-left hover:bg-xinergy-ivory" onClick={() => open(id)}>
+                    <span>{index + 1}</span>
+                    <span>
+                      {ahpLabel(id)}
+                      <span className="mt-1 block h-1.5 bg-xinergy-charcoal/10">
+                        <span className="block h-full bg-xinergy-orange" style={{ width: `${Math.max(4, (weight / top) * 100)}%` }} />
+                      </span>
+                    </span>
+                    <span className="text-right font-semibold">{formatPercent(weight)}</span>
+                  </button>
                 </td>
-                <td className="py-2 text-right font-semibold">{formatPercent(weight)}</td>
               </tr>
             ))}
           </tbody>
