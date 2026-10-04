@@ -1,6 +1,13 @@
+"use client";
+
+import { usePathname } from "@/i18n/navigation";
+import { isSurveyPath } from "@/lib/surveys/path";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 
 export function WhatsAppFloat() {
+  const pathname = usePathname();
+  if (isSurveyPath(pathname)) return null;
+
   return (
     <a
       href={WHATSAPP_URL}

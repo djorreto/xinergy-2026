@@ -186,7 +186,7 @@ export function RadarSurvey({ locale, linkedin }: { locale: string; linkedin: st
   const whatsapp = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappText)}`;
 
   return (
-    <article className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12" lang={lang === "pt" ? "pt-BR" : lang}>
+    <article className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-8 sm:py-10 lg:px-10 [&_input]:scroll-mb-28 [&_label]:scroll-mb-28 [&_select]:scroll-mb-28 [&_textarea]:scroll-mb-28" lang={lang === "pt" ? "pt-BR" : lang}>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <p className="label-editorial">{sent ? copy.doneEyebrow : copy.steps[step]}</p>
         <div className="inline-flex border border-xinergy-charcoal/15" role="group" aria-label={copy.langLabel}>
@@ -209,17 +209,17 @@ export function RadarSurvey({ locale, linkedin }: { locale: string; linkedin: st
           <div className="mb-6 h-1 bg-xinergy-charcoal/10" aria-hidden>
             <div className="h-full bg-xinergy-orange transition-[width]" style={{ width: `${(step / (STEPS - 1)) * 100}%` }} />
           </div>
-          <ol className="mb-8 flex gap-2 overflow-x-auto pb-1 text-xs text-xinergy-slate">
+          <ol className="mb-8 grid grid-cols-8 gap-1.5 text-xs text-xinergy-slate sm:gap-3">
             {copy.steps.map((name, index) => (
-              <li key={name} className={`flex shrink-0 items-center gap-2 ${index === step ? "text-xinergy-charcoal" : ""}`}>
+              <li key={name} className={`min-w-0 ${index === step ? "text-xinergy-charcoal" : ""}`}>
                 <span
-                  className={`grid h-6 w-6 place-items-center border text-[11px] font-semibold ${
+                  className={`grid h-8 w-8 place-items-center border text-xs font-semibold ${
                     index === step ? "border-xinergy-orange bg-xinergy-orange text-xinergy-charcoal" : index < step ? "border-xinergy-charcoal bg-xinergy-charcoal text-white" : "border-xinergy-charcoal/20"
                   }`}
                 >
                   {index < step ? "✓" : index + 1}
                 </span>
-                <span className="hidden md:inline">{name}</span>
+                <span className="mt-1.5 hidden text-[11px] leading-snug lg:block">{name}</span>
               </li>
             ))}
           </ol>
@@ -255,7 +255,7 @@ export function RadarSurvey({ locale, linkedin }: { locale: string; linkedin: st
 
           {step === 2 ? (
             <div className="flex flex-col gap-5">
-              <div className="max-h-80 overflow-auto border border-xinergy-charcoal/10 bg-white p-5 text-sm leading-relaxed text-xinergy-slate">
+              <div className="border border-xinergy-charcoal/10 bg-white p-5 text-sm leading-relaxed text-xinergy-slate">
                 {consentSections[lang].map((section) => (
                   <section key={section.title} className="mb-4 last:mb-0">
                     <h2 className="font-display text-base text-xinergy-charcoal">{section.title}</h2>
@@ -306,11 +306,11 @@ export function RadarSurvey({ locale, linkedin }: { locale: string; linkedin: st
 
           {banner ? <p className="text-sm font-medium text-red-700">{banner}</p> : <p className="text-sm text-xinergy-slate">{copy.saved}</p>}
 
-          <div className="sticky bottom-0 z-20 -mx-4 flex items-center justify-between gap-3 border-t border-xinergy-charcoal/10 bg-xinergy-ivory/95 px-4 py-3 pr-20 backdrop-blur sm:-mx-6 sm:px-6 sm:pr-6">
-            <button type="button" className="btn-secondary" onClick={() => setStep((current) => Math.max(0, current - 1))}>
+          <div className="sticky bottom-0 z-20 -mx-4 flex items-center gap-3 border-t border-xinergy-charcoal/10 bg-xinergy-ivory/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
+            <button type="button" className="btn-secondary min-h-12 flex-1 sm:flex-none" onClick={() => setStep((current) => Math.max(0, current - 1))}>
               {copy.back}
             </button>
-            <button type="submit" className="btn-primary" disabled={sending}>
+            <button type="submit" className="btn-primary min-h-12 flex-[1.6] sm:flex-none" disabled={sending}>
               {sending ? copy.sending : step === 7 ? copy.submit : copy.next}
             </button>
           </div>
@@ -482,7 +482,7 @@ function Control({
         {question.options.map((option) => {
           const on = value === option.v;
           return (
-            <label key={option.v} className={`cursor-pointer border px-3 py-2 text-sm ${on ? "border-xinergy-orange bg-[#FFF1D6]" : "border-xinergy-charcoal/15 bg-white"}`}>
+            <label key={option.v} className={`cursor-pointer border px-3 py-3 text-sm leading-snug ${on ? "border-xinergy-orange bg-[#FFF1D6]" : "border-xinergy-charcoal/15 bg-white"}`}>
               <input type="radio" className="sr-only" name={question.id} value={option.v} checked={on} onChange={() => onChange(question.id, option.v)} />
               {tx(option, lang)}
             </label>
@@ -505,7 +505,7 @@ function Control({
             const on = selected.includes(option.v);
             const disabled = !on && Boolean(question.max && selected.length >= question.max);
             return (
-              <label key={option.v} className={`cursor-pointer border px-3 py-2 text-sm ${on ? "border-xinergy-orange bg-[#FFF1D6]" : "border-xinergy-charcoal/15 bg-white"} ${disabled ? "opacity-45" : ""}`}>
+              <label key={option.v} className={`cursor-pointer border px-3 py-3 text-sm leading-snug ${on ? "border-xinergy-orange bg-[#FFF1D6]" : "border-xinergy-charcoal/15 bg-white"} ${disabled ? "opacity-45" : ""}`}>
                 <input type="checkbox" className="sr-only" checked={on} disabled={disabled} onChange={() => onToggle(question, option.v)} />
                 {tx(option, lang)}
               </label>
@@ -607,11 +607,11 @@ function Control({
               const right = pair.group === "macro" ? AHP.macros.find((item) => item.id === pair.b)?.label : AHP.criteria[pair.b];
               return (
                 <div key={pair.id} className="border-b border-xinergy-charcoal/10 py-3">
-                  <div className="mb-2 flex items-start justify-between gap-3 text-sm font-semibold sm:hidden">
+                  <div className="mb-2 grid grid-cols-2 gap-3 text-sm font-semibold sm:hidden">
                     <span>{left ? tx(left, lang) : pair.a}</span>
                     <span className="text-right">{right ? tx(right, lang) : pair.b}</span>
                   </div>
-                  <div className="sm:grid sm:grid-cols-[1fr_minmax(18rem,2.2fr)_1fr] sm:items-center sm:gap-3">
+                  <div className="sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(16rem,2.4fr)_minmax(0,1fr)] sm:items-center sm:gap-4">
                     <span className="hidden text-sm font-semibold sm:block">{left ? tx(left, lang) : pair.a}</span>
                     <div className="grid grid-cols-9 gap-1">
                       {AHP_SCALE.map((point) => {
@@ -619,13 +619,16 @@ function Control({
                         return (
                           <label key={point.token} title={point[lang]} className="cursor-pointer">
                             <input type="radio" className="peer sr-only" name={pair.id} checked={on} onChange={() => onChange("prioridades_ahp", { ...selected, [pair.id]: point.token })} />
-                            <span className="grid h-10 place-items-center border border-xinergy-charcoal/15 text-[11px] font-semibold peer-checked:border-xinergy-orange peer-checked:bg-[#FFF1D6] peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-xinergy-orange">
+                            <span className="grid h-11 place-items-center border border-xinergy-charcoal/15 text-xs font-semibold peer-checked:border-xinergy-orange peer-checked:bg-[#FFF1D6] peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-xinergy-orange">
                               {point.n}
                             </span>
                           </label>
                         );
                       })}
                     </div>
+                    <p className="mt-1.5 text-center text-[11px] text-xinergy-slate sm:hidden">
+                      {selected[pair.id] ? AHP_SCALE.find((point) => point.token === selected[pair.id])?.[lang] : `← ${copy.leftMore} · 1 ${copy.equal} · ${copy.rightMore} →`}
+                    </p>
                     <span className="hidden text-right text-sm font-semibold sm:block">{right ? tx(right, lang) : pair.b}</span>
                   </div>
                 </div>

@@ -9,6 +9,7 @@ import { XinergyLogo } from "@/components/shared/XinergyLogo";
 import { ExpertiseNavMenu } from "@/components/layout/ExpertiseNavMenu";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { isSurveyPath } from "@/lib/surveys/path";
 
 export function SiteHeader() {
   const t = useTranslations("ui.header");
@@ -45,9 +46,7 @@ export function SiteHeader() {
   }, [pathname]);
 
   const useSolidHeader = scrolled || !isOverlayHero;
-  const bareSurvey = pathname === "/radar-compras-2027" || pathname.startsWith("/radar-compras-2027/");
-
-  if (bareSurvey) return null;
+  if (isSurveyPath(pathname)) return null;
 
   const mobileMenu =
     open && mounted

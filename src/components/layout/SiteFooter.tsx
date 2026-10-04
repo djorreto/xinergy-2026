@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { usePathname, Link } from "@/i18n/navigation";
+import { isSurveyPath } from "@/lib/surveys/path";
 import Image from "next/image";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { ttForsDisplay } from "@/lib/fonts";
@@ -13,8 +14,11 @@ type SiteFooterProps = {
 
 export function SiteFooter({ locale: _locale }: SiteFooterProps) {
   const t = useTranslations("ui.footer");
+  const pathname = usePathname();
   const { brand, nav, presenceLabel, officesLabel } = useSiteContent();
   const year = new Date().getFullYear();
+
+  if (isSurveyPath(pathname)) return null;
 
   return (
     <footer className="border-t border-xinergy-charcoal/10 bg-xinergy-charcoal text-white">
