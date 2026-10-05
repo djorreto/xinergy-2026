@@ -122,14 +122,13 @@ function PairCard({ id, lang, token, invalid, onChange }: { id: string; lang: La
   );
 }
 
-const MORE: Record<AhpIntensity, string> = { 3: "#4ADE80", 5: "#3DDE6A", 7: "#2BD15C", 9: "#22C55E" };
-const LESS: Record<AhpIntensity, string> = { 3: "#C23B3B", 5: "#B42323", 7: "#A31B1B", 9: "#8C1515" };
+const MORE: Record<AhpIntensity, string> = { 3: "#A0B8A3", 5: "#8FBA99", 7: "#7FBC8F", 9: "#6FBE86" };
+const LESS: Record<AhpIntensity, string> = { 3: "#C4A99D", 5: "#CEA18F", 7: "#D79981", 9: "#E09174" };
 
 function washOf(place: "a" | "b", side: ReturnType<typeof choiceFromToken>["side"], intensity: AhpIntensity | null) {
   if (side === "equal") return { background: "#B7B5B0", light: false };
   if ((side !== "a" && side !== "b") || !intensity) return undefined;
-  const winner = side === place;
-  return { background: winner ? MORE[intensity] : LESS[intensity], light: !winner };
+  return { background: side === place ? MORE[intensity] : LESS[intensity], light: false };
 }
 
 function SidePanel({ name, items, contains, wash }: { name: string; items: string[]; contains: string; wash?: { background: string; light: boolean } }) {
