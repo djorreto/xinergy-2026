@@ -126,6 +126,12 @@ function sampleLine(total: number, includedCount: number) {
   return `${received} ${aside === 1 ? "1 está aislada de la evaluación." : `${aside} están aisladas de la evaluación.`}`;
 }
 
+function personLabel(person: PersonC) {
+  const name = [person.nombre, person.apellido].filter(Boolean).join(" ").trim();
+  if (!name || name === person.empresa.trim()) return "";
+  return name;
+}
+
 function ResponseTable({
   responses,
   busyId,
@@ -160,6 +166,7 @@ function ResponseTable({
                 <button type="button" className="text-left font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4" onClick={() => onOpen(item.id)}>
                   {item.empresa}
                 </button>
+                {personLabel(item) ? <span className="mt-0.5 block text-xinergy-charcoal">{personLabel(item)}</span> : null}
                 <span className="mt-0.5 block text-xinergy-slate">{item.email}</span>
               </td>
               <td className="p-3">{countryNames(item.paises)}</td>
@@ -197,7 +204,8 @@ function PersonAnswer({
   return (
     <div className="mt-6">
       <button type="button" className="text-sm text-xinergy-slate underline" onClick={onBack}>Volver al listado</button>
-      <h2 className="mt-3 font-display text-2xl text-xinergy-charcoal">{person.empresa}</h2>
+      <h2 className="mt-3 font-display text-2xl text-xinergy-charcoal">{personLabel(person) || person.empresa}</h2>
+      {personLabel(person) ? <p className="mt-1 text-sm text-xinergy-slate">{person.empresa}{person.cargo ? ` · ${person.cargo}` : ""}</p> : null}
       <p className="mt-1 text-sm text-xinergy-slate">
         {scopeLine(person)} · {dateFormat.format(new Date(person.createdAt))} · {countryNames(person.paises)} · {roleName(person.rol)} · {industryName(person.rubro)}
       </p>

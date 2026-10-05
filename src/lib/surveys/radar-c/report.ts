@@ -20,6 +20,11 @@ export type RadarCInput = {
   id: string;
   createdAt: string;
   email: string;
+  nombre?: string;
+  apellido?: string;
+  telefono?: string | null;
+  linkedin?: string | null;
+  cargo?: string;
   empresa: string;
   pais: string;
   rol: string;
@@ -33,6 +38,11 @@ export type PersonC = {
   id: string;
   createdAt: string;
   email: string;
+  nombre: string;
+  apellido: string;
+  telefono: string;
+  linkedin: string;
+  cargo: string;
   empresa: string;
   pais: string;
   paises: string[];
@@ -127,6 +137,11 @@ export function buildPersonC(row: RadarCInput): PersonC {
     id: row.id,
     createdAt: row.createdAt,
     email: row.email,
+    nombre: row.nombre ?? "",
+    apellido: row.apellido ?? "",
+    telefono: row.telefono ?? "",
+    linkedin: row.linkedin ?? "",
+    cargo: row.cargo ?? "",
     empresa: row.empresa,
     pais: row.pais,
     paises: countriesOf(row),

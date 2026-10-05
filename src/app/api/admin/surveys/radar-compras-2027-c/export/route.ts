@@ -15,7 +15,7 @@ export async function GET() {
   if (!people) return NextResponse.json({ ok: false }, { status: 404 });
   const cut = buildPaperCut(people);
   const header = [
-    "Fecha", "Empresa", "Email", "Rol", "Países", "Alcance", "Ruta", "Clase AHP", "Modo", "CR",
+    "Fecha", "Empresa", "Nombre", "Apellido", "Cargo", "Email", "Teléfono", "LinkedIn", "Rol", "Países", "Alcance", "Ruta", "Clase AHP", "Modo", "CR",
     "E1 ahorro validado", "E2 realización", "E3 exposición", "E4 esfuerzo de datos", "E5 etapa IA", "R1 condición de datos", "Barreras",
     ...CAPABILITIES.map((item, index) => `capability_C${index + 1}_${item.id}`),
     ...CAPABILITIES.map((item) => `peso_${item.id}`),
@@ -25,7 +25,12 @@ export async function GET() {
   const rows = people.map((person) => [
     person.createdAt,
     person.empresa,
+    person.nombre,
+    person.apellido,
+    person.cargo,
     person.email,
+    person.telefono,
+    person.linkedin,
     person.rol,
     countryNames(person.paises),
     person.alcance,

@@ -22,11 +22,16 @@ export async function loadPeople() {
   const admin = await createAdminClient();
   const { data: survey } = await admin.from("web_surveys").select("id").eq("slug", SURVEY_SLUG_C).maybeSingle();
   if (!survey) return null;
-  const { data } = await admin.from("web_survey_responses").select("id, created_at, email, empresa, pais, rol, rubro, evaluacion, company, answers").eq("survey_id", survey.id);
+  const { data } = await admin.from("web_survey_responses").select("id, created_at, email, nombre, apellido, telefono, linkedin, cargo, empresa, pais, rol, rubro, evaluacion, company, answers").eq("survey_id", survey.id);
   return (data ?? []).map((row) => buildPersonC({
     id: row.id,
     createdAt: String(row.created_at ?? ""),
     email: row.email,
+    nombre: row.nombre ?? "",
+    apellido: row.apellido ?? "",
+    telefono: row.telefono,
+    linkedin: row.linkedin,
+    cargo: row.cargo ?? "",
     empresa: row.empresa,
     pais: row.pais,
     rol: row.rol,

@@ -120,8 +120,13 @@ export function RadarSurveyC({ locale }: { locale: string }) {
     };
     const countries = list(draft.paises);
     if (step === "contact") {
+      if (!String(draft.nombre || "").trim()) mark("nombre");
+      if (!String(draft.apellido || "").trim()) mark("apellido");
+      if (!String(draft.cargo || "").trim()) mark("cargo");
       if (!String(draft.empresa || "").trim()) mark("empresa");
       if (!EMAIL.test(String(draft.email || "").trim())) mark("email", copy.email);
+      const linkedin = String(draft.linkedin || "").trim();
+      if (linkedin && !/^https?:\/\/\S+\.\S+/i.test(linkedin) && !/linkedin\.com\/\S+/i.test(linkedin)) mark("linkedin", lang === "en" ? "Enter a valid link." : lang === "pt" ? "Informe um link válido." : "Ingrese un enlace válido.");
       CONSENTS.filter((item) => item.req && draft[item.id] !== true).forEach((item) => mark(item.id));
     }
     if (step === "profile") {
@@ -456,8 +461,15 @@ function Contact({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft;
   const copy = ui[lang];
   return (
     <div className="grid gap-5 sm:grid-cols-2">
-      <Field id="empresa" label={lang === "en" ? "Company" : "Empresa"} value={String(draft.empresa || "")} invalid={invalid.empresa} onChange={(value) => onChange("empresa", value)} />
-      <Field id="email" label="Email" type="email" value={String(draft.email || "")} invalid={invalid.email} onChange={(value) => onChange("email", value)} />
+      <Field id="nombre" label={lang === "en" ? "First name" : lang === "pt" ? "Nome" : "Nombre"} autoComplete="given-name" value={String(draft.nombre || "")} invalid={invalid.nombre} onChange={(value) => onChange("nombre", value)} />
+      <Field id="apellido" label={lang === "en" ? "Last name" : lang === "pt" ? "Sobrenome" : "Apellido"} autoComplete="family-name" value={String(draft.apellido || "")} invalid={invalid.apellido} onChange={(value) => onChange("apellido", value)} />
+      <Field id="cargo" label={lang === "en" ? "Exact job title" : lang === "pt" ? "Título exato do cargo" : "Título exacto del cargo"} autoComplete="organization-title" value={String(draft.cargo || "")} invalid={invalid.cargo} onChange={(value) => onChange("cargo", value)} />
+      <Field id="empresa" label={lang === "en" ? "Company" : "Empresa"} autoComplete="organization" value={String(draft.empresa || "")} invalid={invalid.empresa} onChange={(value) => onChange("empresa", value)} />
+      <Field id="email" label={lang === "en" ? "Work email" : lang === "pt" ? "E-mail corporativo" : "Correo corporativo"} type="email" autoComplete="email" value={String(draft.email || "")} invalid={invalid.email} onChange={(value) => onChange("email", value)} />
+      <Field id="telefono" label={lang === "en" ? "Phone (optional)" : lang === "pt" ? "Telefone (opcional)" : "Teléfono (opcional)"} type="tel" autoComplete="tel" value={String(draft.telefono || "")} invalid={invalid.telefono} onChange={(value) => onChange("telefono", value)} />
+      <div className="sm:col-span-2">
+        <Field id="linkedin" label={lang === "en" ? "LinkedIn profile (optional)" : lang === "pt" ? "Perfil do LinkedIn (opcional)" : "Perfil de LinkedIn (opcional)"} type="url" autoComplete="url" value={String(draft.linkedin || "")} invalid={invalid.linkedin} onChange={(value) => onChange("linkedin", value)} />
+      </div>
       <div className="sm:col-span-2">
         <button type="button" className="text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4" aria-expanded={details} onClick={() => setDetails((open) => !open)}>
           {details ? copy.detailsHide : copy.detailsShow}
@@ -639,11 +651,11 @@ function SelectOptions({ lang, options, value, invalid, onChange }: { lang: Lang
   );
 }
 
-function Field({ id, label, value, invalid, onChange, type = "text" }: { id: string; label: string; value: string; invalid?: string; onChange: (value: string) => void; type?: string }) {
+function Field({ id, label, value, invalid, onChange, type = "text", autoComplete }: { id: string; label: string; value: string; invalid?: string; onChange: (value: string) => void; type?: string; autoComplete?: string }) {
   return (
     <label id={`q-${id}`} className="block">
       <span className="mb-2 block font-semibold">{label}</span>
-      <input className={`${inputClass} ${invalid ? "border-red-700" : ""}`} type={type} value={value} onChange={(event) => onChange(event.target.value)} />
+      <input className={`${inputClass} ${invalid ? "border-red-700" : ""}`} type={type} autoComplete={autoComplete} value={value} onChange={(event) => onChange(event.target.value)} />
       {invalid ? <span className="mt-1 block text-sm text-red-700">{invalid}</span> : null}
     </label>
   );

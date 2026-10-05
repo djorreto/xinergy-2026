@@ -20,7 +20,7 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
   const language = data.lang === "pt" || data.lang === "en" || data.lang === "es" ? data.lang : null;
   if (!language || data.version !== SURVEY_VERSION_C) return { ok: false, honeypot };
   const textOf = (id: string) => (typeof data[id] === "string" ? data[id].trim() : "");
-  for (const field of ["email", "empresa", "rol", "rubro", "alcance"]) {
+  for (const field of ["nombre", "apellido", "cargo", "email", "empresa", "rol", "rubro", "alcance"]) {
     if (!textOf(field)) return { ok: false, honeypot };
   }
   const email = textOf("email").toLowerCase();
@@ -77,12 +77,12 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
     ok: true,
     row: {
       language,
-      nombre: textOf("empresa").slice(0, 120),
-      apellido: "",
+      nombre: textOf("nombre").slice(0, 120),
+      apellido: textOf("apellido").slice(0, 120),
       email: email.slice(0, 180),
-      telefono: null,
-      linkedin: null,
-      cargo: role?.es ?? rol,
+      telefono: textOf("telefono").slice(0, 40) || null,
+      linkedin: textOf("linkedin").slice(0, 240) || null,
+      cargo: textOf("cargo").slice(0, 180) || role?.es || rol,
       empresa: textOf("empresa").slice(0, 180),
       pais: paises.join(","),
       rol,
