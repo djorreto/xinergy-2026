@@ -127,31 +127,26 @@ function PairCard({ id, lang, token, invalid, onChange }: { id: string; lang: La
     onChange(tokenFromChoice(side, value));
   }
 
+  const scale = side === "b" ? INTENSITIES : [...INTENSITIES].reverse();
   return (
     <fieldset id={`q-${id}`} className={`border p-4 ${invalid ? "border-red-700" : "border-xinergy-charcoal/15"}`}>
       <legend className="px-1 font-semibold text-xinergy-charcoal">{copy.which}</legend>
-      <div className="mt-3 grid gap-2" role="radiogroup" aria-label={copy.which}>
-        {(["a", "equal", "b"] as const).map((option) => {
-          const label = option === "a" ? names.a : option === "b" ? names.b : copy.equalChoice;
-          const on = side === option;
-          return (
-            <button key={option} type="button" role="radio" aria-checked={on} className={`border px-3 py-3 text-left text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xinergy-orange ${on ? "border-xinergy-orange bg-[#FFF1D6] font-semibold" : "border-xinergy-charcoal/15"}`} onClick={() => chooseSide(option)}>
-              {label}
-            </button>
-          );
-        })}
+      <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-stretch gap-2" role="radiogroup" aria-label={copy.which}>
+        <SideButton label={names.a} hint={copy.left} pressed={side === "a"} onClick={() => chooseSide("a")} />
+        <SideButton label={copy.equalChoice} hint="1" pressed={side === "equal"} onClick={() => chooseSide("equal")} />
+        <SideButton label={names.b} hint={copy.right} pressed={side === "b"} align="right" onClick={() => chooseSide("b")} />
       </div>
       {side === "a" || side === "b" ? (
         <div className="mt-4">
           <p className="font-semibold text-xinergy-charcoal">{copy.intensityQ}</p>
-          <p className="mt-1 text-sm text-xinergy-slate">{side === "a" ? names.a : names.b}</p>
-          <div className="mt-2 grid gap-2" role="radiogroup" aria-label={copy.intensityQ}>
-            {INTENSITIES.map((value, index) => {
+          <p className={`mt-1 text-sm text-xinergy-slate ${side === "b" ? "text-right" : ""}`}>{side === "a" ? names.a : names.b}</p>
+          <div className="mt-2 flex gap-1" role="radiogroup" aria-label={copy.intensityQ}>
+            {scale.map((value) => {
               const on = intensity === value && saved.side === side;
               return (
-                <button key={value} type="button" role="radio" aria-checked={on} className={`border px-3 py-3 text-left text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xinergy-orange ${on ? "border-xinergy-orange bg-[#FFF1D6] font-semibold" : "border-xinergy-charcoal/15"}`} onClick={() => chooseIntensity(value)}>
-                  {copy.intensities[index]}
-                  <span className="mt-1 block text-xs font-normal text-xinergy-slate">{value}</span>
+                <button key={value} type="button" role="radio" aria-checked={on} className={`min-w-0 flex-1 border px-1 py-2 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xinergy-orange ${on ? "border-xinergy-orange bg-[#FFF1D6] font-semibold" : "border-xinergy-charcoal/15"}`} onClick={() => chooseIntensity(value)}>
+                  <span className="block text-base">{value}</span>
+                  <span className="mt-1 block text-[11px] font-normal leading-tight text-xinergy-slate">{copy.intensities[INTENSITIES.indexOf(value)]}</span>
                 </button>
               );
             })}
@@ -160,6 +155,15 @@ function PairCard({ id, lang, token, invalid, onChange }: { id: string; lang: La
       ) : null}
       {token ? <p className="mt-3 text-sm text-xinergy-slate">{describeChoice(id, token, lang)}</p> : null}
     </fieldset>
+  );
+}
+
+function SideButton({ label, hint, pressed, align = "left", onClick }: { label: string; hint: string; pressed: boolean; align?: "left" | "right"; onClick: () => void }) {
+  return (
+    <button type="button" role="radio" aria-checked={pressed} className={`border px-3 py-3 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xinergy-orange ${align === "right" ? "text-right" : "text-left"} ${pressed ? "border-xinergy-orange bg-[#FFF1D6] font-semibold" : "border-xinergy-charcoal/15"}`} onClick={onClick}>
+      <span className="block">{label}</span>
+      <span className="mt-1 block text-[11px] font-normal text-xinergy-slate">{hint}</span>
+    </button>
   );
 }
 
