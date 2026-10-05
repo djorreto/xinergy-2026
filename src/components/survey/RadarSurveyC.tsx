@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { AhpBlocks } from "@/components/survey/AhpBlocks";
 import { AHP } from "@/lib/surveys/radar-2027";
-import { AHP_BLOCKS, blockComplete, reviewBlockIds } from "@/lib/surveys/radar-c/ahp-blocks";
+import { AHP_BLOCKS, blockComplete, type AhpBlockId } from "@/lib/surveys/radar-c/ahp-blocks";
+import { blockFingerprint, pendingCorroboration, readStamps } from "@/lib/surveys/radar-c/ahp-corroboration";
 import {
   AI_STAGE,
   BARRIERS,
@@ -97,6 +98,8 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   }, [step, ahpBlock, ahpReview, reviewIndex, downloadId, ready]);
 
   const pairs = record(draft.prioridades_ahp);
+  const stamps = readStamps(draft.ahp_corroborado);
+  const pendingReview = pendingCorroboration(pairs, stamps);
 
   function patch(id: string, value: unknown) {
     setDraft((current) => ({ ...current, [id]: value }));
@@ -181,8 +184,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
 
   function goBack() {
     if (step === "ahp" && ahpReview) {
-      if (reviewIndex > 0) setReviewIndex((current) => current - 1);
-      else setAhpReview(false);
+      setAhpReview(false);
       return;
     }
     if (step === "ahp" && ahpBlock > 0) {
@@ -195,7 +197,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   function primaryLabel() {
     if (sending && step === "close") return copy.sending;
     if (step === "close") return copy.submit;
-    if (step === "ahp" && ahpReview) return reviewIndex >= reviewBlockIds(pairs).length - 1 ? copy.reviewKeep : copy.nextBlock;
+    if (step === "ahp" && ahpReview) return copy.next;
     if (step === "ahp" && ahpBlock < AHP_BLOCKS.length - 1) return copy.nextBlock;
     return copy.next;
   }
@@ -205,28 +207,40 @@ export function RadarSurveyC({ locale }: { locale: string }) {
       next();
       return;
     }
-    if (ahpReview) {
-      const flagged = reviewBlockIds(pairs);
-      if (reviewIndex < flagged.length - 1) {
-        setReviewIndex((current) => current + 1);
-        return;
-      }
-      next();
-      return;
-    }
+    if (ahpReview) return;
     const current = AHP_BLOCKS[ahpBlock];
     if (!current || !markBlock(current.pairIds) || !blockComplete(current.id, pairs)) return;
     if (ahpBlock < AHP_BLOCKS.length - 1) {
       setAhpBlock((value) => value + 1);
       return;
     }
-    const flagged = reviewBlockIds(pairs);
-    if (flagged.length) {
+    if (pendingReview.length) {
       setAhpReview(true);
       setReviewIndex(0);
       return;
     }
     next();
+  }
+
+  function stampBlock(blockId: AhpBlockId, nextPairs: Record<string, string>) {
+    const nextStamps = { ...stamps, [blockId]: blockFingerprint(blockId, nextPairs) };
+    setDraft((current) => ({ ...current, prioridades_ahp: nextPairs, ahp_corroborado: nextStamps }));
+    if (pendingCorroboration(nextPairs, nextStamps).length === 0) {
+      setAhpReview(false);
+      setIndex((current) => current + 1);
+    }
+  }
+
+  function keepReview() {
+    const blockId = pendingReview[0];
+    if (!blockId) return;
+    stampBlock(blockId, pairs);
+  }
+
+  function saveReview(pairId: string, token: string) {
+    const blockId = pendingReview[0];
+    if (!blockId) return;
+    stampBlock(blockId, { ...pairs, [pairId]: token });
   }
 
   async function submit() {
@@ -326,7 +340,25 @@ export function RadarSurveyC({ locale }: { locale: string }) {
               </div>
               {step === "contact" ? <Contact lang={lang} draft={draft} invalid={invalid} onChange={patch} /> : null}
               {step === "profile" ? <Profile lang={lang} copy={copy} draft={draft} invalid={invalid} onChange={patch} /> : null}
-              {step === "ahp" ? <AhpBlocks lang={lang} selected={pairs} invalid={invalid} block={ahpBlock} review={ahpReview} reviewIndex={reviewIndex} onChange={(value) => patch("prioridades_ahp", value)} /> : null}
+              {step === "ahp" ? (
+                <AhpBlocks
+                  lang={lang}
+                  selected={pairs}
+                  invalid={invalid}
+                  block={ahpBlock}
+                  review={ahpReview}
+                  corroborationBlock={pendingReview[0]}
+                  onChange={(value) => {
+                    const nextStamps = { ...stamps };
+                    for (const item of AHP_BLOCKS) {
+                      if (nextStamps[item.id] && nextStamps[item.id] !== blockFingerprint(item.id, value)) delete nextStamps[item.id];
+                    }
+                    setDraft((current) => ({ ...current, prioridades_ahp: value, ahp_corroborado: nextStamps }));
+                  }}
+                  onKeep={keepReview}
+                  onSave={saveReview}
+                />
+              ) : null}
               {step === "role" ? <RoleQuestions lang={lang} rol={rol} draft={draft} invalid={invalid} onChange={patch} /> : null}
               {step === "capacity" ? <Capabilities lang={lang} selected={record(draft.capacidades)} invalid={invalid} onChange={(id, value) => patch("capacidades", { ...record(draft.capacidades), [id]: value })} /> : null}
               {step === "context" ? <Context lang={lang} draft={draft} invalid={invalid} onChange={patch} /> : null}
@@ -346,7 +378,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
               {banner ? <p className="text-sm font-medium text-red-700">{banner}</p> : <p className="text-sm text-xinergy-slate">{copy.saved}</p>}
               <div className="sticky bottom-0 z-20 -mx-4 flex items-center gap-3 border-t border-xinergy-charcoal/10 bg-xinergy-ivory/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
                 <button type="button" className="btn-secondary min-h-12 flex-1 sm:flex-none" onClick={goBack} disabled={sending}>{copy.back}</button>
-                <button type="submit" className="btn-primary min-h-12 flex-[1.6] sm:flex-none" disabled={sending}>{primaryLabel()}</button>
+                {ahpReview ? null : <button type="submit" className="btn-primary min-h-12 flex-[1.6] sm:flex-none" disabled={sending}>{primaryLabel()}</button>}
               </div>
             </form>
           )}

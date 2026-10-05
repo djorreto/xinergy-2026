@@ -75,6 +75,11 @@ function eigen(matrix: number[][]) {
   return { weights, cr: ratio };
 }
 
+/** Misma razón de consistencia que usa el análisis de la encuesta. */
+export function comparisonCr(matrix: number[][]) {
+  return eigen(matrix).cr;
+}
+
 export function analyzeAhp(tokens: Record<string, string> | null | undefined): AhpAnalysis | null {
   if (!tokens) return null;
   const values: Record<string, number> = {};

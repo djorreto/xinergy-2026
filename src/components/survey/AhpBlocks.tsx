@@ -1,19 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { ahpClass } from "@/lib/surveys/radar-b/engine";
 import { AHP_SCALE } from "@/lib/surveys/radar-2027";
+import { corroborationOf, type CorroborationCard } from "@/lib/surveys/radar-c/ahp-corroboration";
 import {
   AHP_BLOCKS,
   blockCr,
   choiceFromToken,
-  contradictionOf,
   describeChoice,
   pairMeta,
-  reviewBlockIds,
   sideDetail,
+  tokenFromChoice,
   type AhpBlockId,
   type AhpIntensity,
-  type ContrastSide,
+  type AhpSide,
 } from "@/lib/surveys/radar-c/ahp-blocks";
 import { ui, type Lang } from "@/lib/surveys/radar-c/instrument";
 
@@ -23,34 +24,43 @@ export function AhpBlocks({
   invalid,
   block,
   review,
-  reviewIndex,
+  corroborationBlock,
   onChange,
+  onKeep,
+  onSave,
 }: {
   lang: Lang;
   selected: Record<string, string>;
   invalid: Record<string, string>;
   block: number;
   review: boolean;
-  reviewIndex: number;
+  corroborationBlock?: AhpBlockId;
   onChange: (value: Record<string, string>) => void;
+  onKeep: () => void;
+  onSave: (pairId: string, token: string) => void;
 }) {
   const copy = ui[lang];
-  const flagged = reviewBlockIds(selected);
-  const shown = review ? flagged[Math.min(reviewIndex, Math.max(flagged.length - 1, 0))] : AHP_BLOCKS[block]?.id;
-  const source = AHP_BLOCKS.find((item) => item.id === shown);
-  const titleIndex = AHP_BLOCKS.findIndex((item) => item.id === shown);
-  const maxCr = flagged.reduce((max, id) => Math.max(max, blockCr(selected, id) ?? 0), 0);
+  const source = AHP_BLOCKS[block];
+  const card = review && corroborationBlock ? corroborationOf(corroborationBlock, selected, lang) : null;
+  const notedCr = card ? blockCr(selected, card.blockId) : null;
+
+  if (review) {
+    return (
+      <div className="flex flex-col gap-6">
+        {card ? <CorroborationCard key={`${card.blockId}:${card.pairId}:${selected[card.pairId]}`} card={card} onKeep={onKeep} onSave={onSave} /> : null}
+        {notedCr != null && notedCr > 0.1 ? (
+          <div className="max-w-2xl text-sm text-xinergy-slate">
+            <p>{copy.reviewNote}</p>
+            {ahpClass(notedCr) === "excluido" ? <p className="mt-2">{copy.reviewPortfolio}</p> : null}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
-      {review ? (
-        <div>
-          <h2 className="font-display text-2xl text-xinergy-charcoal">{copy.reviewTitle}</h2>
-          <p className="mt-3 max-w-2xl text-xinergy-slate">{copy.reviewIntro}</p>
-          {flagged.length > 1 ? <p className="mt-3 text-sm text-xinergy-beige">{copy.blockOf(reviewIndex + 1, flagged.length)}</p> : null}
-        </div>
-      ) : (
-        <div>
+      <div>
           <p className="text-sm text-xinergy-beige">{copy.blockOf(block + 1, AHP_BLOCKS.length)}</p>
           <h2 className="mt-2 font-display text-2xl text-xinergy-charcoal">{copy.blockTitles[block]}</h2>
           {block === 0 ? (
@@ -68,69 +78,67 @@ export function AhpBlocks({
               <p className="mt-3 max-w-2xl text-sm text-xinergy-slate">{copy.ahpGroups}</p>
             </>
           ) : <p className="mt-3 max-w-2xl text-sm text-xinergy-slate">{copy.ahpInside}</p>}
-        </div>
-      )}
+      </div>
       {source ? (
         <section id={`ahp-block-${source.id}`}>
-          {review ? <h3 className="font-display text-xl text-xinergy-charcoal">{copy.blockTitles[titleIndex]}</h3> : null}
-          {review && source.pairIds.length === 3 ? <ContradictionCard lang={lang} blockId={source.id} selected={selected} followsLabel={copy.clashFollows} markedLabel={copy.clashMarked} /> : null}
           <div className="mt-4 flex flex-col gap-4">
             {source.pairIds.map((id) => (
               <PairCard key={id} id={id} lang={lang} token={selected[id]} invalid={Boolean(invalid[id])} onChange={(token) => onChange(token ? { ...selected, [id]: token } : omit(selected, id))} />
             ))}
           </div>
-          {review ? (
-            <button type="button" className="mt-4 text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange" onClick={() => document.getElementById(`q-${source.pairIds[0]}`)?.querySelector("button")?.focus()}>
-              {copy.reviewEdit}
-            </button>
-          ) : null}
         </section>
       ) : null}
-      {review && maxCr > 0.1 ? (
-        <div className="max-w-2xl text-sm text-xinergy-slate">
-          <p>{copy.reviewNote}</p>
-          {ahpClass(maxCr) === "excluido" ? <p className="mt-2">{copy.reviewPortfolio}</p> : null}
-        </div>
-      ) : null}
     </div>
   );
 }
 
-function ContradictionCard({ lang, blockId, selected, followsLabel, markedLabel }: { lang: Lang; blockId: AhpBlockId; selected: Record<string, string>; followsLabel: string; markedLabel: string }) {
-  const clash = contradictionOf(blockId, selected, lang);
-  if (!clash) return null;
-  return (
-    <div className="mt-4 bg-[#FDECEC] px-4 py-4">
-      <ol className="flex flex-col gap-2">
-        {clash.steps.map((step, index) => (
-          <li key={`${step.from}-${step.to}`} className={`text-sm text-xinergy-charcoal ${clash.kind === "cycle" && index === clash.steps.length - 1 ? "bg-[#F6D4D4] px-3 py-2 font-semibold" : ""}`}>
-            {step.sentence}
-          </li>
-        ))}
-      </ol>
-      {clash.kind === "cycle" ? <p className="mt-3 text-sm font-semibold text-xinergy-charcoal">{clash.closing}</p> : null}
-      {clash.follows && clash.marked ? (
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <ContrastBox label={followsLabel} side={clash.follows} />
-          <ContrastBox label={markedLabel} side={clash.marked} />
-        </div>
-      ) : null}
-    </div>
-  );
-}
+function CorroborationCard({ card, onKeep, onSave }: { card: CorroborationCard; onKeep: () => void; onSave: (pairId: string, token: string) => void }) {
+  const [side, setSide] = useState<AhpSide | null>(null);
+  const [intensity, setIntensity] = useState<AhpIntensity | null>(null);
+  const token = side === "equal" ? "1" : side === "a" || side === "b" ? tokenFromChoice(side, intensity) : null;
 
-function ContrastBox({ label, side }: { label: string; side: ContrastSide }) {
-  const fromWash = side.fromWins === null ? "#FFE8A3" : side.fromWins ? MORE[side.intensity ?? 3] : LESS[side.intensity ?? 3];
-  const toWash = side.fromWins === null ? "#FFE8A3" : side.fromWins ? LESS[side.intensity ?? 3] : MORE[side.intensity ?? 3];
+  function chooseSide(next: AhpSide) {
+    setSide(next);
+    if (next === "equal") setIntensity(null);
+  }
+
   return (
-    <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-xinergy-charcoal">{label}</p>
-      <div className="mt-2 grid grid-cols-2 gap-2">
-        <p className="px-3 py-3 text-sm font-semibold text-xinergy-charcoal" style={{ backgroundColor: fromWash }}>{side.from}</p>
-        <p className="px-3 py-3 text-sm font-semibold text-xinergy-charcoal" style={{ backgroundColor: toWash }}>{side.to}</p>
+    <section className="max-w-3xl" aria-labelledby={`confirm-${card.pairId}`}>
+      <h2 id={`confirm-${card.pairId}`} className="font-display text-2xl text-xinergy-charcoal">{card.title}</h2>
+      <p className="mt-3 text-xinergy-slate">{card.context}</p>
+      <fieldset className="mt-6">
+        <legend className="font-semibold text-xinergy-charcoal">{card.question}</legend>
+        <div className="mt-3 grid gap-2 sm:grid-cols-3" role="radiogroup" aria-label={card.question}>
+          <ChoiceButton label={card.optionP} pressed={side === "a"} onClick={() => chooseSide("a")} />
+          <ChoiceButton label={card.optionEqual} pressed={side === "equal"} onClick={() => chooseSide("equal")} />
+          <ChoiceButton label={card.optionQ} pressed={side === "b"} onClick={() => chooseSide("b")} />
+        </div>
+      </fieldset>
+      {side === "a" || side === "b" ? (
+        <fieldset className="mt-5">
+          <legend className="font-semibold text-xinergy-charcoal">{card.intensityQuestion}</legend>
+          <div className="mt-3 grid gap-2 sm:grid-cols-4" role="radiogroup" aria-label={card.intensityQuestion}>
+            {card.intensities.map((item) => (
+              <ChoiceButton key={item.value} label={item.label} hint={String(item.value)} pressed={intensity === item.value} onClick={() => setIntensity(item.value)} />
+            ))}
+          </div>
+        </fieldset>
+      ) : null}
+      <p className="mt-5 text-sm text-xinergy-slate">{card.current}</p>
+      <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+        <button type="button" className="btn-secondary min-h-12" onClick={onKeep}>{card.keep}</button>
+        {token ? <button type="button" className="btn-primary min-h-12" onClick={() => onSave(card.pairId, token)}>{card.save}</button> : null}
       </div>
-      <p className="mt-2 text-sm text-xinergy-charcoal">{side.sentence}</p>
-    </div>
+    </section>
+  );
+}
+
+function ChoiceButton({ label, hint, pressed, onClick }: { label: string; hint?: string; pressed: boolean; onClick: () => void }) {
+  return (
+    <button type="button" role="radio" aria-checked={pressed} className={`border px-3 py-3 text-left text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xinergy-orange ${pressed ? "border-xinergy-orange bg-[#FFF1D6] font-semibold" : "border-xinergy-charcoal/15"}`} onClick={onClick}>
+      <span className="block">{label}</span>
+      {hint ? <span className="mt-1 block text-[11px] font-normal text-xinergy-slate">{hint}</span> : null}
+    </button>
   );
 }
 
