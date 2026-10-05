@@ -12,6 +12,7 @@ import {
   sideDetail,
   triadExplanation,
   type AhpBlockId,
+  type AhpIntensity,
 } from "@/lib/surveys/radar-c/ahp-blocks";
 import { ui, type Lang } from "@/lib/surveys/radar-c/instrument";
 
@@ -106,9 +107,9 @@ function PairCard({ id, lang, token, invalid, onChange }: { id: string; lang: La
   return (
     <fieldset id={`q-${id}`} className={`border p-4 ${invalid ? "border-red-700" : "border-xinergy-charcoal/15"}`}>
       <legend className="px-1 font-semibold text-xinergy-charcoal">{question}</legend>
-      <div className="mt-3 grid grid-cols-2 items-stretch gap-2">
-        <SidePanel name={left.name} items={left.items} contains={copy.contains} pressed={saved.side === "a"} />
-        <SidePanel name={right.name} items={right.items} contains={copy.contains} pressed={saved.side === "b"} align="right" />
+      <div className="mt-3 grid grid-cols-2 items-stretch gap-3">
+        <SidePanel name={left.name} items={left.items} contains={copy.contains} wash={washOf("a", saved.side, saved.intensity)} />
+        <SidePanel name={right.name} items={right.items} contains={copy.contains} wash={washOf("b", saved.side, saved.intensity)} />
       </div>
       <div className="mt-3 grid grid-cols-9 gap-1" role="radiogroup" aria-label={question}>
         {AHP_SCALE.map((point, index) => {
@@ -126,9 +127,18 @@ function PairCard({ id, lang, token, invalid, onChange }: { id: string; lang: La
   );
 }
 
-function SidePanel({ name, items, contains, pressed, align = "left" }: { name: string; items: string[]; contains: string; pressed: boolean; align?: "left" | "right" }) {
+const MORE: Record<AhpIntensity, string> = { 3: "#EAF6EC", 5: "#CDECD4", 7: "#A6DCB4", 9: "#78C98C" };
+const LESS: Record<AhpIntensity, string> = { 3: "#FBEDED", 5: "#F6D4D4", 7: "#EFB0B0", 9: "#E48484" };
+
+function washOf(place: "a" | "b", side: ReturnType<typeof choiceFromToken>["side"], intensity: AhpIntensity | null) {
+  if (side === "equal") return "#FFE8A3";
+  if ((side !== "a" && side !== "b") || !intensity) return undefined;
+  return side === place ? MORE[intensity] : LESS[intensity];
+}
+
+function SidePanel({ name, items, contains, wash }: { name: string; items: string[]; contains: string; wash?: string }) {
   return (
-    <div className={`border px-3 py-3 text-sm ${align === "right" ? "text-right" : "text-left"} ${pressed ? "border-xinergy-orange bg-[#FFF1D6]" : "border-xinergy-charcoal/15"}`}>
+    <div className="px-3 py-3 text-left text-sm" style={wash ? { backgroundColor: wash } : undefined}>
       <p className="font-semibold text-xinergy-charcoal">{name}</p>
       {items.length ? (
         <div className="mt-2 text-[11px] font-normal leading-snug text-xinergy-slate">
