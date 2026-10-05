@@ -1,4 +1,5 @@
 import { analyzeAhp, type AhpAnalysis } from "@/lib/surveys/ahp";
+import { resolvePriorities, type BlockWeight } from "@/lib/surveys/radar-c/ahp-allocation";
 import { isIncluded, type Evaluacion } from "@/lib/surveys/evaluacion";
 import { CAPABILITIES, COUNTRIES, INITIATIVE_COPY, STATUS_TO_ENGINE } from "@/lib/surveys/radar-c/instrument";
 import {
@@ -44,6 +45,11 @@ export type PersonC = {
   operational: boolean;
   ahp: AhpAnalysis | null;
   ahpClass: ReturnType<typeof ahpClass> | null;
+  priorityMode: "ahp" | "hibrido";
+  clarificationComplete: boolean;
+  ahpWeights: number[] | null;
+  finalMacro: number[] | null;
+  blockSources: BlockWeight[];
   weights: number[] | null;
   levels: (number | null)[];
   gaps: (number | null)[];
@@ -69,9 +75,12 @@ export function buildPersonC(row: RadarCInput): PersonC {
   const answers = row.answers ?? {};
   const company = row.company ?? {};
   const tokens = record(answers.prioridades_ahp);
-  const ahp = analyzeAhp(tokens);
+  const resolved = resolvePriorities(tokens, answers.ahp_aclaracion);
+  const ahp = resolved?.ahp ?? analyzeAhp(tokens);
   const klass = ahp ? ahpClass(ahp.maxCr) : null;
-  const weights = ahp ? CAPABILITIES.map((item) => ahp.global[item.id] ?? 0) : null;
+  const ahpWeights = ahp ? CAPABILITIES.map((item) => ahp.global[item.id] ?? 0) : null;
+  const finalWeights = resolved ? CAPABILITIES.map((item) => resolved.global[item.id] ?? 0) : null;
+  const weights = finalWeights ?? ahpWeights;
   const capacidades = record(answers.capacidades);
   const levels = CAPABILITIES.map((item) => {
     const value = capacidades[item.id];
@@ -87,13 +96,14 @@ export function buildPersonC(row: RadarCInput): PersonC {
   const operational = answers.ruta === "operativa";
   const availability = availabilityOf(agenda, datos === "UNKNOWN" ? "UNKNOWN" : datos);
   const gapVector = complete ? (gaps as number[]) : null;
-  const canOptimize = Boolean(weights && gapVector && klass && klass !== "excluido" && !availability.statusUnknown && datos !== "");
+  const clarified = Boolean(resolved?.clarificationComplete && resolved.mode === "hibrido");
+  const canOptimize = Boolean(weights && gapVector && klass && (klass !== "excluido" || clarified) && !availability.statusUnknown && datos !== "");
   const motorReason = !operational
     ? "Ruta ejecutiva: no hay portafolio operacional."
     : !weights
       ? "Faltan comparaciones de prioridad."
-      : klass === "excluido"
-        ? "La consistencia supera 0,20. No hay portafolio recomendado."
+      : klass === "excluido" && !clarified
+        ? "La consistencia supera 0,20 y no hay una aclaración completa. No hay portafolio recomendado."
         : !gapVector
           ? "Falta el nivel de alguna capacidad."
           : availability.statusUnknown
@@ -129,6 +139,11 @@ export function buildPersonC(row: RadarCInput): PersonC {
     operational,
     ahp,
     ahpClass: klass,
+    priorityMode: resolved?.mode ?? "ahp",
+    clarificationComplete: resolved?.clarificationComplete ?? false,
+    ahpWeights,
+    finalMacro: resolved?.macro ?? null,
+    blockSources: resolved?.blocks ?? [],
     weights,
     levels,
     gaps,
@@ -165,6 +180,9 @@ export type BenchmarkC = {
   priorityIds: string[];
   aip: number[] | null;
   macro: number[] | null;
+  expandedIds: string[];
+  expandedAip: number[] | null;
+  expandedMacro: number[] | null;
 };
 
 export function buildBenchmarkC(people: PersonC[]): BenchmarkC {
@@ -185,12 +203,28 @@ export function buildBenchmarkC(people: PersonC[]): BenchmarkC {
     else if (scms.length === 1) principals.push(scms[0]);
     else if (scms.length > 1) duplicates.push(scms[0].empresa);
   }
-  const priority = principals.filter((person) => person.ahpClass === "principal" && person.weights);
-  const aip = priority.length ? priority[0].weights!.map((_, index) => priority.reduce((sum, person) => sum + (person.weights?.[index] ?? 0), 0) / priority.length) : null;
+  const priority = principals.filter((person) => person.priorityMode === "ahp" && person.ahpClass === "principal" && person.weights);
+  const expanded = principals.filter((person) => person.weights && (priority.some((item) => item.id === person.id) || (person.priorityMode === "hibrido" && person.clarificationComplete)));
+  const aip = meanWeights(priority);
   const macro = priority.length
     ? [0, 1, 2].map((index) => priority.reduce((sum, person) => sum + (person.ahp?.macro.weights[index] ?? 0), 0) / priority.length)
     : null;
-  return { companies: principals.length, duplicates, principalIds: principals.map((person) => person.id), priorityIds: priority.map((person) => person.id), aip, macro };
+  return {
+    companies: principals.length,
+    duplicates,
+    principalIds: principals.map((person) => person.id),
+    priorityIds: priority.map((person) => person.id),
+    aip,
+    macro,
+    expandedIds: expanded.map((person) => person.id),
+    expandedAip: meanWeights(expanded),
+    expandedMacro: expanded.length ? [0, 1, 2].map((index) => expanded.reduce((sum, person) => sum + (person.finalMacro?.[index] ?? 0), 0) / expanded.length) : null,
+  };
+}
+
+function meanWeights(people: PersonC[]) {
+  if (!people.length || !people[0].weights) return null;
+  return people[0].weights.map((_, index) => people.reduce((sum, person) => sum + (person.weights?.[index] ?? 0), 0) / people.length);
 }
 
 function compareAgenda(

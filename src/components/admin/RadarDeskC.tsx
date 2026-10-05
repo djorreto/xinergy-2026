@@ -226,7 +226,7 @@ function PersonDetail({ person }: { person: PersonC }) {
       <p className="mt-2">Gasto declarado: {named(SPEND_C, person.spend)}</p>
       {person.weights ? (
         <div className="mt-4">
-          <Bars title={`Prioridades · consistencia ${consistency} · ${className(person.ahpClass)}`} rows={CAPABILITIES.map((item, index) => ({ name: item.short.es, value: person.weights?.[index] ?? 0 }))} />
+          <Bars title={`Prioridades · consistencia ${consistency} · ${className(person.ahpClass)}${person.priorityMode === "hibrido" ? " · asignación directa" : ""}`} rows={CAPABILITIES.map((item, index) => ({ name: item.short.es, value: person.weights?.[index] ?? 0 }))} />
         </div>
       ) : null}
       {person.operational ? (

@@ -23,6 +23,7 @@ export type PaperCut = {
   ahp: { principal: number; exploratory: number; excluded: number; maxExcludedCr: number | null };
   aip: number[] | null;
   macro: number[] | null;
+  expanded: { n: number; aip: number[] | null; macro: number[] | null; order: number[] };
   dispersion: { index: number; min: number; max: number; sd: number }[];
   leaveOneOut: { companies: number; rankChanges: number; maxMove: number };
   capability: { index: number; n: number; median: number | null; below4: number; low: number; gapMean: number | null; gapShare: number | null }[];
@@ -147,6 +148,12 @@ export function buildPaperCut(people: PersonC[], options?: { sensitivity?: boole
     },
     aip,
     macro: benchmark.macro,
+    expanded: {
+      n: benchmark.expandedIds.length,
+      aip: benchmark.expandedAip,
+      macro: benchmark.expandedMacro,
+      order: orderOf(benchmark.expandedAip),
+    },
     dispersion: dispersionOf(priority),
     leaveOneOut: leaveOneOut(priority),
     capability: gapRows,

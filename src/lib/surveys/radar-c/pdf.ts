@@ -59,7 +59,13 @@ export async function personPdfC(person: PersonC, stamp: string) {
   if (person.weights) {
     writer.heading("Prioridades");
     writer.bars(CAPABILITIES.map((item, index) => ({ label: item.short.es, ratio: person.weights?.[index] ?? 0, trailing: formatPercent(person.weights?.[index] ?? 0) })));
-    writer.write(person.ahpClass === "excluido" ? "La consistencia supera 0,20. No hay un portafolio recomendado." : person.ahpClass === "exploratorio" ? "El perfil es exploratorio. El escenario, si aparece, no entra al promedio del corte." : "Las comparaciones entran en el rango principal de consistencia.");
+    writer.write(person.priorityMode === "hibrido"
+      ? "Algunos bloques se aclararon repartiendo 100 puntos. Esos pesos reemplazan las comparaciones de ese bloque. La consistencia original se conserva como diagnóstico."
+      : person.ahpClass === "excluido"
+        ? "La consistencia supera 0,20 y no hay una aclaración completa. No hay un portafolio recomendado."
+        : person.ahpClass === "exploratorio"
+          ? "El perfil es exploratorio. El escenario, si aparece, no entra al promedio principal del corte."
+          : "Las comparaciones entran en el rango principal de consistencia.");
   }
   if (person.operational) {
     writer.heading("Capacidad");

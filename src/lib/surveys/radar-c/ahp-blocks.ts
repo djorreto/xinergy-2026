@@ -52,6 +52,11 @@ export function blockComplete(blockId: AhpBlockId, tokens: Record<string, string
   return Boolean(block && block.pairIds.every((id) => choiceFromToken(tokens[id]).side));
 }
 
+export function blockFingerprint(blockId: AhpBlockId, tokens: Record<string, string>) {
+  const block = AHP_BLOCKS.find((item) => item.id === blockId);
+  return block ? block.pairIds.map((id) => tokens[id] ?? "").join("|") : "";
+}
+
 /** Bloques 3x3 cuyo CR supera 0,10. El par único de costos y caja no entra. */
 export function reviewBlockIds(tokens: Record<string, string>): AhpBlockId[] {
   const analysis = analyzeAhp(tokens);

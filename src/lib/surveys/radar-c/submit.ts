@@ -103,6 +103,7 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
         version: SURVEY_VERSION_C,
         ruta: operational ? "operativa" : "ejecutiva",
         prioridades_ahp: pairs,
+        ahp_aclaracion: data.ahp_aclaracion ?? null,
         capacidades,
         e1: textOf("e1"),
         e2: textOf("e2"),

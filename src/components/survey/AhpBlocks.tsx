@@ -1,18 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { ahpClass } from "@/lib/surveys/radar-b/engine";
+import { AllocationCard } from "@/components/survey/AllocationCard";
 import { AHP_SCALE } from "@/lib/surveys/radar-2027";
-import { corroborationOf, type CorroborationCard } from "@/lib/surveys/radar-c/ahp-corroboration";
+import type { AllocationBlockId } from "@/lib/surveys/radar-c/ahp-allocation";
 import {
   AHP_BLOCKS,
-  blockCr,
   choiceFromToken,
   describeChoice,
   pairMeta,
   sideDetail,
   tokenFromChoice,
-  type AhpBlockId,
   type AhpIntensity,
   type AhpSide,
 } from "@/lib/surveys/radar-c/ahp-blocks";
@@ -24,38 +21,34 @@ export function AhpBlocks({
   invalid,
   block,
   review,
-  corroborationBlock,
+  allocationBlock,
+  allocationIndex,
+  allocationTotal,
   onChange,
-  onKeep,
-  onSave,
+  onConfirmAllocation,
+  allocationInitial,
+  onEditAllocation,
 }: {
   lang: Lang;
   selected: Record<string, string>;
   invalid: Record<string, string>;
   block: number;
   review: boolean;
-  corroborationBlock?: AhpBlockId;
+  allocationBlock?: AllocationBlockId;
+  allocationIndex: number;
+  allocationTotal: number;
   onChange: (value: Record<string, string>) => void;
-  onKeep: () => void;
-  onSave: (pairId: string, token: string) => void;
+  onConfirmAllocation: (points: Record<string, number>) => void;
+  allocationInitial?: Record<string, number> | null;
+  onEditAllocation?: () => void;
 }) {
   const copy = ui[lang];
   const source = AHP_BLOCKS[block];
-  const card = review && corroborationBlock ? corroborationOf(corroborationBlock, selected, lang) : null;
-  const notedCr = card ? blockCr(selected, card.blockId) : null;
 
   if (review) {
-    return (
-      <div className="flex flex-col gap-6">
-        {card ? <CorroborationCard key={`${card.blockId}:${card.pairId}:${selected[card.pairId]}`} card={card} onKeep={onKeep} onSave={onSave} /> : null}
-        {notedCr != null && notedCr > 0.1 ? (
-          <div className="max-w-2xl text-sm text-xinergy-slate">
-            <p>{copy.reviewNote}</p>
-            {ahpClass(notedCr) === "excluido" ? <p className="mt-2">{copy.reviewPortfolio}</p> : null}
-          </div>
-        ) : null}
-      </div>
-    );
+    return allocationBlock ? (
+      <AllocationCard key={allocationBlock} lang={lang} blockId={allocationBlock} index={allocationIndex} total={allocationTotal} initial={allocationInitial} onConfirm={onConfirmAllocation} />
+    ) : null;
   }
 
   return (
@@ -86,59 +79,14 @@ export function AhpBlocks({
               <PairCard key={id} id={id} lang={lang} token={selected[id]} invalid={Boolean(invalid[id])} onChange={(token) => onChange(token ? { ...selected, [id]: token } : omit(selected, id))} />
             ))}
           </div>
+          {onEditAllocation && block === AHP_BLOCKS.length - 1 ? (
+            <button type="button" className="mt-4 text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange" onClick={onEditAllocation}>
+              {lang === "en" ? "Edit the point distribution" : lang === "pt" ? "Editar a distribuição de pontos" : "Editar la distribución de puntos"}
+            </button>
+          ) : null}
         </section>
       ) : null}
     </div>
-  );
-}
-
-function CorroborationCard({ card, onKeep, onSave }: { card: CorroborationCard; onKeep: () => void; onSave: (pairId: string, token: string) => void }) {
-  const [side, setSide] = useState<AhpSide | null>(null);
-  const [intensity, setIntensity] = useState<AhpIntensity | null>(null);
-  const token = side === "equal" ? "1" : side === "a" || side === "b" ? tokenFromChoice(side, intensity) : null;
-
-  function chooseSide(next: AhpSide) {
-    setSide(next);
-    if (next === "equal") setIntensity(null);
-  }
-
-  return (
-    <section className="max-w-3xl" aria-labelledby={`confirm-${card.pairId}`}>
-      <h2 id={`confirm-${card.pairId}`} className="font-display text-2xl text-xinergy-charcoal">{card.title}</h2>
-      <p className="mt-3 text-xinergy-slate">{card.context}</p>
-      <fieldset className="mt-6">
-        <legend className="font-semibold text-xinergy-charcoal">{card.question}</legend>
-        <div className="mt-3 grid gap-2 sm:grid-cols-3" role="radiogroup" aria-label={card.question}>
-          <ChoiceButton label={card.optionP} pressed={side === "a"} onClick={() => chooseSide("a")} />
-          <ChoiceButton label={card.optionEqual} pressed={side === "equal"} onClick={() => chooseSide("equal")} />
-          <ChoiceButton label={card.optionQ} pressed={side === "b"} onClick={() => chooseSide("b")} />
-        </div>
-      </fieldset>
-      {side === "a" || side === "b" ? (
-        <fieldset className="mt-5">
-          <legend className="font-semibold text-xinergy-charcoal">{card.intensityQuestion}</legend>
-          <div className="mt-3 grid gap-2 sm:grid-cols-4" role="radiogroup" aria-label={card.intensityQuestion}>
-            {card.intensities.map((item) => (
-              <ChoiceButton key={item.value} label={item.label} hint={String(item.value)} pressed={intensity === item.value} onClick={() => setIntensity(item.value)} />
-            ))}
-          </div>
-        </fieldset>
-      ) : null}
-      <p className="mt-5 text-sm text-xinergy-slate">{card.current}</p>
-      <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-        <button type="button" className="btn-secondary min-h-12" onClick={onKeep}>{card.keep}</button>
-        {token ? <button type="button" className="btn-primary min-h-12" onClick={() => onSave(card.pairId, token)}>{card.save}</button> : null}
-      </div>
-    </section>
-  );
-}
-
-function ChoiceButton({ label, hint, pressed, onClick }: { label: string; hint?: string; pressed: boolean; onClick: () => void }) {
-  return (
-    <button type="button" role="radio" aria-checked={pressed} className={`border px-3 py-3 text-left text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xinergy-orange ${pressed ? "border-xinergy-orange bg-[#FFF1D6] font-semibold" : "border-xinergy-charcoal/15"}`} onClick={onClick}>
-      <span className="block">{label}</span>
-      {hint ? <span className="mt-1 block text-[11px] font-normal text-xinergy-slate">{hint}</span> : null}
-    </button>
   );
 }
 

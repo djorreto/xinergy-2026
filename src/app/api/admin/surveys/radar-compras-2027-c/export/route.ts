@@ -15,10 +15,11 @@ export async function GET() {
   if (!people) return NextResponse.json({ ok: false }, { status: 404 });
   const cut = buildPaperCut(people);
   const header = [
-    "Fecha", "Empresa", "Email", "Rol", "Países", "Alcance", "Ruta", "Clase AHP", "CR",
+    "Fecha", "Empresa", "Email", "Rol", "Países", "Alcance", "Ruta", "Clase AHP", "Modo", "CR",
     "E1 ahorro validado", "E2 realización", "E3 exposición", "E4 esfuerzo de datos", "E5 etapa IA", "R1 condición de datos", "Barreras",
     ...CAPABILITIES.map((item, index) => `capability_C${index + 1}_${item.id}`),
     ...CAPABILITIES.map((item) => `peso_${item.id}`),
+    ...CAPABILITIES.map((item) => `peso_ahp_${item.id}`),
     ...INITIATIVE_COPY.map((item, index) => `initiative_I${index + 1}_${item.id}`),
   ];
   const rows = people.map((person) => [
@@ -30,6 +31,7 @@ export async function GET() {
     person.alcance,
     person.operational ? "operativa" : "ejecutiva",
     person.ahpClass ?? "",
+    person.priorityMode === "hibrido" ? "Hibrido" : "AHP",
     person.ahp ? String(person.ahp.maxCr) : "",
     person.context.e1,
     person.context.e2,
@@ -40,6 +42,7 @@ export async function GET() {
     person.barriers.join("|"),
     ...person.levels.map((level) => (level == null ? "ns" : String(level))),
     ...CAPABILITIES.map((_, index) => (person.weights ? String(person.weights[index] ?? "") : "")),
+    ...CAPABILITIES.map((_, index) => (person.ahpWeights ? String(person.ahpWeights[index] ?? "") : "")),
     ...INITIATIVE_COPY.map((item) => person.agenda[item.id] ?? ""),
   ]);
   const bases = [
@@ -52,14 +55,16 @@ export async function GET() {
     ["AHP principal", String(cut.ahp.principal)],
     ["AHP exploratorio", String(cut.ahp.exploratory)],
     ["AHP excluido", String(cut.ahp.excluded)],
+    ["Base ampliada", String(cut.expanded.n)],
     ["Portafolio", String(cut.motor)],
   ];
   const weights = [
-    ["Criterio", "Identificador", "Peso medio", "Mínimo", "Máximo", "Desviación", "Brecha media"],
+    ["Criterio", "Identificador", "Peso medio AHP", "Peso medio ampliado", "Mínimo", "Máximo", "Desviación", "Brecha media"],
     ...CAPABILITIES.map((item, index) => [
       capabilityName(index),
       `capability_C${index + 1}`,
       String(cut.aip?.[index] ?? ""),
+      String(cut.expanded.aip?.[index] ?? ""),
       String(cut.dispersion[index]?.min ?? ""),
       String(cut.dispersion[index]?.max ?? ""),
       String(cut.dispersion[index]?.sd ?? ""),

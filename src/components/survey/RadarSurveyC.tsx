@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { AhpBlocks } from "@/components/survey/AhpBlocks";
 import { AHP } from "@/lib/surveys/radar-2027";
-import { AHP_BLOCKS, blockComplete, type AhpBlockId } from "@/lib/surveys/radar-c/ahp-blocks";
-import { blockFingerprint, pendingCorroboration, readStamps } from "@/lib/surveys/radar-c/ahp-corroboration";
+import { AHP_BLOCKS, blockComplete } from "@/lib/surveys/radar-c/ahp-blocks";
+import { activeAllocation, blocksNeedingAllocation, confirmAllocation, retireStaleAllocations, type AllocationBlockId } from "@/lib/surveys/radar-c/ahp-allocation";
 import {
   AI_STAGE,
   BARRIERS,
@@ -54,6 +54,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   const [ahpBlock, setAhpBlock] = useState(0);
   const [ahpReview, setAhpReview] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
+  const [allocationQueue, setAllocationQueue] = useState<AllocationBlockId[]>([]);
   const [sending, setSending] = useState(false);
   const [downloadId, setDownloadId] = useState("");
   const [ready, setReady] = useState(false);
@@ -98,8 +99,8 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   }, [step, ahpBlock, ahpReview, reviewIndex, downloadId, ready]);
 
   const pairs = record(draft.prioridades_ahp);
-  const stamps = readStamps(draft.ahp_corroborado);
-  const pendingReview = pendingCorroboration(pairs, stamps);
+  const pendingReview = blocksNeedingAllocation(pairs).filter((id) => !activeAllocation(id, pairs, draft.ahp_aclaracion));
+  const editableAllocations = (["general", "res", "trans"] as AllocationBlockId[]).filter((id) => activeAllocation(id, pairs, draft.ahp_aclaracion));
 
   function patch(id: string, value: unknown) {
     setDraft((current) => ({ ...current, [id]: value }));
@@ -215,32 +216,34 @@ export function RadarSurveyC({ locale }: { locale: string }) {
       return;
     }
     if (pendingReview.length) {
-      setAhpReview(true);
+      setAllocationQueue(pendingReview);
       setReviewIndex(0);
+      setAhpReview(true);
       return;
     }
     next();
   }
 
-  function stampBlock(blockId: AhpBlockId, nextPairs: Record<string, string>) {
-    const nextStamps = { ...stamps, [blockId]: blockFingerprint(blockId, nextPairs) };
-    setDraft((current) => ({ ...current, prioridades_ahp: nextPairs, ahp_corroborado: nextStamps }));
-    if (pendingCorroboration(nextPairs, nextStamps).length === 0) {
-      setAhpReview(false);
-      setIndex((current) => current + 1);
+  function confirmReview(points: Record<string, number>) {
+    const blockId = allocationQueue[reviewIndex];
+    if (!blockId) return;
+    const nextStore = confirmAllocation(draft.ahp_aclaracion, blockId, pairs, points);
+    if (!nextStore) return;
+    setDraft((current) => ({ ...current, ahp_aclaracion: nextStore }));
+    if (reviewIndex < allocationQueue.length - 1) {
+      setReviewIndex((current) => current + 1);
+      return;
     }
+    setAhpReview(false);
+    setAllocationQueue([]);
+    setIndex((current) => current + 1);
   }
 
-  function keepReview() {
-    const blockId = pendingReview[0];
-    if (!blockId) return;
-    stampBlock(blockId, pairs);
-  }
-
-  function saveReview(pairId: string, token: string) {
-    const blockId = pendingReview[0];
-    if (!blockId) return;
-    stampBlock(blockId, { ...pairs, [pairId]: token });
+  function editAllocations() {
+    if (!editableAllocations.length) return;
+    setAllocationQueue(editableAllocations);
+    setReviewIndex(0);
+    setAhpReview(true);
   }
 
   async function submit() {
@@ -347,16 +350,15 @@ export function RadarSurveyC({ locale }: { locale: string }) {
                   invalid={invalid}
                   block={ahpBlock}
                   review={ahpReview}
-                  corroborationBlock={pendingReview[0]}
+                  allocationBlock={allocationQueue[reviewIndex]}
+                  allocationIndex={reviewIndex + 1}
+                  allocationTotal={allocationQueue.length}
                   onChange={(value) => {
-                    const nextStamps = { ...stamps };
-                    for (const item of AHP_BLOCKS) {
-                      if (nextStamps[item.id] && nextStamps[item.id] !== blockFingerprint(item.id, value)) delete nextStamps[item.id];
-                    }
-                    setDraft((current) => ({ ...current, prioridades_ahp: value, ahp_corroborado: nextStamps }));
+                    setDraft((current) => ({ ...current, prioridades_ahp: value, ahp_aclaracion: retireStaleAllocations(current.ahp_aclaracion, value) }));
                   }}
-                  onKeep={keepReview}
-                  onSave={saveReview}
+                  allocationInitial={allocationQueue[reviewIndex] ? activeAllocation(allocationQueue[reviewIndex], pairs, draft.ahp_aclaracion)?.points : null}
+                  onConfirmAllocation={confirmReview}
+                  onEditAllocation={editableAllocations.length ? editAllocations : undefined}
                 />
               ) : null}
               {step === "role" ? <RoleQuestions lang={lang} rol={rol} draft={draft} invalid={invalid} onChange={patch} /> : null}
