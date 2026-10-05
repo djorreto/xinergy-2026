@@ -41,6 +41,12 @@ export function pairNames(id: string, lang: Lang) {
   return { a: ahpLabel(pair.a, lang), b: ahpLabel(pair.b, lang) };
 }
 
+export function sideDetail(id: string, lang: Lang) {
+  const macro = AHP.macros.find((item) => item.id === id);
+  if (!macro) return { name: ahpLabel(id, lang), items: [] as string[] };
+  return { name: macro.label[lang] || macro.label.es, items: macro.children.map((child) => ahpLabel(child, lang)) };
+}
+
 export function blockComplete(blockId: AhpBlockId, tokens: Record<string, string>) {
   const block = AHP_BLOCKS.find((item) => item.id === blockId);
   return Boolean(block && block.pairIds.every((id) => choiceFromToken(tokens[id]).side));

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { ahpClass } from "@/lib/surveys/radar-b/engine";
 import { AHP } from "@/lib/surveys/radar-2027";
-import { blockCr, choiceFromToken, reviewBlockIds, tokenFromChoice, triadExplanation } from "@/lib/surveys/radar-c/ahp-blocks";
+import { blockCr, choiceFromToken, reviewBlockIds, sideDetail, tokenFromChoice, triadExplanation } from "@/lib/surveys/radar-c/ahp-blocks";
 
 const rest = Object.fromEntries(AHP.pairs.map((pair) => [pair.id, "1"]));
 
@@ -45,6 +45,14 @@ test("riesgo moderado sobre cumplimiento y ESG, con cumplimiento fuerte sobre ES
   assert.match(text, /cumplimiento y control es fuertemente más importante que sostenibilidad y esg/i);
   assert.match(text, /¿Estas intensidades reflejan/);
   assert.doesNotMatch(text, /círculo/);
+});
+
+test("un grupo muestra su nombre y lo que contiene", () => {
+  assert.deepEqual(sideDetail("fin", "es"), {
+    name: "Eficiencia y valor financiero",
+    items: ["Reducir costos", "Liberar caja y capital de trabajo"],
+  });
+  assert.deepEqual(sideDetail("costos", "es").items, []);
 });
 
 test("los umbrales de consistencia de la versión C no se mueven", () => {
