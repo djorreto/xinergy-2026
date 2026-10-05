@@ -174,21 +174,24 @@ function PairCard({ id, lang, token, invalid, onChange }: { id: string; lang: La
   );
 }
 
-const MORE: Record<AhpIntensity, string> = { 3: "#EAF6EC", 5: "#CDECD4", 7: "#A6DCB4", 9: "#78C98C" };
-const LESS: Record<AhpIntensity, string> = { 3: "#FBEDED", 5: "#F6D4D4", 7: "#EFB0B0", 9: "#E48484" };
+const MORE: Record<AhpIntensity, string> = { 3: "#4ADE80", 5: "#3DDE6A", 7: "#2BD15C", 9: "#22C55E" };
+const LESS: Record<AhpIntensity, string> = { 3: "#C23B3B", 5: "#B42323", 7: "#A31B1B", 9: "#8C1515" };
 
 function washOf(place: "a" | "b", side: ReturnType<typeof choiceFromToken>["side"], intensity: AhpIntensity | null) {
-  if (side === "equal") return "#FFE8A3";
+  if (side === "equal") return { background: "#B7B5B0", light: false };
   if ((side !== "a" && side !== "b") || !intensity) return undefined;
-  return side === place ? MORE[intensity] : LESS[intensity];
+  const winner = side === place;
+  return { background: winner ? MORE[intensity] : LESS[intensity], light: !winner };
 }
 
-function SidePanel({ name, items, contains, wash }: { name: string; items: string[]; contains: string; wash?: string }) {
+function SidePanel({ name, items, contains, wash }: { name: string; items: string[]; contains: string; wash?: { background: string; light: boolean } }) {
+  const title = wash?.light ? "text-[#faf9f7]" : "text-xinergy-charcoal";
+  const detail = wash?.light ? "text-[#faf9f7]" : "text-xinergy-charcoal";
   return (
-    <div className="px-3 py-3 text-left text-sm" style={wash ? { backgroundColor: wash } : undefined}>
-      <p className="font-semibold text-xinergy-charcoal">{name}</p>
+    <div className="px-3 py-3 text-left text-sm" style={wash ? { backgroundColor: wash.background } : undefined}>
+      <p className={`font-semibold ${title}`}>{name}</p>
       {items.length ? (
-        <div className="mt-2 text-[11px] font-normal leading-snug text-xinergy-slate">
+        <div className={`mt-2 text-[11px] font-normal leading-snug ${detail}`}>
           <p>{contains}</p>
           <ul className="mt-1">
             {items.map((item) => <li key={item}>{item}</li>)}
