@@ -6,13 +6,14 @@ import {
   AHP_BLOCKS,
   blockCr,
   choiceFromToken,
+  contradictionOf,
   describeChoice,
   pairMeta,
   reviewBlockIds,
   sideDetail,
-  triadExplanation,
   type AhpBlockId,
   type AhpIntensity,
+  type ContrastSide,
 } from "@/lib/surveys/radar-c/ahp-blocks";
 import { ui, type Lang } from "@/lib/surveys/radar-c/instrument";
 
@@ -70,9 +71,9 @@ export function AhpBlocks({
         </div>
       )}
       {source ? (
-        <section id={`ahp-block-${source.id}`} className={review ? "border-l-2 border-xinergy-orange pl-4" : ""}>
+        <section id={`ahp-block-${source.id}`}>
           {review ? <h3 className="font-display text-xl text-xinergy-charcoal">{copy.blockTitles[titleIndex]}</h3> : null}
-          {review && source.pairIds.length === 3 ? <p className="mt-3 max-w-2xl text-xinergy-slate">{triadExplanation(source.id, selected, lang)}</p> : null}
+          {review && source.pairIds.length === 3 ? <ContradictionCard lang={lang} blockId={source.id} selected={selected} followsLabel={copy.clashFollows} markedLabel={copy.clashMarked} /> : null}
           <div className="mt-4 flex flex-col gap-4">
             {source.pairIds.map((id) => (
               <PairCard key={id} id={id} lang={lang} token={selected[id]} invalid={Boolean(invalid[id])} onChange={(token) => onChange(token ? { ...selected, [id]: token } : omit(selected, id))} />
@@ -91,6 +92,44 @@ export function AhpBlocks({
           {ahpClass(maxCr) === "excluido" ? <p className="mt-2">{copy.reviewPortfolio}</p> : null}
         </div>
       ) : null}
+    </div>
+  );
+}
+
+function ContradictionCard({ lang, blockId, selected, followsLabel, markedLabel }: { lang: Lang; blockId: AhpBlockId; selected: Record<string, string>; followsLabel: string; markedLabel: string }) {
+  const clash = contradictionOf(blockId, selected, lang);
+  if (!clash) return null;
+  return (
+    <div className="mt-4 bg-[#FDECEC] px-4 py-4">
+      <ol className="flex flex-col gap-2">
+        {clash.steps.map((step, index) => (
+          <li key={`${step.from}-${step.to}`} className={`text-sm text-xinergy-charcoal ${clash.kind === "cycle" && index === clash.steps.length - 1 ? "bg-[#F6D4D4] px-3 py-2 font-semibold" : ""}`}>
+            {step.sentence}
+          </li>
+        ))}
+      </ol>
+      {clash.kind === "cycle" ? <p className="mt-3 text-sm font-semibold text-xinergy-charcoal">{clash.closing}</p> : null}
+      {clash.follows && clash.marked ? (
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <ContrastBox label={followsLabel} side={clash.follows} />
+          <ContrastBox label={markedLabel} side={clash.marked} />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function ContrastBox({ label, side }: { label: string; side: ContrastSide }) {
+  const fromWash = side.fromWins === null ? "#FFE8A3" : side.fromWins ? MORE[side.intensity ?? 3] : LESS[side.intensity ?? 3];
+  const toWash = side.fromWins === null ? "#FFE8A3" : side.fromWins ? LESS[side.intensity ?? 3] : MORE[side.intensity ?? 3];
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-wide text-xinergy-charcoal">{label}</p>
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        <p className="px-3 py-3 text-sm font-semibold text-xinergy-charcoal" style={{ backgroundColor: fromWash }}>{side.from}</p>
+        <p className="px-3 py-3 text-sm font-semibold text-xinergy-charcoal" style={{ backgroundColor: toWash }}>{side.to}</p>
+      </div>
+      <p className="mt-2 text-sm text-xinergy-charcoal">{side.sentence}</p>
     </div>
   );
 }

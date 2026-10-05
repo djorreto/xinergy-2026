@@ -1,4 +1,4 @@
-import { analyzeAhp, ahpLabel } from "@/lib/surveys/ahp";
+import { analyzeAhp, ahpLabel, ahpTokenValue } from "@/lib/surveys/ahp";
 import { AHP } from "@/lib/surveys/radar-2027";
 import type { Lang } from "@/lib/surveys/radar-c/instrument";
 
@@ -96,35 +96,137 @@ export function describeChoice(id: string, token: string, lang: Lang) {
   return `${winner} es ${word} más importante que ${loser}`;
 }
 
-export function triadExplanation(blockId: AhpBlockId, tokens: Record<string, string>, lang: Lang) {
+export type ContrastSide = {
+  from: string;
+  to: string;
+  sentence: string;
+  fromWins: boolean | null;
+  intensity: AhpIntensity | null;
+};
+
+export type Contradiction = {
+  kind: "cycle" | "gap";
+  steps: { from: string; to: string; sentence: string }[];
+  closing: string;
+  follows: ContrastSide | null;
+  marked: ContrastSide | null;
+};
+
+export function contradictionOf(blockId: AhpBlockId, tokens: Record<string, string>, lang: Lang): Contradiction | null {
   const block = AHP_BLOCKS.find((item) => item.id === blockId);
-  if (!block || block.pairIds.length < 3) return "";
-  const lines = block.pairIds.map((id) => describeChoice(id, tokens[id] ?? "", lang)).filter(Boolean);
-  if (lines.length < 3) return "";
-  const cycle = preferenceCycle(block.pairIds, tokens);
-  const ask = lang === "en"
-    ? "Do these intensities reflect what you meant?"
-    : lang === "pt"
-      ? "Estas intensidades refletem o que você queria expressar?"
-      : "¿Estas intensidades reflejan lo que querías expresar?";
-  const circle = lang === "en"
-    ? "The order of these three priorities closes in a circle."
-    : lang === "pt"
-      ? "A ordem destas três prioridades fecha em círculo."
-      : "El orden de estas tres prioridades se cierra en círculo.";
-  const body = lang === "en"
-    ? `You chose that ${lines[0]}, that ${lines[1]}, and that ${lines[2]}.`
-    : lang === "pt"
-      ? `Você escolheu que ${lowerFirst(lines[0])}, que ${lowerFirst(lines[1])} e que ${lowerFirst(lines[2])}.`
-      : `Elegiste que ${lowerFirst(lines[0])}, que ${lowerFirst(lines[1])} y que ${lowerFirst(lines[2])}.`;
-  return cycle ? `${body} ${circle} ${ask}` : `${body} ${ask}`;
+  if (!block || block.pairIds.length < 3) return null;
+  const cycle = cycleOrder(block.pairIds, tokens);
+  if (cycle) {
+    const steps = [
+      linkSentence(block.pairIds, tokens, cycle[0], cycle[1], lang),
+      linkSentence(block.pairIds, tokens, cycle[1], cycle[2], lang),
+      linkSentence(block.pairIds, tokens, cycle[2], cycle[0], lang),
+    ].filter((step): step is NonNullable<typeof step> => Boolean(step));
+    if (steps.length < 3) return null;
+    return {
+      kind: "cycle",
+      steps,
+      closing: lang === "en"
+        ? "Each one beats the next, and the last one comes back to the first. The three cannot all be true."
+        : lang === "pt"
+          ? "Cada uma ganha da seguinte, e a última volta à primeira. As três não podem ser verdadeiras juntas."
+          : "Cada una le gana a la siguiente, y la última vuelve a la primera. Las tres no pueden ser ciertas juntas.",
+      follows: null,
+      marked: null,
+    };
+  }
+  const items = [...new Set(block.pairIds.flatMap((id) => {
+    const pair = pairMeta(id);
+    return pair ? [pair.a, pair.b] : [];
+  }))];
+  let best: { from: string; mid: string; to: string; gap: number } | null = null;
+  for (const from of items) {
+    for (const mid of items) {
+      if (mid === from) continue;
+      for (const to of items) {
+        if (to === from || to === mid) continue;
+        const first = directedRatio(block.pairIds, tokens, from, mid);
+        const second = directedRatio(block.pairIds, tokens, mid, to);
+        const direct = directedRatio(block.pairIds, tokens, from, to);
+        if (first == null || second == null || direct == null || first < 1 || second < 1) continue;
+        const gap = Math.abs(Math.log(first * second) - Math.log(direct));
+        if (!best || gap > best.gap) best = { from, mid, to, gap };
+      }
+    }
+  }
+  if (!best || best.gap < Math.log(2)) return null;
+  const first = linkSentence(block.pairIds, tokens, best.from, best.mid, lang);
+  const second = linkSentence(block.pairIds, tokens, best.mid, best.to, lang);
+  const stated = directedRatio(block.pairIds, tokens, best.from, best.to);
+  const implied = directedRatio(block.pairIds, tokens, best.from, best.mid)! * directedRatio(block.pairIds, tokens, best.mid, best.to)!;
+  if (!first || !second || stated == null) return null;
+  return {
+    kind: "gap",
+    steps: [first, second],
+    closing: "",
+    follows: contrast(best.from, best.to, implied, lang, "follows"),
+    marked: contrast(best.from, best.to, stated, lang, "marked"),
+  };
 }
 
-function lowerFirst(value: string) {
-  return value.charAt(0).toLocaleLowerCase("es") + value.slice(1);
+function contrast(fromId: string, toId: string, ratio: number, lang: Lang, role: "follows" | "marked"): ContrastSide {
+  const from = ahpLabel(fromId, lang);
+  const to = ahpLabel(toId, lang);
+  const told = magnitudeWord(ratio, lang);
+  if (told.equal) {
+    const sentence = role === "follows"
+      ? (lang === "en" ? `${from} and ${to} would have equal importance` : lang === "pt" ? `${from} e ${to} teriam igual importância` : `${from} y ${to} tendrían igual importancia`)
+      : (lang === "en" ? `You marked that ${from} and ${to} have equal importance` : lang === "pt" ? `Você marcou que ${from} e ${to} têm igual importância` : `Marcaste que ${from} y ${to} tienen igual importancia`);
+    return { from, to, sentence, fromWins: null, intensity: null };
+  }
+  const winner = told.flipped ? to : from;
+  const loser = told.flipped ? from : to;
+  const word = told.word;
+  const sentence = role === "follows"
+    ? (lang === "en" ? `${winner} would have to be ${word} more important than ${loser}` : lang === "pt" ? `${winner} teria de ser ${word} mais importante que ${loser}` : `${winner} tendría que ser ${word} más importante que ${loser}`)
+    : (lang === "en" ? `You marked that ${winner} is ${word} more important than ${loser}` : lang === "pt" ? `Você marcou que ${winner} é ${word} mais importante que ${loser}` : `Marcaste que ${winner} es ${word} más importante que ${loser}`);
+  return { from, to, sentence, fromWins: !told.flipped, intensity: told.intensity };
 }
 
-function preferenceCycle(pairIds: readonly string[], tokens: Record<string, string>) {
+function linkSentence(pairIds: readonly string[], tokens: Record<string, string>, fromId: string, toId: string, lang: Lang) {
+  const ratio = directedRatio(pairIds, tokens, fromId, toId);
+  if (ratio == null) return null;
+  const from = ahpLabel(fromId, lang);
+  const to = ahpLabel(toId, lang);
+  const told = magnitudeWord(ratio, lang);
+  if (told.equal) {
+    const sentence = lang === "en" ? `${from} and ${to} have equal importance` : lang === "pt" ? `${from} e ${to} têm igual importância` : `${from} y ${to} tienen igual importancia`;
+    return { from, to, sentence };
+  }
+  const winner = told.flipped ? to : from;
+  const loser = told.flipped ? from : to;
+  const sentence = lang === "en"
+    ? `${winner} is ${told.word} more important than ${loser}`
+    : lang === "pt"
+      ? `${winner} é ${told.word} mais importante que ${loser}`
+      : `${winner} es ${told.word} más importante que ${loser}`;
+  return { from, to, sentence };
+}
+
+function magnitudeWord(ratio: number, lang: Lang) {
+  const magnitude = ratio >= 1 ? ratio : 1 / ratio;
+  if (magnitude < 2) return { flipped: false, equal: true, intensity: null as AhpIntensity | null, word: "" };
+  const intensity: AhpIntensity = magnitude >= 8 ? 9 : magnitude >= 6 ? 7 : magnitude >= 4 ? 5 : 3;
+  return { flipped: ratio < 1, equal: false, intensity, word: WORDS[lang][intensity] };
+}
+
+function directedRatio(pairIds: readonly string[], tokens: Record<string, string>, from: string, to: string) {
+  for (const id of pairIds) {
+    const pair = pairMeta(id);
+    const value = ahpTokenValue(tokens[id] ?? "");
+    if (!pair || value == null) continue;
+    if (pair.a === from && pair.b === to) return value;
+    if (pair.a === to && pair.b === from) return 1 / value;
+  }
+  return null;
+}
+
+function cycleOrder(pairIds: readonly string[], tokens: Record<string, string>) {
   const beats = new Map<string, Set<string>>();
   for (const id of pairIds) {
     const pair = pairMeta(id);
@@ -138,9 +240,9 @@ function preferenceCycle(pairIds: readonly string[], tokens: Record<string, stri
   for (const [first, losers] of beats) {
     for (const second of losers) {
       for (const third of beats.get(second) ?? []) {
-        if (beats.get(third)?.has(first)) return true;
+        if (beats.get(third)?.has(first)) return [first, second, third] as const;
       }
     }
   }
-  return false;
+  return null;
 }
