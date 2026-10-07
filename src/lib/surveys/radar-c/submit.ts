@@ -1,7 +1,7 @@
 import { analyzeAhp } from "@/lib/surveys/ahp";
 import { AHP } from "@/lib/surveys/radar-2027";
 import { isBlockedEmail } from "@/lib/insights/validate";
-import { CAPABILITIES, CONSENTS, COUNTRIES, DATA_READY, INDUSTRIES, INITIATIVE_COPY, ROLES, SCOPES, SPEND_C, STATUSES, SURVEY_VERSION_C } from "@/lib/surveys/radar-c/instrument";
+import { aiProblems, CAPABILITIES, CONSENTS, COUNTRIES, DATA_READY, INDUSTRIES, INITIATIVE_COPY, ROLES, SCOPES, SPEND_C, STATUSES, SURVEY_VERSION_C, type AiAnswers } from "@/lib/surveys/radar-c/instrument";
 import { BARRIERS, BARRIER_EXCLUSIVE, BUDGET_DIRECTION, EFFORT_HOURS, EXPOSURE, PARTICIPATION, REALIZATION, SAVINGS, SAVINGS_EXPECTATION, VALIDATE_FREQ, AI_STAGE } from "@/lib/surveys/radar-c/instrument";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -65,10 +65,13 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
     if (rol === "ceo" && (!oneOf(BUDGET_DIRECTION, textOf("g1")) || !oneOf(PARTICIPATION, textOf("g2")))) return { ok: false, honeypot };
     if (rol !== "cfo" && rol !== "ceo" && rol !== "otro") return { ok: false, honeypot };
   }
+  const ai = aiOf(data);
+  if (Object.keys(aiProblems(ai, procurement ? "required" : "optional")).length) return { ok: false, honeypot };
   const completeOperation = CAPABILITIES.every((item) => LEVELS.has(capacidades[item.id] ?? ""))
     && oneOf(SAVINGS, textOf("e1")) && oneOf(REALIZATION, textOf("e2")) && oneOf(EXPOSURE, textOf("e3"))
     && oneOf(EFFORT_HOURS, textOf("e4")) && oneOf(AI_STAGE, textOf("e5")) && oneOf(DATA_READY, textOf("r1"))
     && barriersOk(data.e6)
+    && Object.keys(aiProblems(ai, "required")).length === 0
     && INITIATIVE_COPY.every((item) => oneOf(STATUSES, agenda[item.id] ?? ""));
   const operational = procurement || completeOperation;
 
@@ -111,6 +114,7 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
         e4: textOf("e4"),
         e5: textOf("e5"),
         r1: textOf("r1"),
+        ...ai,
         e6: barriersOk(data.e6) ? codes(data.e6) : [],
         agenda,
         f1: textOf("f1"),
@@ -121,6 +125,23 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
       },
       ahp,
     },
+  };
+}
+
+function aiOf(data: Draft): AiAnswers {
+  const text = (id: string) => (typeof data[id] === "string" ? data[id].trim() : "");
+  const activos = text("ia_activos");
+  const presupuesto = text("ia_presupuesto");
+  const running = activos === "si";
+  const funded = presupuesto === "si";
+  return {
+    ia_activos: activos,
+    ia_activos_n: running ? text("ia_activos_n") : "",
+    ia_compras_n: running ? text("ia_compras_n") : "",
+    ia_presupuesto: presupuesto,
+    ia_presupuesto_compras: funded ? text("ia_presupuesto_compras") : "",
+    ia_escala: running ? text("ia_escala") : "",
+    ia_modo: running ? text("ia_modo") : "",
   };
 }
 

@@ -1,14 +1,19 @@
 import { analyzeAhp } from "@/lib/surveys/ahp";
 import { AHP } from "@/lib/surveys/radar-2027";
 import { ahpClass, jaccard, maturityOf, optimizePortfolio, planGap, TARGET_LEVEL } from "@/lib/surveys/radar-b/engine";
-import { EXECUTIVE_FIELDS, OPERATIONAL_FIELDS } from "@/lib/surveys/radar-c/instrument";
+import { aiProblems, EXECUTIVE_FIELDS, OPERATIONAL_FIELDS } from "@/lib/surveys/radar-c/instrument";
 
 export function versionCChecks() {
   const problems: string[] = [];
   const expect = (name: string, ok: boolean) => {
     if (!ok) problems.push(name);
   };
-  expect("ruta operativa 44", OPERATIONAL_FIELDS.length === 44);
+  expect("ruta operativa 51", OPERATIONAL_FIELDS.length === 51);
+  const blank = { ia_activos: "", ia_activos_n: "", ia_compras_n: "", ia_presupuesto: "", ia_presupuesto_compras: "", ia_escala: "", ia_modo: "" };
+  expect("ia vacía no exige nada en la ruta opcional", Object.keys(aiProblems(blank, "optional")).length === 0);
+  expect("ia sí sin cantidad no pasa", aiProblems({ ...blank, ia_activos: "si", ia_presupuesto: "no" }, "required").ia_activos_n === "count");
+  expect("ia de compras no supera el total", aiProblems({ ...blank, ia_activos: "si", ia_activos_n: "2", ia_compras_n: "4", ia_escala: "si", ia_modo: "solos", ia_presupuesto: "si", ia_presupuesto_compras: "40" }, "required").ia_compras_n === "over");
+  expect("ia completa no marca problemas", Object.keys(aiProblems({ ...blank, ia_activos: "no", ia_presupuesto: "si", ia_presupuesto_compras: "0" }, "required")).length === 0);
   expect("ruta ejecutiva 20", EXECUTIVE_FIELDS.length === 20);
   expect("nivel 1 es 0", maturityOf(1) === 0);
   expect("nivel 4 es 0,75", maturityOf(4) === TARGET_LEVEL);

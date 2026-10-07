@@ -9,7 +9,10 @@ import { EVAL_INCLUDED, EVAL_ISOLATED, type Evaluacion } from "@/lib/surveys/eva
 import { median, quartile, roleDistance, SCENARIOS, type InitiativeId } from "@/lib/surveys/radar-b/engine";
 import { industryName, percent, roleName } from "@/lib/surveys/radar-b/report";
 import {
+  AI_MODE,
+  AI_SCALE,
   AI_STAGE,
+  YES_NO,
   BARRIERS,
   BARRIER_EXCLUSIVE,
   BUDGET_DIRECTION,
@@ -286,6 +289,7 @@ function PersonDetail({ person }: { person: PersonC }) {
           )}
         </div>
       )}
+      <AiFacts person={person} />
       {person.desafio.trim() ? <p className="mt-4 border-l-2 border-xinergy-orange pl-3">{person.desafio}</p> : null}
     </div>
   );
@@ -433,6 +437,19 @@ function className(value: PersonC["ahpClass"]) {
   if (value === "exploratorio") return "exploratorio";
   if (value === "excluido") return "fuera del promedio";
   return "sin consistencia";
+}
+
+function AiFacts({ person }: { person: PersonC }) {
+  if (!person.context.ia_activos && !person.context.ia_presupuesto) return null;
+  return (
+    <div className="mt-4 grid gap-2">
+      {person.context.ia_activos ? <p>Proyectos de IA en marcha: {named(YES_NO, person.context.ia_activos)}</p> : null}
+      {person.context.ia_activos === "si" ? <p>Cantidad: {person.context.ia_activos_n || "—"} · de Compras: {person.context.ia_compras_n || "—"}</p> : null}
+      {person.context.ia_escala ? <p>Pilotos escalados: {named(AI_SCALE, person.context.ia_escala)}</p> : null}
+      {person.context.ia_modo ? <p>Cómo se hacen: {named(AI_MODE, person.context.ia_modo)}</p> : null}
+      {person.context.ia_presupuesto ? <p>Presupuesto de IA: {named(YES_NO, person.context.ia_presupuesto)}{person.context.ia_presupuesto === "si" && person.context.ia_presupuesto_compras ? ` · ${person.context.ia_presupuesto_compras}% es de Compras` : ""}</p> : null}
+    </div>
+  );
 }
 
 function named(options: readonly Choice[], value: string) {

@@ -83,6 +83,63 @@ export const AI_STAGE: Choice[] = [
   o("ns", "No sé", "I don't know", "Não sei"),
 ];
 
+export const YES_NO: Choice[] = [
+  o("si", "Sí", "Yes", "Sim"),
+  o("no", "No", "No", "Não"),
+];
+
+export const AI_SCALE: Choice[] = [
+  o("si", "Sí, pasaron a una operación más amplia", "Yes, they moved into broader operation", "Sim, passaram a uma operação mais ampla"),
+  o("no", "No, siguen en piloto", "No, they are still pilots", "Não, continuam em piloto"),
+  o("sin", "No hemos tenido pilotos", "We have not had pilots", "Não tivemos pilotos"),
+];
+
+export const AI_MODE: Choice[] = [
+  o("solos", "Solos, con el equipo interno", "On our own, with the internal team", "Sozinhos, com a equipe interna"),
+  o("partners", "Con partners", "With partners", "Com parceiros"),
+  o("ambos", "Parte solos y parte con partners", "Partly on our own and partly with partners", "Parte sozinhos e parte com parceiros"),
+];
+
+export type AiAnswers = {
+  ia_activos: string;
+  ia_activos_n: string;
+  ia_compras_n: string;
+  ia_presupuesto: string;
+  ia_presupuesto_compras: string;
+  ia_escala: string;
+  ia_modo: string;
+};
+
+/** Sí o no, cantidades y un porcentaje. No se convierten en pesos ni en brecha. */
+export function aiProblems(draft: AiAnswers, mode: "required" | "optional") {
+  const problems: Record<string, "required" | "count" | "over" | "share"> = {};
+  const activos = draft.ia_activos;
+  const presupuesto = draft.ia_presupuesto;
+  const started = [activos, presupuesto, draft.ia_activos_n, draft.ia_compras_n, draft.ia_presupuesto_compras, draft.ia_escala, draft.ia_modo].some(Boolean);
+  if (mode === "optional" && !started) return problems;
+  if (activos !== "si" && activos !== "no") {
+    if (mode === "required" || draft.ia_activos_n || draft.ia_compras_n || draft.ia_escala || draft.ia_modo) problems.ia_activos = "required";
+  }
+  if (activos === "si") {
+    if (!wholeNumber(draft.ia_activos_n, 1, 999)) problems.ia_activos_n = "count";
+    else if (!wholeNumber(draft.ia_compras_n, 0, 999)) problems.ia_compras_n = "count";
+    else if (Number(draft.ia_compras_n) > Number(draft.ia_activos_n)) problems.ia_compras_n = "over";
+    if (!AI_SCALE.some((item) => item.v === draft.ia_escala)) problems.ia_escala = "required";
+    if (!AI_MODE.some((item) => item.v === draft.ia_modo)) problems.ia_modo = "required";
+  }
+  if (presupuesto !== "si" && presupuesto !== "no") {
+    if (mode === "required" || draft.ia_presupuesto_compras) problems.ia_presupuesto = "required";
+  }
+  if (presupuesto === "si" && !wholeNumber(draft.ia_presupuesto_compras, 0, 100)) problems.ia_presupuesto_compras = "share";
+  return problems;
+}
+
+function wholeNumber(value: string, min: number, max: number) {
+  if (!/^(0|[1-9]\d*)$/.test(value)) return false;
+  const number = Number(value);
+  return number >= min && number <= max;
+}
+
 export const DATA_READY: Choice[] = [
   o("READY", "Datos listos: identificados, disponibles, con responsables, acceso y control de calidad", "Data ready: identified, available, owned, authorized and quality-checked", "Dados prontos: identificados, disponíveis, com responsáveis, acesso e controle de qualidade"),
   o("PARTIAL", "Una parte cumple, pero faltan datos, calidad, integración o gobierno", "Part of it meets the conditions, but data, quality, integration or governance is missing", "Uma parte cumpre, mas faltam dados, qualidade, integração ou governança"),
@@ -187,6 +244,7 @@ export const OPERATIONAL_FIELDS = [
   ...AHP.pairs.map((pair) => pair.id),
   ...CAPABILITIES.map((item) => item.id),
   "e1", "e2", "e3", "e4", "e5", "r1", "e6",
+  "ia_activos", "ia_activos_n", "ia_compras_n", "ia_presupuesto", "ia_presupuesto_compras", "ia_escala", "ia_modo",
   ...INITIATIVE_COPY.map((item) => item.id),
   "c_datos", "c_agregado",
 ] as const;
@@ -266,7 +324,10 @@ export const ui = {
     capTitle: "Capacidad actual",
     capNote: "Elija el nivel más alto que describa prácticas habituales. Si solo cumple una parte, elija el anterior. “No sé” no es el nivel más bajo.",
     contextTitle: "Resultados y condiciones",
-    contextNote: "Son rangos y declaraciones. No se convierten en un promedio de ahorro ni corrigen la capacidad.",
+    contextNote: "Son rangos y declaraciones. No se convierten en un promedio de ahorro ni corrigen la capacidad. Las de proyectos de IA piden sí o no, una cantidad o un porcentaje, y no entran al cálculo de la brecha.",
+    countInvalid: "Ingrese un número entero.",
+    countOver: "Los proyectos de Compras no pueden ser más que el total.",
+    shareInvalid: "Ingrese un porcentaje entero de 0 a 100.",
     agendaTitle: "Estado de cada iniciativa",
     agendaNote: "Aprobada: hay decisión de ejecutarla en 12 a 18 meses. Implementada: ese alcance ya opera de forma estable.",
     roleTitle: "Dos preguntas de su rol",
@@ -349,7 +410,10 @@ export const ui = {
     capTitle: "Current capability",
     capNote: "Choose the highest level that describes habitual practice. If you only meet part of a level, choose the one below. “I don't know” is not the lowest level.",
     contextTitle: "Results and conditions",
-    contextNote: "These are ranges and statements. They are not turned into an average saving and they do not overwrite capability.",
+    contextNote: "These are ranges and statements. They are not turned into an average saving and they do not overwrite capability. The AI project questions ask for yes or no, a count or a percentage, and they do not enter the gap calculation.",
+    countInvalid: "Enter a whole number.",
+    countOver: "Procurement projects cannot exceed the total.",
+    shareInvalid: "Enter a whole percentage from 0 to 100.",
     agendaTitle: "Status of each initiative",
     agendaNote: "Approved: there is a decision to execute in 12 to 18 months. Implemented: that scope already runs in a stable way.",
     roleTitle: "Two questions for your role",
@@ -432,7 +496,10 @@ export const ui = {
     capTitle: "Capacidade atual",
     capNote: "Escolha o nível mais alto que descreva práticas habituais. Se só cumpre uma parte, escolha o anterior. “Não sei” não é o nível mais baixo.",
     contextTitle: "Resultados e condições",
-    contextNote: "São faixas e declarações. Não viram uma média de economia nem corrigem a capacidade.",
+    contextNote: "São faixas e declarações. Não viram uma média de economia nem corrigem a capacidade. As de projetos de IA pedem sim ou não, uma quantidade ou um percentual, e não entram no cálculo da lacuna.",
+    countInvalid: "Informe um número inteiro.",
+    countOver: "Os projetos de Compras não podem passar do total.",
+    shareInvalid: "Informe um percentual inteiro de 0 a 100.",
     agendaTitle: "Estado de cada iniciativa",
     agendaNote: "Aprovada: há decisão de executar em 12 a 18 meses. Implementada: esse escopo já opera de forma estável.",
     roleTitle: "Duas perguntas do seu papel",

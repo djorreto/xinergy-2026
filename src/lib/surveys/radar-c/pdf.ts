@@ -1,6 +1,6 @@
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import { AHP } from "@/lib/surveys/radar-2027";
-import { CAPABILITIES, INITIATIVE_COPY, REALIZATION, SAVINGS, STATUSES } from "@/lib/surveys/radar-c/instrument";
+import { AI_MODE, AI_SCALE, CAPABILITIES, INITIATIVE_COPY, REALIZATION, SAVINGS, STATUSES, YES_NO } from "@/lib/surveys/radar-c/instrument";
 import { buildBenchmarkC, type PersonC } from "@/lib/surveys/radar-c/report";
 import { formatPercent } from "@/lib/surveys/ahp";
 
@@ -89,6 +89,11 @@ export async function personPdfC(person: PersonC, stamp: string) {
       ["Etapa de IA", person.context.e5 || "sin dato"],
       ["Condición de datos", person.context.r1 || "sin dato"],
     ]);
+    const projects = aiRows(person);
+    if (projects.length) {
+      writer.heading("Proyectos de IA");
+      writer.facts(projects);
+    }
     writer.pairs(INITIATIVE_COPY.map((item) => ({ label: item.name.es, value: label(STATUSES, person.agenda[item.id] ?? "") })));
     const named = [
       ["lean", "Ajustado"],
@@ -133,6 +138,24 @@ function scopeLabel(value: string) {
   if (value === "multipais") return "Corporativo multipaís";
   if (value === "pais") return "Un país";
   return "Alcance";
+}
+
+function aiRows(person: PersonC): [string, string][] {
+  const rows: [string, string][] = [];
+  if (person.context.ia_activos) {
+    rows.push(["Proyectos en marcha", label(YES_NO, person.context.ia_activos)]);
+    if (person.context.ia_activos === "si") {
+      if (person.context.ia_activos_n) rows.push(["Cantidad", person.context.ia_activos_n]);
+      if (person.context.ia_compras_n) rows.push(["De Compras", person.context.ia_compras_n]);
+      if (person.context.ia_escala) rows.push(["Pilotos escalados", label(AI_SCALE, person.context.ia_escala)]);
+      if (person.context.ia_modo) rows.push(["Cómo se hacen", label(AI_MODE, person.context.ia_modo)]);
+    }
+  }
+  if (person.context.ia_presupuesto) {
+    rows.push(["Presupuesto de IA", label(YES_NO, person.context.ia_presupuesto)]);
+    if (person.context.ia_presupuesto === "si" && person.context.ia_presupuesto_compras) rows.push(["Parte de Compras", `${person.context.ia_presupuesto_compras}%`]);
+  }
+  return rows;
 }
 
 function label(options: { v: string; es: string }[], value: string) {
