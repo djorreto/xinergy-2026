@@ -18,6 +18,7 @@ export async function POST(request: Request) {
       utmContent?: string;
       utmTerm?: string;
       referrer?: string;
+      preview?: boolean;
     };
     payload = body;
   } catch {

@@ -9,6 +9,7 @@ const fieldClass =
 
 type Props = {
   slug: string;
+  preview?: boolean;
 };
 
 function errorMessage(
@@ -37,7 +38,7 @@ function errorMessage(
   }
 }
 
-export function PovDownloadForm({ slug }: Props) {
+export function PovDownloadForm({ slug, preview = false }: Props) {
   const t = useTranslations("ui.insights.download");
   const locale = useLocale();
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -121,6 +122,7 @@ export function PovDownloadForm({ slug }: Props) {
           utmContent: params.get("utm_content") || attribution.utm_content,
           utmTerm: params.get("utm_term") || attribution.utm_term,
           referrer: attribution.referrer || document.referrer,
+          preview,
         }),
       });
       const data = (await response.json()) as { ok?: boolean; error?: string; downloadUrl?: string };

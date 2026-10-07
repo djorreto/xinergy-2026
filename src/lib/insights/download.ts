@@ -8,6 +8,7 @@ import {
   isPersonName,
   isValidEmail,
 } from "@/lib/insights/validate";
+import { getAdminUser } from "@/lib/auth/admin";
 import { isLiveInsight } from "@/lib/insights/schedule";
 import { clientIp, hashDownloadToken, hashIp, newDownloadToken, requestCountry, santiagoDate } from "@/lib/insights/tokens";
 import { createInsightLead } from "@/lib/monday/insights-board";
@@ -31,6 +32,7 @@ type RequestInput = {
   utmContent?: string;
   utmTerm?: string;
   referrer?: string;
+  preview?: boolean;
 };
 
 export type RequestResult = { ok: true; downloadUrl?: string } | { ok: false; error: string };
@@ -68,6 +70,11 @@ export async function requestInsightDownload(request: Request, input: RequestInp
   if (isBlockedEmail(email)) return { ok: false, error: "disposable_email" };
   if (!(await domainAcceptsMail(emailDomain(email)))) return { ok: false, error: "fake_email" };
   if (!isLocale(locale) || !slug) return { ok: false, error: "invalid_insight" };
+  if (input.preview === true) {
+    const session = await getAdminUser();
+    if (!session) return { ok: false, error: "invalid_insight" };
+    return adminPreviewDownload(slug, locale);
+  }
 
   const ip = clientIp(request);
   if (!(await verifyTurnstile(input.turnstileToken?.trim() ?? "", ip))) {
@@ -174,6 +181,24 @@ export async function requestInsightDownload(request: Request, input: RequestInp
     await admin.from("web_insight_downloads").update({ monday_error: message.slice(0, 500) }).eq("id", saved.id);
   }
 
+  return { ok: true, downloadUrl: signed.data.signedUrl };
+}
+
+async function adminPreviewDownload(slug: string, locale: Locale): Promise<RequestResult> {
+  const admin = await createAdminClient();
+  const { data: insight, error } = await admin
+    .from("web_insights")
+    .select("id, slug, kind, pdf_path, web_insight_locales(locale, title)")
+    .eq("slug", slug)
+    .maybeSingle();
+  const copies = insight?.web_insight_locales ?? [];
+  const copy = copies.find((item: { locale: string; title: string }) => item.locale === locale && item.title.trim())
+    ?? copies.find((item: { locale: string; title: string }) => item.title.trim());
+  if (error || insight?.kind !== "documento" || !insight.pdf_path || !copy) return { ok: false, error: "invalid_insight" };
+  const signed = await admin.storage.from("insight-pdfs").createSignedUrl(insight.pdf_path, SIGNED_URL_SECONDS, {
+    download: `${insight.slug}.pdf`,
+  });
+  if (signed.error || !signed.data?.signedUrl) return { ok: false, error: "unavailable" };
   return { ok: true, downloadUrl: signed.data.signedUrl };
 }
 

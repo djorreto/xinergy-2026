@@ -6,7 +6,7 @@ import { contactHref } from "@/lib/contact-context";
 import { paragraphs, type PovInsight } from "@/lib/insights/types";
 import { getTranslations } from "next-intl/server";
 
-export async function PovInsightArticle({ item }: { item: PovInsight }) {
+export async function PovInsightArticle({ item, preview = false }: { item: PovInsight; preview?: boolean }) {
   const t = await getTranslations("ui.insights");
   const blocks = paragraphs(item.body);
 
@@ -19,7 +19,7 @@ export async function PovInsightArticle({ item }: { item: PovInsight }) {
         coverUrl={item.coverUrl}
         imageSize={item.imageSize}
         availability={item.availability}
-        after={item.hasPdf ? <PovDownloadForm slug={item.slug} /> : null}
+        after={item.hasPdf ? <PovDownloadForm slug={item.slug} preview={preview} /> : null}
       >
         <div className="space-y-5">
           {blocks.map((paragraph) => (

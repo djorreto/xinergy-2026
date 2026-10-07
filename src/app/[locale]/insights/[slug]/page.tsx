@@ -77,7 +77,7 @@ export default async function InsightPage({ params, searchParams }: Props) {
       );
     }
     const pov = toPublishedShape(record, safeLocale);
-    if (pov) return <PovInsightArticle item={pov} />;
+    if (pov) return <PovInsightArticle item={pov} preview={Boolean(admin) && !isLiveInsight(record.status, record.available_at)} />;
   }
 
   const { insights } = getContent(locale);
