@@ -1,4 +1,5 @@
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
+import { AHP } from "@/lib/surveys/radar-2027";
 import { CAPABILITIES, INITIATIVE_COPY, REALIZATION, SAVINGS, STATUSES } from "@/lib/surveys/radar-c/instrument";
 import { buildBenchmarkC, type PersonC } from "@/lib/surveys/radar-c/report";
 import { formatPercent } from "@/lib/surveys/ahp";
@@ -54,35 +55,77 @@ export async function studyPdfC(people: PersonC[], stamp: string) {
 export async function personPdfC(person: PersonC, stamp: string) {
   const doc = await documentOf("Radar Compras 2027 · C (versión oficial) - Devolución");
   const writer = pen(doc);
-  await writer.cover("Devolución de su alcance", stamp, `${scopeLabel(person.alcance)}${person.unidad ? ` · ${person.unidad}` : ""}`);
-  writer.write("Este documento describe lo que usted declaró y, cuando el cálculo aplica, un escenario de demostración. No lo compara con un percentil de mercado si la base agregada no alcanza.");
+  const who = [person.nombre, person.apellido].filter(Boolean).join(" ");
+  await writer.cover("Reporte de su alcance", stamp, [person.empresa, who, person.cargo, scopeLabel(person.alcance), person.unidad].filter(Boolean).join(" · "));
+  writer.note("Este reporte describe lo declarado para este alcance. El escenario usa una matriz de demostración: no es un ahorro ni un pronóstico, y no compara el alcance con un percentil de mercado.");
+  if (person.finalMacro && person.finalMacro.length === 3) {
+    writer.heading("Los tres grupos");
+    writer.bars(AHP.macros.map((item, index) => ({ label: item.label.es, ratio: person.finalMacro?.[index] ?? 0, trailing: formatPercent(person.finalMacro?.[index] ?? 0) })));
+  }
   if (person.weights) {
-    writer.heading("Prioridades");
-    writer.bars(CAPABILITIES.map((item, index) => ({ label: item.short.es, ratio: person.weights?.[index] ?? 0, trailing: formatPercent(person.weights?.[index] ?? 0) })));
-    writer.write(person.priorityMode === "hibrido"
-      ? "Algunos bloques se aclararon repartiendo 100 puntos. Esos pesos reemplazan las comparaciones de ese bloque. La consistencia original se conserva como diagnóstico."
-      : person.ahpClass === "excluido"
-        ? "La consistencia supera 0,20 y no hay una aclaración completa. No hay un portafolio recomendado."
-        : person.ahpClass === "exploratorio"
-          ? "El perfil es exploratorio. El escenario, si aparece, no entra al promedio principal del corte."
-          : "Las comparaciones entran en el rango principal de consistencia.");
+    writer.heading("Prioridades para 2027");
+    writer.bars([...person.weights].map((weight, index) => ({ weight, index })).sort((left, right) => right.weight - left.weight).map((item) => ({
+      label: CAPABILITIES[item.index]?.short.es ?? "",
+      ratio: item.weight,
+      trailing: formatPercent(item.weight),
+    })));
+    writer.write(priorityReading(person));
   }
   if (person.operational) {
-    writer.heading("Capacidad");
-    writer.write(CAPABILITIES.map((item, index) => `${item.short.es}: ${person.levels[index] ?? "no sé"}`).join(". ") + ".");
-    writer.heading("Contexto");
-    writer.write(`Ahorro validado: ${label(SAVINGS, person.context.e1)}. Realización: ${label(REALIZATION, person.context.e2)}. Exposición sin alternativa: ${labelOfContext(person.context.e3)}. Etapa de IA: ${person.context.e5 || "sin dato"}. Condición de datos: ${person.context.r1 || "sin dato"}.`);
-    writer.heading("Agenda y escenario");
-    writer.write(INITIATIVE_COPY.map((item) => `${item.name.es}: ${label(STATUSES, person.agenda[item.id] ?? "")}`).join(". ") + ".");
-    const balanced = person.scenarios.find((item) => item.id === "balanced");
-    writer.write(balanced?.closure == null ? person.motorReason : `En el escenario intermedio, la alternativa modelada cierra ${formatPercent(balanced.closure)} de la brecha hacia el nivel 4. Similitud con lo aprobado: ${person.similarity == null ? "no aplica" : formatPercent(person.similarity)}. ${person.eta == null ? person.etaReason : `Contribución de la agenda aprobada, bajo sus propios recursos: ${formatPercent(person.eta)}.`}`);
+    writer.heading("Capacidad actual");
+    writer.write("Cada barra marca el nivel declarado, de 1 a 5. “No sé” no se dibuja como el nivel más bajo.");
+    writer.levels(CAPABILITIES.map((item, index) => ({ label: item.short.es, level: person.levels[index] ?? null })));
+    if (person.strategic && person.g0 != null && person.g0 > 0) {
+      const peak = Math.max(...person.strategic);
+      writer.heading("Dónde pesa la brecha");
+      writer.write("Cada barra es el peso de la prioridad por la distancia hasta el nivel 4. La más larga es la que más combina atención declarada y práctica todavía por construir.");
+      writer.bars(person.strategic.map((value, index) => ({ label: CAPABILITIES[index]?.short.es ?? "", ratio: peak > 0 ? value / peak : 0, trailing: formatPercent(person.g0 ? value / person.g0 : 0) })));
+    }
+    writer.heading("Lo que ya está decidido");
+    writer.facts([
+      ["Ahorro que se puede informar", label(SAVINGS, person.context.e1)],
+      ["Realización de ese ahorro", label(REALIZATION, person.context.e2)],
+      ["Gasto sin alternativa", person.context.e3 || "sin dato"],
+      ["Etapa de IA", person.context.e5 || "sin dato"],
+      ["Condición de datos", person.context.r1 || "sin dato"],
+    ]);
+    writer.pairs(INITIATIVE_COPY.map((item) => ({ label: item.name.es, value: label(STATUSES, person.agenda[item.id] ?? "") })));
+    const named = [
+      ["lean", "Ajustado"],
+      ["balanced", "Intermedio"],
+      ["transformational", "Amplio"],
+    ] as const;
+    const closures = named.map(([id, label]) => {
+      const scenario = person.scenarios.find((item) => item.id === id);
+      return { label, ratio: scenario?.closure ?? null, trailing: scenario?.closure == null ? "—" : formatPercent(scenario.closure) };
+    });
+    writer.heading("Escenario de demostración");
+    if (closures.some((item) => item.ratio != null)) {
+      writer.write("Cierre modelado de la brecha hacia el nivel 4, bajo tres topes de recurso. No es un ahorro prometido.");
+      writer.columns(closures);
+      const balanced = person.scenarios.find((item) => item.id === "balanced");
+      if (balanced?.ids.length) {
+        writer.write(`En el escenario intermedio entran: ${balanced.ids.map((id) => INITIATIVE_COPY.find((item) => item.id === id)?.name.es ?? id).join(", ")}.`);
+      }
+      writer.write(`Similitud con lo aprobado: ${person.similarity == null ? "no aplica" : formatPercent(person.similarity)}. ${person.eta == null ? person.etaReason : `La agenda aprobada, con sus propios recursos, cubre ${formatPercent(person.eta)} de la mejor combinación de ese mismo recurso.`}`);
+    } else writer.write(person.motorReason);
   } else {
     writer.heading("Su rol");
-    writer.write(person.rol === "cfo" ? `Expectativa de ahorro validado: ${person.context.f1 || "sin dato"}. Validación contra línea base: ${person.context.f2 || "sin dato"}.` : `Presupuesto de eficiencia: ${person.context.g1 || "sin dato"}. Momento en que participa Compras: ${person.context.g2 || "sin dato"}.`);
+    writer.facts(person.rol === "cfo"
+      ? [["Expectativa de ahorro validado", person.context.f1 || "sin dato"], ["Validación contra línea base", person.context.f2 || "sin dato"]]
+      : [["Presupuesto de eficiencia", person.context.g1 || "sin dato"], ["Momento en que participa Compras", person.context.g2 || "sin dato"]]);
   }
-  writer.write("Pregunta para su comité: dónde la prioridad declarada no tiene todavía una medición o una decisión del mismo alcance.");
-  writer.finish("Devolución");
+  writer.heading("Para el comité");
+  writer.write("Dónde la prioridad declarada todavía no tiene una medición o una decisión del mismo alcance.");
+  writer.finish("Reporte");
   return new Uint8Array(await doc.save());
+}
+
+function priorityReading(person: PersonC) {
+  if (person.priorityMode === "hibrido") return "Algunos bloques se aclararon repartiendo 100 puntos. Esos pesos reemplazan las comparaciones de ese bloque. La consistencia original queda como diagnóstico.";
+  if (person.ahpClass === "excluido") return "La consistencia supera 0,20 y no hay una aclaración completa. No hay un portafolio recomendado.";
+  if (person.ahpClass === "exploratorio") return "El perfil es exploratorio. El escenario, si aparece, no entra al promedio principal del corte.";
+  return "Las comparaciones entran en el rango principal de consistencia.";
 }
 
 function scopeLabel(value: string) {
@@ -94,10 +137,6 @@ function scopeLabel(value: string) {
 
 function label(options: { v: string; es: string }[], value: string) {
   return options.find((item) => item.v === value)?.es ?? (value || "sin dato");
-}
-
-function labelOfContext(value: string) {
-  return value || "sin dato";
 }
 
 async function documentOf(title: string) {
@@ -157,16 +196,70 @@ function pen(doc: PDFDocument) {
     write(text: string) {
       write(text, 11, font, CHARCOAL, 8);
     },
+    note(text: string) {
+      const lines = wrap(clean(text), font, 10, width - 20);
+      const height = lines.length * 14 + 16;
+      ensure(height + 8);
+      page.drawRectangle({ x: MARGIN, y: y - height, width, height, color: rgb(0.97, 0.95, 0.92) });
+      page.drawRectangle({ x: MARGIN, y: y - height, width: 3, height, color: ORANGE });
+      lines.forEach((line, index) => page.drawText(line, { x: MARGIN + 12, y: y - 18 - index * 14, size: 10, font, color: CHARCOAL }));
+      y -= height + 12;
+    },
     bars(rows: { label: string; ratio: number; trailing: string }[]) {
       for (const row of rows) {
+        ensure(22);
+        page.drawText(fit(row.label, font, 9, 168), { x: MARGIN, y: y - 9, size: 9, font, color: CHARCOAL });
+        page.drawRectangle({ x: MARGIN + 176, y: y - 11, width: 250, height: 9, color: rgb(0.93, 0.91, 0.88) });
+        page.drawRectangle({ x: MARGIN + 176, y: y - 11, width: Math.max(row.ratio > 0 ? 2 : 0, 250 * Math.max(0, Math.min(1, row.ratio))), height: 9, color: ORANGE });
+        page.drawText(clean(row.trailing), { x: MARGIN + 434, y: y - 9, size: 9, font: bold, color: CHARCOAL });
+        y -= 18;
+      }
+      y -= 6;
+    },
+    levels(rows: { label: string; level: number | null }[]) {
+      for (const row of rows) {
+        ensure(20);
+        page.drawText(fit(row.label, font, 9, 168), { x: MARGIN, y: y - 9, size: 9, font, color: CHARCOAL });
+        for (let step = 1; step <= 5; step += 1) {
+          const on = row.level != null && step <= row.level;
+          page.drawRectangle({ x: MARGIN + 176 + (step - 1) * 28, y: y - 12, width: 22, height: 12, color: on ? ORANGE : rgb(0.93, 0.91, 0.88) });
+        }
+        page.drawText(row.level == null ? "no sé" : String(row.level), { x: MARGIN + 324, y: y - 9, size: 9, font: bold, color: CHARCOAL });
+        y -= 18;
+      }
+      y -= 6;
+    },
+    columns(rows: { label: string; ratio: number | null; trailing: string }[]) {
+      ensure(128);
+      const slot = width / Math.max(rows.length, 1);
+      const base = y - 92;
+      rows.forEach((row, index) => {
+        const x = MARGIN + index * slot;
+        const height = row.ratio == null ? 0 : Math.max(3, 70 * Math.max(0, Math.min(1, row.ratio)));
+        page.drawRectangle({ x: x + 28, y: base, width: 42, height: 70, color: rgb(0.93, 0.91, 0.88) });
+        if (height) page.drawRectangle({ x: x + 28, y: base, width: 42, height, color: ORANGE });
+        page.drawText(clean(row.trailing), { x: x + 28, y: base + 76, size: 10, font: bold, color: CHARCOAL });
+        page.drawText(clean(row.label), { x: x + 28, y: base - 16, size: 9, font, color: SLATE });
+      });
+      y = base - 28;
+    },
+    facts(rows: [string, string][]) {
+      for (const [name, value] of rows) {
         ensure(18);
-        page.drawText(fit(row.label, font, 8, 180), { x: MARGIN, y: y - 8, size: 8, font, color: CHARCOAL });
-        page.drawRectangle({ x: MARGIN + 190, y: y - 10, width: 180, height: 7, color: rgb(0.93, 0.91, 0.88) });
-        page.drawRectangle({ x: MARGIN + 190, y: y - 10, width: Math.max(1, 180 * Math.max(0, Math.min(1, row.ratio))), height: 7, color: ORANGE });
-        page.drawText(clean(row.trailing), { x: MARGIN + 378, y: y - 8, size: 8, font: bold, color: CHARCOAL });
+        page.drawText(fit(name, font, 9, 220), { x: MARGIN, y: y - 9, size: 9, font, color: SLATE });
+        page.drawText(fit(value, bold, 9, width - 230), { x: MARGIN + 230, y: y - 9, size: 9, font: bold, color: CHARCOAL });
         y -= 16;
       }
-      y -= 8;
+      y -= 6;
+    },
+    pairs(rows: { label: string; value: string }[]) {
+      for (const row of rows) {
+        ensure(16);
+        page.drawText(fit(row.label, font, 8, 280), { x: MARGIN, y: y - 8, size: 8, font, color: CHARCOAL });
+        page.drawText(fit(row.value, font, 8, width - 290), { x: MARGIN + 290, y: y - 8, size: 8, font, color: SLATE });
+        y -= 14;
+      }
+      y -= 6;
     },
     finish(label: string) {
       pages.forEach((item, index) => item.drawText(clean(`${label}  ·  ${index + 1} de ${pages.length}`), { x: MARGIN, y: 26, size: 8, font, color: SLATE }));
