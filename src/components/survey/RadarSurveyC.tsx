@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
+import { XinergyLogo } from "@/components/shared/XinergyLogo";
 import { AhpBlocks } from "@/components/survey/AhpBlocks";
 import { AHP } from "@/lib/surveys/radar-2027";
 import { AHP_BLOCKS, blockComplete } from "@/lib/surveys/radar-c/ahp-blocks";
@@ -295,8 +296,8 @@ export function RadarSurveyC({ locale }: { locale: string }) {
 
   return (
     <article className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-8 sm:py-10 lg:px-10 [&_input]:scroll-mb-28 [&_label]:scroll-mb-28 [&_select]:scroll-mb-28 [&_textarea]:scroll-mb-28" lang={lang === "pt" ? "pt-BR" : lang}>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <p className="label-editorial">{downloadId ? copy.doneEyebrow : labels[position]}</p>
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <XinergyLogo variant="color" priority />
         <div className="inline-flex border border-xinergy-charcoal/15" role="group" aria-label={lang === "en" ? "Language" : lang === "pt" ? "Idioma" : "Idioma"}>
           {(["es", "en", "pt"] as const).map((code) => (
             <button key={code} type="button" aria-pressed={lang === code} onClick={() => setLang(code)} className={`px-3 py-1.5 text-xs font-semibold tracking-wide ${lang === code ? "bg-xinergy-charcoal text-white" : "text-xinergy-slate"}`}>
@@ -305,6 +306,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
           ))}
         </div>
       </div>
+      <p className="label-editorial mb-6">{downloadId ? copy.doneEyebrow : labels[position]}</p>
 
       {downloadId ? (
         <div>
