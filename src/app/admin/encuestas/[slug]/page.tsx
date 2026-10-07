@@ -10,7 +10,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { evaluationOf } from "@/lib/surveys/evaluacion";
 import { SURVEY_SLUG_B } from "@/lib/surveys/radar-b/engine";
 import { SURVEY_SLUG_C } from "@/lib/surveys/radar-c/instrument";
-import { buildBenchmarkC, buildPersonC, type RadarCInput } from "@/lib/surveys/radar-c/report";
+import { buildBenchmarkC, personFromRow, RESPONSE_COLUMNS_C, type SurveyResponseRowC } from "@/lib/surveys/radar-c/report";
 import { versionCChecks } from "@/lib/surveys/radar-c/verify";
 import { buildBenchmark, buildPerson, type RadarBInput } from "@/lib/surveys/radar-b/report";
 import { demoChecks } from "@/lib/surveys/radar-b/verify";
@@ -131,21 +131,8 @@ async function optionC(email: string) {
   const admin = await createAdminClient();
   const { data: survey } = await admin.from("web_surveys").select("id").eq("slug", SURVEY_SLUG_C).maybeSingle();
   if (!survey) notFound();
-  const { data } = await admin.from("web_survey_responses").select("id, created_at, email, empresa, pais, rol, rubro, evaluacion, company, answers").eq("survey_id", survey.id).order("created_at", { ascending: false });
-  const people = ((data ?? []) as Array<RadarCInput & { created_at?: string; evaluacion?: string }>).map((row) =>
-    buildPersonC({
-      id: row.id,
-      createdAt: String(row.created_at ?? ""),
-      email: row.email,
-      empresa: row.empresa,
-      pais: row.pais,
-      rol: row.rol,
-      rubro: row.rubro,
-      evaluacion: evaluationOf(row.evaluacion),
-      company: row.company ?? {},
-      answers: row.answers ?? {},
-    }),
-  );
+  const { data } = await admin.from("web_survey_responses").select(RESPONSE_COLUMNS_C).eq("survey_id", survey.id).order("created_at", { ascending: false });
+  const people = ((data ?? []) as SurveyResponseRowC[]).map((row) => personFromRow(row));
   const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://xinergy.lat").replace(/\/$/, "");
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">

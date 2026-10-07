@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { getAdminUser } from "@/lib/auth/admin";
 import { createAdminClient, supabaseConfigured } from "@/lib/supabase/admin";
-import { evaluationOf } from "@/lib/surveys/evaluacion";
 import { SURVEY_SLUG_C } from "@/lib/surveys/radar-c/instrument";
 import { paperPdfC } from "@/lib/surveys/radar-c/paper-pdf";
-import { buildPersonC } from "@/lib/surveys/radar-c/report";
+import { personFromRow, RESPONSE_COLUMNS_C, type SurveyResponseRowC } from "@/lib/surveys/radar-c/report";
 
 export const maxDuration = 60;
 
@@ -22,24 +21,8 @@ export async function loadPeople() {
   const admin = await createAdminClient();
   const { data: survey } = await admin.from("web_surveys").select("id").eq("slug", SURVEY_SLUG_C).maybeSingle();
   if (!survey) return null;
-  const { data } = await admin.from("web_survey_responses").select("id, created_at, email, nombre, apellido, telefono, linkedin, cargo, empresa, pais, rol, rubro, evaluacion, company, answers").eq("survey_id", survey.id);
-  return (data ?? []).map((row) => buildPersonC({
-    id: row.id,
-    createdAt: String(row.created_at ?? ""),
-    email: row.email,
-    nombre: row.nombre ?? "",
-    apellido: row.apellido ?? "",
-    telefono: row.telefono,
-    linkedin: row.linkedin,
-    cargo: row.cargo ?? "",
-    empresa: row.empresa,
-    pais: row.pais,
-    rol: row.rol,
-    rubro: row.rubro,
-    evaluacion: evaluationOf(row.evaluacion),
-    company: row.company ?? {},
-    answers: row.answers ?? {},
-  }));
+  const { data } = await admin.from("web_survey_responses").select(RESPONSE_COLUMNS_C).eq("survey_id", survey.id);
+  return (data ?? []).map((row) => personFromRow(row as SurveyResponseRowC));
 }
 
 export function pdf(bytes: Uint8Array, filename: string) {

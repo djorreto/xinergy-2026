@@ -1,6 +1,6 @@
 import { analyzeAhp, type AhpAnalysis } from "@/lib/surveys/ahp";
 import { resolvePriorities, type BlockWeight } from "@/lib/surveys/radar-c/ahp-allocation";
-import { isIncluded, type Evaluacion } from "@/lib/surveys/evaluacion";
+import { evaluationOf, isIncluded, type Evaluacion } from "@/lib/surveys/evaluacion";
 import { CAPABILITIES, COUNTRIES, INITIATIVE_COPY, STATUS_TO_ENGINE } from "@/lib/surveys/radar-c/instrument";
 import {
   INITIATIVES,
@@ -15,6 +15,48 @@ import {
   type ScenarioId,
 } from "@/lib/surveys/radar-b/engine";
 import { availabilityOf } from "@/lib/surveys/radar-b/report";
+
+/** Columnas de web_survey_responses que arman una persona de la encuesta C. */
+export const RESPONSE_COLUMNS_C =
+  "id, created_at, email, nombre, apellido, telefono, linkedin, cargo, empresa, pais, rol, rubro, evaluacion, company, answers";
+
+export type SurveyResponseRowC = {
+  id: string;
+  created_at?: string | null;
+  email: string;
+  nombre?: string | null;
+  apellido?: string | null;
+  telefono?: string | null;
+  linkedin?: string | null;
+  cargo?: string | null;
+  empresa: string;
+  pais: string;
+  rol: string;
+  rubro: string;
+  evaluacion?: string | null;
+  company?: Record<string, unknown> | null;
+  answers?: Record<string, unknown> | null;
+};
+
+export function personFromRow(row: SurveyResponseRowC): PersonC {
+  return buildPersonC({
+    id: row.id,
+    createdAt: String(row.created_at ?? ""),
+    email: row.email,
+    nombre: row.nombre ?? "",
+    apellido: row.apellido ?? "",
+    telefono: row.telefono,
+    linkedin: row.linkedin,
+    cargo: row.cargo ?? "",
+    empresa: row.empresa,
+    pais: row.pais,
+    rol: row.rol,
+    rubro: row.rubro,
+    evaluacion: evaluationOf(row.evaluacion),
+    company: row.company ?? {},
+    answers: row.answers ?? {},
+  });
+}
 
 export type RadarCInput = {
   id: string;

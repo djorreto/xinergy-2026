@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { createAdminClient, supabaseConfigured } from "@/lib/supabase/admin";
-import { evaluationOf } from "@/lib/surveys/evaluacion";
 import { SURVEY_SLUG_C } from "@/lib/surveys/radar-c/instrument";
 import { personPdfC } from "@/lib/surveys/radar-c/pdf";
-import { buildPersonC } from "@/lib/surveys/radar-c/report";
+import { personFromRow, RESPONSE_COLUMNS_C, type SurveyResponseRowC } from "@/lib/surveys/radar-c/report";
 
 export async function GET(request: Request) {
   const id = new URL(request.url).searchParams.get("id") ?? "";
@@ -12,20 +11,9 @@ export async function GET(request: Request) {
   const admin = await createAdminClient();
   const { data: survey } = await admin.from("web_surveys").select("id").eq("slug", SURVEY_SLUG_C).maybeSingle();
   if (!survey) return NextResponse.json({ ok: false }, { status: 404 });
-  const { data } = await admin.from("web_survey_responses").select("id, created_at, email, empresa, pais, rol, rubro, evaluacion, company, answers").eq("id", id).eq("survey_id", survey.id).maybeSingle();
+  const { data } = await admin.from("web_survey_responses").select(RESPONSE_COLUMNS_C).eq("id", id).eq("survey_id", survey.id).maybeSingle();
   if (!data) return NextResponse.json({ ok: false }, { status: 404 });
-  const person = buildPersonC({
-    id: data.id,
-    createdAt: String(data.created_at ?? ""),
-    email: data.email,
-    empresa: data.empresa,
-    pais: data.pais,
-    rol: data.rol,
-    rubro: data.rubro,
-    evaluacion: evaluationOf(data.evaluacion),
-    company: data.company ?? {},
-    answers: data.answers ?? {},
-  });
+  const person = personFromRow(data as SurveyResponseRowC);
   const bytes = await personPdfC(person, "Devolución individual");
   return new NextResponse(Buffer.from(bytes), {
     headers: {
