@@ -178,6 +178,8 @@ export function buildPersonC(row: RadarCInput): PersonC {
       ia_presupuesto_compras: textOf(answers.ia_presupuesto_compras),
       ia_escala: textOf(answers.ia_escala),
       ia_modo: textOf(answers.ia_modo),
+      equipo_n: textOf(answers.equipo_n),
+      equipo_proximo: textOf(answers.equipo_proximo),
       f1: textOf(answers.f1),
       f2: textOf(answers.f2),
       g1: textOf(answers.g1),

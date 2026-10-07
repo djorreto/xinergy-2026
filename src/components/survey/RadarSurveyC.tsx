@@ -12,7 +12,9 @@ import {
   AI_SCALE,
   AI_STAGE,
   YES_NO,
+  TEAM_NEXT,
   aiProblems,
+  teamProblems,
   BARRIERS,
   BARRIER_EXCLUSIVE,
   BUDGET_DIRECTION,
@@ -47,7 +49,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const inputClass = "w-full border border-xinergy-charcoal/15 bg-white px-3 py-3 text-base outline-none focus:border-xinergy-orange";
 
 type Draft = Record<string, unknown>;
-type Step = "welcome" | "contact" | "profile" | "ahp" | "role" | "capacity" | "context" | "agenda" | "close";
+type Step = "welcome" | "contact" | "profile" | "ahp" | "role" | "capacity" | "context" | "agenda" | "team" | "close";
 
 export function RadarSurveyC({ locale }: { locale: string }) {
   const [lang, setLang] = useState<Lang>(locale === "pt" ? "pt" : locale === "en" ? "en" : "es");
@@ -173,6 +175,11 @@ export function RadarSurveyC({ locale }: { locale: string }) {
     if (step === "agenda" && procurement) INITIATIVE_COPY.forEach((item) => {
       if (!record(draft.agenda)[item.id]) mark(item.id);
     });
+    if (step === "team" && rol === "cpo") {
+      for (const [id, code] of Object.entries(teamProblems(String(draft.equipo_n || ""), String(draft.equipo_proximo || "")))) {
+        mark(id, code === "count" ? copy.countInvalid : copy.required);
+      }
+    }
     setInvalid(problems);
     if (Object.keys(problems).length) {
       setBanner(copy.fix);
@@ -381,6 +388,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
               {step === "capacity" ? <Capabilities lang={lang} selected={record(draft.capacidades)} invalid={invalid} onChange={(id, value) => patch("capacidades", { ...record(draft.capacidades), [id]: value })} /> : null}
               {step === "context" ? <Context lang={lang} draft={draft} invalid={invalid} onChange={patch} /> : null}
               {step === "agenda" ? <Agenda lang={lang} selected={record(draft.agenda)} invalid={invalid} onChange={(id, value) => patch("agenda", { ...record(draft.agenda), [id]: value })} /> : null}
+              {step === "team" ? <TeamQuestions lang={lang} draft={draft} invalid={invalid} onChange={patch} /> : null}
               {step === "close" ? (
                 <>
                   <label className="block" id="q-desafio">
@@ -422,6 +430,7 @@ function labelOf(copy: (typeof ui)[Lang], step: Step) {
     agenda: copy.stepsOperational[6],
     close: copy.stepsOperational[7],
     role: copy.stepsExecutive[4],
+    team: copy.teamStep,
   };
   return operational[step];
 }
@@ -432,6 +441,7 @@ function heading(copy: (typeof ui)[Lang], step: Step, procurement: boolean) {
   if (step === "profile") return { title: copy.profileTitle, notes: [copy.profileNote] };
   if (step === "ahp") return { title: copy.ahpTitle, notes: [] as string[] };
   if (step === "role") return { title: copy.roleTitle, notes: [] as string[] };
+  if (step === "team") return { title: copy.teamTitle, notes: [copy.teamNote] };
   if (step === "capacity") return { title: copy.capTitle, notes: [copy.capNote, ...optional] };
   if (step === "context") return { title: copy.contextTitle, notes: [copy.contextNote, ...optional] };
   if (step === "agenda") return { title: copy.agendaTitle, notes: [copy.agendaNote, ...optional] };
@@ -466,6 +476,7 @@ function stepsOf(rol: string): Step[] {
   const head: Step[] = ["welcome", "contact", "profile", "ahp"];
   const tail: Step[] = ["capacity", "context", "agenda", "close"];
   if (rol === "ceo" || rol === "cfo") return [...head, "role", ...tail];
+  if (rol === "cpo") return [...head, "capacity", "context", "agenda", "team", "close"];
   return [...head, ...tail];
 }
 
@@ -612,12 +623,12 @@ function AiFacts({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft;
   );
 }
 
-function NumberField({ id, label, value, invalid, onChange, suffix }: { id: string; label: string; value: string; invalid?: string; onChange: (value: string) => void; suffix?: string }) {
+function NumberField({ id, label, value, invalid, onChange, suffix, digits = 3 }: { id: string; label: string; value: string; invalid?: string; onChange: (value: string) => void; suffix?: string; digits?: number }) {
   return (
     <label id={`q-${id}`} className="block">
       <span className="mb-2 block font-semibold">{label}</span>
       <span className="flex items-center gap-2">
-        <input inputMode="numeric" className={`${inputClass} max-w-32 ${invalid ? "border-red-700" : ""}`} value={value} onChange={(event) => onChange(event.target.value.replace(/\D/g, "").replace(/^0+(?=\d)/, "").slice(0, 3))} />
+        <input inputMode="numeric" className={`${inputClass} max-w-32 ${invalid ? "border-red-700" : ""}`} value={value} onChange={(event) => onChange(event.target.value.replace(/\D/g, "").replace(/^0+(?=\d)/, "").slice(0, digits))} />
         {suffix ? <span className="text-sm text-xinergy-slate">{suffix}</span> : null}
       </span>
       {invalid ? <span className="mt-1 block text-sm text-red-700">{invalid}</span> : null}
@@ -666,6 +677,17 @@ function Agenda({ lang, selected, invalid, onChange }: { lang: Lang; selected: R
           <SelectOptions lang={lang} options={STATUSES} value={selected[item.id] ?? ""} invalid={Boolean(invalid[item.id])} onChange={(value) => onChange(item.id, value)} />
         </label>
       ))}
+    </div>
+  );
+}
+
+function TeamQuestions({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
+  const size = lang === "en" ? "How many people are on your Procurement team in this scope today?" : lang === "pt" ? "Quantas pessoas tem hoje sua equipe de Compras neste escopo?" : "¿Cuántas personas tiene hoy su equipo de Compras en este alcance?";
+  const next = lang === "en" ? "How do you expect the size of that team to be next year?" : lang === "pt" ? "Como você espera que seja o tamanho dessa equipe no próximo ano?" : "¿Cómo espera que sea el tamaño de ese equipo el próximo año?";
+  return (
+    <div className="grid gap-5">
+      <NumberField id="equipo_n" digits={5} label={size} value={String(draft.equipo_n || "")} invalid={invalid.equipo_n} onChange={(value) => onChange("equipo_n", value)} />
+      <ChoiceField id="equipo_proximo" lang={lang} label={next} options={TEAM_NEXT} value={String(draft.equipo_proximo || "")} invalid={invalid.equipo_proximo} onChange={(value) => onChange("equipo_proximo", value)} />
     </div>
   );
 }

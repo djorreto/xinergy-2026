@@ -140,6 +140,20 @@ function wholeNumber(value: string, min: number, max: number) {
   return number >= min && number <= max;
 }
 
+export const TEAM_NEXT: Choice[] = [
+  o("mas", "Más grande", "Larger", "Maior"),
+  o("igual", "Igual", "The same", "Igual"),
+  o("menos", "Más chico", "Smaller", "Menor"),
+];
+
+/** Personas de hoy y la dirección del próximo año. No entra a la brecha. */
+export function teamProblems(size: string, next: string) {
+  const problems: Record<string, "required" | "count"> = {};
+  if (!wholeNumber(size, 1, 99999)) problems.equipo_n = "count";
+  if (!TEAM_NEXT.some((item) => item.v === next)) problems.equipo_proximo = "required";
+  return problems;
+}
+
 export const DATA_READY: Choice[] = [
   o("READY", "Datos listos: identificados, disponibles, con responsables, acceso y control de calidad", "Data ready: identified, available, owned, authorized and quality-checked", "Dados prontos: identificados, disponíveis, com responsáveis, acesso e controle de qualidade"),
   o("PARTIAL", "Una parte cumple, pero faltan datos, calidad, integración o gobierno", "Part of it meets the conditions, but data, quality, integration or governance is missing", "Uma parte cumpre, mas faltam dados, qualidade, integração ou governança"),
@@ -331,6 +345,9 @@ export const ui = {
     agendaTitle: "Estado de cada iniciativa",
     agendaNote: "Aprobada: hay decisión de ejecutarla en 12 a 18 meses. Implementada: ese alcance ya opera de forma estable.",
     roleTitle: "Dos preguntas de su rol",
+    teamStep: "Equipo",
+    teamTitle: "Su equipo",
+    teamNote: "Es el equipo de Compras de este alcance, hoy. El número no entra al cálculo de la brecha.",
     closeTitle: "Un cambio para 2027",
     closeNote: "Opcional. No entra al cálculo.",
     challenge: "¿Qué cambio concreto haría la mayor diferencia para Compras durante 2027?",
@@ -417,6 +434,9 @@ export const ui = {
     agendaTitle: "Status of each initiative",
     agendaNote: "Approved: there is a decision to execute in 12 to 18 months. Implemented: that scope already runs in a stable way.",
     roleTitle: "Two questions for your role",
+    teamStep: "Team",
+    teamTitle: "Your team",
+    teamNote: "This is the Procurement team of this scope, today. The number does not enter the gap calculation.",
     closeTitle: "One change for 2027",
     closeNote: "Optional. It is not part of the calculation.",
     challenge: "What concrete change would make the biggest difference for Procurement during 2027?",
@@ -503,6 +523,9 @@ export const ui = {
     agendaTitle: "Estado de cada iniciativa",
     agendaNote: "Aprovada: há decisão de executar em 12 a 18 meses. Implementada: esse escopo já opera de forma estável.",
     roleTitle: "Duas perguntas do seu papel",
+    teamStep: "Equipe",
+    teamTitle: "Sua equipe",
+    teamNote: "É a equipe de Compras deste escopo, hoje. O número não entra no cálculo da lacuna.",
     closeTitle: "Uma mudança para 2027",
     closeNote: "Opcional. Não entra no cálculo.",
     challenge: "Que mudança concreta faria a maior diferença para Compras durante 2027?",

@@ -1,7 +1,7 @@
 import { analyzeAhp } from "@/lib/surveys/ahp";
 import { AHP } from "@/lib/surveys/radar-2027";
 import { isBlockedEmail } from "@/lib/insights/validate";
-import { aiProblems, CAPABILITIES, CONSENTS, COUNTRIES, DATA_READY, INDUSTRIES, INITIATIVE_COPY, ROLES, SCOPES, SPEND_C, STATUSES, SURVEY_VERSION_C, type AiAnswers } from "@/lib/surveys/radar-c/instrument";
+import { aiProblems, CAPABILITIES, CONSENTS, COUNTRIES, DATA_READY, INDUSTRIES, INITIATIVE_COPY, ROLES, SCOPES, SPEND_C, STATUSES, SURVEY_VERSION_C, teamProblems, type AiAnswers } from "@/lib/surveys/radar-c/instrument";
 import { BARRIERS, BARRIER_EXCLUSIVE, BUDGET_DIRECTION, EFFORT_HOURS, EXPOSURE, PARTICIPATION, REALIZATION, SAVINGS, SAVINGS_EXPECTATION, VALIDATE_FREQ, AI_STAGE } from "@/lib/surveys/radar-c/instrument";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -67,6 +67,9 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
   }
   const ai = aiOf(data);
   if (Object.keys(aiProblems(ai, procurement ? "required" : "optional")).length) return { ok: false, honeypot };
+  const teamSize = rol === "cpo" ? textOf("equipo_n") : "";
+  const teamNext = rol === "cpo" ? textOf("equipo_proximo") : "";
+  if (rol === "cpo" && Object.keys(teamProblems(teamSize, teamNext)).length) return { ok: false, honeypot };
   const completeOperation = CAPABILITIES.every((item) => LEVELS.has(capacidades[item.id] ?? ""))
     && oneOf(SAVINGS, textOf("e1")) && oneOf(REALIZATION, textOf("e2")) && oneOf(EXPOSURE, textOf("e3"))
     && oneOf(EFFORT_HOURS, textOf("e4")) && oneOf(AI_STAGE, textOf("e5")) && oneOf(DATA_READY, textOf("r1"))
@@ -121,6 +124,8 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
         f2: textOf("f2"),
         g1: textOf("g1"),
         g2: textOf("g2"),
+        equipo_n: teamSize,
+        equipo_proximo: teamNext,
         desafio: textOf("desafio").slice(0, 4000),
       },
       ahp,

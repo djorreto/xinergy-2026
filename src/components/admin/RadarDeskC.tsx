@@ -12,6 +12,7 @@ import {
   AI_MODE,
   AI_SCALE,
   AI_STAGE,
+  TEAM_NEXT,
   YES_NO,
   BARRIERS,
   BARRIER_EXCLUSIVE,
@@ -290,6 +291,7 @@ function PersonDetail({ person }: { person: PersonC }) {
         </div>
       )}
       <AiFacts person={person} />
+      {person.context.equipo_n || person.context.equipo_proximo ? <p className="mt-4">Equipo hoy: {person.context.equipo_n || "—"} personas. El próximo año: {named(TEAM_NEXT, person.context.equipo_proximo)}.</p> : null}
       {person.desafio.trim() ? <p className="mt-4 border-l-2 border-xinergy-orange pl-3">{person.desafio}</p> : null}
     </div>
   );

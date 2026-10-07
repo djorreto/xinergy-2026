@@ -1,6 +1,6 @@
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import { AHP } from "@/lib/surveys/radar-2027";
-import { AI_MODE, AI_SCALE, CAPABILITIES, INITIATIVE_COPY, REALIZATION, SAVINGS, STATUSES, YES_NO } from "@/lib/surveys/radar-c/instrument";
+import { AI_MODE, AI_SCALE, CAPABILITIES, INITIATIVE_COPY, REALIZATION, SAVINGS, STATUSES, TEAM_NEXT, YES_NO } from "@/lib/surveys/radar-c/instrument";
 import { buildBenchmarkC, type PersonC } from "@/lib/surveys/radar-c/report";
 import { formatPercent } from "@/lib/surveys/ahp";
 
@@ -93,6 +93,13 @@ export async function personPdfC(person: PersonC, stamp: string) {
     if (projects.length) {
       writer.heading("Proyectos de IA");
       writer.facts(projects);
+    }
+    if (person.context.equipo_n || person.context.equipo_proximo) {
+      writer.heading("Su equipo");
+      writer.facts([
+        ["Personas hoy", person.context.equipo_n || "sin dato"],
+        ["El próximo año", label(TEAM_NEXT, person.context.equipo_proximo)],
+      ]);
     }
     writer.pairs(INITIATIVE_COPY.map((item) => ({ label: item.name.es, value: label(STATUSES, person.agenda[item.id] ?? "") })));
     const named = [
