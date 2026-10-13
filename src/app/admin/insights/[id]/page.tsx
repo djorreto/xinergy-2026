@@ -36,6 +36,7 @@ export default async function EditInsightPage({
     .from("web_insight_downloads")
     .select("email, validated_at, created_at, is_competitor")
     .eq("insight_id", id)
+    .is("hidden_at", null)
     .order("created_at", { ascending: false })
     .limit(20);
 

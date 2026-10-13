@@ -33,14 +33,14 @@ export default async function AdminInsightsPage({
     admin
       .from("web_insights")
       .select("id, slug, kind, status, intake_complete, created_by, available_at, created_at, published_at, web_insight_locales(locale, title)"),
-    admin.from("web_insight_downloads").select("insight_id, validated_at"),
+    admin.from("web_insight_downloads").select("insight_id, validated_at, hidden_at"),
     admin.from("web_insight_competitor_domains").select("domain").order("domain"),
     admin.from("web_insight_admins").select("email, enabled").order("email"),
   ]);
 
   const counts = new Map<string, number>();
   for (const row of downloads ?? []) {
-    if (!row.validated_at) continue;
+    if (!row.validated_at || row.hidden_at) continue;
     counts.set(row.insight_id, (counts.get(row.insight_id) ?? 0) + 1);
   }
 
