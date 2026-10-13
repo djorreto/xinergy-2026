@@ -64,7 +64,7 @@ function toPov(record: InsightRecord, locale: Locale): PovInsight | null {
     author: copy.author,
     coverUrl: card.coverUrl ?? null,
     imageSize: record.image_size === "sm" || record.image_size === "md" || record.image_size === "lg" ? record.image_size : "lg",
-    hasPdf: Boolean(record.pdf_path) && record.kind !== "noticia",
+    hasPdf: Boolean(copy.pdf_path) && record.kind !== "noticia",
     availability: record.kind === "noticia" ? null : availabilityNote(normalizeLanguages(record.languages), locale),
   };
 }

@@ -94,8 +94,12 @@ export default async function EditInsightPage({
         mediaLinks={normalizeMediaLinks(data.media_links)}
         galleryUrls={(data.gallery_paths ?? []).map((path: string) => coverPublicUrl(path)).filter((url: string | null): url is string => Boolean(url))}
         sourceUrl={data.source_url ?? ""}
-        hasPdf={Boolean(data.pdf_path)}
-        pdfFilename={data.pdf_filename ?? ""}
+        pdfs={Object.fromEntries(
+          locales.map((locale) => {
+            const row = stored.find((item) => item.locale === locale);
+            return [locale, { ready: Boolean(row?.pdf_path), filename: row?.pdf_filename ?? "" }];
+          }),
+        ) as Record<Locale, { ready: boolean; filename: string }>}
         locales={localeFields}
         downloads={(downloads as DownloadRow[] | null)?.map((row) => ({
           email: row.email,

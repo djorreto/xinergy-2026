@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { locales, type Locale } from "@/i18n/routing";
@@ -52,7 +53,7 @@ type SaveInput = {
   languages: Locale[];
   mediaLinks: MediaLinks;
   locales: Record<Locale, InsightLocaleFields>;
-  pdfFilename: string;
+  pdfFilenames: Record<Locale, string>;
 };
 
 function resolveAvailableAt(input: SaveInput): { ok: true; availableAt: string | null } | { ok: false; error: string } {
@@ -72,7 +73,7 @@ export async function saveInsight(input: SaveInput): Promise<{ ok: true } | { ok
   const admin = await createAdminClient();
   const { data: current, error } = await admin
     .from("web_insights")
-    .select("id, slug, kind, status, available_at, published_at, cover_path, pdf_path, gallery_paths")
+    .select("id, slug, kind, status, available_at, published_at, cover_path, gallery_paths, web_insight_locales(locale, pdf_path)")
     .eq("id", input.id)
     .maybeSingle();
   if (error || !current) return { ok: false, error: "No encontré este insight." };
@@ -95,7 +96,15 @@ export async function saveInsight(input: SaveInput): Promise<{ ok: true } | { ok
     if (kind === "noticia") {
       if (!current.cover_path && gallery.length === 0) return { ok: false, error: "Sube una imagen antes de publicar." };
     } else if (!current.cover_path) return { ok: false, error: "Sube una portada antes de publicar." };
-    if (kind === "documento" && !current.pdf_path) return { ok: false, error: "Sube el PDF antes de publicar." };
+    const uploaded = new Set(
+      (current.web_insight_locales ?? [])
+        .filter((row: { locale: string; pdf_path: string | null }) => Boolean(row.pdf_path))
+        .map((row: { locale: string }) => row.locale),
+    );
+    const missingPdf = languages.find((locale) => !uploaded.has(locale));
+    if (kind === "documento" && missingPdf) {
+      return { ok: false, error: `Falta subir el PDF en ${missingPdf.toUpperCase()}.` };
+    }
     const ready = filled.filter(
       ({ fields }) => fields.title.trim().length >= 3 && fields.excerpt.trim().length >= 40 && fields.body.trim().length >= 80,
     );
@@ -122,7 +131,6 @@ export async function saveInsight(input: SaveInput): Promise<{ ok: true } | { ok
     image_size: ImageSize;
     languages: Locale[];
     media_links: MediaLinks;
-    pdf_filename: string | null;
     updated_at: string;
     published_at?: string;
   } = {
@@ -133,7 +141,6 @@ export async function saveInsight(input: SaveInput): Promise<{ ok: true } | { ok
     image_size: input.imageSize === "sm" || input.imageSize === "md" || input.imageSize === "lg" ? input.imageSize : "lg",
     languages,
     media_links: mediaLinks,
-    pdf_filename: kind === "documento" && input.pdfFilename.trim() ? pdfDownloadName(input.pdfFilename, slug) : null,
     updated_at: new Date().toISOString(),
   };
   if (status === "published" && input.availability === "now" && availableAt && !current.published_at) patch.published_at = availableAt;
@@ -157,6 +164,10 @@ export async function saveInsight(input: SaveInput): Promise<{ ok: true } | { ok
         tag: fields.tag.trim(),
         author: fields.author.trim(),
         published_on: fields.publishedOn || null,
+        pdf_filename:
+          kind === "documento" && input.pdfFilenames[locale]?.trim()
+            ? pdfDownloadName(input.pdfFilenames[locale], `${slug}-${locale}`)
+            : null,
       },
       { onConflict: "insight_id,locale" },
     );
@@ -173,7 +184,12 @@ export async function saveInsight(input: SaveInput): Promise<{ ok: true } | { ok
         body: fields?.body ?? "",
       };
     }),
-    Boolean(current.pdf_path),
+    kind === "noticia" ||
+      languages.every((locale) =>
+        (current.web_insight_locales ?? []).some(
+          (row: { locale: string; pdf_path: string | null }) => row.locale === locale && Boolean(row.pdf_path),
+        ),
+      ),
     kind,
   );
   await admin.from("web_insights").update({ intake_complete: complete }).eq("id", input.id);
@@ -191,7 +207,7 @@ export async function setInsightVisibility(input: {
   const admin = await createAdminClient();
   const { data: current, error } = await admin
     .from("web_insights")
-    .select("id, slug, kind, published_at, cover_path, pdf_path, gallery_paths, web_insight_locales(title, excerpt, body)")
+    .select("id, slug, kind, published_at, cover_path, languages, gallery_paths, web_insight_locales(locale, title, excerpt, body, pdf_path)")
     .eq("id", input.id)
     .maybeSingle();
   if (error || !current) return { ok: false, error: "No encontré este insight." };
@@ -215,7 +231,16 @@ export async function setInsightVisibility(input: {
     if (kind === "noticia") {
       if (!current.cover_path && gallery.length === 0) return { ok: false, error: "Sube una imagen antes de publicar." };
     } else if (!current.cover_path) return { ok: false, error: "Sube una portada antes de publicar." };
-    if (kind === "documento" && !current.pdf_path) return { ok: false, error: "Sube el PDF antes de publicar." };
+    const requiredLanguages = normalizeLanguages(current.languages);
+    const uploaded = new Set(
+      (current.web_insight_locales ?? [])
+        .filter((row: { locale: string; pdf_path: string | null }) => Boolean(row.pdf_path))
+        .map((row: { locale: string }) => row.locale),
+    );
+    const missingPdf = requiredLanguages.find((locale) => !uploaded.has(locale));
+    if (kind === "documento" && missingPdf) {
+      return { ok: false, error: `Falta subir el PDF en ${missingPdf.toUpperCase()}.` };
+    }
     const ready = (current.web_insight_locales ?? []).some(
       (row: { title: string; excerpt: string; body: string }) =>
         row.title.trim().length >= 3 && row.excerpt.trim().length >= 40 && row.body.trim().length >= 80,
@@ -293,22 +318,25 @@ export async function duplicateInsight(formData: FormData) {
   if (!created) redirect(adminHref(`/insights/${id}?error=duplicate`));
 
   const coverPath = await copyFile("insight-covers", source.cover_path, created.id);
-  const pdfPath = await copyFile("insight-pdfs", source.pdf_path, created.id);
-  if (coverPath || pdfPath) {
-    await admin.from("web_insights").update({ cover_path: coverPath, pdf_path: pdfPath, pdf_filename: source.pdf_filename }).eq("id", created.id);
+  if (coverPath) {
+    await admin.from("web_insights").update({ cover_path: coverPath }).eq("id", created.id);
   }
 
-  const copies = (source.web_insight_locales ?? []).map((locale: Record<string, unknown>) => ({
-    insight_id: created.id,
-    locale: locale.locale,
-    title: locale.title,
-    excerpt: locale.excerpt,
-    body: locale.body,
-    type_label: locale.type_label,
-    tag: locale.tag,
-    author: locale.author,
-    published_on: locale.published_on,
-  }));
+  const copies = await Promise.all(
+    (source.web_insight_locales ?? []).map(async (locale: Record<string, unknown>) => ({
+      insight_id: created.id,
+      locale: locale.locale,
+      title: locale.title,
+      excerpt: locale.excerpt,
+      body: locale.body,
+      type_label: locale.type_label,
+      tag: locale.tag,
+      author: locale.author,
+      published_on: locale.published_on,
+      pdf_path: await copyFile("insight-pdfs", typeof locale.pdf_path === "string" ? locale.pdf_path : null, created.id),
+      pdf_filename: locale.pdf_filename,
+    })),
+  );
   if (copies.length) await admin.from("web_insight_locales").insert(copies);
   const complete = intakeIsComplete(
     copies.map((locale) => ({
@@ -317,7 +345,7 @@ export async function duplicateInsight(formData: FormData) {
       excerpt: String(locale.excerpt ?? ""),
       body: String(locale.body ?? ""),
     })),
-    Boolean(pdfPath),
+    source.kind === "noticia" || copies.every((locale) => Boolean(locale.pdf_path)),
     source.kind === "noticia" ? "noticia" : "documento",
   );
   await admin.from("web_insights").update({ intake_complete: complete }).eq("id", created.id);
@@ -330,7 +358,7 @@ async function copyFile(bucket: "insight-covers" | "insight-pdfs", path: string 
   const downloaded = await admin.storage.from(bucket).download(path);
   if (downloaded.error || !downloaded.data) return null;
   const extension = path.split(".").pop() || (bucket === "insight-pdfs" ? "pdf" : "jpg");
-  const nextPath = `${insightId}/copia-${Date.now()}.${extension}`;
+  const nextPath = `${insightId}/copia-${randomUUID()}.${extension}`;
   const uploaded = await admin.storage.from(bucket).upload(nextPath, downloaded.data, { upsert: false });
   return uploaded.error ? null : nextPath;
 }

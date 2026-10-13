@@ -35,8 +35,9 @@ export async function POST(request: Request) {
   if (!user) return go("/admin/login");
 
   const formData = await request.formData();
-  const languages = normalizeLanguages(formData.getAll("languages"));
+  const languages = normalizeLanguages([formData.get("language")]);
   if (!languages.length) return go("/admin/insights/new?error=languages");
+  const primaryLanguage = languages[0];
   const file = formData.get("pdf");
   if (!(file instanceof File) || file.size === 0) return go("/admin/insights/new?error=file");
   const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
@@ -58,7 +59,7 @@ export async function POST(request: Request) {
     return go("/admin/insights/new?error=save");
   }
 
-  const path = `${data.id}/documento.pdf`;
+  const path = `${data.id}/pdf-${primaryLanguage}.pdf`;
   const uploaded = await admin.storage.from("insight-pdfs").upload(path, stored, {
     contentType: "application/pdf",
     upsert: true,
@@ -68,8 +69,6 @@ export async function POST(request: Request) {
     await admin.from("web_insights").delete().eq("id", data.id);
     return go("/admin/insights/new?error=save");
   }
-  await admin.from("web_insights").update({ pdf_path: path, pdf_filename: pdfDownloadName(file.name, slug) }).eq("id", data.id);
-
   let draft: Awaited<ReturnType<typeof draftInsightFromPdf>> | null = null;
   try {
     draft = await draftInsightFromPdf(bytes);
@@ -92,6 +91,8 @@ export async function POST(request: Request) {
       tag: fields.tag,
       author: fields.author,
       published_on: fields.publishedOn || null,
+      pdf_path: locale === primaryLanguage ? path : null,
+      pdf_filename: locale === primaryLanguage ? pdfDownloadName(file.name, `${slug}-${locale}`) : null,
     };
   });
   const inserted = await admin.from("web_insight_locales").insert(
@@ -101,7 +102,7 @@ export async function POST(request: Request) {
     !inserted.error &&
     intakeIsComplete(
       rows.map((row) => ({ locale: row.locale, title: row.title, excerpt: row.excerpt, body: row.body })),
-      true,
+      languages.every((locale) => rows.some((row) => row.locale === locale && Boolean(row.pdf_path))),
     );
   const nextSlug = draft.es.title ? await uniqueSlug(slugify(draft.es.title), data.id) : slug;
   await admin

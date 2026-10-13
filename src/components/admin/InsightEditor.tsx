@@ -33,8 +33,7 @@ type Props = {
   mediaLinks: MediaLinks;
   galleryUrls: string[];
   sourceUrl: string;
-  hasPdf: boolean;
-  pdfFilename: string;
+  pdfs: Record<Locale, { ready: boolean; filename: string }>;
   locales: Record<Locale, InsightLocaleFields>;
   downloads: DownloadRow[];
 };
@@ -111,8 +110,7 @@ export function InsightEditor({
   mediaLinks: initialMediaLinks,
   galleryUrls,
   sourceUrl: initialSourceUrl,
-  hasPdf,
-  pdfFilename: initialPdfFilename,
+  pdfs,
   locales: initialLocales,
   downloads,
 }: Props) {
@@ -135,8 +133,14 @@ export function InsightEditor({
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
   const [uploading, setUploading] = useState<"cover" | "pdf" | "gallery" | null>(null);
-  const [pdfReady, setPdfReady] = useState(hasPdf);
-  const [pdfFilename, setPdfFilename] = useState(pdfDownloadName(initialPdfFilename, initialSlug));
+  const [pdfReady, setPdfReady] = useState<Record<Locale, boolean>>(
+    Object.fromEntries(locales.map((locale) => [locale, pdfs[locale]?.ready ?? false])) as Record<Locale, boolean>,
+  );
+  const [pdfFilenames, setPdfFilenames] = useState<Record<Locale, string>>(
+    Object.fromEntries(
+      locales.map((locale) => [locale, pdfDownloadName(pdfs[locale]?.filename, `${initialSlug}-${locale}`)]),
+    ) as Record<Locale, string>,
+  );
   const current = copy[active] ?? emptyLocale();
   const validated = downloads.filter((row) => row.validatedAt).length;
 
@@ -191,7 +195,7 @@ export function InsightEditor({
       languages,
       mediaLinks,
       locales: copy,
-      pdfFilename,
+      pdfFilenames,
     });
     setSaving(false);
     if (!result.ok) {
@@ -208,7 +212,7 @@ export function InsightEditor({
     router.refresh();
   }
 
-  async function upload(fileKind: "cover" | "pdf" | "gallery", file: File) {
+  async function upload(fileKind: "cover" | "pdf" | "gallery", file: File, pdfLocale: Locale = active) {
     const max = fileKind === "pdf" ? 20 * 1024 * 1024 : 5 * 1024 * 1024;
     if (file.size > max) {
       setError(fileKind === "pdf" ? "El PDF no puede pesar más de 20 MB." : "La imagen no puede pesar más de 5 MB.");
@@ -220,7 +224,7 @@ export function InsightEditor({
       const signed = await fetch("/api/admin/uploads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ insightId: id, kind: fileKind, filename: file.name, contentType: file.type }),
+        body: JSON.stringify({ insightId: id, kind: fileKind, locale: fileKind === "pdf" ? pdfLocale : undefined, filename: file.name, contentType: file.type }),
       });
       const payload = (await signed.json()) as { ok?: boolean; path?: string; token?: string; bucket?: string; error?: string };
       if (!signed.ok || !payload.path || !payload.token || !payload.bucket) {
@@ -238,7 +242,7 @@ export function InsightEditor({
       const done = await fetch("/api/admin/uploads", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ insightId: id, kind: fileKind, path: payload.path, filename: file.name }),
+        body: JSON.stringify({ insightId: id, kind: fileKind, locale: fileKind === "pdf" ? pdfLocale : undefined, path: payload.path, filename: file.name }),
       });
       const saved = (await done.json()) as { ok?: boolean; filename?: string | null };
       if (!done.ok) {
@@ -246,9 +250,15 @@ export function InsightEditor({
         return;
       }
       if (fileKind === "pdf") {
-        setPdfReady(true);
+        setPdfReady((current) => ({ ...current, [pdfLocale]: true }));
         if (saved.filename) {
-          setPdfFilename((current) => (current.trim() && current !== pdfDownloadName("", slug) ? current : saved.filename!));
+          setPdfFilenames((current) => ({
+            ...current,
+            [pdfLocale]:
+              current[pdfLocale]?.trim() && current[pdfLocale] !== pdfDownloadName("", `${slug}-${pdfLocale}`)
+                ? current[pdfLocale]
+                : saved.filename!,
+          }));
         }
       }
       setMessage(fileKind === "pdf" ? "PDF actualizado." : fileKind === "gallery" ? "Imagen agregada." : "Imagen actualizada.");
@@ -489,16 +499,21 @@ export function InsightEditor({
         ) : (
           <section className="border border-xinergy-charcoal/10 bg-white p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-xinergy-slate">PDF</p>
-            {pdfReady ? (
-              <a href={`/api/admin/insights/${id}/pdf`} target="_blank" rel="noopener" className="mt-3 inline-block text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4">
-                PDF cargado
+            <p className="mt-2 text-sm text-xinergy-slate">{localeLabels[active]}</p>
+            {pdfReady[active] ? (
+              <a href={`/api/admin/insights/${id}/pdf?locale=${active}`} target="_blank" rel="noopener" className="mt-3 inline-block text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4">
+                PDF cargado en {localeLabels[active]}
               </a>
             ) : (
-              <p className="mt-3 text-sm text-xinergy-slate">Sin PDF</p>
+              <p className="mt-3 text-sm text-xinergy-slate">Sin PDF en {localeLabels[active]}</p>
             )}
             <label className="mt-4 block text-sm font-semibold text-xinergy-charcoal">
               Nombre del archivo
-              <input className={fieldClass} value={pdfFilename} onChange={(event) => setPdfFilename(event.target.value)} />
+              <input
+                className={fieldClass}
+                value={pdfFilenames[active]}
+                onChange={(event) => setPdfFilenames((current) => ({ ...current, [active]: event.target.value }))}
+              />
             </label>
             <p className="mt-2 text-xs leading-relaxed text-xinergy-slate">Así lo descarga el cliente. Se guarda junto con el insight.</p>
             <input
@@ -508,7 +523,7 @@ export function InsightEditor({
               disabled={uploading !== null}
               onChange={(event) => {
                 const file = event.target.files?.[0];
-                if (file) void upload("pdf", file);
+                if (file) void upload("pdf", file, active);
               }}
             />
           </section>

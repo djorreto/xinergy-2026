@@ -109,7 +109,7 @@ export async function requestInsightDownload(request: Request, input: RequestInp
 
   const { data: insight, error: insightError } = await admin
     .from("web_insights")
-    .select("id, slug, kind, status, available_at, pdf_path, pdf_filename, web_insight_locales(locale, title)")
+    .select("id, slug, kind, status, available_at, web_insight_locales(locale, title, pdf_path, pdf_filename)")
     .eq("slug", slug)
     .eq("status", "published")
     .maybeSingle();
@@ -117,7 +117,7 @@ export async function requestInsightDownload(request: Request, input: RequestInp
   const copy = (insight?.web_insight_locales ?? []).find(
     (item: { locale: string; title: string }) => item.locale === locale && item.title.trim(),
   );
-  if (insightError || insight?.kind !== "documento" || !insight?.pdf_path || !copy || !isLiveInsight(insight.status, insight.available_at)) {
+  if (insightError || insight?.kind !== "documento" || !copy?.pdf_path || !isLiveInsight(insight.status, insight.available_at)) {
     return { ok: false, error: "invalid_insight" };
   }
 
@@ -150,8 +150,8 @@ export async function requestInsightDownload(request: Request, input: RequestInp
     .single();
   if (insertError || !saved) return { ok: false, error: "unavailable" };
 
-  const signed = await admin.storage.from("insight-pdfs").createSignedUrl(insight.pdf_path, SIGNED_URL_SECONDS, {
-    download: pdfDownloadName(insight.pdf_filename, insight.slug),
+  const signed = await admin.storage.from("insight-pdfs").createSignedUrl(copy.pdf_path, SIGNED_URL_SECONDS, {
+    download: pdfDownloadName(copy.pdf_filename, `${insight.slug}-${locale}`),
   });
   if (signed.error || !signed.data?.signedUrl) {
     await admin.from("web_insight_downloads").delete().eq("id", saved.id);
@@ -189,15 +189,15 @@ async function adminPreviewDownload(slug: string, locale: Locale): Promise<Reque
   const admin = await createAdminClient();
   const { data: insight, error } = await admin
     .from("web_insights")
-    .select("id, slug, kind, pdf_path, pdf_filename, web_insight_locales(locale, title)")
+    .select("id, slug, kind, web_insight_locales(locale, title, pdf_path, pdf_filename)")
     .eq("slug", slug)
     .maybeSingle();
   const copies = insight?.web_insight_locales ?? [];
   const copy = copies.find((item: { locale: string; title: string }) => item.locale === locale && item.title.trim())
     ?? copies.find((item: { locale: string; title: string }) => item.title.trim());
-  if (error || insight?.kind !== "documento" || !insight.pdf_path || !copy) return { ok: false, error: "invalid_insight" };
-  const signed = await admin.storage.from("insight-pdfs").createSignedUrl(insight.pdf_path, SIGNED_URL_SECONDS, {
-    download: pdfDownloadName(insight.pdf_filename, insight.slug),
+  if (error || insight?.kind !== "documento" || !copy?.pdf_path) return { ok: false, error: "invalid_insight" };
+  const signed = await admin.storage.from("insight-pdfs").createSignedUrl(copy.pdf_path, SIGNED_URL_SECONDS, {
+    download: pdfDownloadName(copy.pdf_filename, `${insight.slug}-${locale}`),
   });
   if (signed.error || !signed.data?.signedUrl) return { ok: false, error: "unavailable" };
   return { ok: true, downloadUrl: signed.data.signedUrl };
@@ -222,7 +222,11 @@ type DownloadRow = {
   expires_at: string;
   validated_at: string | null;
   monday_item_id: string | null;
-  web_insights: { slug: string; kind: string | null; pdf_path: string | null; pdf_filename: string | null; web_insight_locales: { locale: string; title: string }[] } | null;
+  web_insights: {
+    slug: string;
+    kind: string | null;
+    web_insight_locales: { locale: string; title: string; pdf_path: string | null; pdf_filename: string | null }[];
+  } | null;
 };
 
 export async function redeemInsightDownload(token: string): Promise<
@@ -238,7 +242,7 @@ export async function redeemInsightDownload(token: string): Promise<
   const { data, error } = await admin
     .from("web_insight_downloads")
     .select(
-      "id, insight_id, locale, first_name, last_name, email, email_domain, is_competitor, utm_source, utm_medium, utm_campaign, utm_content, utm_term, referrer, created_at, expires_at, validated_at, monday_item_id, web_insights(slug, kind, pdf_path, pdf_filename, web_insight_locales(locale, title))",
+      "id, insight_id, locale, first_name, last_name, email, email_domain, is_competitor, utm_source, utm_medium, utm_campaign, utm_content, utm_term, referrer, created_at, expires_at, validated_at, monday_item_id, web_insights(slug, kind, web_insight_locales(locale, title, pdf_path, pdf_filename))",
     )
     .eq("token_hash", hashDownloadToken(token))
     .maybeSingle();
@@ -248,7 +252,8 @@ export async function redeemInsightDownload(token: string): Promise<
   if (error || !row) return { ok: false, reason: "invalid", locale };
   if (new Date(row.expires_at).getTime() < Date.now()) return { ok: false, reason: "expired", locale };
 
-  const pdfPath = row.web_insights?.kind === "documento" ? row.web_insights.pdf_path : null;
+  const localizedPdf = row.web_insights?.web_insight_locales.find((item) => item.locale === locale);
+  const pdfPath = row.web_insights?.kind === "documento" ? localizedPdf?.pdf_path : null;
   if (!pdfPath) return { ok: false, reason: "unavailable", locale };
 
   const now = new Date().toISOString();
@@ -287,7 +292,7 @@ export async function redeemInsightDownload(token: string): Promise<
   }
 
   const signed = await admin.storage.from("insight-pdfs").createSignedUrl(pdfPath, SIGNED_URL_SECONDS, {
-    download: pdfDownloadName(row.web_insights?.pdf_filename, row.web_insights?.slug || "xinergy"),
+    download: pdfDownloadName(localizedPdf?.pdf_filename, `${row.web_insights?.slug || "xinergy"}-${locale}`),
   });
   if (signed.error || !signed.data?.signedUrl) return { ok: false, reason: "unavailable", locale };
   return { ok: true, url: signed.data.signedUrl };

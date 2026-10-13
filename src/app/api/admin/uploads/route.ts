@@ -4,6 +4,7 @@ import { pdfDownloadName } from "@/lib/insights/pdf-name";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const COVER_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const PDF_LOCALES = new Set(["es", "en", "pt"]);
 
 function extension(filename: string, kind: "cover" | "pdf" | "gallery") {
   if (kind === "pdf") return "pdf";
@@ -20,17 +21,22 @@ export async function POST(request: Request) {
   const body = (await request.json()) as {
     insightId?: string;
     kind?: "cover" | "pdf" | "gallery";
+    locale?: string;
     filename?: string;
     contentType?: string;
   };
   const insightId = body.insightId?.trim() ?? "";
   const kind = body.kind;
+  const locale = body.locale?.trim() ?? "";
   const contentType = body.contentType ?? "";
   if (!insightId || (kind !== "cover" && kind !== "pdf" && kind !== "gallery")) {
     return NextResponse.json({ ok: false, error: "invalid" }, { status: 400 });
   }
   if (kind === "pdf" && contentType !== "application/pdf") {
     return NextResponse.json({ ok: false, error: "pdf" }, { status: 400 });
+  }
+  if (kind === "pdf" && !PDF_LOCALES.has(locale)) {
+    return NextResponse.json({ ok: false, error: "locale" }, { status: 400 });
   }
   if (kind !== "pdf" && !COVER_TYPES.has(contentType)) {
     return NextResponse.json({ ok: false, error: "cover" }, { status: 400 });
@@ -41,7 +47,7 @@ export async function POST(request: Request) {
   if (!insight) return NextResponse.json({ ok: false }, { status: 404 });
 
   const bucket = kind === "pdf" ? "insight-pdfs" : "insight-covers";
-  const path = `${insightId}/${kind}-${Date.now()}.${extension(body.filename ?? "", kind)}`;
+  const path = `${insightId}/${kind}${kind === "pdf" ? `-${locale}` : ""}-${Date.now()}.${extension(body.filename ?? "", kind)}`;
   const signed = await admin.storage.from(bucket).createSignedUploadUrl(path);
   if (signed.error || !signed.data) {
     return NextResponse.json({ ok: false, error: signed.error?.message ?? "upload" }, { status: 500 });
@@ -54,12 +60,16 @@ export async function PATCH(request: Request) {
   const user = await getAdminUser();
   if (!user) return NextResponse.json({ ok: false }, { status: 401 });
 
-  const body = (await request.json()) as { insightId?: string; kind?: "cover" | "pdf" | "gallery"; path?: string; filename?: string };
+  const body = (await request.json()) as { insightId?: string; kind?: "cover" | "pdf" | "gallery"; locale?: string; path?: string; filename?: string };
   const insightId = body.insightId?.trim() ?? "";
   const path = body.path?.trim() ?? "";
   const kind = body.kind;
+  const locale = body.locale?.trim() ?? "";
   if (!insightId || !path.startsWith(`${insightId}/`) || (kind !== "cover" && kind !== "pdf" && kind !== "gallery")) {
     return NextResponse.json({ ok: false }, { status: 400 });
+  }
+  if (kind === "pdf" && !PDF_LOCALES.has(locale)) {
+    return NextResponse.json({ ok: false, error: "locale" }, { status: 400 });
   }
 
   const admin = await createAdminClient();
@@ -73,18 +83,40 @@ export async function PATCH(request: Request) {
 
   const { data: current } = await admin
     .from("web_insights")
-    .select("slug, cover_path, pdf_path, pdf_filename, gallery_paths")
+    .select("slug, cover_path, gallery_paths")
     .eq("id", insightId)
     .maybeSingle();
-  const previous = kind === "pdf" ? current?.pdf_path : kind === "cover" ? current?.cover_path : null;
+  const { data: currentLocale } = kind === "pdf"
+    ? await admin
+        .from("web_insight_locales")
+        .select("pdf_path, pdf_filename")
+        .eq("insight_id", insightId)
+        .eq("locale", locale)
+        .maybeSingle()
+    : { data: null };
+  const previous = kind === "pdf" ? currentLocale?.pdf_path : kind === "cover" ? current?.cover_path : null;
   const gallery = Array.isArray(current?.gallery_paths) ? current.gallery_paths : [];
-  const downloadName = current?.pdf_filename?.trim()
-    ? current.pdf_filename
-    : pdfDownloadName(body.filename, current?.slug || "xinergy");
+  const downloadName = currentLocale?.pdf_filename?.trim()
+    ? currentLocale.pdf_filename
+    : pdfDownloadName(body.filename, `${current?.slug || "xinergy"}-${locale}`);
+  if (kind === "pdf") {
+    const { error } = await admin
+      .from("web_insight_locales")
+      .update({ pdf_path: path, pdf_filename: downloadName })
+      .eq("insight_id", insightId)
+      .eq("locale", locale);
+    if (error) return NextResponse.json({ ok: false }, { status: 500 });
+    if (previous && previous !== path) {
+      const { count } = await admin
+        .from("web_insight_locales")
+        .select("id", { count: "exact", head: true })
+        .eq("pdf_path", previous);
+      if ((count ?? 0) === 0) await admin.storage.from(bucket).remove([previous]);
+    }
+    return NextResponse.json({ ok: true, path, filename: downloadName });
+  }
   const update =
-    kind === "pdf"
-      ? { pdf_path: path, pdf_filename: downloadName, updated_at: new Date().toISOString() }
-      : kind === "gallery"
+    kind === "gallery"
         ? { gallery_paths: [...gallery, path], updated_at: new Date().toISOString() }
         : { cover_path: path, updated_at: new Date().toISOString() };
   const { error } = await admin.from("web_insights").update(update).eq("id", insightId);
@@ -94,6 +126,6 @@ export async function PATCH(request: Request) {
   return NextResponse.json({
     ok: true,
     path,
-    filename: kind === "pdf" ? downloadName : null,
+    filename: null,
   });
 }

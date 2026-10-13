@@ -6,8 +6,8 @@ import { createNewsInsight } from "@/app/admin/insights/actions";
 function LanguageChecks() {
   return (
     <fieldset className="space-y-2">
-      <legend className="text-sm font-medium text-xinergy-charcoal">Idiomas del documento adjunto</legend>
-      <p className="text-sm text-xinergy-slate">Puede ser uno o los tres. La página de Xinergy se publica igual en español, inglés y portugués.</p>
+      <legend className="text-sm font-medium text-xinergy-charcoal">Idioma de este primer PDF</legend>
+      <p className="text-sm text-xinergy-slate">En el paso siguiente podrás subir los otros dos archivos por separado.</p>
       {(
         [
           ["es", "Español"],
@@ -16,7 +16,7 @@ function LanguageChecks() {
         ] as const
       ).map(([value, label]) => (
         <label key={value} className="flex items-center gap-2 text-sm text-xinergy-charcoal">
-          <input type="checkbox" name="languages" value={value} />
+          <input type="radio" name="language" value={value} required />
           {label}
         </label>
       ))}
@@ -31,9 +31,9 @@ export function NewInsightForm() {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const chosen = new FormData(event.currentTarget).getAll("languages");
-    if (!chosen.length) {
-      setError("Marca al menos un idioma.");
+    const chosen = new FormData(event.currentTarget).get("language");
+    if (!chosen) {
+      setError("Marca el idioma del PDF.");
       return;
     }
     setError(null);
@@ -85,7 +85,7 @@ export function NewInsightForm() {
       ) : (
         <form onSubmit={onSubmit} className="mt-4 space-y-4">
           <p className="text-sm text-xinergy-slate">
-            Sube el PDF y marca en qué idiomas está. Groq completa los textos. La imagen del insight se ajusta en el paso siguiente.
+            Sube el primer PDF e indica su idioma. Groq completa los textos. Después podrás cargar las otras dos versiones por separado.
           </p>
           <LanguageChecks />
           <label className="block text-sm font-medium text-xinergy-charcoal">

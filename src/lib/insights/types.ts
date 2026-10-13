@@ -47,6 +47,8 @@ export type InsightLocaleRow = {
   tag: string;
   author: string;
   published_on: string | null;
+  pdf_path: string | null;
+  pdf_filename: string | null;
 };
 
 export type InsightKind = "noticia" | "documento";
