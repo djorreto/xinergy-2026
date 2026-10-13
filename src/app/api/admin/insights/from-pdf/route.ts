@@ -5,6 +5,7 @@ import { adminHref } from "@/lib/auth/admin-path";
 import { draftInsightFromPdf } from "@/lib/insights/from-pdf";
 import { normalizeLanguages } from "@/lib/insights/languages";
 import { intakeIsComplete } from "@/lib/insights/intake";
+import { pdfDownloadName } from "@/lib/insights/pdf-name";
 import { reservedInsightSlugs, slugify } from "@/lib/insights/slug";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
     await admin.from("web_insights").delete().eq("id", data.id);
     return go("/admin/insights/new?error=save");
   }
-  await admin.from("web_insights").update({ pdf_path: path }).eq("id", data.id);
+  await admin.from("web_insights").update({ pdf_path: path, pdf_filename: pdfDownloadName(file.name, slug) }).eq("id", data.id);
 
   let draft: Awaited<ReturnType<typeof draftInsightFromPdf>> | null = null;
   try {

@@ -9,6 +9,7 @@ import { reservedInsightSlugs, slugify } from "@/lib/insights/slug";
 import type { ImageSize, InsightLocaleFields } from "@/lib/insights/types";
 import { isAllowedEmail } from "@/lib/auth/domain";
 import { intakeIsComplete } from "@/lib/insights/intake";
+import { pdfDownloadName } from "@/lib/insights/pdf-name";
 import { normalizeLanguages, normalizeMediaLinks, type MediaLinks } from "@/lib/insights/languages";
 import { chileLocalToDate } from "@/lib/insights/schedule";
 import { translateInsightFields, type TranslatedFields } from "@/lib/insights/translate";
@@ -51,6 +52,7 @@ type SaveInput = {
   languages: Locale[];
   mediaLinks: MediaLinks;
   locales: Record<Locale, InsightLocaleFields>;
+  pdfFilename: string;
 };
 
 function resolveAvailableAt(input: SaveInput): { ok: true; availableAt: string | null } | { ok: false; error: string } {
@@ -120,6 +122,7 @@ export async function saveInsight(input: SaveInput): Promise<{ ok: true } | { ok
     image_size: ImageSize;
     languages: Locale[];
     media_links: MediaLinks;
+    pdf_filename: string | null;
     updated_at: string;
     published_at?: string;
   } = {
@@ -130,6 +133,7 @@ export async function saveInsight(input: SaveInput): Promise<{ ok: true } | { ok
     image_size: input.imageSize === "sm" || input.imageSize === "md" || input.imageSize === "lg" ? input.imageSize : "lg",
     languages,
     media_links: mediaLinks,
+    pdf_filename: kind === "documento" && input.pdfFilename.trim() ? pdfDownloadName(input.pdfFilename, slug) : null,
     updated_at: new Date().toISOString(),
   };
   if (status === "published" && input.availability === "now" && availableAt && !current.published_at) patch.published_at = availableAt;
@@ -264,7 +268,7 @@ export async function duplicateInsight(formData: FormData) {
   const admin = await createAdminClient();
   const { data: source } = await admin
     .from("web_insights")
-    .select("slug, kind, cover_path, image_size, languages, media_links, pdf_path, source_url, gallery_paths, web_insight_locales(*)")
+    .select("slug, kind, cover_path, image_size, languages, media_links, pdf_path, pdf_filename, source_url, gallery_paths, web_insight_locales(*)")
     .eq("id", id)
     .maybeSingle();
   if (!source) redirect(adminHref("/insights"));
@@ -291,7 +295,7 @@ export async function duplicateInsight(formData: FormData) {
   const coverPath = await copyFile("insight-covers", source.cover_path, created.id);
   const pdfPath = await copyFile("insight-pdfs", source.pdf_path, created.id);
   if (coverPath || pdfPath) {
-    await admin.from("web_insights").update({ cover_path: coverPath, pdf_path: pdfPath }).eq("id", created.id);
+    await admin.from("web_insights").update({ cover_path: coverPath, pdf_path: pdfPath, pdf_filename: source.pdf_filename }).eq("id", created.id);
   }
 
   const copies = (source.web_insight_locales ?? []).map((locale: Record<string, unknown>) => ({

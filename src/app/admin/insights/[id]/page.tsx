@@ -27,7 +27,7 @@ export default async function EditInsightPage({
   const admin = await createAdminClient();
   const { data } = await admin
     .from("web_insights")
-    .select("id, slug, kind, status, intake_complete, created_by, available_at, cover_path, image_size, languages, media_links, pdf_path, source_url, gallery_paths, web_insight_locales(*)")
+    .select("id, slug, kind, status, intake_complete, created_by, available_at, cover_path, image_size, languages, media_links, pdf_path, pdf_filename, source_url, gallery_paths, web_insight_locales(*)")
     .eq("id", id)
     .maybeSingle();
   if (!data) notFound();
@@ -94,6 +94,7 @@ export default async function EditInsightPage({
         galleryUrls={(data.gallery_paths ?? []).map((path: string) => coverPublicUrl(path)).filter((url: string | null): url is string => Boolean(url))}
         sourceUrl={data.source_url ?? ""}
         hasPdf={Boolean(data.pdf_path)}
+        pdfFilename={data.pdf_filename ?? ""}
         locales={localeFields}
         downloads={(downloads as DownloadRow[] | null)?.map((row) => ({
           email: row.email,

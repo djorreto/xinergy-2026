@@ -6,6 +6,7 @@ import { locales, localeLabels, type Locale } from "@/i18n/routing";
 import { saveInsight, translateInsightLocales } from "@/app/admin/insights/actions";
 import type { ImageSize } from "@/lib/insights/types";
 import type { MediaLinks } from "@/lib/insights/languages";
+import { pdfDownloadName } from "@/lib/insights/pdf-name";
 import { insightAvailabilityLabel, toChileInputValue } from "@/lib/insights/schedule";
 import type { InsightLocaleFields } from "@/lib/insights/types";
 import { createClient } from "@/lib/supabase/client";
@@ -33,6 +34,7 @@ type Props = {
   galleryUrls: string[];
   sourceUrl: string;
   hasPdf: boolean;
+  pdfFilename: string;
   locales: Record<Locale, InsightLocaleFields>;
   downloads: DownloadRow[];
 };
@@ -110,6 +112,7 @@ export function InsightEditor({
   galleryUrls,
   sourceUrl: initialSourceUrl,
   hasPdf,
+  pdfFilename: initialPdfFilename,
   locales: initialLocales,
   downloads,
 }: Props) {
@@ -132,6 +135,8 @@ export function InsightEditor({
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
   const [uploading, setUploading] = useState<"cover" | "pdf" | "gallery" | null>(null);
+  const [pdfReady, setPdfReady] = useState(hasPdf);
+  const [pdfFilename, setPdfFilename] = useState(pdfDownloadName(initialPdfFilename, initialSlug));
   const current = copy[active] ?? emptyLocale();
   const validated = downloads.filter((row) => row.validatedAt).length;
 
@@ -186,6 +191,7 @@ export function InsightEditor({
       languages,
       mediaLinks,
       locales: copy,
+      pdfFilename,
     });
     setSaving(false);
     if (!result.ok) {
@@ -232,11 +238,18 @@ export function InsightEditor({
       const done = await fetch("/api/admin/uploads", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ insightId: id, kind: fileKind, path: payload.path }),
+        body: JSON.stringify({ insightId: id, kind: fileKind, path: payload.path, filename: file.name }),
       });
+      const saved = (await done.json()) as { ok?: boolean; filename?: string | null };
       if (!done.ok) {
         setError("El archivo se subió, pero no quedó asociado.");
         return;
+      }
+      if (fileKind === "pdf") {
+        setPdfReady(true);
+        if (saved.filename) {
+          setPdfFilename((current) => (current.trim() && current !== pdfDownloadName("", slug) ? current : saved.filename!));
+        }
       }
       setMessage(fileKind === "pdf" ? "PDF actualizado." : fileKind === "gallery" ? "Imagen agregada." : "Imagen actualizada.");
       router.refresh();
@@ -476,7 +489,18 @@ export function InsightEditor({
         ) : (
           <section className="border border-xinergy-charcoal/10 bg-white p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-xinergy-slate">PDF</p>
-            <p className="mt-3 text-sm text-xinergy-slate">{hasPdf ? "PDF cargado" : "Sin PDF"}</p>
+            {pdfReady ? (
+              <a href={`/api/admin/insights/${id}/pdf`} target="_blank" rel="noopener" className="mt-3 inline-block text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange underline-offset-4">
+                PDF cargado
+              </a>
+            ) : (
+              <p className="mt-3 text-sm text-xinergy-slate">Sin PDF</p>
+            )}
+            <label className="mt-4 block text-sm font-semibold text-xinergy-charcoal">
+              Nombre del archivo
+              <input className={fieldClass} value={pdfFilename} onChange={(event) => setPdfFilename(event.target.value)} />
+            </label>
+            <p className="mt-2 text-xs leading-relaxed text-xinergy-slate">Así lo descarga el cliente. Se guarda junto con el insight.</p>
             <input
               type="file"
               accept="application/pdf"

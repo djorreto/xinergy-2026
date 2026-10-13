@@ -12,6 +12,7 @@ import { getAdminUser } from "@/lib/auth/admin";
 import { isLiveInsight } from "@/lib/insights/schedule";
 import { clientIp, hashDownloadToken, hashIp, newDownloadToken, requestCountry, santiagoDate } from "@/lib/insights/tokens";
 import { createInsightLead } from "@/lib/monday/insights-board";
+import { pdfDownloadName } from "@/lib/insights/pdf-name";
 import { createAdminClient, supabaseConfigured } from "@/lib/supabase/admin";
 
 const HOUR_LIMIT = 8;
@@ -108,7 +109,7 @@ export async function requestInsightDownload(request: Request, input: RequestInp
 
   const { data: insight, error: insightError } = await admin
     .from("web_insights")
-    .select("id, slug, kind, status, available_at, pdf_path, web_insight_locales(locale, title)")
+    .select("id, slug, kind, status, available_at, pdf_path, pdf_filename, web_insight_locales(locale, title)")
     .eq("slug", slug)
     .eq("status", "published")
     .maybeSingle();
@@ -150,7 +151,7 @@ export async function requestInsightDownload(request: Request, input: RequestInp
   if (insertError || !saved) return { ok: false, error: "unavailable" };
 
   const signed = await admin.storage.from("insight-pdfs").createSignedUrl(insight.pdf_path, SIGNED_URL_SECONDS, {
-    download: `${insight.slug}.pdf`,
+    download: pdfDownloadName(insight.pdf_filename, insight.slug),
   });
   if (signed.error || !signed.data?.signedUrl) {
     await admin.from("web_insight_downloads").delete().eq("id", saved.id);
@@ -188,7 +189,7 @@ async function adminPreviewDownload(slug: string, locale: Locale): Promise<Reque
   const admin = await createAdminClient();
   const { data: insight, error } = await admin
     .from("web_insights")
-    .select("id, slug, kind, pdf_path, web_insight_locales(locale, title)")
+    .select("id, slug, kind, pdf_path, pdf_filename, web_insight_locales(locale, title)")
     .eq("slug", slug)
     .maybeSingle();
   const copies = insight?.web_insight_locales ?? [];
@@ -196,7 +197,7 @@ async function adminPreviewDownload(slug: string, locale: Locale): Promise<Reque
     ?? copies.find((item: { locale: string; title: string }) => item.title.trim());
   if (error || insight?.kind !== "documento" || !insight.pdf_path || !copy) return { ok: false, error: "invalid_insight" };
   const signed = await admin.storage.from("insight-pdfs").createSignedUrl(insight.pdf_path, SIGNED_URL_SECONDS, {
-    download: `${insight.slug}.pdf`,
+    download: pdfDownloadName(insight.pdf_filename, insight.slug),
   });
   if (signed.error || !signed.data?.signedUrl) return { ok: false, error: "unavailable" };
   return { ok: true, downloadUrl: signed.data.signedUrl };
@@ -221,7 +222,7 @@ type DownloadRow = {
   expires_at: string;
   validated_at: string | null;
   monday_item_id: string | null;
-  web_insights: { slug: string; kind: string | null; pdf_path: string | null; web_insight_locales: { locale: string; title: string }[] } | null;
+  web_insights: { slug: string; kind: string | null; pdf_path: string | null; pdf_filename: string | null; web_insight_locales: { locale: string; title: string }[] } | null;
 };
 
 export async function redeemInsightDownload(token: string): Promise<
@@ -237,7 +238,7 @@ export async function redeemInsightDownload(token: string): Promise<
   const { data, error } = await admin
     .from("web_insight_downloads")
     .select(
-      "id, insight_id, locale, first_name, last_name, email, email_domain, is_competitor, utm_source, utm_medium, utm_campaign, utm_content, utm_term, referrer, created_at, expires_at, validated_at, monday_item_id, web_insights(slug, kind, pdf_path, web_insight_locales(locale, title))",
+      "id, insight_id, locale, first_name, last_name, email, email_domain, is_competitor, utm_source, utm_medium, utm_campaign, utm_content, utm_term, referrer, created_at, expires_at, validated_at, monday_item_id, web_insights(slug, kind, pdf_path, pdf_filename, web_insight_locales(locale, title))",
     )
     .eq("token_hash", hashDownloadToken(token))
     .maybeSingle();
@@ -286,7 +287,7 @@ export async function redeemInsightDownload(token: string): Promise<
   }
 
   const signed = await admin.storage.from("insight-pdfs").createSignedUrl(pdfPath, SIGNED_URL_SECONDS, {
-    download: `${row.web_insights?.slug || "xinergy"}.pdf`,
+    download: pdfDownloadName(row.web_insights?.pdf_filename, row.web_insights?.slug || "xinergy"),
   });
   if (signed.error || !signed.data?.signedUrl) return { ok: false, reason: "unavailable", locale };
   return { ok: true, url: signed.data.signedUrl };

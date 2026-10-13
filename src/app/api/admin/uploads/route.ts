@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAdminUser } from "@/lib/auth/admin";
+import { pdfDownloadName } from "@/lib/insights/pdf-name";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const COVER_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
@@ -53,7 +54,7 @@ export async function PATCH(request: Request) {
   const user = await getAdminUser();
   if (!user) return NextResponse.json({ ok: false }, { status: 401 });
 
-  const body = (await request.json()) as { insightId?: string; kind?: "cover" | "pdf" | "gallery"; path?: string };
+  const body = (await request.json()) as { insightId?: string; kind?: "cover" | "pdf" | "gallery"; path?: string; filename?: string };
   const insightId = body.insightId?.trim() ?? "";
   const path = body.path?.trim() ?? "";
   const kind = body.kind;
@@ -72,14 +73,17 @@ export async function PATCH(request: Request) {
 
   const { data: current } = await admin
     .from("web_insights")
-    .select("cover_path, pdf_path, gallery_paths")
+    .select("slug, cover_path, pdf_path, pdf_filename, gallery_paths")
     .eq("id", insightId)
     .maybeSingle();
   const previous = kind === "pdf" ? current?.pdf_path : kind === "cover" ? current?.cover_path : null;
   const gallery = Array.isArray(current?.gallery_paths) ? current.gallery_paths : [];
+  const downloadName = current?.pdf_filename?.trim()
+    ? current.pdf_filename
+    : pdfDownloadName(body.filename, current?.slug || "xinergy");
   const update =
     kind === "pdf"
-      ? { pdf_path: path, updated_at: new Date().toISOString() }
+      ? { pdf_path: path, pdf_filename: downloadName, updated_at: new Date().toISOString() }
       : kind === "gallery"
         ? { gallery_paths: [...gallery, path], updated_at: new Date().toISOString() }
         : { cover_path: path, updated_at: new Date().toISOString() };
@@ -87,5 +91,9 @@ export async function PATCH(request: Request) {
   if (error) return NextResponse.json({ ok: false }, { status: 500 });
   if (previous && previous !== path && !previous.startsWith("/")) await admin.storage.from(bucket).remove([previous]);
 
-  return NextResponse.json({ ok: true, path });
+  return NextResponse.json({
+    ok: true,
+    path,
+    filename: kind === "pdf" ? downloadName : null,
+  });
 }
