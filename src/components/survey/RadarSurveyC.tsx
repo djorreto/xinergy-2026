@@ -452,7 +452,7 @@ function Welcome({ copy, onStart }: { copy: (typeof ui)[Lang]; onStart: () => vo
             {copy.welcomeNote[0]}<strong>{copy.welcomeNote[1]}</strong>{copy.welcomeNote[2]}<strong>{copy.welcomeNote[3]}</strong>{copy.welcomeNote[4]}
           </p>
         </div>
-        <div>
+        <div className="self-start border border-xinergy-charcoal/10 bg-white p-4 sm:p-5">
           <p className="font-semibold text-xinergy-charcoal">{copy.benefitsLabel}</p>
           <div className="mt-3 grid gap-3">
             {copy.benefits.map(([title, text]) => (
