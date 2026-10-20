@@ -309,8 +309,8 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   const position = Math.min(index, tracker.length - 1);
 
   return (
-    <article className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-8 sm:py-10 lg:px-10 [&_input]:scroll-mb-28 [&_label]:scroll-mb-28 [&_select]:scroll-mb-28 [&_textarea]:scroll-mb-28" lang={lang === "pt" ? "pt-BR" : lang}>
-      <div className="mb-6 flex items-center justify-between gap-4">
+    <article className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-8 lg:px-10 [&_input]:scroll-mb-28 [&_label]:scroll-mb-28 [&_select]:scroll-mb-28 [&_textarea]:scroll-mb-28" lang={lang === "pt" ? "pt-BR" : lang}>
+      <div className="mb-3 flex items-center justify-between gap-4">
         <XinergyLogo variant="color" priority />
         <div className="inline-flex border border-xinergy-charcoal/15" role="group" aria-label={lang === "en" ? "Language" : lang === "pt" ? "Idioma" : "Idioma"}>
           {(["es", "en", "pt"] as const).map((code) => (
@@ -320,7 +320,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
           ))}
         </div>
       </div>
-      <p className="label-editorial mb-6">{submitted ? copy.doneEyebrow : labels[position]}</p>
+      <p className="label-editorial mb-2">{submitted ? copy.doneEyebrow : labels[position]}</p>
 
       {submitted ? (
         <div>
@@ -330,10 +330,10 @@ export function RadarSurveyC({ locale }: { locale: string }) {
         </div>
       ) : (
         <>
-          <div className="mb-6 h-1 bg-xinergy-charcoal/10" aria-hidden>
+          <div className="mb-2 h-1 bg-xinergy-charcoal/10" aria-hidden>
             <div className="h-full bg-xinergy-orange transition-[width]" style={{ width: `${(position / Math.max(tracker.length - 1, 1)) * 100}%` }} />
           </div>
-          <ol className="mb-8 grid gap-1.5 text-xs text-xinergy-slate sm:gap-3" style={{ gridTemplateColumns: `repeat(${labels.length}, minmax(0, 1fr))` }}>
+          <ol className="mb-4 grid gap-1 text-xs text-xinergy-slate sm:gap-3" style={{ gridTemplateColumns: `repeat(${labels.length}, minmax(0, 1fr))` }}>
             {labels.map((name, item) => (
               <li key={name} className={`min-w-0 ${item === position ? "text-xinergy-charcoal" : ""}`} aria-current={item === position ? "step" : undefined}>
                 <span className={`grid h-8 w-8 place-items-center border text-xs font-semibold ${item === position ? "border-xinergy-orange bg-xinergy-orange text-xinergy-charcoal" : item < position ? "border-xinergy-charcoal bg-xinergy-charcoal text-white" : "border-xinergy-charcoal/20"}`}>
@@ -349,11 +349,11 @@ export function RadarSurveyC({ locale }: { locale: string }) {
                 event.preventDefault();
                 goForward();
               }}
-              className="flex flex-col gap-8"
+              className="flex flex-col gap-6"
             >
               <header>
                 <p className="text-sm text-xinergy-beige">{copy.stepOf(position + 1, tracker.length)}</p>
-                <h1 className="mt-2 font-display text-3xl leading-tight text-xinergy-charcoal sm:text-4xl">{heading(copy, step).title}</h1>
+                <h1 className="mt-2 font-display text-2xl leading-tight text-xinergy-charcoal sm:text-3xl">{heading(copy, step).title}</h1>
                 {heading(copy, step).notes.map((note) => <p key={note} className="mt-3 max-w-2xl text-xinergy-slate">{note}</p>)}
               </header>
               <div className="absolute -left-[9999px] h-0 overflow-hidden" aria-hidden="true">
@@ -404,7 +404,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
             </form>
           )}
           {step === "welcome" ? (
-            <div className="mt-8">
+            <div className="mt-4">
               <button type="button" className="btn-primary w-full sm:w-auto" onClick={next}>{copy.start}</button>
             </div>
           ) : null}
@@ -445,25 +445,31 @@ function heading(copy: (typeof ui)[Lang], step: Step) {
 function Welcome({ copy }: { copy: (typeof ui)[Lang] }) {
   return (
     <div>
-      <p className="text-sm font-semibold text-xinergy-slate">{copy.eyebrow}</p>
-      <h1 className="mt-3 font-display text-4xl leading-tight text-xinergy-charcoal sm:text-5xl">{copy.welcomeTitle}</h1>
-      <p className="mt-3 max-w-3xl text-xl leading-relaxed text-xinergy-slate">{copy.welcomeSubtitle}</p>
-      <p className="mt-8 text-lg font-semibold text-xinergy-charcoal">{copy.purposeLabel}</p>
-      <p className="mt-2 max-w-2xl text-lg leading-relaxed text-xinergy-charcoal">{copy.purpose}</p>
-      <p className="mt-4 max-w-3xl text-lg leading-relaxed text-xinergy-charcoal">{copy.welcomeLead}</p>
-      <p className="mt-4 max-w-3xl text-lg leading-relaxed text-xinergy-charcoal">
-        {copy.welcomeNote[0]}<strong>{copy.welcomeNote[1]}</strong>{copy.welcomeNote[2]}<strong>{copy.welcomeNote[3]}</strong>{copy.welcomeNote[4]}
-      </p>
-      <p className="mt-6 text-lg font-semibold text-xinergy-charcoal">{copy.benefitsLabel}</p>
-      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+      <p className="text-xs font-semibold text-xinergy-slate">{copy.eyebrow}</p>
+      <h1 className="mt-2 font-display text-2xl leading-tight text-xinergy-charcoal sm:text-3xl">{copy.welcomeTitle}</h1>
+      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-xinergy-slate sm:text-base">{copy.welcomeSubtitle}</p>
+      <div className="mt-4 grid gap-4 lg:grid-cols-2 lg:gap-10">
+        <div>
+          <p className="font-semibold text-xinergy-charcoal">{copy.purposeLabel}</p>
+          <p className="mt-2 text-sm leading-relaxed text-xinergy-charcoal sm:text-base">{copy.purpose}</p>
+          <p className="mt-3 text-sm leading-relaxed text-xinergy-charcoal sm:text-base">{copy.welcomeLead}</p>
+        </div>
+        <div>
+          <p className="text-sm leading-relaxed text-xinergy-charcoal sm:text-base">
+            {copy.welcomeNote[0]}<strong>{copy.welcomeNote[1]}</strong>{copy.welcomeNote[2]}<strong>{copy.welcomeNote[3]}</strong>{copy.welcomeNote[4]}
+          </p>
+          <p className="mt-4 font-semibold text-xinergy-charcoal">{copy.benefitsLabel}</p>
+        </div>
+      </div>
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
         {copy.benefits.map(([title, text]) => (
-          <div key={title} className="border-t-2 border-xinergy-orange pt-3">
-            <p className="font-display text-base text-xinergy-charcoal">{title}</p>
-            <p className="mt-1 text-sm text-xinergy-slate">{text}</p>
+          <div key={title} className="border-t-2 border-xinergy-orange pt-2">
+            <p className="font-semibold text-sm text-xinergy-charcoal">{title}</p>
+            <p className="mt-1 text-xs leading-relaxed text-xinergy-slate">{text}</p>
           </div>
         ))}
       </div>
-      <p className="mt-6 flex flex-wrap gap-x-5 gap-y-1 text-sm text-xinergy-slate">
+      <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-xinergy-slate">
         {copy.meta.map((item) => <span key={item}>{item}</span>)}
       </p>
     </div>

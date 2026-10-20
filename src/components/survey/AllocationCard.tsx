@@ -55,9 +55,9 @@ export function AllocationCard({
       <div className="mt-6 grid items-center gap-8 md:grid-cols-[minmax(0,40rem)_16.5rem]">
         <div className="flex flex-col gap-4">
           {slices.map((slice) => (
-            <div key={slice.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border border-xinergy-charcoal/15 border-l-4 px-3 py-3" style={{ borderLeftColor: slice.color }}>
+            <div key={slice.id} className="grid gap-3 border border-xinergy-charcoal/15 border-l-4 px-3 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center" style={{ borderLeftColor: slice.color }}>
               <label className="font-semibold text-xinergy-charcoal" htmlFor={`points-${blockId}-${slice.id}`}>{slice.name}</label>
-              <div className="flex items-center gap-2">
+              <div className="grid grid-cols-[2.75rem_minmax(4rem,5rem)_auto_2.75rem] items-center gap-2">
                 <button type="button" className="grid h-11 w-11 place-items-center border border-xinergy-charcoal/15 text-lg" aria-label={`${copy.decrease} ${slice.name}`} onClick={() => step(slice.id, -1)}>−</button>
                 <input
                   id={`points-${blockId}-${slice.id}`}
@@ -109,7 +109,7 @@ function AllocationPie({ slices, unassigned }: { slices: { id: string; name: str
 
   return (
     <figure className="mx-auto flex w-full max-w-xs flex-col items-center gap-4" aria-label={label}>
-      <svg viewBox="0 0 160 160" className="h-52 w-52" aria-hidden="true">
+      <svg viewBox="0 0 160 160" className="h-44 w-44 sm:h-52 sm:w-52" aria-hidden="true">
         {total <= 0 || drawn.length === 0 ? <circle cx="80" cy="80" r="74" fill={REST_COLOR} /> : null}
         {total > 0 && drawn.length === 1 ? <circle cx="80" cy="80" r="74" fill={drawn[0].color} /> : null}
         {total > 0 && drawn.length > 1

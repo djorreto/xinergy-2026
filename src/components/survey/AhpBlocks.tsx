@@ -100,9 +100,9 @@ function PairCard({ id, lang, token, invalid, onChange }: { id: string; lang: La
   const question = grouped ? copy.whichGroup : copy.which;
 
   return (
-    <fieldset id={`q-${id}`} className={`border p-4 ${invalid ? "border-red-700" : "border-xinergy-charcoal/15"}`}>
+    <fieldset id={`q-${id}`} className={`border p-3 sm:p-4 ${invalid ? "border-red-700" : "border-xinergy-charcoal/15"}`}>
       <legend className="px-1 font-semibold text-xinergy-charcoal">{question}</legend>
-      <div className="mt-3 grid grid-cols-2 items-stretch gap-3">
+      <div className="mt-3 grid grid-cols-2 items-stretch gap-2 sm:gap-3">
         <SidePanel name={left.name} items={left.items} contains={copy.contains} wash={washOf("a", saved.side, saved.intensity)} />
         <SidePanel name={right.name} items={right.items} contains={copy.contains} wash={washOf("b", saved.side, saved.intensity)} />
       </div>
@@ -110,7 +110,7 @@ function PairCard({ id, lang, token, invalid, onChange }: { id: string; lang: La
         {AHP_SCALE.map((point, index) => {
           const on = token === point.token;
           return (
-            <button key={point.token} type="button" role="radio" aria-checked={on} aria-label={`${point.n}. ${point[lang]}`} className={`min-w-0 border px-0.5 py-2 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xinergy-orange ${on ? "border-xinergy-orange bg-[#FFF1D6] font-semibold" : "border-xinergy-charcoal/15"}`} onClick={() => onChange(point.token)}>
+            <button key={point.token} type="button" role="radio" aria-checked={on} aria-label={`${point.n}. ${point[lang]}`} className={`min-h-11 min-w-0 border px-0.5 py-2 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xinergy-orange ${on ? "border-xinergy-orange bg-[#FFF1D6] font-semibold" : "border-xinergy-charcoal/15"}`} onClick={() => onChange(point.token)}>
               <span className="block text-sm sm:text-base">{point.n}</span>
               <span className="mt-1 hidden text-[10px] font-normal leading-tight text-xinergy-slate sm:block">{copy.scaleShort[index]}</span>
             </button>
@@ -135,7 +135,7 @@ function SidePanel({ name, items, contains, wash }: { name: string; items: strin
   const title = wash?.light ? "text-[#faf9f7]" : "text-xinergy-charcoal";
   const detail = wash?.light ? "text-[#faf9f7]" : "text-xinergy-charcoal";
   return (
-    <div className="px-3 py-3 text-left text-sm" style={wash ? { backgroundColor: wash.background } : undefined}>
+    <div className="px-2 py-3 text-left text-xs sm:px-3 sm:text-sm" style={wash ? { backgroundColor: wash.background } : undefined}>
       <p className={`font-semibold ${title}`}>{name}</p>
       {items.length ? (
         <div className={`mt-2 text-[11px] font-normal leading-snug ${detail}`}>
