@@ -343,7 +343,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
               </li>
             ))}
           </ol>
-          {step === "welcome" ? <Welcome copy={copy} /> : (
+          {step === "welcome" ? <Welcome copy={copy} onStart={next} /> : (
             <form
               onSubmit={(event) => {
                 event.preventDefault();
@@ -403,11 +403,6 @@ export function RadarSurveyC({ locale }: { locale: string }) {
               </div>
             </form>
           )}
-          {step === "welcome" ? (
-            <div className="mt-4">
-              <button type="button" className="btn-primary w-full sm:w-auto" onClick={next}>{copy.start}</button>
-            </div>
-          ) : null}
         </>
       )}
     </article>
@@ -442,7 +437,7 @@ function heading(copy: (typeof ui)[Lang], step: Step) {
   return { title: copy.closeTitle, notes: [copy.closeNote] };
 }
 
-function Welcome({ copy }: { copy: (typeof ui)[Lang] }) {
+function Welcome({ copy, onStart }: { copy: (typeof ui)[Lang]; onStart: () => void }) {
   return (
     <div>
       <p className="text-xs font-semibold text-xinergy-slate">{copy.eyebrow}</p>
@@ -453,25 +448,26 @@ function Welcome({ copy }: { copy: (typeof ui)[Lang] }) {
           <p className="font-semibold text-xinergy-charcoal">{copy.purposeLabel}</p>
           <p className="mt-2 text-sm leading-relaxed text-xinergy-charcoal sm:text-base">{copy.purpose}</p>
           <p className="mt-3 text-sm leading-relaxed text-xinergy-charcoal sm:text-base">{copy.welcomeLead}</p>
-        </div>
-        <div>
-          <p className="text-sm leading-relaxed text-xinergy-charcoal sm:text-base">
+          <p className="mt-3 text-sm leading-relaxed text-xinergy-charcoal sm:text-base">
             {copy.welcomeNote[0]}<strong>{copy.welcomeNote[1]}</strong>{copy.welcomeNote[2]}<strong>{copy.welcomeNote[3]}</strong>{copy.welcomeNote[4]}
           </p>
-          <p className="mt-4 font-semibold text-xinergy-charcoal">{copy.benefitsLabel}</p>
+        </div>
+        <div>
+          <p className="font-semibold text-xinergy-charcoal">{copy.benefitsLabel}</p>
+          <div className="mt-3 grid gap-3">
+            {copy.benefits.map(([title, text]) => (
+              <div key={title} className="border-t-2 border-xinergy-orange pt-2">
+                <p className="text-sm font-semibold text-xinergy-charcoal">{title}</p>
+                <p className="mt-1 text-xs leading-relaxed text-xinergy-slate">{text}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-xinergy-slate">
+            {copy.meta.map((item) => <span key={item}>{item}</span>)}
+          </p>
+          <button type="button" className="btn-primary mt-4 w-full sm:w-auto" onClick={onStart}>{copy.start}</button>
         </div>
       </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        {copy.benefits.map(([title, text]) => (
-          <div key={title} className="border-t-2 border-xinergy-orange pt-2">
-            <p className="font-semibold text-sm text-xinergy-charcoal">{title}</p>
-            <p className="mt-1 text-xs leading-relaxed text-xinergy-slate">{text}</p>
-          </div>
-        ))}
-      </div>
-      <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-xinergy-slate">
-        {copy.meta.map((item) => <span key={item}>{item}</span>)}
-      </p>
     </div>
   );
 }
