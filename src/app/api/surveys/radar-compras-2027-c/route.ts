@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   const admin = await createAdminClient();
   const { data: survey, error: surveyError } = await admin.from("web_surveys").select("id").eq("slug", SURVEY_SLUG_C).maybeSingle();
   if (surveyError || !survey) return NextResponse.json({ ok: false, error: "save" }, { status: 500 });
-  const { data, error } = await admin.from("web_survey_responses").insert({ survey_id: survey.id, ...parsed.row }).select("id").single();
-  if (error || !data) return NextResponse.json({ ok: false, error: "save" }, { status: 500 });
-  return NextResponse.json({ ok: true, id: data.id });
+  const { error } = await admin.from("web_survey_responses").insert({ survey_id: survey.id, ...parsed.row });
+  if (error) return NextResponse.json({ ok: false, error: "save" }, { status: 500 });
+  return NextResponse.json({ ok: true });
 }

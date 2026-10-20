@@ -87,7 +87,7 @@ const THEMES: { label: string; pattern: RegExp }[] = [
 export function buildPaperCut(people: PersonC[], options?: { sensitivity?: boolean }): PaperCut {
   const included = people.filter((person) => person.included);
   const operational = included.filter((person) => person.operational && (person.rol === "cpo" || person.rol === "scm"));
-  const executive = included.filter((person) => !person.operational);
+  const executive = included.filter((person) => person.rol === "cfo" || person.rol === "ceo" || person.rol === "otro" || !person.operational);
   const benchmark = buildBenchmarkC(included);
   const priority = operational.filter((person) => benchmark.priorityIds.includes(person.id));
   const principals = operational.filter((person) => benchmark.principalIds.includes(person.id));

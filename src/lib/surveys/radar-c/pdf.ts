@@ -1,6 +1,6 @@
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import { AHP } from "@/lib/surveys/radar-2027";
-import { AI_MODE, AI_SCALE, CAPABILITIES, INITIATIVE_COPY, REALIZATION, SAVINGS, STATUSES, TEAM_NEXT, YES_NO } from "@/lib/surveys/radar-c/instrument";
+import { AI_MODE, AI_SCALE, BUDGET_DIRECTION, CAPABILITIES, INITIATIVE_COPY, PARTICIPATION, REALIZATION, SAVINGS, SAVINGS_EXPECTATION, STATUSES, TEAM_NEXT, VALIDATE_FREQ, YES_NO_NS } from "@/lib/surveys/radar-c/instrument";
 import { buildBenchmarkC, type PersonC } from "@/lib/surveys/radar-c/report";
 import { formatPercent } from "@/lib/surveys/ahp";
 
@@ -121,11 +121,10 @@ export async function personPdfC(person: PersonC, stamp: string) {
       }
       writer.write(`Similitud con lo aprobado: ${person.similarity == null ? "no aplica" : formatPercent(person.similarity)}. ${person.eta == null ? person.etaReason : `La agenda aprobada, con sus propios recursos, cubre ${formatPercent(person.eta)} de la mejor combinación de ese mismo recurso.`}`);
     } else writer.write(person.motorReason);
-  } else {
+  }
+  if (person.rol === "cfo" || person.rol === "ceo" || !person.operational) {
     writer.heading("Su rol");
-    writer.facts(person.rol === "cfo"
-      ? [["Expectativa de ahorro validado", person.context.f1 || "sin dato"], ["Validación contra línea base", person.context.f2 || "sin dato"]]
-      : [["Presupuesto de eficiencia", person.context.g1 || "sin dato"], ["Momento en que participa Compras", person.context.g2 || "sin dato"]]);
+    writer.facts(roleFacts(person));
   }
   writer.heading("Para el comité");
   writer.write("Dónde la prioridad declarada todavía no tiene una medición o una decisión del mismo alcance.");
@@ -150,7 +149,7 @@ function scopeLabel(value: string) {
 function aiRows(person: PersonC): [string, string][] {
   const rows: [string, string][] = [];
   if (person.context.ia_activos) {
-    rows.push(["Proyectos en marcha", label(YES_NO, person.context.ia_activos)]);
+    rows.push(["Proyectos en marcha", label(YES_NO_NS, person.context.ia_activos)]);
     if (person.context.ia_activos === "si") {
       if (person.context.ia_activos_n) rows.push(["Cantidad", person.context.ia_activos_n]);
       if (person.context.ia_compras_n) rows.push(["De Compras", person.context.ia_compras_n]);
@@ -159,10 +158,26 @@ function aiRows(person: PersonC): [string, string][] {
     }
   }
   if (person.context.ia_presupuesto) {
-    rows.push(["Presupuesto de IA", label(YES_NO, person.context.ia_presupuesto)]);
+    rows.push(["Presupuesto de IA", label(YES_NO_NS, person.context.ia_presupuesto)]);
     if (person.context.ia_presupuesto === "si" && person.context.ia_presupuesto_compras) rows.push(["Parte de Compras", `${person.context.ia_presupuesto_compras}%`]);
   }
   return rows;
+}
+
+function roleFacts(person: PersonC): [string, string][] {
+  if (person.rol === "cfo") {
+    return [
+      ["Expectativa de ahorro validado", label(SAVINGS_EXPECTATION, person.context.f1)],
+      ["Validación contra línea base", label(VALIDATE_FREQ, person.context.f2)],
+    ];
+  }
+  if (person.rol === "ceo" || !person.operational) {
+    return [
+      ["Presupuesto de eficiencia", label(BUDGET_DIRECTION, person.context.g1)],
+      ["Momento en que participa Compras", label(PARTICIPATION, person.context.g2)],
+    ];
+  }
+  return [];
 }
 
 function label(options: { v: string; es: string }[], value: string) {

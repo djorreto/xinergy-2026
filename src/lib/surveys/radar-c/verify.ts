@@ -14,8 +14,11 @@ export function versionCChecks() {
   expect("ia sí sin cantidad no pasa", aiProblems({ ...blank, ia_activos: "si", ia_presupuesto: "no" }, "required").ia_activos_n === "count");
   expect("ia de compras no supera el total", aiProblems({ ...blank, ia_activos: "si", ia_activos_n: "2", ia_compras_n: "4", ia_escala: "si", ia_modo: "solos", ia_presupuesto: "si", ia_presupuesto_compras: "40" }, "required").ia_compras_n === "over");
   expect("ia completa no marca problemas", Object.keys(aiProblems({ ...blank, ia_activos: "no", ia_presupuesto: "si", ia_presupuesto_compras: "0" }, "required")).length === 0);
+  expect("ia no sé no pide cantidades", Object.keys(aiProblems({ ...blank, ia_activos: "ns", ia_presupuesto: "ns" }, "required")).length === 0);
+  expect("ia no sé no se lee como cantidad", aiProblems({ ...blank, ia_activos: "ns", ia_activos_n: "ns", ia_presupuesto: "no" }, "required").ia_activos_n == null);
   expect("equipo del cpo pide un entero", teamProblems("", "mas").equipo_n === "count");
   expect("equipo del cpo acepta tamaño y dirección", Object.keys(teamProblems("12", "igual")).length === 0);
+  expect("equipo próximo no sé es válido", Object.keys(teamProblems("12", "ns")).length === 0);
   expect("ruta ejecutiva 20", EXECUTIVE_FIELDS.length === 20);
   expect("nivel 1 es 0", maturityOf(1) === 0);
   expect("nivel 4 es 0,75", maturityOf(4) === TARGET_LEVEL);

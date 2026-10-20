@@ -11,7 +11,7 @@ import {
   AI_MODE,
   AI_SCALE,
   AI_STAGE,
-  YES_NO,
+  YES_NO_NS,
   TEAM_NEXT,
   aiProblems,
   teamProblems,
@@ -63,7 +63,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   const [reviewIndex, setReviewIndex] = useState(0);
   const [allocationQueue, setAllocationQueue] = useState<AllocationBlockId[]>([]);
   const [sending, setSending] = useState(false);
-  const [downloadId, setDownloadId] = useState("");
+  const [submitted, setSubmitted] = useState(false);
   const [ready, setReady] = useState(false);
   const copy = ui[lang];
   const rol = typeof draft.rol === "string" ? draft.rol : "";
@@ -93,17 +93,17 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   }, []);
 
   useEffect(() => {
-    if (!ready || downloadId) return;
+    if (!ready || submitted) return;
     try {
       localStorage.setItem(STORE, JSON.stringify({ lang, index, ahpBlock, ahpReview, reviewIndex, d: draft }));
     } catch {
       /* la encuesta igual se puede enviar */
     }
-  }, [ready, downloadId, lang, index, ahpBlock, ahpReview, reviewIndex, draft]);
+  }, [ready, submitted, lang, index, ahpBlock, ahpReview, reviewIndex, draft]);
 
   useEffect(() => {
     if (ready) window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [step, ahpBlock, ahpReview, reviewIndex, downloadId, ready]);
+  }, [step, ahpBlock, ahpReview, reviewIndex, submitted, ready]);
 
   const pairs = record(draft.prioridades_ahp);
   const pendingReview = blocksNeedingAllocation(pairs).filter((id) => !activeAllocation(id, pairs, draft.ahp_aclaracion));
@@ -160,19 +160,17 @@ export function RadarSurveyC({ locale }: { locale: string }) {
         if (!draft.g2) mark("g2");
       }
     }
-    if (step === "capacity" && procurement) CAPABILITIES.forEach((item) => {
+    if (step === "capacity") CAPABILITIES.forEach((item) => {
       if (!record(draft.capacidades)[item.id]) mark(item.id);
     });
-    if (step === "context" && procurement) {
+    if (step === "context") {
       for (const id of ["e1", "e2", "e3", "e4", "e5", "r1"]) if (!draft[id]) mark(id);
       if (!list(draft.e6).length) mark("e6");
-    }
-    if (step === "context") {
-      for (const [id, code] of Object.entries(aiProblems(aiDraft(draft), procurement ? "required" : "optional"))) {
+      for (const [id, code] of Object.entries(aiProblems(aiDraft(draft), "required"))) {
         mark(id, code === "count" ? copy.countInvalid : code === "over" ? copy.countOver : code === "share" ? copy.shareInvalid : copy.required);
       }
     }
-    if (step === "agenda" && procurement) INITIATIVE_COPY.forEach((item) => {
+    if (step === "agenda") INITIATIVE_COPY.forEach((item) => {
       if (!record(draft.agenda)[item.id]) mark(item.id);
     });
     if (step === "team" && rol === "cpo") {
@@ -272,18 +270,18 @@ export function RadarSurveyC({ locale }: { locale: string }) {
     setSending(true);
     setBanner("");
     try {
-      const response = await fetch("/api/surveys/radar-compras-2027-c", {
+      const response = await fetch("/api/surveys/radar-compras-2027", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ company_url: companyUrl, d: { ...draft, lang, version: SURVEY_VERSION_C, ruta_operativa: procurement } }),
       });
-      const payload = (await response.json()) as { ok?: boolean; id?: string };
-      if (!response.ok || !payload.ok || !payload.id) {
+      const payload = (await response.json()) as { ok?: boolean };
+      if (!response.ok || !payload.ok) {
         setBanner(copy.sendErr);
         setSending(false);
         return;
       }
-      setDownloadId(payload.id);
+      setSubmitted(true);
       try {
         localStorage.removeItem(STORE);
       } catch {
@@ -322,16 +320,13 @@ export function RadarSurveyC({ locale }: { locale: string }) {
           ))}
         </div>
       </div>
-      <p className="label-editorial mb-6">{downloadId ? copy.doneEyebrow : labels[position]}</p>
+      <p className="label-editorial mb-6">{submitted ? copy.doneEyebrow : labels[position]}</p>
 
-      {downloadId ? (
+      {submitted ? (
         <div>
           <h1 className="font-display text-4xl leading-tight text-xinergy-charcoal sm:text-5xl">{copy.doneTitle}</h1>
           <p className="mt-4 max-w-2xl text-lg text-xinergy-slate">{copy.doneLead}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a className="btn-primary" href={`/api/surveys/radar-compras-2027-c/devolucion?id=${downloadId}`}>{copy.doneDownload}</a>
-            <Link href="/" className="btn-secondary">{copy.doneHome}</Link>
-          </div>
+          <Link href="/" className="btn-primary mt-8 inline-flex">{copy.doneHome}</Link>
         </div>
       ) : (
         <>
@@ -358,8 +353,8 @@ export function RadarSurveyC({ locale }: { locale: string }) {
             >
               <header>
                 <p className="text-sm text-xinergy-beige">{copy.stepOf(position + 1, tracker.length)}</p>
-                <h1 className="mt-2 font-display text-3xl leading-tight text-xinergy-charcoal sm:text-4xl">{heading(copy, step, procurement).title}</h1>
-                {heading(copy, step, procurement).notes.map((note) => <p key={note} className="mt-3 max-w-2xl text-xinergy-slate">{note}</p>)}
+                <h1 className="mt-2 font-display text-3xl leading-tight text-xinergy-charcoal sm:text-4xl">{heading(copy, step).title}</h1>
+                {heading(copy, step).notes.map((note) => <p key={note} className="mt-3 max-w-2xl text-xinergy-slate">{note}</p>)}
               </header>
               <div className="absolute -left-[9999px] h-0 overflow-hidden" aria-hidden="true">
                 <input name="xinergy_hp" value={companyUrl} onChange={(event) => setCompanyUrl(event.target.value)} tabIndex={-1} autoComplete="off" />
@@ -435,16 +430,15 @@ function labelOf(copy: (typeof ui)[Lang], step: Step) {
   return operational[step];
 }
 
-function heading(copy: (typeof ui)[Lang], step: Step, procurement: boolean) {
-  const optional = procurement ? [] : [copy.optionalStep];
+function heading(copy: (typeof ui)[Lang], step: Step) {
   if (step === "contact") return { title: copy.contactTitle, notes: [copy.contactNote] };
   if (step === "profile") return { title: copy.profileTitle, notes: [copy.profileNote] };
   if (step === "ahp") return { title: copy.ahpTitle, notes: [] as string[] };
   if (step === "role") return { title: copy.roleTitle, notes: [] as string[] };
   if (step === "team") return { title: copy.teamTitle, notes: [copy.teamNote] };
-  if (step === "capacity") return { title: copy.capTitle, notes: [copy.capNote, ...optional] };
-  if (step === "context") return { title: copy.contextTitle, notes: [copy.contextNote, ...optional] };
-  if (step === "agenda") return { title: copy.agendaTitle, notes: [copy.agendaNote, ...optional] };
+  if (step === "capacity") return { title: copy.capTitle, notes: [copy.capNote, copy.optionalStep] };
+  if (step === "context") return { title: copy.contextTitle, notes: [copy.contextNote, copy.optionalStep] };
+  if (step === "agenda") return { title: copy.agendaTitle, notes: [copy.agendaNote, copy.optionalStep] };
   return { title: copy.closeTitle, notes: [copy.closeNote] };
 }
 
@@ -453,11 +447,15 @@ function Welcome({ copy }: { copy: (typeof ui)[Lang] }) {
     <div>
       <p className="text-sm font-semibold text-xinergy-slate">{copy.eyebrow}</p>
       <h1 className="mt-3 font-display text-4xl leading-tight text-xinergy-charcoal sm:text-5xl">{copy.welcomeTitle}</h1>
-      <p className="mt-6 text-sm font-semibold uppercase tracking-wide text-xinergy-beige">{copy.purposeLabel}</p>
+      <p className="mt-3 max-w-3xl text-xl leading-relaxed text-xinergy-slate">{copy.welcomeSubtitle}</p>
+      <p className="mt-8 text-lg font-semibold text-xinergy-charcoal">{copy.purposeLabel}</p>
       <p className="mt-2 max-w-2xl text-lg leading-relaxed text-xinergy-charcoal">{copy.purpose}</p>
-      <p className="mt-4 max-w-2xl text-xinergy-slate">{copy.welcomeLead}</p>
-      <p className="mt-3 max-w-2xl text-xinergy-slate">{copy.welcomeNote}</p>
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+      <p className="mt-4 max-w-3xl text-lg leading-relaxed text-xinergy-charcoal">{copy.welcomeLead}</p>
+      <p className="mt-4 max-w-3xl text-lg leading-relaxed text-xinergy-charcoal">
+        {copy.welcomeNote[0]}<strong>{copy.welcomeNote[1]}</strong>{copy.welcomeNote[2]}<strong>{copy.welcomeNote[3]}</strong>{copy.welcomeNote[4]}
+      </p>
+      <p className="mt-6 text-lg font-semibold text-xinergy-charcoal">{copy.benefitsLabel}</p>
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
         {copy.benefits.map(([title, text]) => (
           <div key={title} className="border-t-2 border-xinergy-orange pt-3">
             <p className="font-display text-base text-xinergy-charcoal">{title}</p>
@@ -608,7 +606,7 @@ function AiFacts({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft;
   return (
     <div className="grid gap-5 border-t border-xinergy-charcoal/10 pt-5">
       <p className="font-display text-xl text-xinergy-charcoal">{copy.title}</p>
-      <ChoiceField id="ia_activos" lang={lang} label={copy.running} options={YES_NO} value={String(draft.ia_activos || "")} invalid={invalid.ia_activos} onChange={setRunning} />
+      <ChoiceField id="ia_activos" lang={lang} label={copy.running} options={YES_NO_NS} value={String(draft.ia_activos || "")} invalid={invalid.ia_activos} onChange={setRunning} />
       {running ? (
         <>
           <NumberField id="ia_activos_n" label={copy.total} value={String(draft.ia_activos_n || "")} invalid={invalid.ia_activos_n} onChange={(value) => onChange("ia_activos_n", value)} />
@@ -617,7 +615,7 @@ function AiFacts({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft;
           <ChoiceField id="ia_modo" lang={lang} label={copy.mode} options={AI_MODE} value={String(draft.ia_modo || "")} invalid={invalid.ia_modo} onChange={(value) => onChange("ia_modo", value)} />
         </>
       ) : null}
-      <ChoiceField id="ia_presupuesto" lang={lang} label={copy.budget} options={YES_NO} value={String(draft.ia_presupuesto || "")} invalid={invalid.ia_presupuesto} onChange={setFunded} />
+      <ChoiceField id="ia_presupuesto" lang={lang} label={copy.budget} options={YES_NO_NS} value={String(draft.ia_presupuesto || "")} invalid={invalid.ia_presupuesto} onChange={setFunded} />
       {funded ? <NumberField id="ia_presupuesto_compras" label={copy.share} suffix="%" value={String(draft.ia_presupuesto_compras || "")} invalid={invalid.ia_presupuesto_compras} onChange={(value) => onChange("ia_presupuesto_compras", value)} /> : null}
     </div>
   );

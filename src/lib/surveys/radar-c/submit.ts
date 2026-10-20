@@ -46,27 +46,17 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
   if (!ahp) return { ok: false, honeypot };
 
   const rol = textOf("rol");
-  const procurement = rol === "cpo" || rol === "scm";
   const capacidades = record(data.capacidades);
   const agenda = record(data.agenda);
-  if (procurement) {
-    if (!CAPABILITIES.every((item) => LEVELS.has(capacidades[item.id] ?? ""))) return { ok: false, honeypot };
-    if (!oneOf(SAVINGS, textOf("e1")) || !oneOf(REALIZATION, textOf("e2")) || !oneOf(EXPOSURE, textOf("e3"))) return { ok: false, honeypot };
-    if (!oneOf(EFFORT_HOURS, textOf("e4")) || !oneOf(AI_STAGE, textOf("e5")) || !oneOf(DATA_READY, textOf("r1"))) return { ok: false, honeypot };
-    if (!barriersOk(data.e6)) return { ok: false, honeypot };
-    if (!INITIATIVE_COPY.every((item) => oneOf(STATUSES, agenda[item.id] ?? ""))) return { ok: false, honeypot };
-  } else {
-    if (Object.values(capacidades).some((value) => !LEVELS.has(value))) return { ok: false, honeypot };
-    if (!optionalOne(SAVINGS, textOf("e1")) || !optionalOne(REALIZATION, textOf("e2")) || !optionalOne(EXPOSURE, textOf("e3"))) return { ok: false, honeypot };
-    if (!optionalOne(EFFORT_HOURS, textOf("e4")) || !optionalOne(AI_STAGE, textOf("e5")) || !optionalOne(DATA_READY, textOf("r1"))) return { ok: false, honeypot };
-    if (codes(data.e6).length && !barriersOk(data.e6)) return { ok: false, honeypot };
-    if (Object.values(agenda).some((value) => !oneOf(STATUSES, value))) return { ok: false, honeypot };
-    if (rol === "cfo" && (!oneOf(SAVINGS_EXPECTATION, textOf("f1")) || !oneOf(VALIDATE_FREQ, textOf("f2")))) return { ok: false, honeypot };
-    if (rol === "ceo" && (!oneOf(BUDGET_DIRECTION, textOf("g1")) || !oneOf(PARTICIPATION, textOf("g2")))) return { ok: false, honeypot };
-    if (rol !== "cfo" && rol !== "ceo" && rol !== "otro") return { ok: false, honeypot };
-  }
+  if (!CAPABILITIES.every((item) => LEVELS.has(capacidades[item.id] ?? ""))) return { ok: false, honeypot };
+  if (!oneOf(SAVINGS, textOf("e1")) || !oneOf(REALIZATION, textOf("e2")) || !oneOf(EXPOSURE, textOf("e3"))) return { ok: false, honeypot };
+  if (!oneOf(EFFORT_HOURS, textOf("e4")) || !oneOf(AI_STAGE, textOf("e5")) || !oneOf(DATA_READY, textOf("r1"))) return { ok: false, honeypot };
+  if (!barriersOk(data.e6)) return { ok: false, honeypot };
+  if (!INITIATIVE_COPY.every((item) => oneOf(STATUSES, agenda[item.id] ?? ""))) return { ok: false, honeypot };
+  if (rol === "cfo" && (!oneOf(SAVINGS_EXPECTATION, textOf("f1")) || !oneOf(VALIDATE_FREQ, textOf("f2")))) return { ok: false, honeypot };
+  if (rol === "ceo" && (!oneOf(BUDGET_DIRECTION, textOf("g1")) || !oneOf(PARTICIPATION, textOf("g2")))) return { ok: false, honeypot };
   const ai = aiOf(data);
-  if (Object.keys(aiProblems(ai, procurement ? "required" : "optional")).length) return { ok: false, honeypot };
+  if (Object.keys(aiProblems(ai, "required")).length) return { ok: false, honeypot };
   const teamSize = rol === "cpo" ? textOf("equipo_n") : "";
   const teamNext = rol === "cpo" ? textOf("equipo_proximo") : "";
   if (rol === "cpo" && Object.keys(teamProblems(teamSize, teamNext)).length) return { ok: false, honeypot };
@@ -76,7 +66,7 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
     && barriersOk(data.e6)
     && Object.keys(aiProblems(ai, "required")).length === 0
     && INITIATIVE_COPY.every((item) => oneOf(STATUSES, agenda[item.id] ?? ""));
-  const operational = procurement || completeOperation;
+  const operational = completeOperation;
 
   const role = ROLES.find((item) => item.v === rol);
   return {
@@ -107,6 +97,7 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
       },
       answers: {
         version: SURVEY_VERSION_C,
+        ruta_operativa: data.ruta_operativa === true,
         ruta: operational ? "operativa" : "ejecutiva",
         prioridades_ahp: pairs,
         ahp_aclaracion: data.ahp_aclaracion ?? null,
@@ -165,10 +156,6 @@ function codes(value: unknown) {
 
 function oneOf(list: { v: string }[], value: string) {
   return list.some((item) => item.v === value);
-}
-
-function optionalOne(list: { v: string }[], value: string) {
-  return !value || oneOf(list, value);
 }
 
 function record(value: unknown) {

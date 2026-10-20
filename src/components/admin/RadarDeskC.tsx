@@ -13,7 +13,7 @@ import {
   AI_SCALE,
   AI_STAGE,
   TEAM_NEXT,
-  YES_NO,
+  YES_NO_NS,
   BARRIERS,
   BARRIER_EXCLUSIVE,
   BUDGET_DIRECTION,
@@ -275,21 +275,8 @@ function PersonDetail({ person }: { person: PersonC }) {
           </div>
           <p className="mt-3">Similitud con lo aprobado: {percent(person.similarity)}. {person.etaReason || `Alineación ${percent(person.eta)}.`}</p>
         </>
-      ) : (
-        <div className="mt-4 grid gap-2">
-          {person.rol === "cfo" ? (
-            <>
-              <p>Ahorro que espera para 2027: {named(SAVINGS_EXPECTATION, person.context.f1)}</p>
-              <p>Validación de Finanzas: {named(VALIDATE_FREQ, person.context.f2)}</p>
-            </>
-          ) : (
-            <>
-              <p>Presupuesto de eficiencia para 2027: {named(BUDGET_DIRECTION, person.context.g1)}</p>
-              <p>Cuándo entra Compras a esas decisiones: {named(PARTICIPATION, person.context.g2)}</p>
-            </>
-          )}
-        </div>
-      )}
+      ) : null}
+      {person.rol === "cfo" || person.rol === "ceo" || !person.operational ? <RoleAnswers person={person} /> : null}
       <AiFacts person={person} />
       {person.context.equipo_n || person.context.equipo_proximo ? <p className="mt-4">Equipo hoy: {person.context.equipo_n || "—"} personas. El próximo año: {named(TEAM_NEXT, person.context.equipo_proximo)}.</p> : null}
       {person.desafio.trim() ? <p className="mt-4 border-l-2 border-xinergy-orange pl-3">{person.desafio}</p> : null}
@@ -445,13 +432,33 @@ function AiFacts({ person }: { person: PersonC }) {
   if (!person.context.ia_activos && !person.context.ia_presupuesto) return null;
   return (
     <div className="mt-4 grid gap-2">
-      {person.context.ia_activos ? <p>Proyectos de IA en marcha: {named(YES_NO, person.context.ia_activos)}</p> : null}
+      {person.context.ia_activos ? <p>Proyectos de IA en marcha: {named(YES_NO_NS, person.context.ia_activos)}</p> : null}
       {person.context.ia_activos === "si" ? <p>Cantidad: {person.context.ia_activos_n || "—"} · de Compras: {person.context.ia_compras_n || "—"}</p> : null}
       {person.context.ia_escala ? <p>Pilotos escalados: {named(AI_SCALE, person.context.ia_escala)}</p> : null}
       {person.context.ia_modo ? <p>Cómo se hacen: {named(AI_MODE, person.context.ia_modo)}</p> : null}
-      {person.context.ia_presupuesto ? <p>Presupuesto de IA: {named(YES_NO, person.context.ia_presupuesto)}{person.context.ia_presupuesto === "si" && person.context.ia_presupuesto_compras ? ` · ${person.context.ia_presupuesto_compras}% es de Compras` : ""}</p> : null}
+      {person.context.ia_presupuesto ? <p>Presupuesto de IA: {named(YES_NO_NS, person.context.ia_presupuesto)}{person.context.ia_presupuesto === "si" && person.context.ia_presupuesto_compras ? ` · ${person.context.ia_presupuesto_compras}% es de Compras` : ""}</p> : null}
     </div>
   );
+}
+
+function RoleAnswers({ person }: { person: PersonC }) {
+  if (person.rol === "cfo") {
+    return (
+      <div className="mt-4 grid gap-2">
+        <p>Ahorro que espera para 2027: {named(SAVINGS_EXPECTATION, person.context.f1)}</p>
+        <p>Validación de Finanzas: {named(VALIDATE_FREQ, person.context.f2)}</p>
+      </div>
+    );
+  }
+  if (person.rol === "ceo" || !person.operational) {
+    return (
+      <div className="mt-4 grid gap-2">
+        <p>Presupuesto de eficiencia para 2027: {named(BUDGET_DIRECTION, person.context.g1)}</p>
+        <p>Cuándo entra Compras a esas decisiones: {named(PARTICIPATION, person.context.g2)}</p>
+      </div>
+    );
+  }
+  return null;
 }
 
 function named(options: readonly Choice[], value: string) {

@@ -47,15 +47,15 @@ export async function GET() {
     person.context.e5,
     person.context.r1,
     person.barriers.join("|"),
-    person.context.ia_activos,
+    shown(person.context.ia_activos),
     person.context.ia_activos_n,
     person.context.ia_compras_n,
-    person.context.ia_presupuesto,
+    shown(person.context.ia_presupuesto),
     person.context.ia_presupuesto_compras,
-    person.context.ia_escala,
-    person.context.ia_modo,
+    shown(person.context.ia_escala),
+    shown(person.context.ia_modo),
     person.context.equipo_n,
-    person.context.equipo_proximo,
+    shown(person.context.equipo_proximo),
     ...person.levels.map((level) => (level == null ? "ns" : String(level))),
     ...CAPABILITIES.map((_, index) => (person.weights ? String(person.weights[index] ?? "") : "")),
     ...CAPABILITIES.map((_, index) => (person.ahpWeights ? String(person.ahpWeights[index] ?? "") : "")),
@@ -116,4 +116,8 @@ export async function GET() {
       "Cache-Control": "no-store",
     },
   });
+}
+
+function shown(value: string) {
+  return value === "ns" ? "No sé" : value;
 }

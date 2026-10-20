@@ -8,8 +8,10 @@ const o = (v: string, es: string, en: string, pt: string): Choice => ({ v, es, e
 
 export { AHP, AHP_SCALE, CAPABILITIES, COUNTRIES, INDUSTRIES, INITIATIVE_COPY, ROLES };
 
+/** Identificador histórico en Supabase; no es la ruta pública. */
 export const SURVEY_SLUG_C = "radar-compras-2027-c";
-export const SURVEY_VERSION_C = "radar-2027-c-v1";
+export const SURVEY_PUBLIC_SLUG_C = "radar-compras-2027";
+export const SURVEY_VERSION_C = "radar-2027-c-v2";
 export const MODEL_VERSION_C = "C-1.0-seed";
 
 export const SCOPES: Choice[] = [
@@ -88,16 +90,23 @@ export const YES_NO: Choice[] = [
   o("no", "No", "No", "Não"),
 ];
 
+export const YES_NO_NS: Choice[] = [
+  ...YES_NO,
+  o("ns", "No sé", "I don't know", "Não sei"),
+];
+
 export const AI_SCALE: Choice[] = [
   o("si", "Sí, pasaron a una operación más amplia", "Yes, they moved into broader operation", "Sim, passaram a uma operação mais ampla"),
   o("no", "No, siguen en piloto", "No, they are still pilots", "Não, continuam em piloto"),
   o("sin", "No hemos tenido pilotos", "We have not had pilots", "Não tivemos pilotos"),
+  o("ns", "No sé", "I don't know", "Não sei"),
 ];
 
 export const AI_MODE: Choice[] = [
   o("solos", "Solos, con el equipo interno", "On our own, with the internal team", "Sozinhos, com a equipe interna"),
   o("partners", "Con partners", "With partners", "Com parceiros"),
   o("ambos", "Parte solos y parte con partners", "Partly on our own and partly with partners", "Parte sozinhos e parte com parceiros"),
+  o("ns", "No sé", "I don't know", "Não sei"),
 ];
 
 export type AiAnswers = {
@@ -110,14 +119,14 @@ export type AiAnswers = {
   ia_modo: string;
 };
 
-/** Sí o no, cantidades y un porcentaje. No se convierten en pesos ni en brecha. */
+/** Sí, no o no sé. Las cantidades y el porcentaje solo aplican con sí, y no se convierten en pesos ni en brecha. */
 export function aiProblems(draft: AiAnswers, mode: "required" | "optional") {
   const problems: Record<string, "required" | "count" | "over" | "share"> = {};
   const activos = draft.ia_activos;
   const presupuesto = draft.ia_presupuesto;
   const started = [activos, presupuesto, draft.ia_activos_n, draft.ia_compras_n, draft.ia_presupuesto_compras, draft.ia_escala, draft.ia_modo].some(Boolean);
   if (mode === "optional" && !started) return problems;
-  if (activos !== "si" && activos !== "no") {
+  if (!YES_NO_NS.some((item) => item.v === activos)) {
     if (mode === "required" || draft.ia_activos_n || draft.ia_compras_n || draft.ia_escala || draft.ia_modo) problems.ia_activos = "required";
   }
   if (activos === "si") {
@@ -127,7 +136,7 @@ export function aiProblems(draft: AiAnswers, mode: "required" | "optional") {
     if (!AI_SCALE.some((item) => item.v === draft.ia_escala)) problems.ia_escala = "required";
     if (!AI_MODE.some((item) => item.v === draft.ia_modo)) problems.ia_modo = "required";
   }
-  if (presupuesto !== "si" && presupuesto !== "no") {
+  if (!YES_NO_NS.some((item) => item.v === presupuesto)) {
     if (mode === "required" || draft.ia_presupuesto_compras) problems.ia_presupuesto = "required";
   }
   if (presupuesto === "si" && !wholeNumber(draft.ia_presupuesto_compras, 0, 100)) problems.ia_presupuesto_compras = "share";
@@ -144,6 +153,7 @@ export const TEAM_NEXT: Choice[] = [
   o("mas", "Más grande", "Larger", "Maior"),
   o("igual", "Igual", "The same", "Igual"),
   o("menos", "Más chico", "Smaller", "Menor"),
+  o("ns", "No sé", "I don't know", "Não sei"),
 ];
 
 /** Personas de hoy y la dirección del próximo año. No entra a la brecha. */
@@ -282,11 +292,11 @@ export const ui = {
     start: "Comenzar",
     stepOf: (current: number, total: number) => `Paso ${current} de ${total}`,
     benefits: [
-      ["Su devolución", "Al terminar puede descargar el resultado de este alcance."],
-      ["Informe del corte", "Se publica cuando hay una base agregada, sin nombres ni empresas."],
-      ["Ruta según el rol", "Dirección y Finanzas ven las mismas preguntas de operación. Pueden dejarlas en blanco."],
+      ["Visión regional", "Contribuye a construir una mirada sobre el futuro de Compras en América Latina."],
+      ["Análisis experto", "Integraremos las respuestas con analítica de datos y conocimiento experto de Xinergy."],
+      ["Resultados del estudio", "Compartiremos los principales hallazgos y tendencias regionales de forma agregada."],
     ] as [string, string][],
-    meta: ["Ruta breve", "Confidencial", "Resultados agregados"],
+    meta: ["15 minutos aprox.", "Tratamiento confidencial de las respuestas", "Resultados publicados de forma agregada"],
     doneEyebrow: "Listo",
     submit: "Enviar respuestas",
     sending: "Enviando…",
@@ -295,17 +305,19 @@ export const ui = {
     fix: "Revise las preguntas marcadas.",
     sendErr: "No pudimos enviar sus respuestas. Revise su conexión e intente de nuevo.",
     saved: "Su avance se guarda en este navegador.",
-    eyebrow: "Radar Compras 2027 · C (versión oficial)",
-    welcomeTitle: "Agenda de Compras para 2027",
-    purposeLabel: "Para qué",
-    purpose: "Xinergy está reuniendo cómo Compras quiere ordenar 2027. El propósito es ver, en cada alcance, qué debería pesar más, qué ya sostiene la práctica y qué decisiones están tomadas. Esa lectura vuelve a quien responde. El corte agregado se publica después, sin nombres ni empresas.",
-    welcomeLead: "Al terminar puede descargar la devolución de su alcance. Si no está en Compras, capacidad, contexto y agenda se pueden dejar en blanco.",
-    welcomeNote: "Los escenarios usan una matriz de demostración. No son un ahorro prometido ni un pronóstico.",
+    eyebrow: "Radar de Compras LatAm 2027",
+    welcomeTitle: "¿Hacia dónde van las compras en América Latina?",
+    welcomeSubtitle: "La visión de los líderes de la región sobre las prioridades, desafíos y transformaciones que marcarán el 2027.",
+    purposeLabel: "Queremos conocer tu visión.",
+    purpose: "En Xinergy estamos convocando a líderes de Compras, Finanzas y Dirección de empresas de América Latina para conocer cómo están preparando sus organizaciones para 2027.",
+    welcomeLead: "¿Dónde estarán las principales prioridades? ¿Qué desafíos enfrentarán las empresas? ¿Cómo evolucionarán la eficiencia, la gestión de riesgos, la tecnología, la inteligencia artificial y el talento?",
+    welcomeNote: ["A partir de sus respuestas, combinaremos ", "modelos de análisis de datos con la experiencia y conocimiento de nuestros especialistas", " para desarrollar el ", "Radar de Compras LATAM 2027", ", un estudio que buscará identificar las principales tendencias, prioridades y desafíos de las organizaciones de la región."] as [string, string, string, string, string],
+    benefitsLabel: "Tu perspectiva es parte de esta visión.",
     contactTitle: "Sus datos",
     contactNote: "El nombre y el correo quedan fuera del análisis agregado. Sirven para enviarle el informe si lo pide.",
     profileTitle: "Alcance que va a evaluar",
     profileNote: "Marque los países de ese alcance. Si son varios, elija corporativo multipaís: no cuenta como una respuesta por país.",
-    optionalStep: "Si no conoce la operación de este alcance, puede continuar sin responder. No es obligatorio.",
+    optionalStep: "Si no conoce algún punto, marque «No sé».",
     detailsShow: "Leer detalles del tratamiento de datos",
     detailsHide: "Ocultar detalles",
     ahpTitle: "Qué debería priorizar Compras en 2027",
@@ -338,7 +350,7 @@ export const ui = {
     capTitle: "Capacidad actual",
     capNote: "Elija el nivel más alto que describa prácticas habituales. Si solo cumple una parte, elija el anterior. “No sé” no es el nivel más bajo.",
     contextTitle: "Resultados y condiciones",
-    contextNote: "Son rangos y declaraciones. No se convierten en un promedio de ahorro ni corrigen la capacidad. Las de proyectos de IA piden sí o no, una cantidad o un porcentaje, y no entran al cálculo de la brecha.",
+    contextNote: "Son rangos y declaraciones. No se convierten en un promedio de ahorro ni corrigen la capacidad. En proyectos de IA puede marcar sí, no o «No sé». El detalle solo se pide si la respuesta es sí, y no entra al cálculo de la brecha.",
     countInvalid: "Ingrese un número entero.",
     countOver: "Los proyectos de Compras no pueden ser más que el total.",
     shareInvalid: "Ingrese un porcentaje entero de 0 a 100.",
@@ -358,9 +370,8 @@ export const ui = {
     countries: "Países del alcance",
     oneCountry: "Para el alcance de un país, marque solo uno. Si son varios, cambie a corporativo multipaís.",
     manyCountries: "Corporativo multipaís necesita al menos dos países.",
-    doneTitle: "Recibimos sus respuestas",
-    doneLead: "Puede descargar ahora la devolución de su alcance. El informe del corte se publica cuando haya una base agregada.",
-    doneDownload: "Descargar mi devolución",
+    doneTitle: "Gracias por participar",
+    doneLead: "Recibimos sus respuestas. Ahora serán procesadas y revisadas junto con el resto del estudio. Si solicitó el informe, lo recibirá antes de su publicación y será invitado a la presentación de resultados.",
     doneHome: "Volver a Xinergy",
   },
   en: {
@@ -371,11 +382,11 @@ export const ui = {
     start: "Start",
     stepOf: (current: number, total: number) => `Step ${current} of ${total}`,
     benefits: [
-      ["Your return", "At the end you can download the result for this scope."],
-      ["Cut report", "It is published when there is an aggregate base, without names or companies."],
-      ["Route by role", "Executives and Finance see the same operating questions. They can leave them blank."],
+      ["Regional perspective", "Contribute to building a view of the future of Procurement in Latin America."],
+      ["Expert analysis", "We will combine the responses with data analytics and Xinergy's expert knowledge."],
+      ["Study results", "We will share the main findings and regional trends in aggregate form."],
     ] as [string, string][],
-    meta: ["Short route", "Confidential", "Aggregate results"],
+    meta: ["About 15 minutes", "Confidential treatment of responses", "Results published in aggregate form"],
     doneEyebrow: "Done",
     submit: "Submit answers",
     sending: "Sending…",
@@ -384,17 +395,19 @@ export const ui = {
     fix: "Check the marked questions.",
     sendErr: "We could not send your answers. Check your connection and try again.",
     saved: "Your progress is saved in this browser.",
-    eyebrow: "Procurement Radar 2027 · C (official version)",
-    welcomeTitle: "Procurement agenda for 2027",
-    purposeLabel: "Why",
-    purpose: "Xinergy is gathering how Procurement wants to set 2027. The purpose is to see, for each scope, what should weigh more, what practice can already sustain, and which decisions are already made. That reading goes back to the person who answers. The aggregate cut is published later, without names or companies.",
-    welcomeLead: "At the end you can download the return for your scope. If you are not in Procurement, capability, context and the agenda can be left blank.",
-    welcomeNote: "Scenarios use a demonstration matrix. They are not a promised saving or a forecast.",
+    eyebrow: "Latin America Procurement Radar 2027",
+    welcomeTitle: "Where is Procurement heading in Latin America?",
+    welcomeSubtitle: "The perspective of the region's leaders on the priorities, challenges, and transformations that will shape 2027.",
+    purposeLabel: "We want to know your perspective.",
+    purpose: "At Xinergy, we are bringing together Procurement, Finance, and executive leaders from companies across Latin America to understand how they are preparing their organizations for 2027.",
+    welcomeLead: "Where will the main priorities lie? What challenges will companies face? How will efficiency, risk management, technology, artificial intelligence, and talent evolve?",
+    welcomeNote: ["Based on your responses, we will combine ", "data analysis models with the experience and knowledge of our specialists", " to develop the ", "Latin America Procurement Radar 2027", ", a study that will identify the main trends, priorities, and challenges facing organizations across the region."] as [string, string, string, string, string],
+    benefitsLabel: "Your perspective is part of this view.",
     contactTitle: "Your details",
     contactNote: "Your name and email stay out of the aggregate analysis. They are used to send the report if you ask for it.",
     profileTitle: "Scope you will assess",
     profileNote: "Mark the countries of that scope. If there are several, choose multi-country corporate: it does not count as one answer per country.",
-    optionalStep: "If you do not know the operation of this scope, you can continue without answering. It is not required.",
+    optionalStep: "If you do not know a point, choose “I don't know”.",
     detailsShow: "Read the data processing details",
     detailsHide: "Hide details",
     ahpTitle: "What Procurement should prioritize in 2027",
@@ -427,7 +440,7 @@ export const ui = {
     capTitle: "Current capability",
     capNote: "Choose the highest level that describes habitual practice. If you only meet part of a level, choose the one below. “I don't know” is not the lowest level.",
     contextTitle: "Results and conditions",
-    contextNote: "These are ranges and statements. They are not turned into an average saving and they do not overwrite capability. The AI project questions ask for yes or no, a count or a percentage, and they do not enter the gap calculation.",
+    contextNote: "These are ranges and statements. They are not turned into an average saving and they do not overwrite capability. AI project questions accept yes, no or “I don't know”. The detail is asked only when the answer is yes, and it does not enter the gap calculation.",
     countInvalid: "Enter a whole number.",
     countOver: "Procurement projects cannot exceed the total.",
     shareInvalid: "Enter a whole percentage from 0 to 100.",
@@ -447,9 +460,8 @@ export const ui = {
     countries: "Countries in the scope",
     oneCountry: "For a one-country scope, mark only one. If there are several, switch to multi-country corporate.",
     manyCountries: "Multi-country corporate needs at least two countries.",
-    doneTitle: "We received your answers",
-    doneLead: "You can download the return for your scope now. The cut report is published when there is an aggregate base.",
-    doneDownload: "Download my return",
+    doneTitle: "Thank you for taking part",
+    doneLead: "We received your answers. They will now be processed and reviewed with the rest of the study. If you requested the report, you will receive it before publication and an invitation to the results presentation.",
     doneHome: "Back to Xinergy",
   },
   pt: {
@@ -460,11 +472,11 @@ export const ui = {
     start: "Começar",
     stepOf: (current: number, total: number) => `Passo ${current} de ${total}`,
     benefits: [
-      ["Sua devolutiva", "No final você pode baixar o resultado deste escopo."],
-      ["Relatório do corte", "Sai quando houver uma base agregada, sem nomes nem empresas."],
-      ["Rota segundo o papel", "Direção e Finanças veem as mesmas perguntas de operação. Podem deixá-las em branco."],
+      ["Visão regional", "Contribua para construir uma visão sobre o futuro de Compras na América Latina."],
+      ["Análise especializada", "Integraremos as respostas com análise de dados e o conhecimento especializado da Xinergy."],
+      ["Resultados do estudo", "Compartilharemos as principais conclusões e tendências regionais de forma agregada."],
     ] as [string, string][],
-    meta: ["Rota breve", "Confidencial", "Resultados agregados"],
+    meta: ["Aproximadamente 15 minutos", "Tratamento confidencial das respostas", "Resultados publicados de forma agregada"],
     doneEyebrow: "Pronto",
     submit: "Enviar respostas",
     sending: "Enviando…",
@@ -473,17 +485,19 @@ export const ui = {
     fix: "Revise as perguntas marcadas.",
     sendErr: "Não conseguimos enviar suas respostas. Verifique a conexão e tente de novo.",
     saved: "Seu avanço fica salvo neste navegador.",
-    eyebrow: "Radar de Compras 2027 · C (versão oficial)",
-    welcomeTitle: "Agenda de Compras para 2027",
-    purposeLabel: "Para quê",
-    purpose: "A Xinergy está reunindo como Compras quer ordenar 2027. O propósito é ver, em cada escopo, o que deveria pesar mais, o que a prática já sustenta e quais decisões estão tomadas. Essa leitura volta para quem responde. O corte agregado sai depois, sem nomes nem empresas.",
-    welcomeLead: "No final você pode baixar a devolutiva do seu escopo. Se não está em Compras, capacidade, contexto e agenda podem ficar em branco.",
-    welcomeNote: "Os cenários usam uma matriz de demonstração. Não são uma economia prometida nem uma previsão.",
+    eyebrow: "Radar de Compras LatAm 2027",
+    welcomeTitle: "Para onde vão as compras na América Latina?",
+    welcomeSubtitle: "A visão dos líderes da região sobre as prioridades, os desafios e as transformações que marcarão 2027.",
+    purposeLabel: "Queremos conhecer sua visão.",
+    purpose: "Na Xinergy, estamos reunindo líderes de Compras, Finanças e Direção de empresas da América Latina para entender como estão preparando suas organizações para 2027.",
+    welcomeLead: "Onde estarão as principais prioridades? Quais desafios as empresas enfrentarão? Como evoluirão a eficiência, a gestão de riscos, a tecnologia, a inteligência artificial e o talento?",
+    welcomeNote: ["A partir das suas respostas, combinaremos ", "modelos de análise de dados com a experiência e o conhecimento dos nossos especialistas", " para desenvolver o ", "Radar de Compras LATAM 2027", ", um estudo que buscará identificar as principais tendências, prioridades e desafios das organizações da região."] as [string, string, string, string, string],
+    benefitsLabel: "Sua perspectiva faz parte desta visão.",
     contactTitle: "Seus dados",
     contactNote: "O nome e o e-mail ficam fora da análise agregada. Servem para enviar o relatório se você pedir.",
     profileTitle: "Escopo que vai avaliar",
     profileNote: "Marque os países desse escopo. Se forem vários, escolha corporativo multipaís: não conta como uma resposta por país.",
-    optionalStep: "Se não conhece a operação deste escopo, pode continuar sem responder. Não é obrigatório.",
+    optionalStep: "Se não conhece algum ponto, marque “Não sei”.",
     detailsShow: "Ler os detalhes do tratamento de dados",
     detailsHide: "Ocultar detalhes",
     ahpTitle: "O que Compras deveria priorizar em 2027",
@@ -516,7 +530,7 @@ export const ui = {
     capTitle: "Capacidade atual",
     capNote: "Escolha o nível mais alto que descreva práticas habituais. Se só cumpre uma parte, escolha o anterior. “Não sei” não é o nível mais baixo.",
     contextTitle: "Resultados e condições",
-    contextNote: "São faixas e declarações. Não viram uma média de economia nem corrigem a capacidade. As de projetos de IA pedem sim ou não, uma quantidade ou um percentual, e não entram no cálculo da lacuna.",
+    contextNote: "São faixas e declarações. Não viram uma média de economia nem corrigem a capacidade. Nas perguntas de projetos de IA pode marcar sim, não ou “Não sei”. O detalhe só é pedido se a resposta for sim, e não entra no cálculo da lacuna.",
     countInvalid: "Informe um número inteiro.",
     countOver: "Os projetos de Compras não podem passar do total.",
     shareInvalid: "Informe um percentual inteiro de 0 a 100.",
@@ -536,9 +550,8 @@ export const ui = {
     countries: "Países do escopo",
     oneCountry: "Para o escopo de um país, marque só um. Se forem vários, mude para corporativo multipaís.",
     manyCountries: "Corporativo multipaís precisa de pelo menos dois países.",
-    doneTitle: "Recebemos suas respostas",
-    doneLead: "Você pode baixar agora a devolutiva do seu escopo. O relatório do corte sai quando houver uma base agregada.",
-    doneDownload: "Baixar minha devolutiva",
+    doneTitle: "Obrigado por participar",
+    doneLead: "Recebemos suas respostas. Agora elas serão processadas e revisadas junto com o restante do estudo. Se solicitou o relatório, você o receberá antes da publicação e será convidado para a apresentação dos resultados.",
     doneHome: "Voltar à Xinergy",
   },
 } as const;
