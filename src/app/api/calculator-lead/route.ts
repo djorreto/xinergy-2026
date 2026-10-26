@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import type { CalculatorInput } from "@/lib/calculator";
+import { domainAcceptsMail } from "@/lib/insights/mail-domain";
 import { clientIp } from "@/lib/insights/tokens";
+import { emailDomain, isBlockedEmail } from "@/lib/insights/validate";
 import { submitMondayCalculatorForm } from "@/lib/monday-form-submit";
+import { requestFormGate } from "@/lib/security/form-gate";
 import { honeypotTripped, isRateLimited, verifyTurnstile } from "@/lib/security/public-form";
 
 function isValidEmail(email: string): boolean {
@@ -45,8 +48,12 @@ export async function POST(request: Request) {
 
   if (honeypotTripped(companyUrl)) return NextResponse.json({ ok: true });
 
-  if (!isValidEmail(email) || email.length > 160) {
+  if (!isValidEmail(email) || email.length > 160 || isBlockedEmail(email) || !(await domainAcceptsMail(emailDomain(email)))) {
     return NextResponse.json({ ok: false, error: "invalid_email" }, { status: 400 });
+  }
+
+  if ((await requestFormGate(request)) !== "ok") {
+    return NextResponse.json({ ok: false, error: "captcha" }, { status: 400 });
   }
 
   if (!input) {

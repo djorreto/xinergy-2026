@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { WHATSAPP_PHONE } from "@/lib/whatsapp";
+import { WhatsAppLink } from "@/components/shared/WhatsAppLink";
 import {
   AHP,
   AHP_SCALE,
@@ -183,7 +183,6 @@ export function RadarSurvey({ locale, linkedin }: { locale: string; linkedin: st
       : lang === "en"
         ? "Hello, I took Xinergy's Procurement Radar. I would like to talk about efficiencies in my company."
         : "Hola, respondo el Radar de Compras de Xinergy. Me gustaría conversar sobre eficiencias en mi empresa.";
-  const whatsapp = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappText)}`;
 
   return (
     <article className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-8 sm:py-10 lg:px-10 [&_input]:scroll-mb-28 [&_label]:scroll-mb-28 [&_select]:scroll-mb-28 [&_textarea]:scroll-mb-28" lang={lang === "pt" ? "pt-BR" : lang}>
@@ -227,7 +226,7 @@ export function RadarSurvey({ locale, linkedin }: { locale: string; linkedin: st
       ) : null}
 
       {sent ? (
-        <Done copy={copy} whatsapp={whatsapp} linkedin={linkedin} />
+        <Done copy={copy} whatsappText={whatsappText} linkedin={linkedin} />
       ) : step === 0 ? (
         <Welcome copy={copy} />
       ) : (
@@ -351,7 +350,7 @@ function Welcome({ copy }: { copy: SurveyCopy }) {
   );
 }
 
-function Done({ copy, whatsapp, linkedin }: { copy: SurveyCopy; whatsapp: string; linkedin: string }) {
+function Done({ copy, whatsappText, linkedin }: { copy: SurveyCopy; whatsappText: string; linkedin: string }) {
   return (
     <div>
       <h1 className="font-display text-4xl leading-tight text-xinergy-charcoal sm:text-5xl">{copy.doneTitle}</h1>
@@ -369,9 +368,9 @@ function Done({ copy, whatsapp, linkedin }: { copy: SurveyCopy; whatsapp: string
           <Link href="/contacto" className="btn-primary w-full">
             {copy.contact}
           </Link>
-          <a href={whatsapp} className="btn-secondary w-full" target="_blank" rel="noreferrer">
+          <WhatsAppLink text={whatsappText} ctaLocation="survey" className="btn-secondary w-full">
             {copy.whatsapp}
-          </a>
+          </WhatsAppLink>
           <a href={linkedin} className="btn-secondary w-full" target="_blank" rel="noreferrer">
             {copy.linkedin}
           </a>

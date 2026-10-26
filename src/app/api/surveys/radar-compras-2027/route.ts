@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requestFormGate } from "@/lib/security/form-gate";
 import { isRateLimited } from "@/lib/security/public-form";
 import { createAdminClient, supabaseConfigured } from "@/lib/supabase/admin";
 import { SURVEY_SLUG_C } from "@/lib/surveys/radar-c/instrument";
@@ -15,6 +16,9 @@ export async function POST(request: Request) {
   const parsed = parseOptionC(body);
   if (!parsed.ok) {
     if (parsed.honeypot) return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: false, error: "invalid" }, { status: 400 });
+  }
+  if ((await requestFormGate(request)) !== "ok") {
     return NextResponse.json({ ok: false, error: "invalid" }, { status: 400 });
   }
   if (await isRateLimited(request, "survey")) {

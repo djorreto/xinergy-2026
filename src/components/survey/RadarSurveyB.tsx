@@ -25,7 +25,7 @@ import {
   type Choice,
   type Lang,
 } from "@/lib/surveys/radar-b/instrument";
-import { WHATSAPP_PHONE } from "@/lib/whatsapp";
+import { WhatsAppLink } from "@/components/shared/WhatsAppLink";
 
 const STORE = "xinergy-radar-2027-b";
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -196,7 +196,6 @@ export function RadarSurveyB({ locale, linkedin }: { locale: string; linkedin: s
   }
 
   const whatsappText = lang === "pt" ? "Olá, respondi a opção B do Radar de Compras da Xinergy." : lang === "en" ? "Hello, I completed option B of Xinergy's Procurement Radar." : "Hola, respondí la opción B del Radar de Compras de Xinergy.";
-  const whatsapp = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(whatsappText)}`;
 
   const tracker: Step[] = knowledge === "no"
     ? ["welcome", "contact", "profile", "ahp", "knowledge", "challenge"]
@@ -220,7 +219,7 @@ export function RadarSurveyB({ locale, linkedin }: { locale: string; linkedin: s
           <h1 className="font-display text-4xl leading-tight text-xinergy-charcoal sm:text-5xl">{copy.doneTitle}</h1>
           <p className="mt-4 max-w-xl text-lg text-xinergy-slate">{copy.doneLead}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a className="btn-primary" href={whatsapp}>{copy.whatsapp}</a>
+            <WhatsAppLink text={whatsappText} ctaLocation="survey" className="btn-primary">{copy.whatsapp}</WhatsAppLink>
             <Link href="/" className="btn-secondary">{copy.doneHome}</Link>
           </div>
           <p className="mt-6 text-sm text-xinergy-slate">{linkedin}</p>

@@ -5,6 +5,7 @@ import { INSIGHTS_SESSION_COOKIE, readSessionToken } from "./lib/auth/insights-s
 import { localeFromCountry } from "./i18n/geo";
 import { routing, type Locale } from "./i18n/routing";
 import { isSurveyPath } from "./lib/surveys/path";
+import { createFormGate, FORM_GATE_COOKIE, formGateCookieOptions, formGateIsCurrent } from "./lib/security/form-gate";
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
 
@@ -40,6 +41,13 @@ function detectLocale(request: NextRequest): Locale {
 
 function noindex(response: NextResponse) {
   response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  return response;
+}
+
+async function withFormGate(request: NextRequest, response: NextResponse) {
+  const current = request.cookies.get(FORM_GATE_COOKIE)?.value;
+  if (await formGateIsCurrent(current)) return response;
+  response.cookies.set(FORM_GATE_COOKIE, await createFormGate(), formGateCookieOptions());
   return response;
 }
 
@@ -110,10 +118,10 @@ export default async function middleware(request: NextRequest) {
     const locale = detectLocale(request);
     const url = request.nextUrl.clone();
     url.pathname = pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
-    return hideFromSearch(pathname, NextResponse.redirect(url));
+    return hideFromSearch(pathname, await withFormGate(request, NextResponse.redirect(url)));
   }
 
-  return hideFromSearch(pathname, intlMiddleware(request));
+  return hideFromSearch(pathname, await withFormGate(request, intlMiddleware(request)));
 }
 
 export const config = {
