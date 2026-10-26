@@ -14,6 +14,7 @@ import {
 } from "@/lib/calculator";
 import { getCalculatorCopy, formatUsd } from "@/lib/calculator-i18n";
 import { isValidEmail, submitCalculatorLead } from "@/lib/calculator-lead";
+import { TurnstileField, turnstileSiteKey } from "@/components/shared/TurnstileField";
 
 const defaultAnswers = [2, 2, 2, 2, 2];
 
@@ -31,7 +32,10 @@ export function EfficiencyCalculator() {
   const [hasNegotiationTool, setHasNegotiationTool] = useState<boolean | null>(null);
   const [hasStockPlanningTool, setHasStockPlanningTool] = useState<boolean | null>(null);
   const [email, setEmail] = useState("");
+  const [companyUrl, setCompanyUrl] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
+  const siteKey = turnstileSiteKey();
   const [submitting, setSubmitting] = useState(false);
   const [resultsUnlocked, setResultsUnlocked] = useState(false);
 
@@ -70,8 +74,12 @@ export function EfficiencyCalculator() {
 
     setEmailError(null);
     setSubmitting(true);
-    await submitCalculatorLead(trimmed, input);
+    const lead = await submitCalculatorLead(trimmed, input, { turnstileToken, companyUrl });
     setSubmitting(false);
+    if (!lead.ok && (lead.error === "captcha" || lead.error === "rate_limited")) {
+      setEmailError(lead.error === "captcha" ? t("captcha") : t("rateLimited"));
+      return;
+    }
     setResultsUnlocked(true);
   };
 
@@ -79,7 +87,7 @@ export function EfficiencyCalculator() {
     t(`maturityLevels.${level}` as "maturityLevels.Inicial");
 
   return (
-    <div className="overflow-hidden border border-xinergy-charcoal/10 bg-white shadow-[0_32px_64px_-24px_rgba(63,55,75,0.18)]">
+    <div className="relative overflow-hidden border border-xinergy-charcoal/10 bg-white shadow-[0_32px_64px_-24px_rgba(63,55,75,0.18)]">
       <div className="border-b border-xinergy-charcoal/8 bg-xinergy-cream/60 px-4 py-4 sm:px-6 sm:py-5 lg:px-10">
         <div className="flex items-center justify-between gap-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-xinergy-slate">
@@ -255,6 +263,18 @@ export function EfficiencyCalculator() {
                   <p className="mt-2 text-xs text-red-600">{emailError}</p>
                 )}
               </fieldset>
+              <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+                <label>
+                  Website
+                  <input
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={companyUrl}
+                    onChange={(event) => setCompanyUrl(event.target.value)}
+                  />
+                </label>
+              </div>
+              <TurnstileField onToken={setTurnstileToken} />
             </div>
           )}
 
@@ -345,7 +365,7 @@ export function EfficiencyCalculator() {
               <button
                 type="button"
                 onClick={handleUnlockResults}
-                disabled={submitting}
+                disabled={submitting || (Boolean(siteKey) && !turnstileToken)}
                 className="btn-primary w-full disabled:opacity-60 sm:w-auto"
               >
                 {submitting ? t("waiting") : t("seeResults")}

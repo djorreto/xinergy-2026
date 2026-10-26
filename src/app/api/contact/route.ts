@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { submitMondayContactForm } from "@/lib/monday-form-submit";
+import { clientIp } from "@/lib/insights/tokens";
+import { honeypotTripped, isRateLimited, verifyTurnstile } from "@/lib/security/public-form";
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
@@ -12,6 +14,8 @@ export async function POST(request: Request) {
   let company = "";
   let role = "";
   let message = "";
+  let companyUrl = "";
+  let turnstileToken = "";
 
   try {
     const payload = (await request.json()) as {
@@ -21,6 +25,8 @@ export async function POST(request: Request) {
       company?: string;
       role?: string;
       message?: string;
+      company_url?: string;
+      turnstileToken?: string;
     };
     name = payload.name?.trim() ?? "";
     email = payload.email?.trim() ?? "";
@@ -28,20 +34,37 @@ export async function POST(request: Request) {
     company = payload.company?.trim() ?? "";
     role = payload.role?.trim() ?? "";
     message = payload.message?.trim() ?? "";
+    companyUrl = payload.company_url?.trim() ?? "";
+    turnstileToken = payload.turnstileToken?.trim() ?? "";
   } catch {
     return NextResponse.json({ ok: false, error: "invalid_payload" }, { status: 400 });
   }
 
-  if (!name || name.length < 2) {
+  if (honeypotTripped(companyUrl)) return NextResponse.json({ ok: true });
+
+  if (!name || name.length < 2 || name.length > 80) {
     return NextResponse.json({ ok: false, error: "invalid_name" }, { status: 400 });
   }
 
-  if (!isValidEmail(email)) {
+  if (!isValidEmail(email) || email.length > 160) {
     return NextResponse.json({ ok: false, error: "invalid_email" }, { status: 400 });
   }
 
-  if (!message || message.length < 10) {
+  if (phone.length > 40 || company.length > 120 || role.length > 80) {
+    return NextResponse.json({ ok: false, error: "invalid_payload" }, { status: 400 });
+  }
+
+  if (!message || message.length < 10 || message.length > 4000) {
     return NextResponse.json({ ok: false, error: "invalid_message" }, { status: 400 });
+  }
+
+  const ip = clientIp(request);
+  if (!(await verifyTurnstile(turnstileToken, ip))) {
+    return NextResponse.json({ ok: false, error: "captcha" }, { status: 400 });
+  }
+
+  if (await isRateLimited(request, "contact")) {
+    return NextResponse.json({ ok: false, error: "rate_limited" }, { status: 429 });
   }
 
   const result = await submitMondayContactForm({ name, email, phone, company, role, message });

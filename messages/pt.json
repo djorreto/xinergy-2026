@@ -83,7 +83,9 @@
         "network_error": "Erro de conexão. Verifique sua rede e tente novamente.",
         "invalid_name": "Informe seu nome.",
         "invalid_email": "Informe um e-mail válido.",
-        "invalid_message": "A mensagem deve ter pelo menos 10 caracteres."
+        "invalid_message": "A mensagem deve ter pelo menos 10 caracteres.",
+        "rate_limited": "Houve tentativas demais. Espere um pouco e tente de novo.",
+        "captcha": "Não conseguimos verificar que você é uma pessoa. Recarregue a página e tente outra vez."
       }
     }
   },
@@ -171,6 +173,8 @@
     "email": "E-mail",
     "emailPlaceholder": "voce@empresa.com",
     "emailInvalid": "Informe um e-mail válido.",
+    "captcha": "Não conseguimos verificar que você é uma pessoa. Recarregue a página e tente outra vez.",
+    "rateLimited": "Houve tentativas demais. Espere um pouco e tente de novo.",
     "estimatedSavings": "Eficiências estimadas (ano 1)",
     "rangeCopy": "Faixa conservadora–agressiva sobre gasto endereçável (~{pct}% do total).",
     "maturityPurchasing": "Maturidade em compras",

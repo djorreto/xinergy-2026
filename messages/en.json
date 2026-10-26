@@ -83,7 +83,9 @@
         "network_error": "Connection error. Check your network and try again.",
         "invalid_name": "Please enter your name.",
         "invalid_email": "Please enter a valid email.",
-        "invalid_message": "Message must be at least 10 characters."
+        "invalid_message": "Message must be at least 10 characters.",
+        "rate_limited": "Too many attempts. Wait a while and try again.",
+        "captcha": "We couldn't verify that you're a person. Reload the page and try again."
       }
     }
   },
@@ -171,6 +173,8 @@
     "email": "Email",
     "emailPlaceholder": "you@company.com",
     "emailInvalid": "Enter a valid email.",
+    "captcha": "We couldn't verify that you're a person. Reload the page and try again.",
+    "rateLimited": "Too many attempts. Wait a while and try again.",
     "estimatedSavings": "Estimated efficiencies (year 1)",
     "rangeCopy": "Conservative–aggressive range on addressable spend (~{pct}% of total).",
     "maturityPurchasing": "Procurement maturity",

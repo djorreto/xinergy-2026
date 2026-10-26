@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { trackContactLead } from "@/lib/gtag";
+import { TurnstileField, turnstileSiteKey } from "@/components/shared/TurnstileField";
 
 const fieldClass =
   "mt-3 w-full border border-xinergy-charcoal/15 bg-white px-4 py-3.5 text-base text-xinergy-charcoal outline-none transition placeholder:text-xinergy-slate/45 focus:border-xinergy-orange sm:text-[length:var(--type-body)]";
@@ -20,6 +21,10 @@ function errorMessage(
       return t("errors.invalid_email");
     case "invalid_message":
       return t("errors.invalid_message");
+    case "rate_limited":
+      return t("errors.rate_limited");
+    case "captcha":
+      return t("errors.captcha");
     default:
       return t("errors.generic");
   }
@@ -27,12 +32,15 @@ function errorMessage(
 
 export function ContactForm() {
   const t = useTranslations("ui.contact.form");
+  const siteKey = turnstileSiteKey();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
   const [message, setMessage] = useState("");
+  const [companyUrl, setCompanyUrl] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorKey, setErrorKey] = useState<string | null>(null);
 
@@ -45,7 +53,16 @@ export function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, company, role, message }),
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          company,
+          role,
+          message,
+          company_url: companyUrl,
+          turnstileToken,
+        }),
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
@@ -89,11 +106,23 @@ export function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="border border-xinergy-charcoal/10 bg-white p-6 sm:p-8"
+      className="relative border border-xinergy-charcoal/10 bg-white p-6 sm:p-8"
     >
       <p className="label-editorial">{t("eyebrow")}</p>
       <h2 className="mt-2 font-display text-[length:var(--type-section)] text-xinergy-charcoal">{t("title")}</h2>
       <p className="type-body-sm mt-2 text-xinergy-slate">{t("subtitle")}</p>
+
+      <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+        <label>
+          Website
+          <input
+            tabIndex={-1}
+            autoComplete="off"
+            value={companyUrl}
+            onChange={(event) => setCompanyUrl(event.target.value)}
+          />
+        </label>
+      </div>
 
       <div className="mt-6 space-y-6">
         <fieldset>
@@ -185,6 +214,8 @@ export function ContactForm() {
         </fieldset>
       </div>
 
+      <TurnstileField onToken={setTurnstileToken} />
+
       {status === "error" && (
         <p className="mt-4 text-sm text-red-600" role="alert">
           {errorMessage(t, errorKey)}
@@ -195,7 +226,7 @@ export function ContactForm() {
         <button
           type="submit"
           className="btn-primary w-full justify-center disabled:opacity-60 sm:w-auto"
-          disabled={status === "loading"}
+          disabled={status === "loading" || (Boolean(siteKey) && !turnstileToken)}
         >
           {status === "loading" ? t("sending") : t("submit")}
         </button>

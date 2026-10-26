@@ -13,6 +13,7 @@ import { isLiveInsight } from "@/lib/insights/schedule";
 import { clientIp, hashDownloadToken, hashIp, newDownloadToken, requestCountry, santiagoDate } from "@/lib/insights/tokens";
 import { createInsightLead } from "@/lib/monday/insights-board";
 import { pdfDownloadName } from "@/lib/insights/pdf-name";
+import { verifyTurnstile } from "@/lib/security/public-form";
 import { createAdminClient, supabaseConfigured } from "@/lib/supabase/admin";
 
 const HOUR_LIMIT = 8;
@@ -40,20 +41,6 @@ export type RequestResult = { ok: true; downloadUrl?: string } | { ok: false; er
 
 function isLocale(value: string | undefined): value is Locale {
   return value === "es" || value === "en" || value === "pt";
-}
-
-async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
-  const secret = process.env.TURNSTILE_SECRET_KEY?.trim();
-  if (!secret) return true;
-  if (!token) return false;
-  const body = new URLSearchParams({ secret, response: token });
-  if (ip && ip !== "unknown") body.set("remoteip", ip);
-  const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-    method: "POST",
-    body,
-  });
-  const data = (await response.json().catch(() => ({}))) as { success?: boolean };
-  return Boolean(data.success);
 }
 
 export async function requestInsightDownload(request: Request, input: RequestInput): Promise<RequestResult> {
@@ -93,6 +80,7 @@ export async function requestInsightDownload(request: Request, input: RequestInp
       .from("web_insight_attempts")
       .select("id", { count: "exact", head: true })
       .eq("ip_hash", ipHash)
+      .not("email", "like", "rate-limit:%")
       .gte("created_at", sinceHour),
     admin
       .from("web_insight_attempts")

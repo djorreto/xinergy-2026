@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { ATTRIBUTION_KEY, type Attribution } from "@/lib/insights/attribution";
+import { TurnstileField, turnstileSiteKey } from "@/components/shared/TurnstileField";
 
 const fieldClass =
   "mt-2 w-full border border-xinergy-charcoal/15 bg-white px-4 py-3.5 text-base text-xinergy-charcoal outline-none transition placeholder:text-xinergy-slate/45 focus:border-xinergy-orange";
@@ -41,7 +42,7 @@ function errorMessage(
 export function PovDownloadForm({ slug, preview = false }: Props) {
   const t = useTranslations("ui.insights.download");
   const locale = useLocale();
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const siteKey = turnstileSiteKey();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -50,44 +51,6 @@ export function PovDownloadForm({ slug, preview = false }: Props) {
   const [errorKey, setErrorKey] = useState<string | null>(null);
   const [downloadUrl, setDownloadUrl] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
-
-  useEffect(() => {
-    if (!siteKey) return;
-    let cancelled = false;
-    const elementId = "insight-turnstile";
-
-    function render() {
-      const turnstile = (
-        window as Window & {
-          turnstile?: { render: (element: HTMLElement, options: object) => void };
-        }
-      ).turnstile;
-      const element = document.getElementById(elementId);
-      if (!turnstile || !element || element.dataset.rendered === "true" || cancelled) return;
-      element.dataset.rendered = "true";
-      turnstile.render(element, {
-        sitekey: siteKey,
-        callback: (token: string) => setTurnstileToken(token),
-      });
-    }
-
-    const existing = document.getElementById("cf-turnstile-script") as HTMLScriptElement | null;
-    if (existing) {
-      if ((window as Window & { turnstile?: unknown }).turnstile) render();
-      else existing.addEventListener("load", render, { once: true });
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.id = "cf-turnstile-script";
-    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-    script.async = true;
-    script.addEventListener("load", render, { once: true });
-    document.head.appendChild(script);
-    return () => {
-      cancelled = true;
-    };
-  }, [siteKey]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -217,13 +180,13 @@ export function PovDownloadForm({ slug, preview = false }: Props) {
         </label>
       </div>
 
-      {siteKey ? <div id="insight-turnstile" className="mt-5" /> : null}
+      <TurnstileField onToken={setTurnstileToken} />
 
       {status === "error" ? <p className="mt-4 text-sm text-red-700">{errorMessage(t, errorKey)}</p> : null}
 
       <button
         type="submit"
-        disabled={status === "loading"}
+        disabled={status === "loading" || (Boolean(siteKey) && !turnstileToken)}
         className="mt-6 flex w-full items-center justify-center bg-xinergy-orange px-5 py-3 text-sm font-semibold text-xinergy-charcoal transition hover:bg-xinergy-orange-dark disabled:opacity-60 sm:inline-flex sm:w-auto"
       >
         {status === "loading" ? t("sending") : t("submit")}
