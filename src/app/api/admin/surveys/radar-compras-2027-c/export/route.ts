@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdminUser } from "@/lib/auth/admin";
 import { loadPeople } from "@/app/api/admin/surveys/radar-compras-2027-c/informe/route";
 import { workbookBytes } from "@/lib/surveys/export-xlsx";
-import { CAPABILITIES, INITIATIVE_COPY } from "@/lib/surveys/radar-c/instrument";
+import { CAPABILITIES, INITIATIVE_COPY, exposureCodeOf } from "@/lib/surveys/radar-c/instrument";
 import { buildPaperCut, capabilityName, initiativeName } from "@/lib/surveys/radar-c/paper-cut";
 import { countryNames } from "@/lib/surveys/radar-c/report";
 
@@ -14,11 +14,47 @@ export async function GET() {
   const people = await loadPeople();
   if (!people) return NextResponse.json({ ok: false }, { status: 404 });
   const cut = buildPaperCut(people);
+  const mixedVersions = new Set(people.map((person) => person.version)).size > 1;
   const header = [
-    "Fecha", "Empresa", "Nombre", "Apellido", "Cargo", "Email", "Teléfono", "LinkedIn", "Rol", "Países", "Alcance", "Ruta", "Clase AHP", "Modo", "CR",
-    "E1 ahorro validado", "E2 realización", "E3 exposición", "E4 esfuerzo de datos", "E5 etapa IA", "R1 condición de datos", "Barreras",
-    "IA proyectos en marcha", "IA cantidad", "IA proyectos de Compras", "IA presupuesto", "IA presupuesto de Compras %", "IA pilotos escalados", "IA cómo se hacen",
-    "Equipo hoy", "Equipo próximo año",
+    "Fecha",
+    "Empresa",
+    "Nombre",
+    "Apellido",
+    "Cargo",
+    "Email",
+    "Teléfono",
+    "LinkedIn",
+    "Rol",
+    "Países",
+    "Alcance",
+    "Ruta",
+    "Versión",
+    "AHP escala",
+    "Clase AHP",
+    "Modo",
+    "CR",
+    "E1 ahorro validado",
+    "E2 realización",
+    "E3 exposición",
+    "E3a exposición crítica",
+    "E3b monoproveedor",
+    "E4 esfuerzo de datos",
+    "E5 etapa IA",
+    "R1 condición de datos",
+    "Barreras",
+    "IA proyectos en marcha",
+    "IA cantidad",
+    "IA proyectos de Compras",
+    "IA presupuesto",
+    "IA presupuesto de Compras %",
+    "IA pilotos escalados",
+    "IA cómo se hacen",
+    "IA usos",
+    "Equipo estratégico",
+    "Equipo operativo",
+    "Equipo soporte",
+    "Equipo hoy",
+    "Equipo próximo año",
     ...CAPABILITIES.map((item, index) => `capability_C${index + 1}_${item.id}`),
     ...CAPABILITIES.map((item) => `peso_${item.id}`),
     ...CAPABILITIES.map((item) => `peso_ahp_${item.id}`),
@@ -37,12 +73,16 @@ export async function GET() {
     countryNames(person.paises),
     person.alcance,
     person.operational ? "operativa" : "ejecutiva",
+    person.version,
+    person.ahpScale,
     person.ahpClass ?? "",
     person.priorityMode === "hibrido" ? "Hibrido" : "AHP",
     person.ahp ? String(person.ahp.maxCr) : "",
     person.context.e1,
     person.context.e2,
-    person.context.e3,
+    exposureCodeOf(person.context, person.version) || person.context.e3,
+    person.context.e3a,
+    person.context.e3b,
     person.context.e4,
     person.context.e5,
     person.context.r1,
@@ -54,13 +94,23 @@ export async function GET() {
     person.context.ia_presupuesto_compras,
     shown(person.context.ia_escala),
     shown(person.context.ia_modo),
+    person.context.ia_usos,
+    person.context.equipo_estrategico,
+    person.context.equipo_operativo,
+    person.context.equipo_soporte,
     person.context.equipo_n,
     shown(person.context.equipo_proximo),
     ...person.levels.map((level) => (level == null ? "ns" : String(level))),
     ...CAPABILITIES.map((_, index) => (person.weights ? String(person.weights[index] ?? "") : "")),
     ...CAPABILITIES.map((_, index) => (person.ahpWeights ? String(person.ahpWeights[index] ?? "") : "")),
-    ...INITIATIVE_COPY.map((item) => person.agenda[item.id] ?? ""),
+    ...CAPABILITIES.map((item) => person.agenda[item.id] ?? ""),
   ]);
+  const versionCounts = Object.entries(
+    people.reduce<Record<string, number>>((acc, person) => {
+      acc[person.version] = (acc[person.version] ?? 0) + 1;
+      return acc;
+    }, {}),
+  );
   const bases = [
     ["Base", "N"],
     ["Recibidas", String(cut.participants)],
@@ -71,10 +121,19 @@ export async function GET() {
     ["AHP principal", String(cut.ahp.principal)],
     ["AHP exploratorio", String(cut.ahp.exploratory)],
     ["AHP excluido", String(cut.ahp.excluded)],
+    ["AHP escala Saaty", String(cut.ahpScales.saaty9)],
+    ["AHP escala compacta", String(cut.ahpScales.compact5)],
     ["Base ampliada", String(cut.expanded.n)],
     ["Portafolio", String(cut.motor)],
+    [],
+    ["Versión", "Respuestas"],
+    ...versionCounts.map(([version, count]) => [version, String(count)]),
   ];
+  const weightsNote = mixedVersions
+    ? "Hay respuestas v1 y v3: los nombres de esg y talento difieren. Las medias de nivel usan el mismo id; interprete etiquetas por versión en Respuestas."
+    : "";
   const weights = [
+    ...(weightsNote ? [["Nota", weightsNote]] : []),
     ["Criterio", "Identificador", "Peso medio AHP", "Peso medio ampliado", "Mínimo", "Máximo", "Desviación", "Brecha media"],
     ...CAPABILITIES.map((item, index) => [
       capabilityName(index),
@@ -88,8 +147,16 @@ export async function GET() {
     ]),
   ];
   const portfolios = [
-    ["Escenario", "Iniciativa", "Identificador", "Seleccionadas", "Aprobadas", "Base"],
-    ...cut.selection.map((row) => [row.scenario, initiativeName(row.index), `initiative_I${row.index + 1}`, String(row.selected), String(row.approved), String(row.of)]),
+    ["Escenario", "Iniciativa", "Identificador", "Seleccionadas", "Aprobadas", "Aprobadas v1 (i11)", "Base"],
+    ...cut.selection.map((row) => [
+      row.scenario,
+      initiativeName(row.index),
+      `initiative_I${row.index + 1}`,
+      String(row.selected),
+      String(row.approved),
+      row.approvedLegacy == null ? "" : String(row.approvedLegacy),
+      String(row.of),
+    ]),
   ];
   const sensitivity = [
     ["Nota", cut.sensitivity.note],

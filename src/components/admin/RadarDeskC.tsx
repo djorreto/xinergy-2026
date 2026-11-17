@@ -20,8 +20,12 @@ import {
   CAPABILITIES,
   DATA_READY,
   EFFORT_HOURS,
+  EFFORT_HOURS_V3,
   EXPOSURE,
   INITIATIVE_COPY,
+  SURVEY_VERSION_C,
+  capabilitiesForVersion,
+  initiativesForVersion,
   PARTICIPATION,
   REALIZATION,
   SAVINGS,
@@ -238,13 +242,13 @@ function PersonDetail({ person }: { person: PersonC }) {
       <p className="mt-2">Gasto declarado: {named(SPEND_C, person.spend)}</p>
       {person.weights ? (
         <div className="mt-4">
-          <Bars title={`Prioridades · consistencia ${consistency} · ${className(person.ahpClass)}${person.priorityMode === "hibrido" ? " · asignación directa" : ""}`} rows={CAPABILITIES.map((item, index) => ({ name: item.short.es, value: person.weights?.[index] ?? 0 }))} />
+          <Bars title={`Prioridades · consistencia ${consistency} · ${className(person.ahpClass)}${person.priorityMode === "hibrido" ? " · asignación directa" : ""}`} rows={capabilitiesForVersion(person.version).map((item, index) => ({ name: item.short.es, value: person.weights?.[index] ?? 0 }))} />
         </div>
       ) : null}
       {person.operational ? (
         <>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {CAPABILITIES.map((item, index) => (
+            {capabilitiesForVersion(person.version).map((item, index) => (
               <p key={item.id}>{item.short.es}: nivel {person.levels[index] ?? "no sé"} · brecha {percent(person.gaps[index])}</p>
             ))}
           </div>
@@ -252,14 +256,21 @@ function PersonDetail({ person }: { person: PersonC }) {
           <div className="mt-4 grid gap-2">
             <p>Ahorro validado: {named(SAVINGS, person.context.e1)}</p>
             <p>Parte reconocida por Finanzas: {named(REALIZATION, person.context.e2)}</p>
-            <p>Gasto sin alternativa viable: {named(EXPOSURE, person.context.e3)}</p>
-            <p>Trabajo para validar el gasto: {named(EFFORT_HOURS, person.context.e4)}</p>
+            {person.version === SURVEY_VERSION_C ? (
+              <>
+                <p>Gasto crítico sin alternativa: {named(EXPOSURE, person.context.e3a)}</p>
+                <p>Monoproveedor viable: {named(EXPOSURE, person.context.e3b)}</p>
+              </>
+            ) : (
+              <p>Gasto sin alternativa viable: {named(EXPOSURE, person.context.e3)}</p>
+            )}
+            <p>Trabajo para validar el gasto: {named(person.version === SURVEY_VERSION_C ? EFFORT_HOURS_V3 : EFFORT_HOURS, person.context.e4)}</p>
             <p>Etapa de IA: {named(AI_STAGE, person.context.e5)}</p>
             <p>Datos para IA: {named(DATA_READY, person.context.r1)}</p>
             <p>Barreras: {person.barriers.map((item) => named([...BARRIERS, ...BARRIER_EXCLUSIVE], item)).join(", ") || "—"}</p>
           </div>
           <div className="mt-4 grid gap-2">
-            {INITIATIVE_COPY.map((item) => (
+            {initiativesForVersion(person.version).map((item) => (
               <p key={item.id}>{item.name.es}: {named(STATUSES, person.agenda[item.id] ?? "")}</p>
             ))}
           </div>

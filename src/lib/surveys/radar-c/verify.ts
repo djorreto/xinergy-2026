@@ -1,24 +1,30 @@
 import { analyzeAhp } from "@/lib/surveys/ahp";
 import { AHP } from "@/lib/surveys/radar-2027";
-import { ahpClass, jaccard, maturityOf, optimizePortfolio, planGap, TARGET_LEVEL } from "@/lib/surveys/radar-b/engine";
-import { aiProblems, EXECUTIVE_FIELDS, OPERATIONAL_FIELDS, teamProblems } from "@/lib/surveys/radar-c/instrument";
+import { ahpClass, jaccard, maturityOf, planGap, TARGET_LEVEL } from "@/lib/surveys/radar-b/engine";
+import { optimizePortfolioC } from "@/lib/surveys/radar-c/portfolio";
+import { aiProblems, EXECUTIVE_FIELDS, OPERATIONAL_FIELDS, SURVEY_VERSION_C, teamProblems, teamProblemsV3 } from "@/lib/surveys/radar-c/instrument";
 
 export function versionCChecks() {
   const problems: string[] = [];
   const expect = (name: string, ok: boolean) => {
     if (!ok) problems.push(name);
   };
-  expect("ruta operativa 51", OPERATIONAL_FIELDS.length === 51);
+  expect("ruta operativa 50", OPERATIONAL_FIELDS.length === 50);
   const blank = { ia_activos: "", ia_activos_n: "", ia_compras_n: "", ia_presupuesto: "", ia_presupuesto_compras: "", ia_escala: "", ia_modo: "" };
   expect("ia vacía no exige nada en la ruta opcional", Object.keys(aiProblems(blank, "optional")).length === 0);
-  expect("ia sí sin cantidad no pasa", aiProblems({ ...blank, ia_activos: "si", ia_presupuesto: "no" }, "required").ia_activos_n === "count");
-  expect("ia de compras no supera el total", aiProblems({ ...blank, ia_activos: "si", ia_activos_n: "2", ia_compras_n: "4", ia_escala: "si", ia_modo: "solos", ia_presupuesto: "si", ia_presupuesto_compras: "40" }, "required").ia_compras_n === "over");
-  expect("ia completa no marca problemas", Object.keys(aiProblems({ ...blank, ia_activos: "no", ia_presupuesto: "si", ia_presupuesto_compras: "0" }, "required")).length === 0);
+  expect("ia sí sin cantidad no pasa en v1", aiProblems({ ...blank, ia_activos: "si", ia_presupuesto: "no" }, "required", "radar-2027-c-v1").ia_activos_n === "count");
+  expect("ia de compras no supera el total en v1", aiProblems({ ...blank, ia_activos: "si", ia_activos_n: "2", ia_compras_n: "4", ia_escala: "si", ia_modo: "solos", ia_presupuesto: "si", ia_presupuesto_compras: "40" }, "required", "radar-2027-c-v1").ia_compras_n === "over");
+  expect("ia completa no marca problemas en v1", Object.keys(aiProblems({ ...blank, ia_activos: "no", ia_presupuesto: "si", ia_presupuesto_compras: "0" }, "required", "radar-2027-c-v1")).length === 0);
   expect("ia no sé no pide cantidades", Object.keys(aiProblems({ ...blank, ia_activos: "ns", ia_presupuesto: "ns" }, "required")).length === 0);
   expect("ia no sé no se lee como cantidad", aiProblems({ ...blank, ia_activos: "ns", ia_activos_n: "ns", ia_presupuesto: "no" }, "required").ia_activos_n == null);
+  expect("v3 piloto sin ia_usos no pasa", aiProblems({ ...blank, e5: "piloto" }, "required", SURVEY_VERSION_C).ia_usos === "uses");
+  expect("v3 piloto con ia_usos pasa", Object.keys(aiProblems({ ...blank, e5: "piloto", ia_usos: ["gasto"], ia_activos: "no", ia_presupuesto: "no" }, "required", SURVEY_VERSION_C)).length === 0);
+  expect("v3 no exige cantidades con activos sí", Object.keys(aiProblems({ ...blank, ia_activos: "si", ia_escala: "si", ia_modo: "solos", ia_presupuesto: "no", e5: "no" }, "required", SURVEY_VERSION_C)).length === 0);
   expect("equipo del cpo pide un entero", teamProblems("", "mas").equipo_n === "count");
   expect("equipo del cpo acepta tamaño y dirección", Object.keys(teamProblems("12", "igual")).length === 0);
   expect("equipo próximo no sé es válido", Object.keys(teamProblems("12", "ns")).length === 0);
+  expect("equipo v3 suma al menos 1", teamProblemsV3("0", "0", "0", "mas").equipo_estrategico === "count");
+  expect("equipo v3 acepta reparto", Object.keys(teamProblemsV3("3", "4", "5", "igual")).length === 0);
   expect("ruta ejecutiva 20", EXECUTIVE_FIELDS.length === 20);
   expect("nivel 1 es 0", maturityOf(1) === 0);
   expect("nivel 4 es 0,75", maturityOf(4) === TARGET_LEVEL);
@@ -36,7 +42,7 @@ export function versionCChecks() {
   const productOfMeans = [0, 1].map((index) => ((weightsA[index] + weightsB[index]) / 2) * ((gapsA[index] + gapsB[index]) / 2));
   expect("media del producto distinta del producto de medias", meanProduct.some((value, index) => Math.abs(value - productOfMeans[index]) > 1e-9));
 
-  const closed = optimizePortfolio([1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], Array.from({ length: 11 }, () => true), 1, { budget: 6, effort: 7, maxCount: 2 });
+  const closed = optimizePortfolioC([1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], Array.from({ length: 11 }, () => true), 1, { budget: 6, effort: 7, maxCount: 2 });
   expect("G0 cero sin cierre", closed.closure == null && closed.ids.length === 0);
   expect("agendas iguales", jaccard(["i1"], ["i1"]) === 1);
   expect("ambas vacias no aplica", jaccard([], []) == null);

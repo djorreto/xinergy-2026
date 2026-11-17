@@ -1,6 +1,8 @@
-import { IMPACT, IMPACT_MATRIX_VERSION, INITIATIVES, SCENARIOS, median, optimizePortfolio, roleDistance, type InitiativeId, type ScenarioId } from "@/lib/surveys/radar-b/engine";
+import { IMPACT_MATRIX_VERSION, INITIATIVES, SCENARIOS, median, roleDistance, type InitiativeId, type ScenarioId } from "@/lib/surveys/radar-b/engine";
+import { IMPACT_C } from "@/lib/surveys/radar-c/content";
 import { availabilityOf } from "@/lib/surveys/radar-b/report";
-import { CAPABILITIES, INITIATIVE_COPY, MODEL_VERSION_C, STATUS_TO_ENGINE } from "@/lib/surveys/radar-c/instrument";
+import { CAPABILITIES, MODEL_VERSION_C, STATUS_TO_ENGINE, SURVEY_VERSION_C, capabilitiesForVersion, exposureCodeOf, initiativesForVersion, roleIsOperationalBenchmark } from "@/lib/surveys/radar-c/instrument";
+import { optimizePortfolioC } from "@/lib/surveys/radar-c/portfolio";
 import { buildBenchmarkC, type PersonC } from "@/lib/surveys/radar-c/report";
 
 export const PAPER_VERSION = "C-Paper-1.0";
@@ -21,6 +23,7 @@ export type PaperCut = {
   roles: { id: string; n: number }[];
   countries: { responses: number; mentions: number };
   ahp: { principal: number; exploratory: number; excluded: number; maxExcludedCr: number | null };
+  ahpScales: { saaty9: number; compact5: number };
   aip: number[] | null;
   macro: number[] | null;
   expanded: { n: number; aip: number[] | null; macro: number[] | null; order: number[] };
@@ -52,7 +55,7 @@ export type PaperCut = {
   deltaLeanBalanced: number | null;
   deltaBalancedTransformational: number | null;
   sameBalancedTransformational: number;
-  selection: { scenario: ScenarioId; index: number; selected: number; approved: number; of: number }[];
+  selection: { scenario: ScenarioId; index: number; selected: number; approved: number; approvedLegacy?: number; of: number }[];
   jaccardMedian: number | null;
   jaccardN: number;
   etaMedian: number | null;
@@ -86,7 +89,7 @@ const THEMES: { label: string; pattern: RegExp }[] = [
 
 export function buildPaperCut(people: PersonC[], options?: { sensitivity?: boolean }): PaperCut {
   const included = people.filter((person) => person.included);
-  const operational = included.filter((person) => person.operational && (person.rol === "cpo" || person.rol === "scm"));
+  const operational = included.filter((person) => person.operational && roleIsOperationalBenchmark(person.rol));
   const executive = included.filter((person) => person.rol === "cfo" || person.rol === "ceo" || person.rol === "otro" || !person.operational);
   const benchmark = buildBenchmarkC(included);
   const priority = operational.filter((person) => benchmark.priorityIds.includes(person.id));
@@ -100,8 +103,15 @@ export function buildPaperCut(people: PersonC[], options?: { sensitivity?: boole
   const realizationMeasured = operational.filter((person) => measuredRealization(person.context.e2)).length;
   const lowRealizationPeople = operational.filter((person) => person.context.e2 === "<25" || person.context.e2 === "25-50");
   const costBelow4 = operational.filter((person) => (person.levels[0] ?? 99) < 4).length;
-  const exposureHighPeople = operational.filter((person) => person.context.e3 === "25-50" || person.context.e3 === ">50");
-  const exposureLowPeople = operational.filter((person) => person.context.e3 === "<10" || person.context.e3 === "10-25");
+  const exposureOf = (person: PersonC) => exposureCodeOf(person.context, person.version);
+  const exposureHighPeople = operational.filter((person) => {
+    const code = exposureOf(person);
+    return code === "25-50" || code === ">50";
+  });
+  const exposureLowPeople = operational.filter((person) => {
+    const code = exposureOf(person);
+    return code === "<10" || code === "10-25";
+  });
   const productivePeople = operational.filter((person) => person.context.e5 === "produccion" || person.context.e5 === "extendido");
   const pilotPeople = operational.filter((person) => person.context.e5 === "piloto");
   const closures = SCENARIOS.map((scenario) => {
@@ -114,7 +124,12 @@ export function buildPaperCut(people: PersonC[], options?: { sensitivity?: boole
       scenario: scenario.id,
       index,
       selected: motor.filter((person) => person.scenarios.find((item) => item.id === scenario.id)?.ids.includes(id)).length,
-      approved: motor.filter((person) => person.declared.includes(id)).length,
+      approved:
+        id === "i11"
+          ? motor.filter((person) => person.declared.includes(id) && person.version === SURVEY_VERSION_C).length
+          : motor.filter((person) => person.declared.includes(id)).length,
+      approvedLegacy:
+        id === "i11" ? motor.filter((person) => person.declared.includes(id) && person.version !== SURVEY_VERSION_C).length : undefined,
       of: motor.length,
     })),
   );
@@ -135,7 +150,7 @@ export function buildPaperCut(people: PersonC[], options?: { sensitivity?: boole
     executive: executive.length,
     companies: benchmark.companies,
     duplicates: benchmark.duplicates,
-    roles: ["cpo", "scm", "cfo", "ceo", "otro"].map((id) => ({ id, n: included.filter((person) => person.rol === id).length })).filter((row) => row.n),
+    roles: ["cpo", "lider_compras", "scm", "cfo", "ceo", "otro"].map((id) => ({ id, n: included.filter((person) => person.rol === id).length })).filter((row) => row.n),
     countries: {
       responses: operational.length,
       mentions: operational.reduce((sum, person) => sum + person.paises.length, 0),
@@ -146,6 +161,7 @@ export function buildPaperCut(people: PersonC[], options?: { sensitivity?: boole
       excluded: excluded.length,
       maxExcludedCr: excluded.reduce<number | null>((max, person) => (person.ahp?.maxCr != null && (max == null || person.ahp.maxCr > max) ? person.ahp.maxCr : max), null),
     },
+    ahpScales: benchmark.ahpScales,
     aip,
     macro: benchmark.macro,
     expanded: {
@@ -270,13 +286,13 @@ function sensitivityOf(people: PersonC[]): PaperCut["sensitivity"] {
     if (!person.weights || person.gaps.some((gap) => gap == null)) continue;
     const agenda = Object.fromEntries(INITIATIVES.map((id) => [id, STATUS_TO_ENGINE[person.agenda[id] ?? ""] ?? ""]));
     const availability = availabilityOf(agenda, person.context.r1);
-    const base = optimizePortfolio(person.weights, person.gaps as number[], availability.available, availability.dataReady, SCENARIOS[1]);
+    const base = optimizePortfolioC(person.weights, person.gaps as number[], availability.available, availability.dataReady, SCENARIOS[1]);
     const selected = INITIATIVES.map((id) => base.ids.includes(id));
     const still = Array(INITIATIVES.length).fill(0);
     let same = 0;
     for (let run = 0; run < runs; run += 1) {
-      const impact = IMPACT.map((row) => row.map((value) => (value === 0 ? 0 : Math.min(0.95, value * (0.8 + random() * 0.4)))));
-      const again = optimizePortfolio(person.weights, person.gaps as number[], availability.available, availability.dataReady, SCENARIOS[1], impact);
+      const impact = IMPACT_C.map((row) => row.map((value) => (value === 0 ? 0 : Math.min(0.95, value * (0.8 + random() * 0.4)))));
+      const again = optimizePortfolioC(person.weights, person.gaps as number[], availability.available, availability.dataReady, SCENARIOS[1], impact);
       if (again.mask === base.mask) same += 1;
       selected.forEach((on, index) => {
         if (on && again.ids.includes(INITIATIVES[index])) still[index] += 1;
@@ -409,10 +425,10 @@ function mulberry32(seed: number) {
   };
 }
 
-export function capabilityName(index: number) {
-  return CAPABILITIES[index]?.short.es ?? `C${index + 1}`;
+export function capabilityName(index: number, version: string = SURVEY_VERSION_C) {
+  return capabilitiesForVersion(version)[index]?.short.es ?? `C${index + 1}`;
 }
 
-export function initiativeName(index: number) {
-  return INITIATIVE_COPY[index]?.name.es ?? `I${index + 1}`;
+export function initiativeName(index: number, version: string = SURVEY_VERSION_C) {
+  return initiativesForVersion(version)[index]?.name.es ?? `I${index + 1}`;
 }

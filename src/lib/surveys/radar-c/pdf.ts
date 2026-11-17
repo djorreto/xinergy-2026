@@ -1,6 +1,28 @@
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import { AHP } from "@/lib/surveys/radar-2027";
-import { AI_MODE, AI_SCALE, BUDGET_DIRECTION, CAPABILITIES, INITIATIVE_COPY, PARTICIPATION, REALIZATION, SAVINGS, SAVINGS_EXPECTATION, STATUSES, TEAM_NEXT, VALIDATE_FREQ, YES_NO_NS } from "@/lib/surveys/radar-c/instrument";
+import {
+  AI_MODE,
+  AI_SCALE,
+  AI_USES,
+  AI_USES_EXCLUSIVE,
+  BUDGET_DIRECTION,
+  EXPOSURE,
+  EFFORT_HOURS,
+  EFFORT_HOURS_V3,
+  PARTICIPATION,
+  REALIZATION,
+  SAVINGS,
+  SAVINGS_EXPECTATION,
+  STATUSES,
+  SURVEY_VERSION_C,
+  TEAM_NEXT,
+  VALIDATE_FREQ,
+  YES_NO_NS,
+  capabilitiesForVersion,
+  exposureCodeOf,
+  initiativesForVersion,
+  roleIsOperationalBenchmark,
+} from "@/lib/surveys/radar-c/instrument";
 import { buildBenchmarkC, type PersonC } from "@/lib/surveys/radar-c/report";
 import { formatPercent } from "@/lib/surveys/ahp";
 
@@ -14,7 +36,7 @@ const ORANGE = rgb(252 / 255, 161 / 255, 0);
 
 export async function studyPdfC(people: PersonC[], stamp: string) {
   const included = people.filter((person) => person.included);
-  const operational = included.filter((person) => person.operational && (person.rol === "cpo" || person.rol === "scm"));
+  const operational = included.filter((person) => person.operational && roleIsOperationalBenchmark(person.rol));
   const benchmark = buildBenchmarkC(included);
   const priority = operational.filter((person) => benchmark.priorityIds.includes(person.id));
   const doc = await documentOf("Radar Compras 2027 · C (versión oficial) - Síntesis");
@@ -27,7 +49,8 @@ export async function studyPdfC(people: PersonC[], stamp: string) {
   writer.write("Cada empresa entra una vez, con la respuesta de Compras. Si hay dos del mismo rol en el mismo alcance, esa empresa queda fuera hasta consolidarla. El perfil es el promedio de los pesos de quienes compararon con consistencia de hasta 0,10. Finanzas y dirección general quedan en un panel aparte. Un rango elegido por varias personas no es el promedio del ahorro.");
   if (benchmark.aip) {
     writer.heading("La agenda de 2027");
-    writer.bars(CAPABILITIES.map((item, index) => ({ label: item.short.es, ratio: benchmark.aip?.[index] ?? 0, trailing: formatPercent(benchmark.aip?.[index] ?? 0) })));
+    const caps = capabilitiesForVersion(SURVEY_VERSION_C);
+    writer.bars(caps.map((item, index) => ({ label: item.short.es, ratio: benchmark.aip?.[index] ?? 0, trailing: formatPercent(benchmark.aip?.[index] ?? 0) })));
     writer.write(`El perfil usa ${priority.length} empresas. ${benchmark.duplicates.length ? `${benchmark.duplicates.length} empresas tienen dos respuestas del mismo rol y no entran hasta consolidarlas.` : "Ninguna empresa quedó fuera por duplicar el mismo rol."}`);
   } else writer.write("Todavía no hay un perfil principal. Hace falta al menos una respuesta de Compras con comparaciones consistentes.");
   const measured = operational.filter((person) => person.context.e2 && person.context.e2 !== "nm" && person.context.e2 !== "ns" && person.context.e2 !== "none");
@@ -36,7 +59,10 @@ export async function studyPdfC(people: PersonC[], stamp: string) {
   writer.write(measured.length
     ? `Entre quienes informan un rango de realización, ${band} de ${measured.length} eligen 50 a 75%. Esa cifra es la proporción de personas en el rango, no el ahorro realizado. “No medimos”, “no sé” y “no hubo ahorro que debiera materializarse” quedan fuera de esa base.`
     : "Este corte todavía no tiene rangos de realización para cruzar con la prioridad de costos.");
-  const exposed = operational.filter((person) => person.context.e3 === "25-50" || person.context.e3 === ">50");
+  const exposed = operational.filter((person) => {
+    const code = exposureCodeOf(person.context, person.version);
+    return code === "25-50" || code === ">50";
+  });
   const lowRisk = exposed.filter((person) => (person.levels[2] ?? 5) < 4);
   writer.heading("Continuidad");
   writer.write(operational.length
@@ -53,6 +79,8 @@ export async function studyPdfC(people: PersonC[], stamp: string) {
 }
 
 export async function personPdfC(person: PersonC, stamp: string) {
+  const capabilities = capabilitiesForVersion(person.version);
+  const initiatives = initiativesForVersion(person.version);
   const doc = await documentOf("Radar Compras 2027 · C (versión oficial) - Devolución");
   const writer = pen(doc);
   const who = [person.nombre, person.apellido].filter(Boolean).join(" ");
@@ -65,7 +93,7 @@ export async function personPdfC(person: PersonC, stamp: string) {
   if (person.weights) {
     writer.heading("Prioridades para 2027");
     writer.bars([...person.weights].map((weight, index) => ({ weight, index })).sort((left, right) => right.weight - left.weight).map((item) => ({
-      label: CAPABILITIES[item.index]?.short.es ?? "",
+      label: capabilities[item.index]?.short.es ?? "",
       ratio: item.weight,
       trailing: formatPercent(item.weight),
     })));
@@ -74,18 +102,27 @@ export async function personPdfC(person: PersonC, stamp: string) {
   if (person.operational) {
     writer.heading("Capacidad actual");
     writer.write("Cada barra marca el nivel declarado, de 1 a 5. “No sé” no se dibuja como el nivel más bajo.");
-    writer.levels(CAPABILITIES.map((item, index) => ({ label: item.short.es, level: person.levels[index] ?? null })));
+    writer.levels(capabilities.map((item, index) => ({ label: item.short.es, level: person.levels[index] ?? null })));
     if (person.strategic && person.g0 != null && person.g0 > 0) {
       const peak = Math.max(...person.strategic);
       writer.heading("Dónde pesa la brecha");
       writer.write("Cada barra es el peso de la prioridad por la distancia hasta el nivel 4. La más larga es la que más combina atención declarada y práctica todavía por construir.");
-      writer.bars(person.strategic.map((value, index) => ({ label: CAPABILITIES[index]?.short.es ?? "", ratio: peak > 0 ? value / peak : 0, trailing: formatPercent(person.g0 ? value / person.g0 : 0) })));
+      writer.bars(person.strategic.map((value, index) => ({ label: capabilities[index]?.short.es ?? "", ratio: peak > 0 ? value / peak : 0, trailing: formatPercent(person.g0 ? value / person.g0 : 0) })));
     }
     writer.heading("Lo que ya está decidido");
+    const exposureFacts: [string, string][] =
+      person.version === SURVEY_VERSION_C
+        ? [
+            ["Gasto crítico sin alternativa", label(EXPOSURE, person.context.e3a)],
+            ["Categorías con un solo proveedor viable", label(EXPOSURE, person.context.e3b)],
+          ]
+        : [["Gasto sin alternativa", label(EXPOSURE, person.context.e3) || person.context.e3 || "sin dato"]];
+    const effortOptions = person.version === SURVEY_VERSION_C ? EFFORT_HOURS_V3 : EFFORT_HOURS;
     writer.facts([
       ["Ahorro que se puede informar", label(SAVINGS, person.context.e1)],
       ["Realización de ese ahorro", label(REALIZATION, person.context.e2)],
-      ["Gasto sin alternativa", person.context.e3 || "sin dato"],
+      ...exposureFacts,
+      ["Esfuerzo para una vista confiable del gasto", label(effortOptions, person.context.e4)],
       ["Etapa de IA", person.context.e5 || "sin dato"],
       ["Condición de datos", person.context.r1 || "sin dato"],
     ]);
@@ -94,14 +131,21 @@ export async function personPdfC(person: PersonC, stamp: string) {
       writer.heading("Proyectos de IA");
       writer.facts(projects);
     }
-    if (person.context.equipo_n || person.context.equipo_proximo) {
+    if (person.context.equipo_estrategico || person.context.equipo_operativo || person.context.equipo_soporte || person.context.equipo_n || person.context.equipo_proximo) {
       writer.heading("Su equipo");
-      writer.facts([
-        ["Personas hoy", person.context.equipo_n || "sin dato"],
-        ["El próximo año", label(TEAM_NEXT, person.context.equipo_proximo)],
-      ]);
+      const teamFacts: [string, string][] =
+        person.context.equipo_estrategico || person.context.equipo_operativo || person.context.equipo_soporte
+          ? [
+              ["Estratégico", person.context.equipo_estrategico || "0"],
+              ["Operativo", person.context.equipo_operativo || "0"],
+              ["Soporte", person.context.equipo_soporte || "0"],
+              ["Total", person.context.equipo_n || "sin dato"],
+            ]
+          : [["Personas hoy", person.context.equipo_n || "sin dato"]];
+      if (person.context.equipo_proximo) teamFacts.push(["El próximo año", label(TEAM_NEXT, person.context.equipo_proximo)]);
+      writer.facts(teamFacts);
     }
-    writer.pairs(INITIATIVE_COPY.map((item) => ({ label: item.name.es, value: label(STATUSES, person.agenda[item.id] ?? "") })));
+    writer.pairs(initiatives.map((item) => ({ label: item.name.es, value: label(STATUSES, person.agenda[item.id] ?? "") })));
     const named = [
       ["lean", "Ajustado"],
       ["balanced", "Intermedio"],
@@ -117,7 +161,7 @@ export async function personPdfC(person: PersonC, stamp: string) {
       writer.columns(closures);
       const balanced = person.scenarios.find((item) => item.id === "balanced");
       if (balanced?.ids.length) {
-        writer.write(`En el escenario intermedio entran: ${balanced.ids.map((id) => INITIATIVE_COPY.find((item) => item.id === id)?.name.es ?? id).join(", ")}.`);
+        writer.write(`En el escenario intermedio entran: ${balanced.ids.map((id) => initiatives.find((item) => item.id === id)?.name.es ?? id).join(", ")}.`);
       }
       writer.write(`Similitud con lo aprobado: ${person.similarity == null ? "no aplica" : formatPercent(person.similarity)}. ${person.eta == null ? person.etaReason : `La agenda aprobada, con sus propios recursos, cubre ${formatPercent(person.eta)} de la mejor combinación de ese mismo recurso.`}`);
     } else writer.write(person.motorReason);
@@ -160,6 +204,11 @@ function aiRows(person: PersonC): [string, string][] {
   if (person.context.ia_presupuesto) {
     rows.push(["Presupuesto de IA", label(YES_NO_NS, person.context.ia_presupuesto)]);
     if (person.context.ia_presupuesto === "si" && person.context.ia_presupuesto_compras) rows.push(["Parte de Compras", `${person.context.ia_presupuesto_compras}%`]);
+  }
+  if (person.context.ia_usos) {
+    const codes = person.context.ia_usos.split(",").filter(Boolean);
+    const uses = codes.map((code) => label([...AI_USES, ...AI_USES_EXCLUSIVE], code)).join(", ");
+    if (uses) rows.push(["Usos de IA", uses]);
   }
   return rows;
 }

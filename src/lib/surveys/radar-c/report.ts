@@ -1,15 +1,22 @@
 import { analyzeAhp, type AhpAnalysis } from "@/lib/surveys/ahp";
 import { resolvePriorities, type BlockWeight } from "@/lib/surveys/radar-c/ahp-allocation";
 import { evaluationOf, isIncluded, type Evaluacion } from "@/lib/surveys/evaluacion";
-import { CAPABILITIES, COUNTRIES, INITIATIVE_COPY, STATUS_TO_ENGINE } from "@/lib/surveys/radar-c/instrument";
+import {
+  CAPABILITIES,
+  COUNTRIES,
+  STATUS_TO_ENGINE,
+  ahpScaleForVersion,
+  initiativesForVersion,
+  pickBenchmarkPerson,
+} from "@/lib/surveys/radar-c/instrument";
+import { isSurveyVersionC, type AhpScaleKind } from "@/lib/surveys/radar-c/content";
+import { improvementOfC, optimizePortfolioC } from "@/lib/surveys/radar-c/portfolio";
 import {
   INITIATIVES,
   SCENARIOS,
   ahpClass,
-  improvementOf,
   jaccard,
   maturityOf,
-  optimizePortfolio,
   planGap,
   type InitiativeId,
   type ScenarioId,
@@ -78,6 +85,8 @@ export type RadarCInput = {
 
 export type PersonC = {
   id: string;
+  version: string;
+  ahpScale: AhpScaleKind;
   createdAt: string;
   email: string;
   nombre: string;
@@ -126,9 +135,19 @@ export function countryNames(codes: string[]) {
 export function buildPersonC(row: RadarCInput): PersonC {
   const answers = row.answers ?? {};
   const company = row.company ?? {};
+  const version = typeof answers.version === "string" && isSurveyVersionC(answers.version) ? answers.version : "radar-2027-c-v1";
+  const ahpScale =
+    answers.ahpScale === "compact5" || answers.ahpScale === "saaty9"
+      ? answers.ahpScale
+      : (typeof (answers.ahp as { ahpScale?: string } | undefined)?.ahpScale === "string" &&
+        ((answers.ahp as { ahpScale: string }).ahpScale === "compact5" || (answers.ahp as { ahpScale: string }).ahpScale === "saaty9")
+          ? (answers.ahp as { ahpScale: AhpScaleKind }).ahpScale
+          : ahpScaleForVersion(version));
+  const initiativeCopy = initiativesForVersion(version);
   const tokens = record(answers.prioridades_ahp);
   const resolved = resolvePriorities(tokens, answers.ahp_aclaracion);
-  const ahp = resolved?.ahp ?? analyzeAhp(tokens);
+  const ahpRaw = resolved?.ahp ?? analyzeAhp(tokens);
+  const ahp = ahpRaw ? ({ ...ahpRaw, ahpScale } as typeof ahpRaw & { ahpScale: AhpScaleKind }) : null;
   const klass = ahp ? ahpClass(ahp.maxCr) : null;
   const ahpWeights = ahp ? CAPABILITIES.map((item) => ahp.global[item.id] ?? 0) : null;
   const finalWeights = resolved ? CAPABILITIES.map((item) => resolved.global[item.id] ?? 0) : null;
@@ -143,7 +162,7 @@ export function buildPersonC(row: RadarCInput): PersonC {
   const strategic = weights && complete ? weights.map((weight, index) => weight * (gaps[index] as number)) : null;
   const g0 = strategic ? strategic.reduce((sum, value) => sum + value, 0) : null;
   const agendaRaw = record(answers.agenda);
-  const agenda = Object.fromEntries(INITIATIVE_COPY.map((item) => [item.id, STATUS_TO_ENGINE[agendaRaw[item.id] ?? ""] ?? ""]));
+  const agenda = Object.fromEntries(initiativeCopy.map((item) => [item.id, STATUS_TO_ENGINE[agendaRaw[item.id] ?? ""] ?? ""]));
   const datos = typeof answers.r1 === "string" ? answers.r1 : "";
   const operational = answers.ruta === "operativa";
   const availability = availabilityOf(agenda, datos === "UNKNOWN" ? "UNKNOWN" : datos);
@@ -169,14 +188,17 @@ export function buildPersonC(row: RadarCInput): PersonC {
                   : "Escenario de demostración.";
   const scenarios = SCENARIOS.map((scenario) => {
     if (!canOptimize || !weights || !gapVector) return { id: scenario.id, ids: [] as InitiativeId[], closure: null, reason: motorReason };
-    const portfolio = optimizePortfolio(weights, gapVector, availability.available, availability.dataReady, scenario);
+    const portfolio = optimizePortfolioC(weights, gapVector, availability.available, availability.dataReady, scenario);
     return { id: scenario.id, ids: portfolio.ids, closure: portfolio.closure, reason: "" };
   });
   const declared = INITIATIVES.filter((id) => agenda[id] === "2");
   const balanced = scenarios.find((item) => item.id === "balanced");
   const comparison = compareAgenda(weights, gapVector, declared, availability, canOptimize);
+  const iaUsos = Array.isArray(answers.ia_usos) ? answers.ia_usos.filter((item): item is string => typeof item === "string") : [];
   return {
     id: row.id,
+    version,
+    ahpScale,
     createdAt: row.createdAt,
     email: row.email,
     nombre: row.nombre ?? "",
@@ -210,6 +232,8 @@ export function buildPersonC(row: RadarCInput): PersonC {
       e1: textOf(answers.e1),
       e2: textOf(answers.e2),
       e3: textOf(answers.e3),
+      e3a: textOf(answers.e3a),
+      e3b: textOf(answers.e3b),
       e4: textOf(answers.e4),
       e5: textOf(answers.e5),
       r1: datos,
@@ -220,7 +244,11 @@ export function buildPersonC(row: RadarCInput): PersonC {
       ia_presupuesto_compras: textOf(answers.ia_presupuesto_compras),
       ia_escala: textOf(answers.ia_escala),
       ia_modo: textOf(answers.ia_modo),
+      ia_usos: iaUsos.join(","),
       equipo_n: textOf(answers.equipo_n),
+      equipo_estrategico: textOf(answers.equipo_estrategico),
+      equipo_operativo: textOf(answers.equipo_operativo),
+      equipo_soporte: textOf(answers.equipo_soporte),
       equipo_proximo: textOf(answers.equipo_proximo),
       f1: textOf(answers.f1),
       f2: textOf(answers.f2),
@@ -244,6 +272,7 @@ export type BenchmarkC = {
   duplicates: string[];
   principalIds: string[];
   priorityIds: string[];
+  ahpScales: { saaty9: number; compact5: number };
   aip: number[] | null;
   macro: number[] | null;
   expandedIds: string[];
@@ -255,19 +284,16 @@ export function buildBenchmarkC(people: PersonC[]): BenchmarkC {
   const included = people.filter((person) => person.included && person.operational);
   const groups = new Map<string, PersonC[]>();
   for (const person of included) {
-    if (person.rol !== "cpo" && person.rol !== "scm") continue;
+    if (person.rol !== "cpo" && person.rol !== "lider_compras" && person.rol !== "scm") continue;
     const key = scopeKey(person);
     groups.set(key, [...(groups.get(key) ?? []), person]);
   }
   const principals: PersonC[] = [];
   const duplicates: string[] = [];
   for (const group of groups.values()) {
-    const cpos = group.filter((person) => person.rol === "cpo");
-    const scms = group.filter((person) => person.rol === "scm");
-    if (cpos.length === 1) principals.push(cpos[0]);
-    else if (cpos.length > 1) duplicates.push(cpos[0].empresa);
-    else if (scms.length === 1) principals.push(scms[0]);
-    else if (scms.length > 1) duplicates.push(scms[0].empresa);
+    const pick = pickBenchmarkPerson(group);
+    if (pick.person) principals.push(pick.person);
+    else if (pick.duplicate && pick.sample) duplicates.push(pick.sample.empresa);
   }
   const priority = principals.filter((person) => person.priorityMode === "ahp" && person.ahpClass === "principal" && person.weights);
   const expanded = principals.filter((person) => person.weights && (priority.some((item) => item.id === person.id) || (person.priorityMode === "hibrido" && person.clarificationComplete)));
@@ -275,11 +301,17 @@ export function buildBenchmarkC(people: PersonC[]): BenchmarkC {
   const macro = priority.length
     ? [0, 1, 2].map((index) => priority.reduce((sum, person) => sum + (person.ahp?.macro.weights[index] ?? 0), 0) / priority.length)
     : null;
+  const ahpScales = { saaty9: 0, compact5: 0 };
+  for (const person of principals) {
+    if (person.ahpScale === "compact5") ahpScales.compact5 += 1;
+    else ahpScales.saaty9 += 1;
+  }
   return {
     companies: principals.length,
     duplicates,
     principalIds: principals.map((person) => person.id),
     priorityIds: priority.map((person) => person.id),
+    ahpScales,
     aip,
     macro,
     expandedIds: expanded.map((person) => person.id),
@@ -302,10 +334,10 @@ function compareAgenda(
 ) {
   if (!declared.length) return { eta: null as number | null, reason: "No hay agenda nueva aprobada. La contribución no se calcula como cero." };
   if (!ready || !weights || !gaps) return { eta: null, reason: "La agenda no se compara porque falta un insumo del escenario." };
-  const spent = improvementOf(weights, gaps, declared, availability.dataReady);
+  const spent = improvementOfC(weights, gaps, declared, availability.dataReady);
   if (!spent) return { eta: null, reason: "La agenda de IA no es comparable sin la iniciativa de datos." };
   if (declared.some((id) => !availability.available[INITIATIVES.indexOf(id)])) return { eta: null, reason: "La agenda incluye una iniciativa que no está disponible para comparar." };
-  const best = optimizePortfolio(weights, gaps, availability.available, availability.dataReady, { budget: Math.max(spent.cost, 0), effort: Math.max(spent.effort, 0), maxCount: Math.max(spent.count, 1) });
+  const best = optimizePortfolioC(weights, gaps, availability.available, availability.dataReady, { budget: Math.max(spent.cost, 0), effort: Math.max(spent.effort, 0), maxCount: Math.max(spent.count, 1) });
   if (best.improvement <= 0) return { eta: null, reason: "No hay mejora modelada que comparar." };
   return { eta: spent.improvement / best.improvement, reason: "" };
 }

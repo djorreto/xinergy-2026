@@ -13,8 +13,11 @@ import {
   AI_STAGE,
   YES_NO_NS,
   TEAM_NEXT,
+  AI_USES,
+  AI_USES_EXCLUSIVE,
   aiProblems,
-  teamProblems,
+  teamProblemsV3,
+  roleIsProcurementLead,
   BARRIERS,
   BARRIER_EXCLUSIVE,
   BUDGET_DIRECTION,
@@ -23,7 +26,7 @@ import {
   CONSENTS,
   COUNTRIES,
   DATA_READY,
-  EFFORT_HOURS,
+  EFFORT_HOURS_V3,
   EXPOSURE,
   INDUSTRIES,
   INITIATIVE_COPY,
@@ -44,7 +47,7 @@ import {
   type Lang,
 } from "@/lib/surveys/radar-c/instrument";
 
-const STORE = "xinergy-radar-2027-c";
+const STORE = "xinergy-radar-2027-c-v3";
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const inputClass = "w-full border border-xinergy-charcoal/15 bg-white px-3 py-3 text-base outline-none focus:border-xinergy-orange";
 
@@ -67,7 +70,7 @@ export function RadarSurveyC({ locale }: { locale: string }) {
   const [ready, setReady] = useState(false);
   const copy = ui[lang];
   const rol = typeof draft.rol === "string" ? draft.rol : "";
-  const procurement = rol === "cpo" || rol === "scm";
+  const procurement = rol === "cpo" || rol === "lider_compras" || rol === "scm";
   const steps = stepsOf(rol);
   const step = steps[Math.min(index, steps.length - 1)];
 
@@ -164,17 +167,22 @@ export function RadarSurveyC({ locale }: { locale: string }) {
       if (!record(draft.capacidades)[item.id]) mark(item.id);
     });
     if (step === "context") {
-      for (const id of ["e1", "e2", "e3", "e4", "e5", "r1"]) if (!draft[id]) mark(id);
+      for (const id of ["e1", "e2", "e3a", "e3b", "e4", "e5", "r1"]) if (!draft[id]) mark(id);
       if (!list(draft.e6).length) mark("e6");
-      for (const [id, code] of Object.entries(aiProblems(aiDraft(draft), "required"))) {
+      for (const [id, code] of Object.entries(aiProblems({ ...aiDraft(draft), e5: String(draft.e5 || "") }, "required"))) {
         mark(id, code === "count" ? copy.countInvalid : code === "over" ? copy.countOver : code === "share" ? copy.shareInvalid : copy.required);
       }
     }
     if (step === "agenda") INITIATIVE_COPY.forEach((item) => {
       if (!record(draft.agenda)[item.id]) mark(item.id);
     });
-    if (step === "team" && rol === "cpo") {
-      for (const [id, code] of Object.entries(teamProblems(String(draft.equipo_n || ""), String(draft.equipo_proximo || "")))) {
+    if (step === "team" && roleIsProcurementLead(rol)) {
+      for (const [id, code] of Object.entries(teamProblemsV3(
+        String(draft.equipo_estrategico || ""),
+        String(draft.equipo_operativo || ""),
+        String(draft.equipo_soporte || ""),
+        String(draft.equipo_proximo || ""),
+      ))) {
         mark(id, code === "count" ? copy.countInvalid : copy.required);
       }
     }
@@ -432,8 +440,8 @@ function heading(copy: (typeof ui)[Lang], step: Step) {
   if (step === "role") return { title: copy.roleTitle, notes: [] as string[] };
   if (step === "team") return { title: copy.teamTitle, notes: [copy.teamNote] };
   if (step === "capacity") return { title: copy.capTitle, notes: [copy.capNote, copy.optionalStep] };
-  if (step === "context") return { title: copy.contextTitle, notes: [copy.contextNote, copy.optionalStep] };
-  if (step === "agenda") return { title: copy.agendaTitle, notes: [copy.agendaNote, copy.optionalStep] };
+  if (step === "context") return { title: copy.contextTitle, notes: [copy.contextNote] };
+  if (step === "agenda") return { title: copy.agendaTitle, notes: [copy.agendaNote] };
   return { title: copy.closeTitle, notes: [copy.closeNote] };
 }
 
@@ -476,7 +484,7 @@ function stepsOf(rol: string): Step[] {
   const head: Step[] = ["welcome", "contact", "profile", "ahp"];
   const tail: Step[] = ["capacity", "context", "agenda", "close"];
   if (rol === "ceo" || rol === "cfo") return [...head, "role", ...tail];
-  if (rol === "cpo") return [...head, "capacity", "context", "agenda", "team", "close"];
+  if (roleIsProcurementLead(rol)) return [...head, "capacity", "context", "agenda", "team", "close"];
   return [...head, ...tail];
 }
 
@@ -586,39 +594,54 @@ function Capabilities({ lang, selected, invalid, onChange }: { lang: Lang; selec
 
 function AiFacts({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
   const running = draft.ia_activos === "si";
-  const funded = draft.ia_presupuesto === "si";
-  const copy = lang === "en"
-    ? { title: "AI projects", running: "Do you have AI projects under way?", total: "How many?", procurement: "How many of those projects are Procurement projects?", budget: "Do you have an AI budget?", share: "What percentage of that budget is Procurement's?", scale: "Have you been able to scale the AI pilots?", mode: "How are you doing them?" }
+  const stage = String(draft.e5 || "");
+  const showUses = stage !== "" && stage !== "no" && stage !== "ns";
+  const uses = list(draft.ia_usos);
+  const exclusive = uses.includes("ninguna");
+  const copy = ui[lang];
+  const labels = lang === "en"
+    ? { title: "AI projects", running: "Do you have AI projects under way?", budget: "Do you have an AI budget?", scale: "Have you been able to scale the AI pilots?", mode: "How are you doing them?" }
     : lang === "pt"
-      ? { title: "Projetos de IA", running: "Você tem projetos de IA em andamento?", total: "Quantos?", procurement: "Quantos desses projetos são de Compras?", budget: "Você tem orçamento de IA?", share: "Qual percentual desse orçamento é de Compras?", scale: "Você conseguiu escalar os pilotos de IA?", mode: "Como estão fazendo?" }
-      : { title: "Proyectos de IA", running: "¿Tiene proyectos de IA en marcha?", total: "¿Cuántos?", procurement: "¿Cuántos de esos proyectos son de Compras?", budget: "¿Tiene presupuesto de IA?", share: "¿Qué porcentaje de ese presupuesto es de Compras?", scale: "¿Ha podido escalar los pilotos de IA?", mode: "¿Cómo los están haciendo?" };
+      ? { title: "Projetos de IA", running: "Você tem projetos de IA em andamento?", budget: "Você tem orçamento de IA?", scale: "Você conseguiu escalar os pilotos de IA?", mode: "Como estão fazendo?" }
+      : { title: "Proyectos de IA", running: "¿Tiene proyectos de IA en marcha?", budget: "¿Tiene presupuesto de IA?", scale: "¿Ha podido escalar los pilotos de IA?", mode: "¿Cómo los están haciendo?" };
   function setRunning(value: string) {
     onChange("ia_activos", value);
     if (value !== "si") {
-      onChange("ia_activos_n", "");
-      onChange("ia_compras_n", "");
       onChange("ia_escala", "");
       onChange("ia_modo", "");
     }
   }
-  function setFunded(value: string) {
-    onChange("ia_presupuesto", value);
-    if (value !== "si") onChange("ia_presupuesto_compras", "");
+  function toggleUse(code: string) {
+    onChange("ia_usos", toggleAiUse(uses, code, exclusive));
   }
   return (
-    <div className="grid gap-5 border-t border-xinergy-charcoal/10 pt-5">
-      <p className="font-display text-xl text-xinergy-charcoal">{copy.title}</p>
-      <ChoiceField id="ia_activos" lang={lang} label={copy.running} options={YES_NO_NS} value={String(draft.ia_activos || "")} invalid={invalid.ia_activos} onChange={setRunning} />
+    <div className="grid gap-5">
+      <p className="font-display text-xl text-xinergy-charcoal">{labels.title}</p>
+      {showUses ? (
+        <fieldset id="q-ia_usos">
+          <legend className="mb-2 font-semibold">{copy.iaUses}</legend>
+          <div className="grid gap-2">
+            {[...AI_USES, ...AI_USES_EXCLUSIVE].map((option) => {
+              const on = uses.includes(option.v);
+              return (
+                <label key={option.v} className={`flex gap-3 border px-3 py-2 ${on ? "border-xinergy-orange bg-[#FFF1D6]" : "border-xinergy-charcoal/15"}`}>
+                  <input type="checkbox" className="mt-1" checked={on} onChange={() => toggleUse(option.v)} />
+                  <span>{option[lang]}</span>
+                </label>
+              );
+            })}
+          </div>
+          {invalid.ia_usos ? <span className="mt-1 block text-sm text-red-700">{invalid.ia_usos}</span> : null}
+        </fieldset>
+      ) : null}
+      <ChoiceField id="ia_activos" lang={lang} label={labels.running} options={YES_NO_NS} value={String(draft.ia_activos || "")} invalid={invalid.ia_activos} onChange={setRunning} />
       {running ? (
         <>
-          <NumberField id="ia_activos_n" label={copy.total} value={String(draft.ia_activos_n || "")} invalid={invalid.ia_activos_n} onChange={(value) => onChange("ia_activos_n", value)} />
-          <NumberField id="ia_compras_n" label={copy.procurement} value={String(draft.ia_compras_n || "")} invalid={invalid.ia_compras_n} onChange={(value) => onChange("ia_compras_n", value)} />
-          <ChoiceField id="ia_escala" lang={lang} label={copy.scale} options={AI_SCALE} value={String(draft.ia_escala || "")} invalid={invalid.ia_escala} onChange={(value) => onChange("ia_escala", value)} />
-          <ChoiceField id="ia_modo" lang={lang} label={copy.mode} options={AI_MODE} value={String(draft.ia_modo || "")} invalid={invalid.ia_modo} onChange={(value) => onChange("ia_modo", value)} />
+          <ChoiceField id="ia_escala" lang={lang} label={labels.scale} options={AI_SCALE} value={String(draft.ia_escala || "")} invalid={invalid.ia_escala} onChange={(value) => onChange("ia_escala", value)} />
+          <ChoiceField id="ia_modo" lang={lang} label={labels.mode} options={AI_MODE} value={String(draft.ia_modo || "")} invalid={invalid.ia_modo} onChange={(value) => onChange("ia_modo", value)} />
         </>
       ) : null}
-      <ChoiceField id="ia_presupuesto" lang={lang} label={copy.budget} options={YES_NO_NS} value={String(draft.ia_presupuesto || "")} invalid={invalid.ia_presupuesto} onChange={setFunded} />
-      {funded ? <NumberField id="ia_presupuesto_compras" label={copy.share} suffix="%" value={String(draft.ia_presupuesto_compras || "")} invalid={invalid.ia_presupuesto_compras} onChange={(value) => onChange("ia_presupuesto_compras", value)} /> : null}
+      <ChoiceField id="ia_presupuesto" lang={lang} label={labels.budget} options={YES_NO_NS} value={String(draft.ia_presupuesto || "")} invalid={invalid.ia_presupuesto} onChange={(value) => onChange("ia_presupuesto", value)} />
     </div>
   );
 }
@@ -637,32 +660,47 @@ function NumberField({ id, label, value, invalid, onChange, suffix, digits = 3 }
 }
 
 function Context({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
+  const copy = ui[lang];
   const barriers = list(draft.e6);
   const exclusive = barriers.some((code) => BARRIER_EXCLUSIVE.some((item) => item.v === code));
+  function setE5(value: string) {
+    onChange("e5", value);
+    if (value === "no" || value === "ns") onChange("ia_usos", []);
+  }
   return (
-    <div className="grid gap-5">
-      <ChoiceField id="e1" lang={lang} label={lang === "en" ? "Savings validated by Finance, last closed year" : lang === "pt" ? "Economia validada por Finanças, último exercício" : "Ahorro validado por Finanzas, último ejercicio cerrado"} options={SAVINGS} value={String(draft.e1 || "")} invalid={invalid.e1} onChange={(value) => onChange("e1", value)} />
-      <ChoiceField id="e2" lang={lang} label={lang === "en" ? "Share of negotiated savings recognized by Finance" : lang === "pt" ? "Parte da economia negociada reconhecida por Finanças" : "Parte del ahorro negociado reconocida por Finanzas"} options={REALIZATION} value={String(draft.e2 || "")} invalid={invalid.e2} onChange={(value) => onChange("e2", value)} />
-      <ChoiceField id="e3" lang={lang} label={lang === "en" ? "Spend without a viable alternative in the time the operation needs" : lang === "pt" ? "Gasto sem alternativa viável no prazo da operação" : "Gasto sin alternativa viable en el plazo que la operación necesita"} options={EXPOSURE} value={String(draft.e3 || "")} invalid={invalid.e3} onChange={(value) => onChange("e3", value)} />
-      <ChoiceField id="e4" lang={lang} label={lang === "en" ? "Work to obtain and validate spend with the top 20 suppliers" : lang === "pt" ? "Trabalho para obter e validar o gasto com os 20 principais fornecedores" : "Trabajo para obtener y validar el gasto con los 20 principales proveedores"} options={EFFORT_HOURS} value={String(draft.e4 || "")} invalid={invalid.e4} onChange={(value) => onChange("e4", value)} />
-      <ChoiceField id="e5" lang={lang} label={lang === "en" ? "Current stage of AI in Procurement" : lang === "pt" ? "Etapa atual de IA em Compras" : "Etapa actual de IA en Compras"} options={AI_STAGE} value={String(draft.e5 || "")} invalid={invalid.e5} onChange={(value) => onChange("e5", value)} />
-      <AiFacts lang={lang} draft={draft} invalid={invalid} onChange={onChange} />
-      <ChoiceField id="r1" lang={lang} label={lang === "en" ? "Data and governance for enterprise AI" : lang === "pt" ? "Dados e governança para IA empresarial" : "Datos y gobierno para IA empresarial"} options={DATA_READY} value={String(draft.r1 || "")} invalid={invalid.r1} onChange={(value) => onChange("r1", value)} />
-      <fieldset id="q-e6">
-        <legend className="mb-2 font-semibold">{lang === "en" ? "Two main barriers to enterprise AI" : lang === "pt" ? "Duas barreiras principais para IA empresarial" : "Dos barreras principales para la IA empresarial"}</legend>
-        <div className="grid gap-2">
-          {[...BARRIERS, ...BARRIER_EXCLUSIVE].map((option) => {
-            const on = barriers.includes(option.v);
-            return (
-              <label key={option.v} className={`flex gap-3 border px-3 py-2 ${on ? "border-xinergy-orange bg-[#FFF1D6]" : "border-xinergy-charcoal/15"}`}>
-                <input type="checkbox" className="mt-1" checked={on} onChange={() => onChange("e6", toggleBarrier(barriers, option.v, exclusive))} />
-                <span>{option[lang]}</span>
-              </label>
-            );
-          })}
-        </div>
-        {invalid.e6 ? <span className="mt-1 block text-sm text-red-700">{invalid.e6}</span> : null}
-      </fieldset>
+    <div className="grid gap-8">
+      <section className="grid gap-5">
+        <h2 className="font-display text-xl text-xinergy-charcoal">{copy.contextResults}</h2>
+        <ChoiceField id="e1" lang={lang} label={lang === "en" ? "Savings validated by Finance, last closed year" : lang === "pt" ? "Economia validada por Finanças, último exercício" : "Ahorro validado por Finanzas, último ejercicio cerrado"} options={SAVINGS} value={String(draft.e1 || "")} invalid={invalid.e1} onChange={(value) => onChange("e1", value)} />
+        <ChoiceField id="e2" lang={lang} label={lang === "en" ? "Share of negotiated savings recognized by Finance" : lang === "pt" ? "Parte da economia negociada reconhecida por Finanças" : "Parte del ahorro negociado reconocida por Finanzas"} options={REALIZATION} value={String(draft.e2 || "")} invalid={invalid.e2} onChange={(value) => onChange("e2", value)} />
+      </section>
+      <section className="grid gap-5">
+        <h2 className="font-display text-xl text-xinergy-charcoal">{copy.contextExposure}</h2>
+        <ChoiceField id="e3a" lang={lang} label={copy.e3a} options={EXPOSURE} value={String(draft.e3a || "")} invalid={invalid.e3a} onChange={(value) => onChange("e3a", value)} />
+        <ChoiceField id="e3b" lang={lang} label={copy.e3b} options={EXPOSURE} value={String(draft.e3b || "")} invalid={invalid.e3b} onChange={(value) => onChange("e3b", value)} />
+        <ChoiceField id="e4" lang={lang} label={copy.e4} options={EFFORT_HOURS_V3} value={String(draft.e4 || "")} invalid={invalid.e4} onChange={(value) => onChange("e4", value)} />
+      </section>
+      <section className="grid gap-5">
+        <h2 className="font-display text-xl text-xinergy-charcoal">{copy.contextAi}</h2>
+        <ChoiceField id="e5" lang={lang} label={lang === "en" ? "Current stage of AI in Procurement" : lang === "pt" ? "Etapa atual de IA em Compras" : "Etapa actual de IA en Compras"} options={AI_STAGE} value={String(draft.e5 || "")} invalid={invalid.e5} onChange={setE5} />
+        <AiFacts lang={lang} draft={draft} invalid={invalid} onChange={onChange} />
+        <ChoiceField id="r1" lang={lang} label={lang === "en" ? "Data and governance for enterprise AI" : lang === "pt" ? "Dados e governança para IA empresarial" : "Datos y gobierno para IA empresarial"} options={DATA_READY} value={String(draft.r1 || "")} invalid={invalid.r1} onChange={(value) => onChange("r1", value)} />
+        <fieldset id="q-e6">
+          <legend className="mb-2 font-semibold">{lang === "en" ? "Two main barriers to enterprise AI" : lang === "pt" ? "Duas barreiras principais para IA empresarial" : "Dos barreras principales para la IA empresarial"}</legend>
+          <div className="grid gap-2">
+            {[...BARRIERS, ...BARRIER_EXCLUSIVE].map((option) => {
+              const on = barriers.includes(option.v);
+              return (
+                <label key={option.v} className={`flex gap-3 border px-3 py-2 ${on ? "border-xinergy-orange bg-[#FFF1D6]" : "border-xinergy-charcoal/15"}`}>
+                  <input type="checkbox" className="mt-1" checked={on} onChange={() => onChange("e6", toggleBarrier(barriers, option.v, exclusive))} />
+                  <span>{option[lang]}</span>
+                </label>
+              );
+            })}
+          </div>
+          {invalid.e6 ? <span className="mt-1 block text-sm text-red-700">{invalid.e6}</span> : null}
+        </fieldset>
+      </section>
     </div>
   );
 }
@@ -682,11 +720,23 @@ function Agenda({ lang, selected, invalid, onChange }: { lang: Lang; selected: R
 }
 
 function TeamQuestions({ lang, draft, invalid, onChange }: { lang: Lang; draft: Draft; invalid: Record<string, string>; onChange: (id: string, value: unknown) => void }) {
-  const size = lang === "en" ? "How many people are on your Procurement team in this scope today?" : lang === "pt" ? "Quantas pessoas tem hoje sua equipe de Compras neste escopo?" : "¿Cuántas personas tiene hoy su equipo de Compras en este alcance?";
+  const copy = ui[lang];
   const next = lang === "en" ? "How do you expect the size of that team to be next year?" : lang === "pt" ? "Como você espera que seja o tamanho dessa equipe no próximo ano?" : "¿Cómo espera que sea el tamaño de ese equipo el próximo año?";
+  function setPart(id: "equipo_estrategico" | "equipo_operativo" | "equipo_soporte", value: string) {
+    const strategic = id === "equipo_estrategico" ? value : String(draft.equipo_estrategico || "");
+    const operative = id === "equipo_operativo" ? value : String(draft.equipo_operativo || "");
+    const support = id === "equipo_soporte" ? value : String(draft.equipo_soporte || "");
+    const total = (Number(strategic || 0) || 0) + (Number(operative || 0) || 0) + (Number(support || 0) || 0);
+    onChange(id, value);
+    onChange("equipo_n", String(total));
+  }
+  const total = (Number(draft.equipo_estrategico || 0) || 0) + (Number(draft.equipo_operativo || 0) || 0) + (Number(draft.equipo_soporte || 0) || 0);
   return (
     <div className="grid gap-5">
-      <NumberField id="equipo_n" digits={5} label={size} value={String(draft.equipo_n || "")} invalid={invalid.equipo_n} onChange={(value) => onChange("equipo_n", value)} />
+      <NumberField id="equipo_estrategico" digits={5} label={copy.teamStrategic} value={String(draft.equipo_estrategico || "")} invalid={invalid.equipo_estrategico} onChange={(value) => setPart("equipo_estrategico", value)} />
+      <NumberField id="equipo_operativo" digits={5} label={copy.teamOperative} value={String(draft.equipo_operativo || "")} invalid={invalid.equipo_operativo} onChange={(value) => setPart("equipo_operativo", value)} />
+      <NumberField id="equipo_soporte" digits={5} label={copy.teamSupport} value={String(draft.equipo_soporte || "")} invalid={invalid.equipo_soporte} onChange={(value) => setPart("equipo_soporte", value)} />
+      <p className="text-sm font-semibold text-xinergy-charcoal">{copy.teamTotal}: {total}</p>
       <ChoiceField id="equipo_proximo" lang={lang} label={next} options={TEAM_NEXT} value={String(draft.equipo_proximo || "")} invalid={invalid.equipo_proximo} onChange={(value) => onChange("equipo_proximo", value)} />
     </div>
   );
@@ -758,16 +808,26 @@ function toggleBarrier(current: string[], code: string, exclusiveOn: boolean) {
   return [...current, code];
 }
 
+function toggleAiUse(current: string[], code: string, exclusiveOn: boolean) {
+  const exclusive = AI_USES_EXCLUSIVE.some((item) => item.v === code);
+  if (exclusive) return current.length === 1 && current[0] === code ? [] : [code];
+  if (exclusiveOn) return [code];
+  if (current.includes(code)) return current.filter((item) => item !== code);
+  return [...current, code];
+}
+
 function aiDraft(draft: Draft) {
   const text = (id: string) => (typeof draft[id] === "string" ? draft[id] : "");
   return {
     ia_activos: text("ia_activos"),
-    ia_activos_n: text("ia_activos_n"),
-    ia_compras_n: text("ia_compras_n"),
+    ia_activos_n: "",
+    ia_compras_n: "",
     ia_presupuesto: text("ia_presupuesto"),
-    ia_presupuesto_compras: text("ia_presupuesto_compras"),
+    ia_presupuesto_compras: "",
     ia_escala: text("ia_escala"),
     ia_modo: text("ia_modo"),
+    ia_usos: list(draft.ia_usos),
+    e5: text("e5"),
   };
 }
 

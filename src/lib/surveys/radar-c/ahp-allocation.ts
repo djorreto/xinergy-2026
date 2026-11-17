@@ -1,6 +1,6 @@
 import { analyzeAhp, type AhpAnalysis } from "@/lib/surveys/ahp";
 import { AHP } from "@/lib/surveys/radar-2027";
-import { AHP_BLOCKS, blockCr, blockFingerprint, reviewBlockIds, type AhpBlockId } from "@/lib/surveys/radar-c/ahp-blocks";
+import { blockCr, blockFingerprint, reviewBlockIds } from "@/lib/surveys/radar-c/ahp-blocks";
 import type { Lang } from "@/lib/surveys/radar-c/instrument";
 
 /** Bloques de tres criterios. Costos y caja no entra en esta revisión. */

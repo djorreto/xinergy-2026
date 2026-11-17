@@ -1,8 +1,34 @@
 import { analyzeAhp } from "@/lib/surveys/ahp";
 import { AHP } from "@/lib/surveys/radar-2027";
 import { isBlockedEmail } from "@/lib/insights/validate";
-import { aiProblems, CAPABILITIES, CONSENTS, COUNTRIES, DATA_READY, INDUSTRIES, INITIATIVE_COPY, ROLES, SCOPES, SPEND_C, STATUSES, SURVEY_VERSION_C, teamProblems, type AiAnswers } from "@/lib/surveys/radar-c/instrument";
-import { BARRIERS, BARRIER_EXCLUSIVE, BUDGET_DIRECTION, EFFORT_HOURS, EXPOSURE, PARTICIPATION, REALIZATION, SAVINGS, SAVINGS_EXPECTATION, VALIDATE_FREQ, AI_STAGE } from "@/lib/surveys/radar-c/instrument";
+import {
+  AI_STAGE,
+  BARRIERS,
+  BARRIER_EXCLUSIVE,
+  BUDGET_DIRECTION,
+  CAPABILITIES,
+  CONSENTS,
+  DATA_READY,
+  EFFORT_HOURS_V3,
+  EXPOSURE,
+  INDUSTRIES,
+  INITIATIVE_COPY,
+  PARTICIPATION,
+  REALIZATION,
+  ROLES,
+  SAVINGS,
+  SAVINGS_EXPECTATION,
+  SCOPES,
+  SPEND_C,
+  STATUSES,
+  SURVEY_VERSION_C,
+  VALIDATE_FREQ,
+  aiProblems,
+  aiUsesOk,
+  roleIsProcurementLead,
+  teamProblemsV3,
+  type AiAnswers,
+} from "@/lib/surveys/radar-c/instrument";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const AHP_TOKENS = new Set(["9", "7", "5", "3", "1", "1/3", "1/5", "1/7", "1/9"]);
@@ -49,22 +75,32 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
   const capacidades = record(data.capacidades);
   const agenda = record(data.agenda);
   if (!CAPABILITIES.every((item) => LEVELS.has(capacidades[item.id] ?? ""))) return { ok: false, honeypot };
-  if (!oneOf(SAVINGS, textOf("e1")) || !oneOf(REALIZATION, textOf("e2")) || !oneOf(EXPOSURE, textOf("e3"))) return { ok: false, honeypot };
-  if (!oneOf(EFFORT_HOURS, textOf("e4")) || !oneOf(AI_STAGE, textOf("e5")) || !oneOf(DATA_READY, textOf("r1"))) return { ok: false, honeypot };
+  if (!oneOf(SAVINGS, textOf("e1")) || !oneOf(REALIZATION, textOf("e2"))) return { ok: false, honeypot };
+  if (!oneOf(EXPOSURE, textOf("e3a")) || !oneOf(EXPOSURE, textOf("e3b"))) return { ok: false, honeypot };
+  if (!oneOf(EFFORT_HOURS_V3, textOf("e4")) || !oneOf(AI_STAGE, textOf("e5")) || !oneOf(DATA_READY, textOf("r1"))) return { ok: false, honeypot };
   if (!barriersOk(data.e6)) return { ok: false, honeypot };
   if (!INITIATIVE_COPY.every((item) => oneOf(STATUSES, agenda[item.id] ?? ""))) return { ok: false, honeypot };
   if (rol === "cfo" && (!oneOf(SAVINGS_EXPECTATION, textOf("f1")) || !oneOf(VALIDATE_FREQ, textOf("f2")))) return { ok: false, honeypot };
   if (rol === "ceo" && (!oneOf(BUDGET_DIRECTION, textOf("g1")) || !oneOf(PARTICIPATION, textOf("g2")))) return { ok: false, honeypot };
+
   const ai = aiOf(data);
-  if (Object.keys(aiProblems(ai, "required")).length) return { ok: false, honeypot };
-  const teamSize = rol === "cpo" ? textOf("equipo_n") : "";
-  const teamNext = rol === "cpo" ? textOf("equipo_proximo") : "";
-  if (rol === "cpo" && Object.keys(teamProblems(teamSize, teamNext)).length) return { ok: false, honeypot };
+  if (Object.keys(aiProblems({ ...ai, e5: textOf("e5") }, "required")).length) return { ok: false, honeypot };
+  if (textOf("e5") !== "no" && textOf("e5") !== "ns" && !aiUsesOk(ai.ia_usos)) return { ok: false, honeypot };
+
+  const lead = roleIsProcurementLead(rol);
+  const strategic = lead ? textOf("equipo_estrategico") : "";
+  const operative = lead ? textOf("equipo_operativo") : "";
+  const support = lead ? textOf("equipo_soporte") : "";
+  const teamNext = lead ? textOf("equipo_proximo") : "";
+  if (lead && Object.keys(teamProblemsV3(strategic, operative, support, teamNext)).length) return { ok: false, honeypot };
+  const teamSize = lead ? String((Number(strategic) || 0) + (Number(operative) || 0) + (Number(support) || 0)) : "";
+
   const completeOperation = CAPABILITIES.every((item) => LEVELS.has(capacidades[item.id] ?? ""))
-    && oneOf(SAVINGS, textOf("e1")) && oneOf(REALIZATION, textOf("e2")) && oneOf(EXPOSURE, textOf("e3"))
-    && oneOf(EFFORT_HOURS, textOf("e4")) && oneOf(AI_STAGE, textOf("e5")) && oneOf(DATA_READY, textOf("r1"))
+    && oneOf(SAVINGS, textOf("e1")) && oneOf(REALIZATION, textOf("e2"))
+    && oneOf(EXPOSURE, textOf("e3a")) && oneOf(EXPOSURE, textOf("e3b"))
+    && oneOf(EFFORT_HOURS_V3, textOf("e4")) && oneOf(AI_STAGE, textOf("e5")) && oneOf(DATA_READY, textOf("r1"))
     && barriersOk(data.e6)
-    && Object.keys(aiProblems(ai, "required")).length === 0
+    && Object.keys(aiProblems({ ...ai, e5: textOf("e5") }, "required")).length === 0
     && INITIATIVE_COPY.every((item) => oneOf(STATUSES, agenda[item.id] ?? ""));
   const operational = completeOperation;
 
@@ -97,6 +133,7 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
       },
       answers: {
         version: SURVEY_VERSION_C,
+        ahpScale: "compact5" as const,
         ruta_operativa: data.ruta_operativa === true,
         ruta: operational ? "operativa" : "ejecutiva",
         prioridades_ahp: pairs,
@@ -104,7 +141,8 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
         capacidades,
         e1: textOf("e1"),
         e2: textOf("e2"),
-        e3: textOf("e3"),
+        e3a: textOf("e3a"),
+        e3b: textOf("e3b"),
         e4: textOf("e4"),
         e5: textOf("e5"),
         r1: textOf("r1"),
@@ -115,11 +153,14 @@ export function parseOptionC(body: unknown): { ok: true; row: Record<string, unk
         f2: textOf("f2"),
         g1: textOf("g1"),
         g2: textOf("g2"),
+        equipo_estrategico: strategic,
+        equipo_operativo: operative,
+        equipo_soporte: support,
         equipo_n: teamSize,
         equipo_proximo: teamNext,
         desafio: textOf("desafio").slice(0, 4000),
       },
-      ahp,
+      ahp: { ...ahp, ahpScale: "compact5" as const },
     },
   };
 }
@@ -129,15 +170,15 @@ function aiOf(data: Draft): AiAnswers {
   const activos = text("ia_activos");
   const presupuesto = text("ia_presupuesto");
   const running = activos === "si";
-  const funded = presupuesto === "si";
   return {
     ia_activos: activos,
-    ia_activos_n: running ? text("ia_activos_n") : "",
-    ia_compras_n: running ? text("ia_compras_n") : "",
+    ia_activos_n: "",
+    ia_compras_n: "",
     ia_presupuesto: presupuesto,
-    ia_presupuesto_compras: funded ? text("ia_presupuesto_compras") : "",
+    ia_presupuesto_compras: "",
     ia_escala: running ? text("ia_escala") : "",
     ia_modo: running ? text("ia_modo") : "",
+    ia_usos: codes(data.ia_usos),
   };
 }
 

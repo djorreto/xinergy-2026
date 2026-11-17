@@ -11,9 +11,11 @@ test("la dirección y la intensidad producen el juicio Saaty", () => {
   assert.equal(tokenFromChoice("b", 3), "1/3");
   assert.equal(tokenFromChoice("equal", null), "1");
   assert.equal(tokenFromChoice("a", null), null);
-  assert.equal(tokenFromChoice("b", 9), "1/9");
+  assert.equal(tokenFromChoice("b", 5), "1/5");
   assert.deepEqual(choiceFromToken(undefined), { side: null, intensity: null });
   assert.deepEqual(choiceFromToken("1/5"), { side: "b", intensity: 5 });
+  assert.deepEqual(choiceFromToken("1/9"), { side: "b", intensity: 9 });
+  assert.deepEqual(choiceFromToken("7"), { side: "a", intensity: 7 });
 });
 
 test("una tríada consistente no pide revisión y el bloque de dos criterios tampoco", () => {
@@ -45,7 +47,7 @@ test("riesgo moderado sobre cumplimiento y ESG, con cumplimiento fuerte sobre ES
 test("un grupo muestra su nombre y lo que contiene", () => {
   assert.deepEqual(sideDetail("fin", "es"), {
     name: "Eficiencia y valor financiero",
-    items: ["Reducir costos", "Liberar caja y capital de trabajo"],
+    items: ["Reducir costo total", "Liberar caja y capital de trabajo"],
   });
   assert.deepEqual(sideDetail("costos", "es").items, []);
 });

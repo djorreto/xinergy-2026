@@ -1,17 +1,58 @@
 import { AHP, AHP_SCALE, SURVEY_CONTACT } from "@/lib/surveys/radar-2027";
-import { CAPABILITIES, COUNTRIES, INDUSTRIES, INITIATIVE_COPY, ROLES, type Choice, type Copy, type Lang } from "@/lib/surveys/radar-b/instrument";
+import { COUNTRIES, type Choice, type Copy, type Lang } from "@/lib/surveys/radar-b/instrument";
+import {
+  AI_USES,
+  AI_USES_EXCLUSIVE,
+  CAPABILITIES_C_V3 as CAPABILITIES,
+  COST_C,
+  EFFORT_C,
+  EFFORT_HOURS_V3,
+  IMPACT_C,
+  INDUSTRIES_C as INDUSTRIES,
+  INITIATIVE_COPY_C_V3 as INITIATIVE_COPY,
+  ROLES_C as ROLES,
+  SURVEY_VERSION_C,
+  ahpScaleForVersion,
+  capabilitiesForVersion,
+  exposureCodeOf,
+  initiativesForVersion,
+  pickBenchmarkPerson,
+  roleIsOperationalBenchmark,
+  roleIsProcurementLead,
+} from "@/lib/surveys/radar-c/content";
 
 export type { Choice, Copy, Lang };
 export const text = (copy: Copy, lang: Lang) => copy[lang];
 const L = (es: string, en: string, pt: string): Copy => ({ es, en, pt });
 const o = (v: string, es: string, en: string, pt: string): Choice => ({ v, es, en, pt });
 
-export { AHP, AHP_SCALE, CAPABILITIES, COUNTRIES, INDUSTRIES, INITIATIVE_COPY, ROLES };
+export {
+  AHP,
+  AHP_SCALE,
+  AI_USES,
+  AI_USES_EXCLUSIVE,
+  CAPABILITIES,
+  COST_C,
+  COUNTRIES,
+  EFFORT_C,
+  EFFORT_HOURS_V3,
+  IMPACT_C,
+  INDUSTRIES,
+  INITIATIVE_COPY,
+  ROLES,
+  SURVEY_VERSION_C,
+  ahpScaleForVersion,
+  capabilitiesForVersion,
+  exposureCodeOf,
+  initiativesForVersion,
+  pickBenchmarkPerson,
+  roleIsOperationalBenchmark,
+  roleIsProcurementLead,
+};
 
 /** Identificador histórico en Supabase; no es la ruta pública. */
 export const SURVEY_SLUG_C = "radar-compras-2027-c";
 export const SURVEY_PUBLIC_SLUG_C = "radar-compras-2027";
-export const SURVEY_VERSION_C = "radar-2027-c-v2";
 export const MODEL_VERSION_C = "C-1.0-seed";
 
 export const SCOPES: Choice[] = [
@@ -67,6 +108,7 @@ export const EXPOSURE: Choice[] = [
   o("ns", "No sé", "I don't know", "Não sei"),
 ];
 
+/** Textos v1/v2. La encuesta viva usa EFFORT_HOURS_V3. */
 export const EFFORT_HOURS: Choice[] = [
   o("<1h", "Menos de 1 hora", "Under 1 hour", "Menos de 1 hora"),
   o("1-8h", "1 a menos de 8 horas", "1 to under 8 hours", "1 a menos de 8 horas"),
@@ -117,30 +159,46 @@ export type AiAnswers = {
   ia_presupuesto_compras: string;
   ia_escala: string;
   ia_modo: string;
+  ia_usos?: string[];
+  e5?: string;
 };
 
-/** Sí, no o no sé. Las cantidades y el porcentaje solo aplican con sí, y no se convierten en pesos ni en brecha. */
-export function aiProblems(draft: AiAnswers, mode: "required" | "optional") {
-  const problems: Record<string, "required" | "count" | "over" | "share"> = {};
+/** Sí, no o no sé. Las cantidades y el porcentaje solo aplican con sí en v1/v2, y no se convierten en pesos ni en brecha. */
+export function aiProblems(draft: AiAnswers, mode: "required" | "optional", version: string = SURVEY_VERSION_C) {
+  const problems: Record<string, "required" | "count" | "over" | "share" | "uses"> = {};
   const activos = draft.ia_activos;
   const presupuesto = draft.ia_presupuesto;
-  const started = [activos, presupuesto, draft.ia_activos_n, draft.ia_compras_n, draft.ia_presupuesto_compras, draft.ia_escala, draft.ia_modo].some(Boolean);
+  const v3 = version === "radar-2027-c-v3";
+  const started = [activos, presupuesto, draft.ia_activos_n, draft.ia_compras_n, draft.ia_presupuesto_compras, draft.ia_escala, draft.ia_modo, ...(draft.ia_usos ?? [])].some(Boolean);
   if (mode === "optional" && !started) return problems;
   if (!YES_NO_NS.some((item) => item.v === activos)) {
     if (mode === "required" || draft.ia_activos_n || draft.ia_compras_n || draft.ia_escala || draft.ia_modo) problems.ia_activos = "required";
   }
   if (activos === "si") {
-    if (!wholeNumber(draft.ia_activos_n, 1, 999)) problems.ia_activos_n = "count";
-    else if (!wholeNumber(draft.ia_compras_n, 0, 999)) problems.ia_compras_n = "count";
-    else if (Number(draft.ia_compras_n) > Number(draft.ia_activos_n)) problems.ia_compras_n = "over";
+    if (!v3) {
+      if (!wholeNumber(draft.ia_activos_n, 1, 999)) problems.ia_activos_n = "count";
+      else if (!wholeNumber(draft.ia_compras_n, 0, 999)) problems.ia_compras_n = "count";
+      else if (Number(draft.ia_compras_n) > Number(draft.ia_activos_n)) problems.ia_compras_n = "over";
+    }
     if (!AI_SCALE.some((item) => item.v === draft.ia_escala)) problems.ia_escala = "required";
     if (!AI_MODE.some((item) => item.v === draft.ia_modo)) problems.ia_modo = "required";
   }
   if (!YES_NO_NS.some((item) => item.v === presupuesto)) {
     if (mode === "required" || draft.ia_presupuesto_compras) problems.ia_presupuesto = "required";
   }
-  if (presupuesto === "si" && !wholeNumber(draft.ia_presupuesto_compras, 0, 100)) problems.ia_presupuesto_compras = "share";
+  if (!v3 && presupuesto === "si" && !wholeNumber(draft.ia_presupuesto_compras, 0, 100)) problems.ia_presupuesto_compras = "share";
+  if (v3) {
+    const stage = draft.e5 ?? "";
+    if (stage && stage !== "no" && stage !== "ns" && !aiUsesOk(draft.ia_usos)) problems.ia_usos = "uses";
+  }
   return problems;
+}
+
+export function aiUsesOk(value: unknown) {
+  const picked = Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+  if (!picked.length) return false;
+  if (picked.includes("ninguna")) return picked.length === 1;
+  return picked.every((code) => AI_USES.some((item) => item.v === code));
 }
 
 function wholeNumber(value: string, min: number, max: number) {
@@ -160,6 +218,20 @@ export const TEAM_NEXT: Choice[] = [
 export function teamProblems(size: string, next: string) {
   const problems: Record<string, "required" | "count"> = {};
   if (!wholeNumber(size, 1, 99999)) problems.equipo_n = "count";
+  if (!TEAM_NEXT.some((item) => item.v === next)) problems.equipo_proximo = "required";
+  return problems;
+}
+
+/** Equipo v3: tres campos numéricos; equipo_n es la suma. */
+export function teamProblemsV3(strategic: string, operative: string, support: string, next: string) {
+  const problems: Record<string, "required" | "count"> = {};
+  if (!wholeNumber(strategic, 0, 99999)) problems.equipo_estrategico = "count";
+  if (!wholeNumber(operative, 0, 99999)) problems.equipo_operativo = "count";
+  if (!wholeNumber(support, 0, 99999)) problems.equipo_soporte = "count";
+  const total = Number(strategic || 0) + Number(operative || 0) + Number(support || 0);
+  if (!problems.equipo_estrategico && !problems.equipo_operativo && !problems.equipo_soporte && total < 1) {
+    problems.equipo_estrategico = "count";
+  }
   if (!TEAM_NEXT.some((item) => item.v === next)) problems.equipo_proximo = "required";
   return problems;
 }
@@ -267,8 +339,8 @@ export const OPERATIONAL_FIELDS = [
   "rol", "paises", "rubro", "alcance",
   ...AHP.pairs.map((pair) => pair.id),
   ...CAPABILITIES.map((item) => item.id),
-  "e1", "e2", "e3", "e4", "e5", "r1", "e6",
-  "ia_activos", "ia_activos_n", "ia_compras_n", "ia_presupuesto", "ia_presupuesto_compras", "ia_escala", "ia_modo",
+  "e1", "e2", "e3a", "e3b", "e4", "e5", "r1", "e6",
+  "ia_activos", "ia_presupuesto", "ia_escala", "ia_modo", "ia_usos",
   ...INITIATIVE_COPY.map((item) => item.id),
   "c_datos", "c_agregado",
 ] as const;
@@ -285,7 +357,7 @@ export const OPTIONAL_FIELDS = ["spend", "desafio", "unidad", "ruta_operativa"] 
 
 export const ui = {
   es: {
-    stepsOperational: ["Bienvenida", "Contacto", "Alcance", "Prioridades", "Capacidad", "Contexto", "Agenda", "Cierre"],
+    stepsOperational: ["Bienvenida", "Contacto", "Alcance", "Prioridades", "Capacidad", "Resultados y contexto", "Agenda", "Cierre"],
     stepsExecutive: ["Bienvenida", "Contacto", "Alcance", "Prioridades", "Su rol", "Cierre"],
     back: "Atrás",
     next: "Continuar",
@@ -321,14 +393,16 @@ export const ui = {
     detailsShow: "Leer detalles del tratamiento de datos",
     detailsHide: "Ocultar detalles",
     ahpTitle: "Qué debería priorizar Compras en 2027",
-    ahpIntro: "Cada comparación es entre dos grupos. El nombre está arriba y, debajo, lo que ese grupo contiene. El número hacia un grupo dice cuánto más debería pesar. El 1 del centro es igual importancia.",
-    ahpExample: "Si el grupo de eficiencia es moderadamente más importante que el de riesgo, elige el 3 de ese lado. Si los dos grupos pesan lo mismo, elige el 1.",
-    ahpGroups: "En este bloque se comparan los grupos completos. Después se comparan las prioridades dentro de cada grupo. No se pregunta el desempeño actual.",
-    ahpInside: "Se comparan las prioridades dentro de este grupo. No se evalúa el desempeño actual ni cuán fácil sería mejorar.",
+    ahpIntro: "Elija hacia qué lado pesa más y cuánto. Son 10 comparaciones, unos 2 minutos.",
+    ahpExample: "",
+    ahpGroups: "En esta pantalla se comparan los grupos. Después se comparan las prioridades dentro de cada grupo.",
+    ahpInside: "Se comparan las prioridades dentro de cada grupo.",
+    ahpInconsistent: "Estas tres respuestas se contradicen entre sí (por ejemplo, A > B, B > C y C > A). Puede revisarlas o seguir.",
     blockOf: (current: number, total: number) => `Bloque ${current} de ${total}`,
-    blockTitles: ["Prioridades generales", "Costos y caja", "Riesgo, control y sostenibilidad", "Tecnología, innovación y talento"],
+    blockTitles: ["Prioridades generales", "Prioridades dentro de cada grupo"],
+    sectionTitles: ["Costos y caja", "Riesgo, control y sostenibilidad", "Tecnología, innovación y talento"],
     macroDefs: [
-      ["Eficiencia y valor financiero", "Reducir costos y mejorar caja y capital de trabajo."],
+      ["Eficiencia y valor financiero", "Reducir costo total y mejorar caja y capital de trabajo."],
       ["Riesgo, sostenibilidad y control", "Asegurar continuidad, cumplimiento y gestión responsable de proveedores."],
       ["Transformación y capacidades", "Desarrollar tecnología y datos, innovación con proveedores y capacidades del equipo."],
     ] as [string, string][],
@@ -336,9 +410,9 @@ export const ui = {
     whichGroup: "¿Cuál grupo debería tener mayor importancia?",
     contains: "Contiene",
     intensityQ: "¿Con qué intensidad?",
-    equalChoice: "Igual importancia",
-    intensities: ["Moderadamente más importante", "Fuertemente más importante", "Muy fuertemente más importante", "Extremadamente más importante"],
-    scaleShort: ["Extrema", "Muy fuerte", "Fuerte", "Moderada", "Igual", "Moderada", "Fuerte", "Muy fuerte", "Extrema"],
+    equalChoice: "Igual",
+    intensities: ["Más importante", "Mucho más importante"],
+    scaleShort: ["Mucho más", "Más", "Igual", "Más", "Mucho más"],
     nextBlock: "Siguiente bloque",
     reviewNote: "Conservaremos tus respuestas. Estas comparaciones no se incluirán en el promedio principal de prioridades del estudio. Las demás respuestas válidas de tu encuesta seguirán utilizándose.",
     reviewPortfolio: "Tampoco se calculará un portafolio recomendado a partir de estas prioridades.",
@@ -349,19 +423,30 @@ export const ui = {
     crReview: "Conviene revisar",
     capTitle: "Capacidad actual",
     capNote: "Elija el nivel más alto que describa prácticas habituales. Si solo cumple una parte, elija el anterior. “No sé” no es el nivel más bajo.",
-    contextTitle: "Resultados y condiciones",
-    contextNote: "Son rangos y declaraciones. No se convierten en un promedio de ahorro ni corrigen la capacidad. En proyectos de IA puede marcar sí, no o «No sé». El detalle solo se pide si la respuesta es sí, y no entra al cálculo de la brecha.",
+    contextTitle: "Resultados y contexto",
+    contextNote: "Si no conoce algún punto, marque «No sé».",
+    contextResults: "Resultados del último ejercicio",
+    contextExposure: "Dependencia de proveedores y datos de gasto",
+    contextAi: "Inteligencia artificial",
+    e3a: "Gasto con proveedor único por decisión, aunque existen alternativas (single source)",
+    e3b: "Gasto con proveedor único porque no existe alternativa en el mercado (sole source)",
+    e4: "Si hoy le piden el gasto de los últimos 12 meses con sus 20 principales proveedores, consolidado y validado, ¿cuánto demoran?",
+    iaUses: "¿En qué actividades de Compras ya usan IA?",
     countInvalid: "Ingrese un número entero.",
     countOver: "Los proyectos de Compras no pueden ser más que el total.",
     shareInvalid: "Ingrese un porcentaje entero de 0 a 100.",
-    agendaTitle: "Estado de cada iniciativa",
-    agendaNote: "Aprobada: hay decisión de ejecutarla en 12 a 18 meses. Implementada: ese alcance ya opera de forma estable.",
+    agendaTitle: "Agenda 2027",
+    agendaNote: "No preguntamos si hoy lo hacen (eso fue en Capacidad), sino si es un proyecto en su agenda. Aprobada: hay decisión de ejecutarla en 12 a 18 meses. Implementada: ya opera de forma estable.",
     roleTitle: "Dos preguntas de su rol",
     teamStep: "Equipo",
     teamTitle: "Su equipo",
-    teamNote: "Es el equipo de Compras de este alcance, hoy. El número no entra al cálculo de la brecha.",
+    teamNote: "Es el equipo de Compras de este alcance, hoy.",
+    teamStrategic: "Estratégico (categorías, sourcing)",
+    teamOperative: "Operativo (órdenes, P2P, administración)",
+    teamSupport: "Excelencia, datos y soporte",
+    teamTotal: "Total",
     closeTitle: "Un cambio para 2027",
-    closeNote: "Opcional. No entra al cálculo.",
+    closeNote: "Opcional.",
     challenge: "¿Qué cambio concreto haría la mayor diferencia para Compras durante 2027?",
     spend: "Gasto anual con proveedores, aproximado, en USD. Opcional.",
     unit: "Nombre de la unidad",
@@ -375,7 +460,7 @@ export const ui = {
     doneHome: "Volver a Xinergy",
   },
   en: {
-    stepsOperational: ["Welcome", "Contact", "Scope", "Priorities", "Capability", "Context", "Agenda", "Close"],
+    stepsOperational: ["Welcome", "Contact", "Scope", "Priorities", "Capability", "Results and context", "Agenda", "Close"],
     stepsExecutive: ["Welcome", "Contact", "Scope", "Priorities", "Your role", "Close"],
     back: "Back",
     next: "Continue",
@@ -411,14 +496,16 @@ export const ui = {
     detailsShow: "Read the data processing details",
     detailsHide: "Hide details",
     ahpTitle: "What Procurement should prioritize in 2027",
-    ahpIntro: "Each comparison is between two groups. The name is on top and, under it, what that group contains. The number toward a group says how much more it should weigh. The 1 in the center is equal importance.",
-    ahpExample: "If the efficiency group is moderately more important than the risk group, choose the 3 on that side. If both groups weigh the same, choose 1.",
-    ahpGroups: "This block compares the whole groups. Later blocks compare the priorities inside each group. This is not a question about current performance.",
-    ahpInside: "These are the priorities inside this group. It does not ask about current performance or how easy an improvement would be.",
+    ahpIntro: "Choose which side matters more and by how much. There are 10 comparisons, about 2 minutes.",
+    ahpExample: "",
+    ahpGroups: "This screen compares the groups. Next come the priorities inside each group.",
+    ahpInside: "These are the priorities inside each group.",
+    ahpInconsistent: "These three answers contradict one another (for example, A > B, B > C, and C > A). You can review them or continue.",
     blockOf: (current: number, total: number) => `Block ${current} of ${total}`,
-    blockTitles: ["Overall priorities", "Cost and cash", "Risk, control and sustainability", "Technology, innovation and talent"],
+    blockTitles: ["Overall priorities", "Priorities within each group"],
+    sectionTitles: ["Cost and cash", "Risk, control and sustainability", "Technology, innovation and talent"],
     macroDefs: [
-      ["Efficiency and financial value", "Reduce cost and improve cash and working capital."],
+      ["Efficiency and financial value", "Reduce total cost and improve cash and working capital."],
       ["Risk, sustainability and control", "Secure continuity, compliance and responsible supplier management."],
       ["Transformation and capabilities", "Develop technology and data, supplier innovation and team capabilities."],
     ] as [string, string][],
@@ -426,9 +513,9 @@ export const ui = {
     whichGroup: "Which group should matter more?",
     contains: "Contains",
     intensityQ: "By how much?",
-    equalChoice: "Equal importance",
-    intensities: ["Moderately more important", "Strongly more important", "Very strongly more important", "Extremely more important"],
-    scaleShort: ["Extreme", "Very strong", "Strong", "Moderate", "Equal", "Moderate", "Strong", "Very strong", "Extreme"],
+    equalChoice: "Equal",
+    intensities: ["More important", "Much more important"],
+    scaleShort: ["Much more", "More", "Equal", "More", "Much more"],
     nextBlock: "Next block",
     reviewNote: "We will keep your answers. These comparisons will not be included in the study's main priority average. Your other valid answers will still be used.",
     reviewPortfolio: "A recommended portfolio will not be calculated from these priorities.",
@@ -439,19 +526,30 @@ export const ui = {
     crReview: "Worth reviewing",
     capTitle: "Current capability",
     capNote: "Choose the highest level that describes habitual practice. If you only meet part of a level, choose the one below. “I don't know” is not the lowest level.",
-    contextTitle: "Results and conditions",
-    contextNote: "These are ranges and statements. They are not turned into an average saving and they do not overwrite capability. AI project questions accept yes, no or “I don't know”. The detail is asked only when the answer is yes, and it does not enter the gap calculation.",
+    contextTitle: "Results and context",
+    contextNote: "If you do not know a point, choose “I don't know”.",
+    contextResults: "Results of the last closed year",
+    contextExposure: "Supplier dependence and spend data",
+    contextAi: "Artificial intelligence",
+    e3a: "Spend with a single supplier by choice, even though alternatives exist (single source)",
+    e3b: "Spend with a single supplier because no market alternative exists (sole source)",
+    e4: "If you were asked today for the last 12 months of spend with your top 20 suppliers, consolidated and validated, how long would it take?",
+    iaUses: "In which Procurement activities do you already use AI?",
     countInvalid: "Enter a whole number.",
     countOver: "Procurement projects cannot exceed the total.",
     shareInvalid: "Enter a whole percentage from 0 to 100.",
-    agendaTitle: "Status of each initiative",
-    agendaNote: "Approved: there is a decision to execute in 12 to 18 months. Implemented: that scope already runs in a stable way.",
+    agendaTitle: "2027 agenda",
+    agendaNote: "We are not asking whether you do this today (that was Capability), but whether it is a project on your agenda. Approved: there is a decision to execute in 12 to 18 months. Implemented: it already runs in a stable way.",
     roleTitle: "Two questions for your role",
     teamStep: "Team",
     teamTitle: "Your team",
-    teamNote: "This is the Procurement team of this scope, today. The number does not enter the gap calculation.",
+    teamNote: "This is the Procurement team of this scope, today.",
+    teamStrategic: "Strategic (categories, sourcing)",
+    teamOperative: "Operational (orders, P2P, administration)",
+    teamSupport: "Excellence, data and support",
+    teamTotal: "Total",
     closeTitle: "One change for 2027",
-    closeNote: "Optional. It is not part of the calculation.",
+    closeNote: "Optional.",
     challenge: "What concrete change would make the biggest difference for Procurement during 2027?",
     spend: "Annual supplier spend, approximate, in USD. Optional.",
     unit: "Business unit name",
@@ -465,7 +563,7 @@ export const ui = {
     doneHome: "Back to Xinergy",
   },
   pt: {
-    stepsOperational: ["Boas-vindas", "Contato", "Escopo", "Prioridades", "Capacidade", "Contexto", "Agenda", "Fecho"],
+    stepsOperational: ["Boas-vindas", "Contato", "Escopo", "Prioridades", "Capacidade", "Resultados e contexto", "Agenda", "Fecho"],
     stepsExecutive: ["Boas-vindas", "Contato", "Escopo", "Prioridades", "Seu papel", "Fecho"],
     back: "Voltar",
     next: "Continuar",
@@ -501,14 +599,16 @@ export const ui = {
     detailsShow: "Ler os detalhes do tratamento de dados",
     detailsHide: "Ocultar detalhes",
     ahpTitle: "O que Compras deveria priorizar em 2027",
-    ahpIntro: "Cada comparação é entre dois grupos. O nome fica em cima e, abaixo, o que esse grupo contém. O número na direção de um grupo diz quanto mais ele deveria pesar. O 1 do centro é igual importância.",
-    ahpExample: "Se o grupo de eficiência é moderadamente mais importante que o de risco, escolha o 3 desse lado. Se os dois grupos pesam o mesmo, escolha o 1.",
-    ahpGroups: "Neste bloco comparam-se os grupos completos. Depois comparam-se as prioridades dentro de cada grupo. Não se pergunta o desempenho atual.",
-    ahpInside: "Comparam-se as prioridades dentro deste grupo. Não se avalia o desempenho atual nem quão fácil seria melhorar.",
+    ahpIntro: "Escolha para que lado pesa mais e quanto. São 10 comparações, cerca de 2 minutos.",
+    ahpExample: "",
+    ahpGroups: "Nesta tela comparam-se os grupos. Depois vêm as prioridades dentro de cada grupo.",
+    ahpInside: "Comparam-se as prioridades dentro de cada grupo.",
+    ahpInconsistent: "Estas três respostas se contradizem (por exemplo, A > B, B > C e C > A). Você pode revisá-las ou continuar.",
     blockOf: (current: number, total: number) => `Bloco ${current} de ${total}`,
-    blockTitles: ["Prioridades gerais", "Custos e caixa", "Risco, controle e sustentabilidade", "Tecnologia, inovação e talento"],
+    blockTitles: ["Prioridades gerais", "Prioridades dentro de cada grupo"],
+    sectionTitles: ["Custos e caixa", "Risco, controle e sustentabilidade", "Tecnologia, inovação e talento"],
     macroDefs: [
-      ["Eficiência e valor financeiro", "Reduzir custos e melhorar caixa e capital de giro."],
+      ["Eficiência e valor financeiro", "Reduzir o custo total e melhorar caixa e capital de giro."],
       ["Risco, sustentabilidade e controle", "Assegurar continuidade, cumprimento e gestão responsável de fornecedores."],
       ["Transformação e capacidades", "Desenvolver tecnologia e dados, inovação com fornecedores e capacidades da equipe."],
     ] as [string, string][],
@@ -516,9 +616,9 @@ export const ui = {
     whichGroup: "Qual grupo deveria ter maior importância?",
     contains: "Contém",
     intensityQ: "Com que intensidade?",
-    equalChoice: "Igual importância",
-    intensities: ["Moderadamente mais importante", "Fortemente mais importante", "Muito fortemente mais importante", "Extremamente mais importante"],
-    scaleShort: ["Extrema", "Muito forte", "Forte", "Moderada", "Igual", "Moderada", "Forte", "Muito forte", "Extrema"],
+    equalChoice: "Igual",
+    intensities: ["Mais importante", "Muito mais importante"],
+    scaleShort: ["Muito mais", "Mais", "Igual", "Mais", "Muito mais"],
     nextBlock: "Bloco seguinte",
     reviewNote: "Vamos conservar suas respostas. Estas comparações não entram na média principal de prioridades do estudo. As outras respostas válidas da pesquisa continuam sendo usadas.",
     reviewPortfolio: "Também não será calculado um portfólio recomendado a partir destas prioridades.",
@@ -529,19 +629,30 @@ export const ui = {
     crReview: "Vale revisar",
     capTitle: "Capacidade atual",
     capNote: "Escolha o nível mais alto que descreva práticas habituais. Se só cumpre uma parte, escolha o anterior. “Não sei” não é o nível mais baixo.",
-    contextTitle: "Resultados e condições",
-    contextNote: "São faixas e declarações. Não viram uma média de economia nem corrigem a capacidade. Nas perguntas de projetos de IA pode marcar sim, não ou “Não sei”. O detalhe só é pedido se a resposta for sim, e não entra no cálculo da lacuna.",
+    contextTitle: "Resultados e contexto",
+    contextNote: "Se não conhece algum ponto, marque “Não sei”.",
+    contextResults: "Resultados do último exercício",
+    contextExposure: "Dependência de fornecedores e dados de gasto",
+    contextAi: "Inteligência artificial",
+    e3a: "Gasto com fornecedor único por decisão, embora existam alternativas (single source)",
+    e3b: "Gasto com fornecedor único porque não existe alternativa no mercado (sole source)",
+    e4: "Se hoje pedirem o gasto dos últimos 12 meses com seus 20 principais fornecedores, consolidado e validado, quanto tempo leva?",
+    iaUses: "Em quais atividades de Compras vocês já usam IA?",
     countInvalid: "Informe um número inteiro.",
     countOver: "Os projetos de Compras não podem passar do total.",
     shareInvalid: "Informe um percentual inteiro de 0 a 100.",
-    agendaTitle: "Estado de cada iniciativa",
-    agendaNote: "Aprovada: há decisão de executar em 12 a 18 meses. Implementada: esse escopo já opera de forma estável.",
+    agendaTitle: "Agenda 2027",
+    agendaNote: "Não perguntamos se vocês fazem isso hoje (isso foi em Capacidade), e sim se é um projeto na agenda. Aprovada: há decisão de executar em 12 a 18 meses. Implementada: já opera de forma estável.",
     roleTitle: "Duas perguntas do seu papel",
     teamStep: "Equipe",
     teamTitle: "Sua equipe",
-    teamNote: "É a equipe de Compras deste escopo, hoje. O número não entra no cálculo da lacuna.",
+    teamNote: "É a equipe de Compras deste escopo, hoje.",
+    teamStrategic: "Estratégico (categorias, sourcing)",
+    teamOperative: "Operacional (pedidos, P2P, administração)",
+    teamSupport: "Excelência, dados e suporte",
+    teamTotal: "Total",
     closeTitle: "Uma mudança para 2027",
-    closeNote: "Opcional. Não entra no cálculo.",
+    closeNote: "Opcional.",
     challenge: "Que mudança concreta faria a maior diferença para Compras durante 2027?",
     spend: "Gasto anual com fornecedores, aproximado, em USD. Opcional.",
     unit: "Nome da unidade",

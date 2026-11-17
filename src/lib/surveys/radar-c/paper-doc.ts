@@ -18,7 +18,6 @@ export type PaperDocument = {
 
 const ROLE: Record<string, string> = { cpo: "Compras", scm: "supply chain", cfo: "Finanzas", ceo: "dirección general", otro: "otro rol" };
 const REALIZATION: Record<string, string> = { "<25": "menos de 25%", "25-50": "25 a menos de 50%", "50-75": "50 a 75%", ">75": "más de 75%", nm: "no medimos", ns: "no sé", none: "no hubo ahorro que debiera materializarse" };
-const STAGE: Record<string, string> = { no: "no se usa", individual: "uso individual", piloto: "pilotos", produccion: "producción", extendido: "uso extendido", ns: "no sé" };
 const BARRIER: Record<string, string> = { roi: "ROI poco claro", sistemas: "integración con sistemas", datos: "calidad o disponibilidad de datos", talento: "talento", cambio: "gestión del cambio", seguridad: "restricciones de acceso", otra: "otra", ninguna: "ninguna barrera", ns: "no se ha evaluado" };
 
 export function paperDocument(cut: PaperCut, stamp: string): PaperDocument {
