@@ -129,8 +129,8 @@ function PairCard({ id, lang, token, invalid, onChange }: { id: string; lang: La
     <fieldset id={`q-${id}`} className={`border p-3 sm:p-4 ${invalid ? "border-red-700" : "border-xinergy-charcoal/15"}`}>
       <legend className="px-1 font-semibold text-xinergy-charcoal">{question}</legend>
       <div className="mt-3 grid grid-cols-2 items-stretch gap-2 sm:gap-3">
-        <SidePanel name={left.name} items={left.items} contains={copy.contains} wash={washOf("a", saved.side, saved.intensity)} />
-        <SidePanel name={right.name} items={right.items} contains={copy.contains} wash={washOf("b", saved.side, saved.intensity)} />
+        <SidePanel align="start" name={left.name} items={left.items} contains={copy.contains} wash={washOf("a", saved.side, saved.intensity)} />
+        <SidePanel align="end" name={right.name} items={right.items} contains={copy.contains} wash={washOf("b", saved.side, saved.intensity)} />
       </div>
       <div className="mt-3 grid grid-cols-5 gap-1" role="radiogroup" aria-label={question}>
         {AHP_SCALE_C.map((point) => {
@@ -168,11 +168,13 @@ function washOf(place: "a" | "b", side: ReturnType<typeof choiceFromToken>["side
   return { background: side === place ? more : less, light: false };
 }
 
-function SidePanel({ name, items, contains, wash }: { name: string; items: string[]; contains: string; wash?: { background: string; light: boolean } }) {
+const IDLE_WASH = { start: "#F3F6F4", end: "#F7F2EE" };
+
+function SidePanel({ align, name, items, contains, wash }: { align: "start" | "end"; name: string; items: string[]; contains: string; wash?: { background: string; light: boolean } }) {
   const title = wash?.light ? "text-[#faf9f7]" : "text-xinergy-charcoal";
   const detail = wash?.light ? "text-[#faf9f7]" : "text-xinergy-charcoal";
   return (
-    <div className="px-2 py-3 text-left text-xs sm:px-3 sm:text-sm" style={wash ? { backgroundColor: wash.background } : undefined}>
+    <div className={`px-2 py-3 text-xs sm:px-3 sm:text-sm ${align === "end" ? "text-right" : "text-left"}`} style={{ backgroundColor: wash?.background ?? IDLE_WASH[align] }}>
       <p className={`font-semibold ${title}`}>{name}</p>
       {items.length ? (
         <div className={`mt-2 text-[11px] font-normal leading-snug ${detail}`}>
