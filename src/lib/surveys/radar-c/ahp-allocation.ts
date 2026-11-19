@@ -166,11 +166,18 @@ export function resolvePriorities(tokens: Record<string, string>, raw: unknown):
   return { ahp, mode: hybrid ? "hibrido" : "ahp", clarificationComplete, global, ahpGlobal: ahp.global, macro, blocks };
 }
 
+function listNames(names: string[], lang: Lang) {
+  const quoted = names.map((name) => `«${name}»`);
+  if (quoted.length < 2) return quoted[0] ?? "";
+  const and = lang === "en" ? "and" : lang === "pt" ? "e" : "y";
+  return `${quoted.slice(0, -1).join(", ")} ${and} ${quoted[quoted.length - 1]}`;
+}
+
 export function allocationCopy(lang: Lang) {
   if (lang === "en") {
     return {
       progress: (current: number, total: number) => `Clarification ${current} of ${total}`,
-      reason: "These three answers do not fit together. Distribute 100 points and we will use that split.",
+      reason: (names: string[]) => `To keep the questions ${listNames(names, lang)} consistent, please indicate these percentages.`,
       question: "For your 2027 Procurement agenda, distribute 100 points across these three priorities according to their importance.",
       ties: "You can assign the same number to priorities that matter equally.",
       assigned: (points: number) => `Assigned: ${points} of 100`,
@@ -187,7 +194,7 @@ export function allocationCopy(lang: Lang) {
   if (lang === "pt") {
     return {
       progress: (current: number, total: number) => `Esclarecimento ${current} de ${total}`,
-      reason: "Estas três respostas não fecham entre si. Distribua 100 pontos e usaremos essa distribuição.",
+      reason: (names: string[]) => `Para assegurar consistência entre as perguntas ${listNames(names, lang)}, indique estas porcentagens.`,
       question: "Para sua agenda de Compras 2027, distribua 100 pontos entre estas três prioridades segundo sua importância.",
       ties: "Você pode atribuir a mesma quantidade a prioridades igualmente importantes.",
       assigned: (points: number) => `Atribuídos: ${points} de 100`,
@@ -203,7 +210,7 @@ export function allocationCopy(lang: Lang) {
   }
   return {
     progress: (current: number, total: number) => `Aclaración ${current} de ${total}`,
-    reason: "Estas tres respuestas no cierran entre sí. Reparta 100 puntos y usaremos este reparto.",
+    reason: (names: string[]) => `Para asegurar consistencia entre las preguntas ${listNames(names, lang)}, por favor indica estos porcentajes.`,
     question: "Para tu agenda de Compras 2027, distribuye 100 puntos entre estas tres prioridades según su importancia.",
     ties: "Puedes asignar la misma cantidad a prioridades igualmente importantes.",
     assigned: (points: number) => `Asignados: ${points} de 100`,
