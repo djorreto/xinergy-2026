@@ -50,6 +50,52 @@ export function criteriaOf(blockId: AllocationBlockId | "fin") {
   return AHP.macros.find((item) => item.id === blockId)?.children ?? [];
 }
 
+/** Reparte 100 en partes lo más iguales posible. El resto queda en el último criterio. */
+export function evenSplit(ids: string[]) {
+  const points: Record<string, number> = {};
+  if (!ids.length) return points;
+  const base = Math.floor(100 / ids.length);
+  let extra = 100 - base * ids.length;
+  for (let index = ids.length - 1; index >= 0; index -= 1) {
+    const add = extra > 0 ? 1 : 0;
+    if (extra > 0) extra -= 1;
+    points[ids[index]] = base + add;
+  }
+  return points;
+}
+
+/** Fija un criterio y reparte el resto entre los demás, en proporción, siempre en enteros que suman 100. */
+export function rebalanceShares(current: Record<string, number>, id: string, next: number, ids: string[]) {
+  const target = Math.max(0, Math.min(100, Math.round(next)));
+  const others = ids.filter((item) => item !== id);
+  const remaining = 100 - target;
+  const result: Record<string, number> = { [id]: others.length ? target : 100 };
+  if (!others.length) return result;
+  const pool = others.reduce((sum, item) => sum + (current[item] ?? 0), 0);
+  if (pool <= 0) {
+    const base = Math.floor(remaining / others.length);
+    let extra = remaining - base * others.length;
+    for (let index = others.length - 1; index >= 0; index -= 1) {
+      const add = extra > 0 ? 1 : 0;
+      if (extra > 0) extra -= 1;
+      result[others[index]] = base + add;
+    }
+    return result;
+  }
+  const rows = others.map((item) => {
+    const exact = ((current[item] ?? 0) / pool) * remaining;
+    return { item, exact, value: Math.floor(exact) };
+  });
+  let leftover = remaining - rows.reduce((sum, row) => sum + row.value, 0);
+  for (const row of [...rows].sort((left, right) => right.exact - right.value - (left.exact - left.value) || others.indexOf(left.item) - others.indexOf(right.item))) {
+    if (leftover <= 0) break;
+    row.value += 1;
+    leftover -= 1;
+  }
+  for (const row of rows) result[row.item] = row.value;
+  return result;
+}
+
 export function blocksNeedingAllocation(tokens: Record<string, string>) {
   return reviewBlockIds(tokens).filter((id): id is AllocationBlockId => (ALLOCATION_BLOCKS as readonly string[]).includes(id));
 }
@@ -180,14 +226,7 @@ export function allocationCopy(lang: Lang) {
       reason: (names: string[]) => `To keep the questions ${listNames(names, lang)} consistent, please indicate these percentages.`,
       question: "For your 2027 Procurement agenda, distribute 100 points across these three priorities according to their importance.",
       ties: "You can assign the same number to priorities that matter equally.",
-      assigned: (points: number) => `Assigned: ${points} of 100`,
-      missing: (points: number) => `Missing ${points}.`,
-      extra: (points: number) => `${points} too many.`,
-      exact: "All 100 points are assigned.",
-      points: "points",
-      unassigned: "Unassigned",
-      decrease: "Decrease",
-      increase: "Increase",
+      adjust: "Move each bar. Raising one lowers the others, and the total stays at 100.",
       confirm: "Confirm priorities",
     };
   }
@@ -197,14 +236,7 @@ export function allocationCopy(lang: Lang) {
       reason: (names: string[]) => `Para assegurar consistência entre as perguntas ${listNames(names, lang)}, indique estas porcentagens.`,
       question: "Para sua agenda de Compras 2027, distribua 100 pontos entre estas três prioridades segundo sua importância.",
       ties: "Você pode atribuir a mesma quantidade a prioridades igualmente importantes.",
-      assigned: (points: number) => `Atribuídos: ${points} de 100`,
-      missing: (points: number) => `Faltam ${points}.`,
-      extra: (points: number) => `Sobram ${points}.`,
-      exact: "Os 100 pontos estão atribuídos.",
-      points: "pontos",
-      unassigned: "Não atribuídos",
-      decrease: "Diminuir",
-      increase: "Aumentar",
+      adjust: "Mova cada barra. Ao aumentar uma, as outras descem e a soma continua em 100.",
       confirm: "Confirmar prioridades",
     };
   }
@@ -213,14 +245,7 @@ export function allocationCopy(lang: Lang) {
     reason: (names: string[]) => `Para asegurar consistencia entre las preguntas ${listNames(names, lang)}, por favor indica estos porcentajes.`,
     question: "Para tu agenda de Compras 2027, distribuye 100 puntos entre estas tres prioridades según su importancia.",
     ties: "Puedes asignar la misma cantidad a prioridades igualmente importantes.",
-    assigned: (points: number) => `Asignados: ${points} de 100`,
-    missing: (points: number) => `Faltan ${points}.`,
-    extra: (points: number) => `Sobran ${points}.`,
-    exact: "Los 100 puntos están asignados.",
-    points: "puntos",
-    unassigned: "Sin asignar",
-    decrease: "Disminuir",
-    increase: "Aumentar",
+    adjust: "Mueva cada barra. Al subir una, las otras bajan y la suma sigue en 100.",
     confirm: "Confirmar prioridades",
   };
 }

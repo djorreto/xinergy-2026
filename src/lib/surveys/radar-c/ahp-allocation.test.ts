@@ -9,6 +9,8 @@ import {
   blocksNeedingAllocation,
   confirmAllocation,
   criteriaOf,
+  evenSplit,
+  rebalanceShares,
   resolvePriorities,
   retireStaleAllocations,
 } from "@/lib/surveys/radar-c/ahp-allocation";
@@ -29,6 +31,22 @@ test("un ciclo y un desajuste de intensidades piden el mismo bloque, sin elegir 
   assert.deepEqual(blocksNeedingAllocation(cycle), ["res"]);
   assert.deepEqual(blocksNeedingAllocation(intensity), ["res"]);
   assert.deepEqual(criteriaOf("res"), ["riesgo", "control", "esg"]);
+});
+
+test("las barras reparten 100 en enteros y al subir una bajan las otras", () => {
+  const ids = criteriaOf("res");
+  const even = evenSplit(ids);
+  assert.equal(Object.values(even).reduce((sum, value) => sum + value, 0), 100);
+  assert.deepEqual(even, { riesgo: 33, control: 33, esg: 34 });
+  const raised = rebalanceShares(even, "riesgo", 60, ids);
+  assert.equal(raised.riesgo, 60);
+  assert.equal(Object.values(raised).reduce((sum, value) => sum + value, 0), 100);
+  const all = rebalanceShares(raised, "riesgo", 100, ids);
+  assert.deepEqual(all, { riesgo: 100, control: 0, esg: 0 });
+  const back = rebalanceShares(all, "riesgo", 40, ids);
+  assert.equal(back.riesgo, 40);
+  assert.equal(back.control + back.esg, 60);
+  assert.equal(Object.values(back).every((value) => Number.isInteger(value)), true);
 });
 
 test("solo se aceptan enteros completos que suman 100, incluidos ceros y empates", () => {
