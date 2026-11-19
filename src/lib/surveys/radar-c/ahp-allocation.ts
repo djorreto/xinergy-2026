@@ -170,6 +170,7 @@ export function allocationCopy(lang: Lang) {
   if (lang === "en") {
     return {
       progress: (current: number, total: number) => `Clarification ${current} of ${total}`,
+      reason: "These three answers do not fit together. Distribute 100 points and we will use that split.",
       question: "For your 2027 Procurement agenda, distribute 100 points across these three priorities according to their importance.",
       ties: "You can assign the same number to priorities that matter equally.",
       assigned: (points: number) => `Assigned: ${points} of 100`,
@@ -186,6 +187,7 @@ export function allocationCopy(lang: Lang) {
   if (lang === "pt") {
     return {
       progress: (current: number, total: number) => `Esclarecimento ${current} de ${total}`,
+      reason: "Estas três respostas não fecham entre si. Distribua 100 pontos e usaremos essa distribuição.",
       question: "Para sua agenda de Compras 2027, distribua 100 pontos entre estas três prioridades segundo sua importância.",
       ties: "Você pode atribuir a mesma quantidade a prioridades igualmente importantes.",
       assigned: (points: number) => `Atribuídos: ${points} de 100`,
@@ -201,6 +203,7 @@ export function allocationCopy(lang: Lang) {
   }
   return {
     progress: (current: number, total: number) => `Aclaración ${current} de ${total}`,
+    reason: "Estas tres respuestas no cierran entre sí. Reparta 100 puntos y usaremos este reparto.",
     question: "Para tu agenda de Compras 2027, distribuye 100 puntos entre estas tres prioridades según su importancia.",
     ties: "Puedes asignar la misma cantidad a prioridades igualmente importantes.",
     assigned: (points: number) => `Asignados: ${points} de 100`,

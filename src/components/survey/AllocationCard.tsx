@@ -50,7 +50,8 @@ export function AllocationCard({
   return (
     <section aria-labelledby={`allocation-${blockId}`}>
       {total > 1 ? <p className="text-sm text-xinergy-beige">{copy.progress(index, total)}</p> : null}
-      <h2 id={`allocation-${blockId}`} className="mt-2 font-display text-2xl text-xinergy-charcoal">{copy.question}</h2>
+      <p className="mt-2 max-w-2xl text-xinergy-charcoal">{copy.reason}</p>
+      <h2 id={`allocation-${blockId}`} className="mt-3 font-display text-2xl text-xinergy-charcoal">{copy.question}</h2>
       <p className="mt-3 max-w-2xl text-xinergy-slate">{copy.ties}</p>
       <div className="mt-6 grid items-center gap-8 md:grid-cols-[minmax(0,40rem)_16.5rem]">
         <div className="flex flex-col gap-4">

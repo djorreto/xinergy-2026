@@ -4,21 +4,15 @@ import { AllocationCard } from "@/components/survey/AllocationCard";
 import type { AllocationBlockId } from "@/lib/surveys/radar-c/ahp-allocation";
 import {
   AHP_BLOCKS,
-  AHP_INCONSISTENCY_COPY,
   AHP_INSIDE_SECTION_TITLES,
   AHP_SCALE_C,
   choiceFromToken,
   describeChoice,
   pairMeta,
   sideDetail,
-  subgroupComplete,
-  subgroupCr,
-  type AhpInsideSectionId,
   type AhpIntensityStored,
 } from "@/lib/surveys/radar-c/ahp-blocks";
 import { ui, type Lang } from "@/lib/surveys/radar-c/instrument";
-
-const TRIO_WARNING_BLOCKS = new Set<AhpInsideSectionId | "general">(["general", "res", "trans"]);
 
 export function AhpBlocks({
   lang,
@@ -85,7 +79,6 @@ export function AhpBlocks({
                       <PairCard key={id} id={id} lang={lang} token={selected[id]} invalid={Boolean(invalid[id])} onChange={(token) => onChange(token ? { ...selected, [id]: token } : omit(selected, id))} />
                     ))}
                   </div>
-                  <InconsistencyHint lang={lang} blockId={section.id} selected={selected} />
                 </div>
               ))}
             </div>
@@ -96,7 +89,6 @@ export function AhpBlocks({
               ))}
             </div>
           )}
-          {source.id === "general" ? <InconsistencyHint lang={lang} blockId="general" selected={selected} /> : null}
           {onEditAllocation && block === AHP_BLOCKS.length - 1 ? (
             <button type="button" className="mt-4 text-sm font-semibold text-xinergy-charcoal underline decoration-xinergy-orange" onClick={onEditAllocation}>
               {lang === "en" ? "Edit the point distribution" : lang === "pt" ? "Editar a distribuição de pontos" : "Editar la distribución de puntos"}
@@ -106,14 +98,6 @@ export function AhpBlocks({
       ) : null}
     </div>
   );
-}
-
-function InconsistencyHint({ lang, blockId, selected }: { lang: Lang; blockId: AhpInsideSectionId | "general"; selected: Record<string, string> }) {
-  if (!TRIO_WARNING_BLOCKS.has(blockId)) return null;
-  if (!subgroupComplete(blockId, selected)) return null;
-  const cr = subgroupCr(selected, blockId);
-  if (cr == null || cr <= 0.1) return null;
-  return <p className="mt-3 text-sm text-amber-800">{AHP_INCONSISTENCY_COPY[lang]}</p>;
 }
 
 function PairCard({ id, lang, token, invalid, onChange }: { id: string; lang: Lang; token?: string; invalid: boolean; onChange: (token: string | null) => void }) {

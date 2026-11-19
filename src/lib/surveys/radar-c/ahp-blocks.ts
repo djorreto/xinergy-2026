@@ -65,12 +65,6 @@ export function criterionLabelC(id: string, lang: Lang) {
   return ahpLabel(id, lang);
 }
 
-export const AHP_INCONSISTENCY_COPY = {
-  es: "Estas tres respuestas se contradicen entre sí (por ejemplo, A > B, B > C y C > A). Puede revisarlas o seguir.",
-  en: "These three answers contradict one another (for example, A > B, B > C, and C > A). You can review them or continue.",
-  pt: "Estas três respostas se contradizem (por exemplo, A > B, B > C e C > A). Você pode revisá-las ou continuar.",
-};
-
 export const AHP_INSIDE_SECTION_TITLES: Record<AhpInsideSectionId, { es: string; en: string; pt: string }> = {
   fin: {
     es: "Costos y caja",
